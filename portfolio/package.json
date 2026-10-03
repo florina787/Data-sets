@@ -1,0 +1,17 @@
+{
+  "name": "florina-regius-ai-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Florina Regius — AI engineering portfolio. Static site, zero runtime dependencies.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "preview": "node scripts/build.mjs && python3 -m http.server 8080 -d dist"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

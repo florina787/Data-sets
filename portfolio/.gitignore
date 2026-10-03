@@ -1,0 +1,22 @@
+# Build output
+dist/
+
+# Dependencies (none are required, but keep tooling out of git)
+node_modules/
+
+# Local environment — never commit real values
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Logs & screenshots from local testing
+*.log
+test-results/
+playwright-report/

@@ -1,4 +1,7 @@
 # Data-sets
+
+> **Portfolio:** the AI engineering portfolio site lives in [`portfolio/`](portfolio/) (deployed with GitHub Pages). The Enterprise Agentic AI Copilot project is in [`enterprise-agentic-ai/`](enterprise-agentic-ai/).
+
 Different Data-set on various Important & Interesting topic
 These Datasets are classic and best to Implement to learn Machine Learning Algorithms.
 Will Add more Datasets in future for Developers, Data Scientist, Students and begineer's.
