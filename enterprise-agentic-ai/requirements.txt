@@ -1,0 +1,15 @@
+# Core runtime (DEMO mode needs nothing else; no API key, no model downloads).
+langgraph>=1.0,<2
+langchain-core>=1.0,<2
+langchain-anthropic>=1.0,<2
+langchain-text-splitters>=1.0,<2
+chromadb>=1.0,<2
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+pydantic>=2.7,<3
+pydantic-settings>=2.4,<3
+python-multipart>=0.0.9
+pypdf>=5.0
+httpx>=0.27,<1
+streamlit>=1.40,<2
+pandas>=2.0

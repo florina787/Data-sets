@@ -1,0 +1,70 @@
+{
+  "_disclaimer": "SYNTHETIC DATA - NovaGrid Corp is fictional. All metrics are invented for demonstration.",
+  "delivery_metrics": [
+    {
+      "project_id": "PRJ-PHOENIX",
+      "as_of": "2026-09-30",
+      "sprints": [
+        {"sprint": "Sprint 17", "planned_points": 45, "completed_points": 44},
+        {"sprint": "Sprint 18", "planned_points": 46, "completed_points": 45},
+        {"sprint": "Sprint 19", "planned_points": 48, "completed_points": 47},
+        {"sprint": "Sprint 20", "planned_points": 48, "completed_points": 41},
+        {"sprint": "Sprint 21", "planned_points": 46, "completed_points": 38}
+      ],
+      "deployment_frequency_per_week": 2.0,
+      "lead_time_days": 6.5,
+      "change_failure_rate_pct": 18.0,
+      "mttr_hours": 3.2,
+      "test_coverage_pct": 74.0,
+      "unplanned_work_pct": 20.0,
+      "open_defects": 14,
+      "budget_consumed_pct": 72.0
+    },
+    {
+      "project_id": "PRJ-ATLAS",
+      "as_of": "2026-09-30",
+      "sprints": [
+        {"sprint": "Sprint 17", "planned_points": 40, "completed_points": 38},
+        {"sprint": "Sprint 18", "planned_points": 40, "completed_points": 39},
+        {"sprint": "Sprint 19", "planned_points": 42, "completed_points": 40},
+        {"sprint": "Sprint 20", "planned_points": 42, "completed_points": 41},
+        {"sprint": "Sprint 21", "planned_points": 44, "completed_points": 42}
+      ],
+      "deployment_frequency_per_week": 3.0,
+      "lead_time_days": 3.1,
+      "change_failure_rate_pct": 8.0,
+      "mttr_hours": 1.9,
+      "test_coverage_pct": 83.0,
+      "unplanned_work_pct": 7.0,
+      "open_defects": 5,
+      "budget_consumed_pct": 73.0
+    },
+    {
+      "project_id": "PRJ-ORION",
+      "as_of": "2026-09-30",
+      "sprints": [
+        {"sprint": "Sprint 17", "planned_points": 36, "completed_points": 30},
+        {"sprint": "Sprint 18", "planned_points": 36, "completed_points": 29},
+        {"sprint": "Sprint 19", "planned_points": 38, "completed_points": 27},
+        {"sprint": "Sprint 20", "planned_points": 38, "completed_points": 25},
+        {"sprint": "Sprint 21", "planned_points": 34, "completed_points": 24}
+      ],
+      "deployment_frequency_per_week": 0.5,
+      "lead_time_days": 9.4,
+      "change_failure_rate_pct": 22.0,
+      "mttr_hours": 6.8,
+      "test_coverage_pct": 61.0,
+      "unplanned_work_pct": 15.0,
+      "open_defects": 23,
+      "budget_consumed_pct": 58.0
+    }
+  ],
+  "engineering_targets": {
+    "deployment_frequency_per_week": 1.0,
+    "lead_time_days": 5.0,
+    "change_failure_rate_pct": 15.0,
+    "mttr_hours": 4.0,
+    "test_coverage_pct": 80.0,
+    "sprint_predictability_pct": 85.0
+  }
+}
