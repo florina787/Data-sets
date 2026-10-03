@@ -1,0 +1,4 @@
+# Semantic embeddings (recommended). Pulls in PyTorch.
+# For a smaller CPU-only install on Linux, first run:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+sentence-transformers>=3.0

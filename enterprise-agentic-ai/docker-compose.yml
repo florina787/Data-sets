@@ -1,0 +1,45 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        INSTALL_SENTENCE_TRANSFORMERS: ${INSTALL_SENTENCE_TRANSFORMERS:-true}
+    image: enterprise-agentic-copilot:latest
+    ports:
+      - "8000:8000"
+    environment:
+      # Starts in DEMO mode unless you explicitly opt in to LIVE mode in your local .env.
+      APP_MODE: ${APP_MODE:-demo}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5-5}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-sentence-transformers}
+      ALLOW_UPLOADS: ${ALLOW_UPLOADS:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LANGSMITH_TRACING: ${LANGSMITH_TRACING:-false}
+      LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+    volumes:
+      - copilot-data:/app/data/chroma
+      - copilot-traces:/app/data/traces
+      - copilot-uploads:/app/data/uploads
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  ui:
+    image: enterprise-agentic-copilot:latest
+    command: ["streamlit", "run", "frontend/streamlit_app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    ports:
+      - "8501:8501"
+    environment:
+      API_BASE_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  copilot-data:
+  copilot-traces:
+  copilot-uploads:

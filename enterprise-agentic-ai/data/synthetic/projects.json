@@ -1,0 +1,53 @@
+{
+  "_disclaimer": "SYNTHETIC DATA - NovaGrid Corp is fictional. All records are invented for demonstration.",
+  "projects": [
+    {
+      "project_id": "PRJ-PHOENIX",
+      "name": "Project Phoenix",
+      "aliases": ["phoenix", "self-service portal", "phx"],
+      "description": "Modernisation of the customer self-service portal onto the NovaGrid AI Platform.",
+      "status": "AMBER",
+      "percent_complete": 68,
+      "owner_employee_id": "E-1001",
+      "target_release": "2026.10",
+      "release_date": "2026-10-28",
+      "code_freeze_date": "2026-10-14",
+      "budget_usd": 1200000,
+      "spend_to_date_usd": 860000,
+      "last_updated": "2026-09-30",
+      "health_summary": "Feature work largely complete; three release blockers and declining velocity put the October release at risk."
+    },
+    {
+      "project_id": "PRJ-ATLAS",
+      "name": "Project Atlas",
+      "aliases": ["atlas", "data platform migration"],
+      "description": "Migration of the analytics warehouse to the cloud data platform.",
+      "status": "GREEN",
+      "percent_complete": 81,
+      "owner_employee_id": "E-1007",
+      "target_release": "2026.11",
+      "release_date": "2026-11-18",
+      "code_freeze_date": "2026-11-04",
+      "budget_usd": 950000,
+      "spend_to_date_usd": 690000,
+      "last_updated": "2026-09-30",
+      "health_summary": "Migration waves on schedule; final reconciliation of finance datasets in progress."
+    },
+    {
+      "project_id": "PRJ-ORION",
+      "name": "Project Orion",
+      "aliases": ["orion", "field service app", "mobile field service"],
+      "description": "Offline-first mobile application for field service engineers.",
+      "status": "RED",
+      "percent_complete": 42,
+      "owner_employee_id": "E-1010",
+      "target_release": "2027.01",
+      "release_date": "2027-01-20",
+      "code_freeze_date": "2027-01-06",
+      "budget_usd": 780000,
+      "spend_to_date_usd": 455000,
+      "last_updated": "2026-09-30",
+      "health_summary": "Offline-sync library failed security review; replan expected by 2026-10-15."
+    }
+  ]
+}
