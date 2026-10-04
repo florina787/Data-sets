@@ -1,0 +1,127 @@
+{
+  "id": "general-hr-faq-low-roi",
+  "name": "Brightline Manufacturing \u2014 HR policy chatbot (low volume)",
+  "company": "Brightline Manufacturing",
+  "industry": "general_enterprise",
+  "summary": "A small HR team answers ~300 policy questions per month. A vendor pitched a custom GenAI chatbot.",
+  "expected": {
+    "primary_architecture": "keep_existing",
+    "ai_recommended": false,
+    "roi_verdict": "ROI DOES NOT JUSTIFY AI"
+  },
+  "request": {
+    "organization": {
+      "name": "Brightline Manufacturing (fictional)",
+      "industry": "general_enterprise",
+      "size": "small",
+      "ai_maturity": 1
+    },
+    "current_architecture": {
+      "deployment": [
+        "azure"
+      ],
+      "compute": [
+        "virtual_machines"
+      ],
+      "styles": [
+        "monolith"
+      ],
+      "integration": [
+        "rest"
+      ],
+      "identity_security": [
+        "entra_id",
+        "rbac"
+      ],
+      "data_stores": [
+        "sharepoint",
+        "sql_server"
+      ],
+      "devops": [
+        "azure_devops"
+      ],
+      "existing_systems": [
+        "HR Intranet FAQ (SharePoint)"
+      ]
+    },
+    "data_profile": {
+      "availability": 4,
+      "quality": 4,
+      "freshness": 3,
+      "ownership": 4,
+      "lineage": 3,
+      "metadata": 3,
+      "permissions": 4,
+      "document_quality": 4,
+      "structured_share_pct": 10,
+      "knowledge_fragmentation": 2,
+      "contains_pii": false,
+      "data_sources": [
+        "12 HR policy documents"
+      ]
+    },
+    "use_case": {
+      "title": "Custom GenAI chatbot for HR policy questions",
+      "description": "Employees ask HR about leave, benefits and expenses. A custom RAG chatbot was proposed.",
+      "users": "Employees, 2 HR generalists",
+      "workflow": "Employee emails HR -> HR answers from 12 policy documents.",
+      "pain_points": [
+        "Repetitive questions"
+      ],
+      "desired_outcome": "Self-service answers.",
+      "current_solution": "HR Intranet FAQ (SharePoint)",
+      "constraints": [
+        "Small budget"
+      ],
+      "primary_tasks": [
+        "knowledge_search",
+        "conversation"
+      ],
+      "action_types": [
+        "read_only"
+      ],
+      "deterministic_requirement": 1,
+      "prediction_requirement": 0,
+      "generation_requirement": 3,
+      "workflow_variability": 1,
+      "multi_step_reasoning": 1,
+      "cross_system_interaction": 1,
+      "tool_requirements": 0,
+      "proprietary_knowledge_need": 4,
+      "citation_requirement": 3,
+      "knowledge_change_frequency": 2,
+      "autonomy_benefit": 2,
+      "hallucination_tolerance": 2,
+      "transaction_criticality": 0,
+      "explainability_requirement": 2,
+      "latency_sensitivity": 2,
+      "availability_requirement": 2,
+      "human_oversight_available": 2
+    },
+    "cost_inputs": {
+      "requests_per_month": 300,
+      "avg_input_tokens": 1000,
+      "avg_output_tokens": 300,
+      "rag_top_k": 4,
+      "human_review_pct": 0.1,
+      "human_review_minutes": 2,
+      "reviewer_hourly_cost": 45,
+      "infrastructure_cost_month": 1500,
+      "current_monthly_cost": 100
+    },
+    "roi_inputs": {
+      "people_involved": 2,
+      "tasks_per_month": 300,
+      "minutes_per_task": 4,
+      "hourly_cost": 45,
+      "error_rate_pct": 1,
+      "rework_cost_per_error": 20,
+      "existing_technology_cost_annual": 1200,
+      "implementation_cost": 120000,
+      "expected_time_reduction_pct": 50,
+      "expected_error_reduction_pct": 20
+    }
+  },
+  "order": 8,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}

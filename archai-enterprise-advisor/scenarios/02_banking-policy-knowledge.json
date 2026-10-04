@@ -1,0 +1,167 @@
+{
+  "id": "banking-policy-knowledge",
+  "name": "NorthStar Bank \u2014 Policy & procedure knowledge assistant",
+  "company": "NorthStar Bank",
+  "industry": "banking",
+  "summary": "Analysts manually review policies, procedures and documents to answer operational and compliance questions.",
+  "expected": {
+    "primary_architecture": "rag_genai",
+    "agentic_verdict": "not_recommended",
+    "ai_recommended": true
+  },
+  "request": {
+    "organization": {
+      "name": "NorthStar Bank (fictional)",
+      "industry": "banking",
+      "size": "enterprise",
+      "ai_maturity": 2,
+      "gpu_available": false,
+      "data_residency_regions": [
+        "Domestic"
+      ]
+    },
+    "current_architecture": {
+      "deployment": [
+        "on_premises"
+      ],
+      "compute": [
+        "kubernetes"
+      ],
+      "styles": [
+        "microservices",
+        "api_based"
+      ],
+      "integration": [
+        "rest",
+        "kafka",
+        "message_queue"
+      ],
+      "identity_security": [
+        "active_directory",
+        "oidc",
+        "rbac",
+        "api_gateway",
+        "secrets_management",
+        "private_networking",
+        "service_accounts"
+      ],
+      "data_stores": [
+        "oracle",
+        "postgresql",
+        "data_warehouse",
+        "sharepoint",
+        "document_repository",
+        "search_engine"
+      ],
+      "devops": [
+        "jenkins",
+        "argocd",
+        "prometheus",
+        "grafana",
+        "splunk"
+      ],
+      "existing_systems": [
+        "Policy & Procedure Library (SharePoint)",
+        "Core Banking Microservices",
+        "Enterprise Search"
+      ]
+    },
+    "data_profile": {
+      "availability": 4,
+      "quality": 3,
+      "freshness": 3,
+      "ownership": 3,
+      "lineage": 2,
+      "metadata": 3,
+      "permissions": 4,
+      "document_quality": 4,
+      "structured_share_pct": 15,
+      "knowledge_fragmentation": 4,
+      "contains_pii": false,
+      "contains_financial_data": false,
+      "confidential": true,
+      "privileged": false,
+      "data_residency_required": true,
+      "data_sources": [
+        "Policies",
+        "Procedures",
+        "Regulatory guidance memos",
+        "Product terms"
+      ]
+    },
+    "use_case": {
+      "title": "Policy & procedure knowledge assistant for analysts",
+      "description": "Analysts spend significant time searching and reading policies, procedures and guidance documents to answer questions and prepare summaries.",
+      "users": "Operations and compliance analysts",
+      "workflow": "Question arrives -> analyst searches SharePoint/enterprise search -> reads multiple documents -> drafts answer with references.",
+      "pain_points": [
+        "Documents scattered across libraries",
+        "Keyword search misses relevant passages",
+        "Inconsistent answers",
+        "Slow onboarding"
+      ],
+      "desired_outcome": "Grounded, cited answers and summaries in seconds, reviewed by the analyst.",
+      "current_solution": "SharePoint libraries + enterprise keyword search",
+      "constraints": [
+        "Answers must cite source documents",
+        "Respect document entitlements",
+        "Data stays on-prem"
+      ],
+      "primary_tasks": [
+        "knowledge_search",
+        "summarization",
+        "extraction"
+      ],
+      "action_types": [
+        "read_only",
+        "draft_content"
+      ],
+      "deterministic_requirement": 2,
+      "prediction_requirement": 0,
+      "generation_requirement": 4,
+      "workflow_variability": 2,
+      "multi_step_reasoning": 2,
+      "cross_system_interaction": 2,
+      "tool_requirements": 1,
+      "proprietary_knowledge_need": 5,
+      "citation_requirement": 5,
+      "knowledge_change_frequency": 4,
+      "autonomy_benefit": 1,
+      "hallucination_tolerance": 1,
+      "transaction_criticality": 1,
+      "explainability_requirement": 4,
+      "latency_sensitivity": 2,
+      "availability_requirement": 3,
+      "human_oversight_available": 4
+    },
+    "cost_inputs": {
+      "requests_per_month": 40000,
+      "avg_input_tokens": 1200,
+      "avg_output_tokens": 500,
+      "rag_top_k": 6,
+      "tokens_per_chunk": 400,
+      "cache_hit_rate": 0.35,
+      "small_model_routing_pct": 0.4,
+      "human_review_pct": 0.25,
+      "human_review_minutes": 2,
+      "reviewer_hourly_cost": 70,
+      "infrastructure_cost_month": 3500,
+      "current_monthly_cost": 0,
+      "max_output_tokens": 800
+    },
+    "roi_inputs": {
+      "people_involved": 60,
+      "tasks_per_month": 6000,
+      "minutes_per_task": 25,
+      "hourly_cost": 70,
+      "error_rate_pct": 3,
+      "rework_cost_per_error": 120,
+      "existing_technology_cost_annual": 0,
+      "implementation_cost": 350000,
+      "expected_time_reduction_pct": 40,
+      "expected_error_reduction_pct": 30
+    }
+  },
+  "order": 2,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}
