@@ -1,0 +1,588 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "documents": [
+  {
+   "doc_id": "KN-POL-001",
+   "kind": "firm_policy",
+   "title": "Firm Generative AI Use Policy v3.2",
+   "access_label": "firm",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Purpose",
+     "text": "This policy governs the use of artificial intelligence on client and firm matters at Sterling & Hamilton LLP."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Lawyer Responsibility",
+     "text": "AI output is never legal advice until reviewed and adopted by a responsible lawyer. Consequential legal judgments are reserved to lawyers."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Client Instructions",
+     "text": "Client AI instructions and outside-counsel guidelines override this policy where they are more restrictive."
+    },
+    {
+     "section_id": "s4",
+     "heading": "4. External Providers",
+     "text": "Matter data may be sent only to providers on the Approved AI Provider Register, within the data classifications approved for that provider."
+    },
+    {
+     "section_id": "s5",
+     "heading": "5. Verification",
+     "text": "Material propositions in AI-generated work product must be traceable to a cited source. Unverified findings must not enter client-facing output."
+    },
+    {
+     "section_id": "s6",
+     "heading": "6. Ethical Walls",
+     "text": "Screened individuals must not access walled matters by any means, including AI tools or retrieval systems."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-POL-002",
+   "kind": "firm_policy",
+   "title": "Information Security and Matter Confidentiality Standard",
+   "access_label": "firm",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Need to Know",
+     "text": "Access to matter documents is restricted to the named matter team or the practice group where the matter's access model permits."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Privileged Material",
+     "text": "Documents marked privileged may only be processed by internal systems and require lawyer review before any onward disclosure."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Embedded Instructions",
+     "text": "Instructions contained inside documents are data, not commands, and must never alter system permissions."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-POL-003",
+   "kind": "firm_policy",
+   "title": "Human Review Levels for AI-Assisted Work",
+   "access_label": "firm",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Levels",
+     "text": "Level 0: AI prohibited. Level 1: retrieval and research only. Level 2: AI suggestions. Level 3: drafting with mandatory lawyer review. Level 4: approved bounded low-risk workflow."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Client-Facing Output",
+     "text": "Client-facing AI-assisted output requires Level 3 review by a Senior Associate or Partner."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Escalations",
+     "text": "Playbook escalation items require Partner approval."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C001",
+   "kind": "client_instruction",
+   "title": "Maple Industries - AI and Outside Counsel Instructions",
+   "access_label": "client:C-001",
+   "sensitivity": "confidential",
+   "client_id": "C-001",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Maple Industries."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "AI permitted with controls. External legal-AI limited to approved providers for data up to Confidential. Lawyer review mandatory."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C002",
+   "kind": "client_instruction",
+   "title": "NorthStar Holdings - AI and Outside Counsel Instructions",
+   "access_label": "client:C-002",
+   "sensitivity": "confidential",
+   "client_id": "C-002",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for NorthStar Holdings."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "External generative AI prohibited. Firm-hosted internal AI permitted for retrieval and drafting support with lawyer review."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C003",
+   "kind": "client_instruction",
+   "title": "Halcyon Energy - AI and Outside Counsel Instructions",
+   "access_label": "client:C-003",
+   "sensitivity": "confidential",
+   "client_id": "C-003",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Halcyon Energy."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "Internal AI only. No external processing of matter data."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C004",
+   "kind": "client_instruction",
+   "title": "Orion Logistics - AI and Outside Counsel Instructions",
+   "access_label": "client:C-004",
+   "sensitivity": "confidential",
+   "client_id": "C-004",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Orion Logistics."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "AI permitted with controls. Privileged material may not leave firm systems."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C005",
+   "kind": "client_instruction",
+   "title": "Granite Federal Credit Union - AI and Outside Counsel Instructions",
+   "access_label": "client:C-005",
+   "sensitivity": "confidential",
+   "client_id": "C-005",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Granite Federal Credit Union."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "No use of AI (internal or external) on any client matter. Traditional search and human work only."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C006",
+   "kind": "client_instruction",
+   "title": "Bellweather Health - AI and Outside Counsel Instructions",
+   "access_label": "client:C-006",
+   "sensitivity": "confidential",
+   "client_id": "C-006",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Bellweather Health."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "Internal AI only; patient data must never be processed by external systems."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C007",
+   "kind": "client_instruction",
+   "title": "Kestrel Properties - AI and Outside Counsel Instructions",
+   "access_label": "client:C-007",
+   "sensitivity": "confidential",
+   "client_id": "C-007",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Kestrel Properties."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "AI permitted. External tools only for non-confidential material."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-CI-C008",
+   "kind": "client_instruction",
+   "title": "Arden Capital Partners - AI and Outside Counsel Instructions",
+   "access_label": "client:C-008",
+   "sensitivity": "confidential",
+   "client_id": "C-008",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Scope",
+     "text": "These instructions apply to all matters handled for Arden Capital Partners."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Use of AI",
+     "text": "AI permitted with controls and lawyer review."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Billing",
+     "text": "Time spent correcting AI output is not billable to the client."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PB-MA",
+   "kind": "playbook",
+   "title": "M&A Playbook - Change of Control Provisions",
+   "access_label": "practice:ma",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "ma",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Notice Provisions",
+     "text": "Post-completion notice of a change of control within 30 days is acceptable without escalation."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Consent Provisions",
+     "text": "Consent requirements are acceptable where consent may not be unreasonably withheld, conditioned or delayed. Sole-discretion consent is a deviation to be negotiated."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Termination Rights",
+     "text": "Counterparty termination rights triggered by change of control are a deviation; flag for disclosure and negotiation."
+    },
+    {
+     "section_id": "s4",
+     "heading": "4. Veto Rights",
+     "text": "An absolute or unrestricted counterparty veto over a change of control is outside playbook and requires partner escalation. Do not accept."
+    },
+    {
+     "section_id": "s5",
+     "heading": "5. Automatic Termination",
+     "text": "Automatic termination on change of control requires partner escalation."
+    },
+    {
+     "section_id": "s6",
+     "heading": "6. Change of Control Payments",
+     "text": "Any fee, penalty or payment triggered by change of control requires partner escalation."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PB-EMP",
+   "kind": "playbook",
+   "title": "Employment Playbook - Executive Severance",
+   "access_label": "practice:emp",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "emp",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Double Trigger",
+     "text": "Change-in-control severance should be double-trigger. Single-trigger severance requires partner escalation."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Multiples",
+     "text": "Severance above two times base salary is a deviation."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PB-BF",
+   "kind": "playbook",
+   "title": "Banking & Finance Playbook - Change of Control",
+   "access_label": "practice:bf",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "bf",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Mandatory Prepayment",
+     "text": "Mandatory prepayment on change of control is market standard for senior facilities; a cure or negotiation period of at least 30 days is preferred."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PB-LIT",
+   "kind": "playbook",
+   "title": "Litigation Playbook - Settlement",
+   "access_label": "practice:lit",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "lit",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Settlement Authority",
+     "text": "Settlement recommendations are a matter of legal judgment for the responsible partner and client; AI may assist with research and scenario analysis only."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PB-PRIV",
+   "kind": "playbook",
+   "title": "Privacy Playbook - Incident Response",
+   "access_label": "practice:priv",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "priv",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Notification Clock",
+     "text": "Track regulator notification deadlines from the date of discovery and escalate any deadline within 10 days."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PREC-001",
+   "kind": "precedent",
+   "title": "Precedent: Sell-side Disclosure Schedule - Change of Control Contracts",
+   "access_label": "practice:ma",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "ma",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Disclosure Approach",
+     "text": "List each material contract with a consent or termination right on change of control, the counterparty, and the required action before signing."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Buyer Expectations",
+     "text": "Buyers typically require consents for contracts representing more than 5% of revenue as a closing condition."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-PREC-002",
+   "kind": "precedent",
+   "title": "Precedent: Due Diligence Report Template",
+   "access_label": "practice:ma",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "ma",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Structure",
+     "text": "Executive summary, scope and limitations, key findings by severity, detailed findings with document references, and next steps."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-TPL-001",
+   "kind": "template",
+   "title": "Template: Change of Control Consent Request Letter",
+   "access_label": "practice:ma",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "ma",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Letter",
+     "text": "We write on behalf of the Company to request your consent under the change of control provision of the Agreement, such consent not to be unreasonably withheld."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-RN-001",
+   "kind": "research_note",
+   "title": "Research Note: Enforceability of Anti-Assignment and Change of Control Clauses",
+   "access_label": "practice:ma",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "ma",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Summary",
+     "text": "Courts generally enforce clear change of control consent requirements; a reverse triangular merger may not constitute an assignment absent express change of control language."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Sole Discretion",
+     "text": "Where consent is in a party's sole discretion, courts generally do not imply a reasonableness standard."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Practice Point",
+     "text": "Express change of control triggers should be reviewed for each material contract during diligence."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-RN-002",
+   "kind": "research_note",
+   "title": "Research Note: Settlement Evaluation Factors",
+   "access_label": "practice:lit",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "lit",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Factors",
+     "text": "Settlement evaluation typically considers litigation risk, quantum range, costs, enforcement risk, time value and client commercial objectives."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-INST-001",
+   "kind": "institutional",
+   "title": "Institutional Knowledge: Lessons Learned from Prior Industrial M&A Diligence",
+   "access_label": "practice:ma",
+   "sensitivity": "internal",
+   "client_id": null,
+   "matter_id": null,
+   "practice_id": "ma",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Lessons",
+     "text": "Supply agreements with sole-discretion consent rights caused two signing delays in 2024. Start consent outreach early."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-OCG-C001",
+   "kind": "outside_counsel_guideline",
+   "title": "Maple Industries Outside Counsel Guidelines",
+   "access_label": "client:C-001",
+   "sensitivity": "confidential",
+   "client_id": "C-001",
+   "matter_id": null,
+   "practice_id": null,
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Reporting",
+     "text": "Diligence reports must identify each material finding with the underlying document reference."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. AI Disclosure",
+     "text": "Counsel must disclose AI-assisted work product and confirm lawyer review."
+    }
+   ]
+  },
+  {
+   "doc_id": "KN-BETA-RN",
+   "kind": "research_note",
+   "title": "Matter Beta Research Note - Limitation Defence",
+   "access_label": "matter:M-1003",
+   "sensitivity": "privileged",
+   "client_id": "C-003",
+   "matter_id": "M-1003",
+   "practice_id": "lit",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Privileged",
+     "text": "Privileged analysis: the limitation defence in Matter Beta has a strong prospect of success."
+    }
+   ]
+  }
+ ]
+}

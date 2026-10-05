@@ -1,0 +1,465 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "workflows": [
+  {
+   "workflow_id": "WF-DD-COC",
+   "name": "Due diligence - change of control review",
+   "practice_ids": [
+    "ma"
+   ],
+   "output_types": [
+    "due_diligence_report",
+    "findings"
+   ],
+   "destinations": [
+    "internal",
+    "external_client"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG",
+    "P-MOCK-LEGAL-AI"
+   ],
+   "agents": [
+    "document_analysis",
+    "playbook",
+    "citation_verification",
+    "assurance"
+   ],
+   "prompts": [
+    "PR-DD-COC-EXTRACT"
+   ],
+   "gates": [
+    "matter_access",
+    "client_ai_policy",
+    "citation_verification",
+    "lawyer_review"
+   ],
+   "hitl_level": 3,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-RESEARCH-INT",
+   "name": "Internal legal research assistance",
+   "practice_ids": [
+    "ma",
+    "lit",
+    "emp",
+    "bf",
+    "re",
+    "priv"
+   ],
+   "output_types": [
+    "research"
+   ],
+   "destinations": [
+    "internal"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "legal_research",
+    "citation_verification"
+   ],
+   "prompts": [
+    "PR-RESEARCH-SUMMARY"
+   ],
+   "gates": [
+    "matter_access",
+    "citation_verification"
+   ],
+   "hitl_level": 2,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-RESEARCH-EXT",
+   "name": "Client research memo (external use)",
+   "practice_ids": [
+    "lit",
+    "ma",
+    "emp"
+   ],
+   "output_types": [
+    "research"
+   ],
+   "destinations": [
+    "external_client"
+   ],
+   "providers": [
+    "P-MOCK-LEGAL-AI",
+    "P-LEGAL-RESEARCH"
+   ],
+   "agents": [
+    "legal_research",
+    "drafting"
+   ],
+   "prompts": [
+    "PR-RESEARCH-MEMO"
+   ],
+   "gates": [
+    "matter_access",
+    "lawyer_review"
+   ],
+   "hitl_level": 3,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-CLIENT-ALERT",
+   "name": "Client alert drafting",
+   "practice_ids": [
+    "priv",
+    "emp",
+    "bf"
+   ],
+   "output_types": [
+    "research",
+    "client_communication"
+   ],
+   "destinations": [
+    "external_client",
+    "external_public"
+   ],
+   "providers": [
+    "P-ENTERPRISE-COPILOT"
+   ],
+   "agents": [
+    "drafting"
+   ],
+   "prompts": [
+    "PR-CLIENT-ALERT"
+   ],
+   "gates": [
+    "lawyer_review"
+   ],
+   "hitl_level": 3,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-LIT-RESEARCH-BRIEF",
+   "name": "Litigation research for court submissions",
+   "practice_ids": [
+    "lit"
+   ],
+   "output_types": [
+    "research",
+    "brief"
+   ],
+   "destinations": [
+    "external_court"
+   ],
+   "providers": [
+    "P-LEGAL-RESEARCH",
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "legal_research",
+    "citation_verification",
+    "drafting"
+   ],
+   "prompts": [
+    "PR-LIT-AUTHORITIES"
+   ],
+   "gates": [
+    "matter_access",
+    "citation_verification",
+    "lawyer_review"
+   ],
+   "hitl_level": 3,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-CONTRACT-SUMMARY",
+   "name": "Contract summarisation",
+   "practice_ids": [
+    "ma",
+    "re",
+    "bf"
+   ],
+   "output_types": [
+    "summary"
+   ],
+   "destinations": [
+    "internal"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG",
+    "P-ENTERPRISE-COPILOT"
+   ],
+   "agents": [
+    "document_analysis"
+   ],
+   "prompts": [
+    "PR-CONTRACT-SUMMARY"
+   ],
+   "gates": [
+    "matter_access"
+   ],
+   "hitl_level": 2,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-PLAYBOOK-CHECK",
+   "name": "Playbook comparison",
+   "practice_ids": [
+    "ma",
+    "emp",
+    "bf"
+   ],
+   "output_types": [
+    "findings"
+   ],
+   "destinations": [
+    "internal"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "playbook"
+   ],
+   "prompts": [
+    "PR-PLAYBOOK-COMPARE"
+   ],
+   "gates": [
+    "matter_access"
+   ],
+   "hitl_level": 2,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-LEASE-ABSTRACT",
+   "name": "Lease abstraction",
+   "practice_ids": [
+    "re"
+   ],
+   "output_types": [
+    "summary",
+    "findings"
+   ],
+   "destinations": [
+    "internal",
+    "external_client"
+   ],
+   "providers": [
+    "P-MOCK-LEGAL-AI"
+   ],
+   "agents": [
+    "document_analysis",
+    "assurance"
+   ],
+   "prompts": [
+    "PR-LEASE-ABSTRACT"
+   ],
+   "gates": [
+    "matter_access",
+    "client_ai_policy",
+    "lawyer_review"
+   ],
+   "hitl_level": 3,
+   "status": "PILOT"
+  },
+  {
+   "workflow_id": "WF-EMP-SEVERANCE",
+   "name": "Executive severance review",
+   "practice_ids": [
+    "emp"
+   ],
+   "output_types": [
+    "findings",
+    "client_communication"
+   ],
+   "destinations": [
+    "internal",
+    "external_client"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "document_analysis",
+    "playbook",
+    "drafting"
+   ],
+   "prompts": [
+    "PR-SEVERANCE-REVIEW"
+   ],
+   "gates": [
+    "matter_access",
+    "lawyer_review"
+   ],
+   "hitl_level": 3,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-INCIDENT-TIMELINE",
+   "name": "Incident timeline extraction",
+   "practice_ids": [
+    "priv"
+   ],
+   "output_types": [
+    "timeline"
+   ],
+   "destinations": [
+    "internal"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "document_analysis"
+   ],
+   "prompts": [
+    "PR-TIMELINE"
+   ],
+   "gates": [
+    "matter_access"
+   ],
+   "hitl_level": 2,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-FIN-COVENANT",
+   "name": "Facility covenant extraction",
+   "practice_ids": [
+    "bf"
+   ],
+   "output_types": [
+    "findings",
+    "summary"
+   ],
+   "destinations": [
+    "internal"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "document_analysis"
+   ],
+   "prompts": [
+    "PR-COVENANTS"
+   ],
+   "gates": [
+    "matter_access"
+   ],
+   "hitl_level": 2,
+   "status": "PRODUCTION"
+  },
+  {
+   "workflow_id": "WF-KNOWLEDGE-QA",
+   "name": "Firm knowledge Q&A",
+   "practice_ids": [
+    "ma",
+    "lit",
+    "emp",
+    "bf",
+    "re",
+    "priv"
+   ],
+   "output_types": [
+    "answer"
+   ],
+   "destinations": [
+    "internal"
+   ],
+   "providers": [
+    "P-INTERNAL-RAG"
+   ],
+   "agents": [
+    "legal_knowledge"
+   ],
+   "prompts": [
+    "PR-KNOWLEDGE-QA"
+   ],
+   "gates": [],
+   "hitl_level": 1,
+   "status": "PRODUCTION"
+  }
+ ],
+ "prompts": [
+  {
+   "prompt_id": "PR-DD-COC-EXTRACT",
+   "name": "Change-of-control extraction",
+   "owner": "U-006",
+   "production_version": "1.3",
+   "candidate_version": "1.4"
+  },
+  {
+   "prompt_id": "PR-RESEARCH-SUMMARY",
+   "name": "Research summary",
+   "owner": "U-006",
+   "production_version": "2.1",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-RESEARCH-MEMO",
+   "name": "Client research memo",
+   "owner": "U-006",
+   "production_version": "1.7",
+   "candidate_version": "1.8"
+  },
+  {
+   "prompt_id": "PR-CLIENT-ALERT",
+   "name": "Client alert",
+   "owner": "U-006",
+   "production_version": "1.2",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-LIT-AUTHORITIES",
+   "name": "Authorities list for submissions",
+   "owner": "U-014",
+   "production_version": "1.0",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-CONTRACT-SUMMARY",
+   "name": "Contract summary",
+   "owner": "U-006",
+   "production_version": "3.0",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-PLAYBOOK-COMPARE",
+   "name": "Playbook comparison",
+   "owner": "U-006",
+   "production_version": "1.1",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-LEASE-ABSTRACT",
+   "name": "Lease abstraction",
+   "owner": "U-013",
+   "production_version": "0.9",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-SEVERANCE-REVIEW",
+   "name": "Severance review",
+   "owner": "U-008",
+   "production_version": "1.0",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-TIMELINE",
+   "name": "Timeline extraction",
+   "owner": "U-012",
+   "production_version": "1.0",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-COVENANTS",
+   "name": "Covenant extraction",
+   "owner": "U-011",
+   "production_version": "1.0",
+   "candidate_version": null
+  },
+  {
+   "prompt_id": "PR-KNOWLEDGE-QA",
+   "name": "Knowledge Q&A",
+   "owner": "U-006",
+   "production_version": "2.4",
+   "candidate_version": null
+  }
+ ]
+}

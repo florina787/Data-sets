@@ -1,0 +1,130 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "work_products": [
+  {
+   "work_product_id": "WP-MEMO-MAPLE-001",
+   "matter_id": "M-1001",
+   "kind": "memo",
+   "provider_id": "P-MOCK-LEGAL-AI",
+   "title": "Draft memo: Change-of-control exposure in Maple supply contracts (AI-generated, unverified)",
+   "destination": "external_client",
+   "propositions": [
+    {
+     "pid": "P1",
+     "claim": "The M&A playbook treats post-completion notice within 30 days as acceptable.",
+     "citation": {
+      "doc_id": "KN-PB-MA",
+      "section_id": "s1",
+      "quote": "Post-completion notice of a change of control within 30 days is acceptable"
+     }
+    },
+    {
+     "pid": "P2",
+     "claim": "Sole-discretion consent rights are a playbook deviation to be negotiated.",
+     "citation": {
+      "doc_id": "KN-PB-MA",
+      "section_id": "s2",
+      "quote": "Sole-discretion consent is a deviation to be negotiated"
+     }
+    },
+    {
+     "pid": "P3",
+     "claim": "An unrestricted counterparty veto requires partner escalation.",
+     "citation": {
+      "doc_id": "KN-PB-MA",
+      "section_id": "s4",
+      "quote": "requires partner escalation"
+     }
+    },
+    {
+     "pid": "P4",
+     "claim": "Automatic termination on change of control requires partner escalation.",
+     "citation": {
+      "doc_id": "KN-PB-MA",
+      "section_id": "s5",
+      "quote": "Automatic termination on change of control requires partner escalation"
+     }
+    },
+    {
+     "pid": "P5",
+     "claim": "Courts generally do not imply a reasonableness standard where consent is in a party's sole discretion.",
+     "citation": {
+      "doc_id": "KN-RN-001",
+      "section_id": "s2",
+      "quote": "courts generally do not imply a reasonableness standard"
+     }
+    },
+    {
+     "pid": "P6",
+     "claim": "Maple's outside counsel guidelines require each material finding to identify the underlying document reference.",
+     "citation": {
+      "doc_id": "KN-OCG-C001",
+      "section_id": "s1",
+      "quote": "identify each material finding with the underlying document reference"
+     }
+    },
+    {
+     "pid": "P7",
+     "claim": "Buyers typically require consents for contracts representing more than 5% of revenue as a closing condition.",
+     "citation": {
+      "doc_id": "KN-PREC-001",
+      "section_id": "s2",
+      "quote": "more than 5% of revenue as a closing condition"
+     }
+    },
+    {
+     "pid": "P8",
+     "claim": "Supply agreements with sole-discretion consent rights caused two signing delays in 2024.",
+     "citation": {
+      "doc_id": "KN-INST-001",
+      "section_id": "s1",
+      "quote": "caused two signing delays in 2024"
+     }
+    },
+    {
+     "pid": "P9",
+     "claim": "Courts always treat a reverse triangular merger as an assignment requiring consent within 10 days.",
+     "citation": {
+      "doc_id": "KN-RN-001",
+      "section_id": "s1",
+      "quote": "a reverse triangular merger may not constitute an assignment"
+     }
+    },
+    {
+     "pid": "P10",
+     "claim": "Maple Industries has agreed to indemnify the buyer for all consent costs up to USD 4 million.",
+     "citation": {
+      "doc_id": "KN-PREC-001",
+      "section_id": "s1",
+      "quote": "Maple Industries has agreed to indemnify the buyer"
+     }
+    }
+   ]
+  },
+  {
+   "work_product_id": "WP-REC-MAPLE-002",
+   "matter_id": "M-1001",
+   "kind": "recommendation",
+   "provider_id": "P-MOCK-LEGAL-AI",
+   "title": "AI recommendation: negotiation position on supplier veto",
+   "destination": "internal",
+   "recommendations": [
+    {
+     "rid": "R1",
+     "text": "Accept unrestricted counterparty veto over the Change of Control in the supply agreement to preserve the relationship.",
+     "playbook_id": "PB-MA-COC"
+    },
+    {
+     "rid": "R2",
+     "text": "Request that consent be not unreasonably withheld, conditioned or delayed.",
+     "playbook_id": "PB-MA-COC"
+    },
+    {
+     "rid": "R3",
+     "text": "Accept the termination right on ninety days' notice without disclosure.",
+     "playbook_id": "PB-MA-COC"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,185 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "matters": [
+  {
+   "matter_id": "M-1001",
+   "name": "Project Maple",
+   "matter_number": "SH-2026-0417",
+   "client_id": "C-001",
+   "practice_id": "ma",
+   "jurisdiction": "New York, USA",
+   "responsible_partner": "U-001",
+   "description": "Sell-side due diligence for the proposed acquisition of Maple Industries by a strategic buyer.",
+   "authorized_users": [
+    "U-001",
+    "U-002",
+    "U-005",
+    "U-006"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "confidential",
+   "risk_level": "MEDIUM",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1002",
+   "name": "Project Aurora",
+   "matter_number": "SH-2026-0388",
+   "client_id": "C-002",
+   "practice_id": "ma",
+   "jurisdiction": "Delaware, USA",
+   "responsible_partner": "U-001",
+   "description": "Confidential bolt-on acquisition; client prohibits external generative AI.",
+   "authorized_users": [
+    "U-001",
+    "U-002"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "highly_confidential",
+   "risk_level": "HIGH",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1003",
+   "name": "Matter Beta",
+   "matter_number": "SH-2025-1190",
+   "client_id": "C-003",
+   "practice_id": "lit",
+   "jurisdiction": "Texas, USA",
+   "responsible_partner": "U-004",
+   "description": "Halcyon Energy v. Redwood Grid - commercial dispute. Subject to ethical wall.",
+   "authorized_users": [
+    "U-004",
+    "U-014"
+   ],
+   "access_model": "practice_group",
+   "confidentiality": "highly_confidential",
+   "risk_level": "HIGH",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1004",
+   "name": "Orion v. Castellan",
+   "matter_number": "SH-2025-0912",
+   "client_id": "C-004",
+   "practice_id": "lit",
+   "jurisdiction": "England & Wales",
+   "responsible_partner": "U-004",
+   "description": "Contract and freight-loss dispute; mediation and settlement discussions ongoing.",
+   "authorized_users": [
+    "U-004",
+    "U-003",
+    "U-014"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "confidential",
+   "risk_level": "HIGH",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1005",
+   "name": "Granite Regulatory Examination",
+   "matter_number": "SH-2026-0102",
+   "client_id": "C-005",
+   "practice_id": "bf",
+   "jurisdiction": "Federal, USA",
+   "responsible_partner": "U-011",
+   "description": "Response to supervisory examination findings. Client prohibits all AI use.",
+   "authorized_users": [
+    "U-011",
+    "U-002"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "highly_confidential",
+   "risk_level": "HIGH",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1006",
+   "name": "Bellweather Incident Response",
+   "matter_number": "SH-2026-0233",
+   "client_id": "C-006",
+   "practice_id": "priv",
+   "jurisdiction": "California, USA",
+   "responsible_partner": "U-012",
+   "description": "Data-security incident response and regulator notifications.",
+   "authorized_users": [
+    "U-012",
+    "U-002"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "highly_confidential",
+   "risk_level": "HIGH",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1007",
+   "name": "Kestrel Portfolio Leasing",
+   "matter_number": "SH-2026-0301",
+   "client_id": "C-007",
+   "practice_id": "re",
+   "jurisdiction": "Illinois, USA",
+   "responsible_partner": "U-013",
+   "description": "Lease portfolio review for a retail property portfolio.",
+   "authorized_users": [
+    "U-013",
+    "U-005"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "internal",
+   "risk_level": "LOW",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1008",
+   "name": "Maple Executive Transitions",
+   "matter_number": "SH-2026-0420",
+   "client_id": "C-001",
+   "practice_id": "emp",
+   "jurisdiction": "New York, USA",
+   "responsible_partner": "U-008",
+   "description": "Executive retention and change-in-control severance review linked to Project Maple.",
+   "authorized_users": [
+    "U-008",
+    "U-002"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "confidential",
+   "risk_level": "MEDIUM",
+   "status": "OPEN"
+  },
+  {
+   "matter_id": "M-1009",
+   "name": "Arden Facility Refinancing",
+   "matter_number": "SH-2026-0277",
+   "client_id": "C-008",
+   "practice_id": "bf",
+   "jurisdiction": "New York, USA",
+   "responsible_partner": "U-011",
+   "description": "Refinancing of a senior secured credit facility.",
+   "authorized_users": [
+    "U-011",
+    "U-002"
+   ],
+   "access_model": "named_team",
+   "confidentiality": "confidential",
+   "risk_level": "MEDIUM",
+   "status": "OPEN"
+  }
+ ],
+ "ethical_walls": [
+  {
+   "wall_id": "EW-0007",
+   "matter_ids": [
+    "M-1003"
+   ],
+   "screened_users": [
+    "U-003",
+    "U-002"
+   ],
+   "reason": "Screened individuals previously advised Redwood Grid (adverse party) at a prior firm.",
+   "established": "2025-11-04",
+   "approved_by": "General Counsel, Sterling & Hamilton LLP"
+  }
+ ]
+}

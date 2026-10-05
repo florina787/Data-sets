@@ -1,0 +1,130 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "firm": "Sterling & Hamilton LLP",
+ "practices": [
+  {
+   "practice_id": "ma",
+   "name": "Corporate / M&A"
+  },
+  {
+   "practice_id": "lit",
+   "name": "Litigation"
+  },
+  {
+   "practice_id": "emp",
+   "name": "Employment"
+  },
+  {
+   "practice_id": "bf",
+   "name": "Banking & Finance"
+  },
+  {
+   "practice_id": "re",
+   "name": "Real Estate"
+  },
+  {
+   "practice_id": "priv",
+   "name": "Privacy & Technology"
+  }
+ ],
+ "users": [
+  {
+   "user_id": "U-001",
+   "name": "Eleanor Hart",
+   "role": "PARTNER",
+   "practice_id": "ma",
+   "email": "eleanor.hart@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-002",
+   "name": "Priya Raman",
+   "role": "SENIOR_ASSOCIATE",
+   "practice_id": "ma",
+   "email": "priya.raman@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-003",
+   "name": "Daniel Okafor",
+   "role": "ASSOCIATE",
+   "practice_id": "lit",
+   "email": "daniel.okafor@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-004",
+   "name": "Marcus Chen",
+   "role": "PARTNER",
+   "practice_id": "lit",
+   "email": "marcus.chen@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-005",
+   "name": "Sofia Alvarez",
+   "role": "PARALEGAL",
+   "practice_id": "ma",
+   "email": "sofia.alvarez@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-006",
+   "name": "Grace Liu",
+   "role": "KNOWLEDGE_LAWYER",
+   "practice_id": "ma",
+   "email": "grace.liu@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-007",
+   "name": "Tom Becker",
+   "role": "AI_GOVERNANCE",
+   "practice_id": null,
+   "email": "tom.becker@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-008",
+   "name": "Hannah Brooks",
+   "role": "PARTNER",
+   "practice_id": "emp",
+   "email": "hannah.brooks@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-009",
+   "name": "Sam Ortiz",
+   "role": "ADMIN",
+   "practice_id": null,
+   "email": "sam.ortiz@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-010",
+   "name": "Oliver Grant",
+   "role": "TRAINEE",
+   "practice_id": "ma",
+   "email": "oliver.grant@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-011",
+   "name": "Rebecca Stone",
+   "role": "PARTNER",
+   "practice_id": "bf",
+   "email": "rebecca.stone@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-012",
+   "name": "Arjun Mehta",
+   "role": "PARTNER",
+   "practice_id": "priv",
+   "email": "arjun.mehta@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-013",
+   "name": "Laura Kim",
+   "role": "PARTNER",
+   "practice_id": "re",
+   "email": "laura.kim@sterling-hamilton.example"
+  },
+  {
+   "user_id": "U-014",
+   "name": "Nina Petrov",
+   "role": "ASSOCIATE",
+   "practice_id": "lit",
+   "email": "nina.petrov@sterling-hamilton.example"
+  }
+ ]
+}

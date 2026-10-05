@@ -1,0 +1,239 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "playbooks": [
+  {
+   "playbook_id": "PB-MA-COC",
+   "practice_id": "ma",
+   "title": "M&A Playbook - Change of Control",
+   "source_doc_id": "KN-PB-MA",
+   "version": "2026.2",
+   "rules": [
+    {
+     "rule_id": "MA-COC-01",
+     "topic": "Post-completion notice",
+     "section_id": "s1",
+     "clause_patterns": [
+      "shall notify",
+      "give written notice",
+      "notice to the"
+     ],
+     "exclude_patterns": [
+      "may terminate",
+      "terminate automatically",
+      "veto",
+      "without the prior written consent",
+      "shall pay",
+      "sole discretion"
+     ],
+     "result": "ALIGNED",
+     "standard_position": "Notice within 30 days of completion is acceptable.",
+     "recommendation_patterns": []
+    },
+    {
+     "rule_id": "MA-COC-02",
+     "topic": "Consent - reasonableness standard",
+     "section_id": "s2",
+     "clause_patterns": [
+      "not to be unreasonably withheld"
+     ],
+     "exclude_patterns": [],
+     "result": "ALIGNED",
+     "standard_position": "Consent not to be unreasonably withheld, conditioned or delayed.",
+     "recommendation_patterns": []
+    },
+    {
+     "rule_id": "MA-COC-03",
+     "topic": "Consent - sole discretion",
+     "section_id": "s2",
+     "clause_patterns": [
+      "sole discretion"
+     ],
+     "exclude_patterns": [],
+     "result": "DEVIATION",
+     "standard_position": "Negotiate to a reasonableness standard; disclose in DD report.",
+     "recommendation_patterns": [
+      "accept sole discretion",
+      "accept sole-discretion"
+     ]
+    },
+    {
+     "rule_id": "MA-COC-04",
+     "topic": "Counterparty termination right",
+     "section_id": "s3",
+     "clause_patterns": [
+      "may terminate this agreement"
+     ],
+     "exclude_patterns": [],
+     "result": "DEVIATION",
+     "standard_position": "Flag for disclosure; seek waiver for material contracts.",
+     "recommendation_patterns": [
+      "accept termination right",
+      "accept the termination right"
+     ]
+    },
+    {
+     "rule_id": "MA-COC-05",
+     "topic": "Unrestricted veto",
+     "section_id": "s4",
+     "clause_patterns": [
+      "unrestricted right to approve or veto",
+      "absolute and unrestricted"
+     ],
+     "exclude_patterns": [],
+     "result": "ESCALATION_REQUIRED",
+     "standard_position": "Outside playbook. Do not accept. Partner escalation required.",
+     "recommendation_patterns": [
+      "accept unrestricted",
+      "accept the unrestricted",
+      "accept an unrestricted",
+      "agree to the counterparty veto",
+      "accept counterparty veto",
+      "accept the veto"
+     ]
+    },
+    {
+     "rule_id": "MA-COC-06",
+     "topic": "Automatic termination",
+     "section_id": "s5",
+     "clause_patterns": [
+      "terminate automatically"
+     ],
+     "exclude_patterns": [],
+     "result": "ESCALATION_REQUIRED",
+     "standard_position": "Partner escalation required.",
+     "recommendation_patterns": [
+      "accept automatic termination"
+     ]
+    },
+    {
+     "rule_id": "MA-COC-07",
+     "topic": "Change of control payment",
+     "section_id": "s6",
+     "clause_patterns": [
+      "shall pay to the",
+      "change of control fee"
+     ],
+     "exclude_patterns": [],
+     "result": "ESCALATION_REQUIRED",
+     "standard_position": "Any CoC-triggered payment requires partner escalation.",
+     "recommendation_patterns": [
+      "accept the change of control fee",
+      "accept the fee",
+      "accept change of control payment"
+     ]
+    }
+   ]
+  },
+  {
+   "playbook_id": "PB-EMP-SEV",
+   "practice_id": "emp",
+   "title": "Employment Playbook - Executive Severance",
+   "source_doc_id": "KN-PB-EMP",
+   "version": "2026.1",
+   "rules": [
+    {
+     "rule_id": "EMP-SEV-01",
+     "topic": "Single-trigger severance",
+     "section_id": "s1",
+     "clause_patterns": [
+      "single trigger",
+      "upon a change in control, the executive receives"
+     ],
+     "exclude_patterns": [],
+     "result": "ESCALATION_REQUIRED",
+     "standard_position": "Double trigger required.",
+     "recommendation_patterns": [
+      "accept single-trigger",
+      "accept single trigger"
+     ]
+    },
+    {
+     "rule_id": "EMP-SEV-02",
+     "topic": "Double-trigger severance",
+     "section_id": "s1",
+     "clause_patterns": [
+      "terminated without cause within"
+     ],
+     "exclude_patterns": [],
+     "result": "ALIGNED",
+     "standard_position": "Double trigger is standard.",
+     "recommendation_patterns": []
+    }
+   ]
+  },
+  {
+   "playbook_id": "PB-BF-COC",
+   "practice_id": "bf",
+   "title": "Banking & Finance Playbook - Change of Control",
+   "source_doc_id": "KN-PB-BF",
+   "version": "2026.1",
+   "rules": [
+    {
+     "rule_id": "BF-COC-01",
+     "topic": "Mandatory prepayment without cure period",
+     "section_id": "s1",
+     "clause_patterns": [
+      "mandatory prepayment"
+     ],
+     "exclude_patterns": [
+      "30 days",
+      "thirty"
+     ],
+     "result": "DEVIATION",
+     "standard_position": "Seek at least 30 days to negotiate or refinance.",
+     "recommendation_patterns": [
+      "accept immediate prepayment"
+     ]
+    }
+   ]
+  },
+  {
+   "playbook_id": "PB-LIT-SET",
+   "practice_id": "lit",
+   "title": "Litigation Playbook - Settlement",
+   "source_doc_id": "KN-PB-LIT",
+   "version": "2026.1",
+   "rules": [
+    {
+     "rule_id": "LIT-SET-01",
+     "topic": "Settlement recommendation",
+     "section_id": "s1",
+     "clause_patterns": [],
+     "exclude_patterns": [],
+     "result": "ESCALATION_REQUIRED",
+     "standard_position": "Settlement decisions are reserved to the responsible partner and client.",
+     "recommendation_patterns": [
+      "accept the settlement",
+      "reject the settlement",
+      "should accept",
+      "should reject"
+     ]
+    }
+   ]
+  },
+  {
+   "playbook_id": "PB-PRIV-IR",
+   "practice_id": "priv",
+   "title": "Privacy Playbook - Incident Response",
+   "source_doc_id": "KN-PB-PRIV",
+   "version": "2026.1",
+   "rules": [
+    {
+     "rule_id": "PRIV-IR-01",
+     "topic": "Notification deadline",
+     "section_id": "s1",
+     "clause_patterns": [
+      "notification deadline"
+     ],
+     "exclude_patterns": [],
+     "result": "ALIGNED",
+     "standard_position": "Track the deadline from discovery.",
+     "recommendation_patterns": [
+      "delay notification",
+      "skip notification"
+     ]
+    }
+   ]
+  }
+ ]
+}

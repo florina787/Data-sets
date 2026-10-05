@@ -1,0 +1,142 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "providers": [
+  {
+   "provider_id": "P-INTERNAL-RAG",
+   "name": "LexGuard Internal RAG",
+   "type": "INTERNAL_RAG",
+   "external": false,
+   "approval_status": "APPROVED",
+   "status": "ACTIVE",
+   "allowed_classifications": [
+    "public",
+    "internal",
+    "confidential",
+    "highly_confidential",
+    "privileged"
+   ],
+   "practice_restrictions": [],
+   "matter_restrictions": [],
+   "capabilities": [
+    "research",
+    "summarize",
+    "analyze_documents",
+    "compare",
+    "draft"
+   ],
+   "human_review": "LEVEL_3_FOR_DRAFTS",
+   "owner": "U-007",
+   "notes": "Firm-hosted, permission-aware retrieval. Deterministic in DEMO_MODE."
+  },
+  {
+   "provider_id": "P-ENTERPRISE-COPILOT",
+   "name": "Firm Enterprise Copilot (general productivity)",
+   "type": "ENTERPRISE_COPILOT",
+   "external": false,
+   "approval_status": "APPROVED",
+   "status": "ACTIVE",
+   "allowed_classifications": [
+    "public",
+    "internal",
+    "confidential"
+   ],
+   "practice_restrictions": [],
+   "matter_restrictions": [
+    "M-1003"
+   ],
+   "capabilities": [
+    "summarize",
+    "draft"
+   ],
+   "human_review": "LEVEL_3",
+   "owner": "U-007",
+   "notes": "Not approved for privileged material."
+  },
+  {
+   "provider_id": "P-MOCK-LEGAL-AI",
+   "name": "Mock Legal AI Platform (external, demo)",
+   "type": "EXTERNAL_LEGAL_AI",
+   "external": true,
+   "approval_status": "APPROVED",
+   "status": "ACTIVE",
+   "allowed_classifications": [
+    "public",
+    "internal",
+    "confidential"
+   ],
+   "practice_restrictions": [
+    "ma",
+    "lit",
+    "emp",
+    "bf",
+    "re"
+   ],
+   "matter_restrictions": [],
+   "capabilities": [
+    "analyze_documents",
+    "research",
+    "draft",
+    "compare",
+    "summarize"
+   ],
+   "human_review": "LEVEL_3",
+   "owner": "U-007",
+   "notes": "Local mock that simulates an external legal-AI platform. Makes no network calls."
+  },
+  {
+   "provider_id": "P-HARVEY",
+   "name": "Harvey (adapter interface - not integrated)",
+   "type": "EXTERNAL_LEGAL_AI",
+   "external": true,
+   "approval_status": "PENDING_DUE_DILIGENCE",
+   "status": "NOT_INTEGRATED",
+   "allowed_classifications": [],
+   "practice_restrictions": [],
+   "matter_restrictions": [],
+   "capabilities": [],
+   "human_review": "LEVEL_3",
+   "owner": "U-007",
+   "notes": "Interface placeholder only. Integration depends on available enterprise APIs, authentication, permissions and contractual configuration."
+  },
+  {
+   "provider_id": "P-LEGAL-RESEARCH",
+   "name": "Legal Research Platform (traditional search, mock)",
+   "type": "LEGAL_RESEARCH_PLATFORM",
+   "external": true,
+   "approval_status": "APPROVED",
+   "status": "ACTIVE",
+   "allowed_classifications": [
+    "public",
+    "internal"
+   ],
+   "practice_restrictions": [],
+   "matter_restrictions": [],
+   "capabilities": [
+    "research"
+   ],
+   "human_review": "LEVEL_1",
+   "owner": "U-006",
+   "notes": "Non-generative search. Queries must not contain client-confidential facts."
+  },
+  {
+   "provider_id": "P-ANTHROPIC-LIVE",
+   "name": "Anthropic Claude (optional live mode narration)",
+   "type": "LLM",
+   "external": true,
+   "approval_status": "CONDITIONAL",
+   "status": "DISABLED_IN_DEMO",
+   "allowed_classifications": [
+    "public",
+    "internal"
+   ],
+   "practice_restrictions": [],
+   "matter_restrictions": [],
+   "capabilities": [
+    "summarize"
+   ],
+   "human_review": "LEVEL_3",
+   "owner": "U-007",
+   "notes": "Only used when DEMO_MODE=false and ANTHROPIC_API_KEY is set. Never makes control decisions."
+  }
+ ]
+}
