@@ -1,5 +1,7 @@
 """ValueIQ, ChangeOps and Evaluation Lab."""
 
+import pytest
+
 from app.changeops import service as changeops
 from app.evaluation import lab
 from app.valueiq import service as valueiq
@@ -46,9 +48,8 @@ def test_regression_evaluation_baseline_vs_candidate(store):
     rag = lab.compare(store, "RAG_PIPELINE")
     by = {m["metric"]: m for m in rag["metrics"]}
     assert by["cross_matter_isolation"]["candidate"] == 1.0
-    if not rag["gates_passed"]:
-        import pytest
-        with pytest.raises(ValueError):
-            lab.promote("RAG_PIPELINE", rag["run_id"], "U-007")
+    assert not rag["gates_passed"] and "retrieval_quality" in rag["failed_gates"]
+    with pytest.raises(ValueError):
+        lab.promote("RAG_PIPELINE", rag["run_id"], "U-007")
     promoted = lab.promote("DUE_DILIGENCE_AGENT", r["run_id"], "U-007")
     assert promoted["promoted_version"] == "1.4"

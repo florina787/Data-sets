@@ -31,7 +31,7 @@ VERSIONED_COMPONENTS: dict[str, dict] = {
     "RAG_PIPELINE": {
         "kind": "rag", "owner": "U-007", "production": "2.0", "candidate": "2.1",
         "configs": {"2.0": {"top_k": 5, "strict_numbers": True, "chunk_words": 120},
-                    "2.1": {"top_k": 2, "strict_numbers": True, "chunk_words": 40}},
+                    "2.1": {"top_k": 1, "strict_numbers": True, "chunk_words": 40}},
         "description": "Permission-aware retrieval configuration.",
     },
     "PR-RESEARCH-MEMO": {
