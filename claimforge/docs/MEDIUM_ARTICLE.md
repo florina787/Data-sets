@@ -1,207 +1,184 @@
-# I Built an Agentic AI Copilot for Health-Insurance Software — and the Most Important Design Decision Was Where *Not* to Use AI
+# The Bug Was Hiding in a Cancelled Appointment
 
-*How ClaimForge Copilot takes a business requirement all the way to production claims intelligence, with LangGraph agents, deterministic rules engines, statistics and humans each doing the job they're best at.*
-
----
-
-> **Disclaimer:** Everything in this project is synthetic. "NorthStar Health Benefits" is a fictional insurer. Every member, claim, policy and incident is generated. This is an engineering demonstration. It is not insurance advice, and it is not a real adjudication system.
+### I built an AI copilot for health-insurance software. The most useful thing it learned to do was say "I'm not sure."
 
 ---
 
-## The one-sentence change that touches everything
-
-Imagine a product manager at a health insurer writes this:
-
-> *"Increase physiotherapy annual coverage from $750 to $1,000 and require prior authorization after 10 completed visits."*
-
-It reads like a small change, but it touches a lot:
-
-- **Policy wording.** Two policy sections have to be amended, and a 30-day member notice is required.
-- **Three microservices:** Claims, Benefits and Authorization.
-- **Two APIs, rule tables, an event schema,** regression tests, monitoring dashboards, member communications and analytics.
-- **Money.** Every physiotherapy claim from now on pays differently.
-
-It also contains a trap. Does "after 10 visits" mean authorization starts *on* visit 10, or from visit 11? In my experience the costliest defects come from requirements that reach a developer while still ambiguous, and they are rarely hard algorithms.
-
-I wanted to see what an AI copilot for this lifecycle would look like if it were designed responsibly. The result is **ClaimForge Copilot**, with a production-intelligence module called **ClaimIQ**.
-
-![Copilot asking for human clarification](screenshots/copilot_clarification.png)
+*Every company, person and claim in this story is fictional. I built a synthetic insurer, "NorthStar Health Benefits," so I could break it on purpose.*
 
 ---
 
-## The core principle: don't use an LLM for everything
+## Monday, 9:00 a.m.
 
-Most agentic-AI demos send everything through an LLM. In health insurance that is a liability. You never want to ask a language model whether someone's claim should be approved.
+A product manager types one sentence into a ticket:
 
-So ClaimForge splits the work by responsibility:
+> **"Increase physiotherapy annual coverage from $750 to $1,000 and require prior authorization after 10 completed visits."**
 
-| Job | Who does it |
-|---|---|
-| Reasoning, orchestration, investigation, explanation | **Agents** (LangGraph) |
-| Finding policy evidence, with citations | **RAG** (local BM25 retrieval) |
-| Eligibility, coverage, limits, reimbursement, prior auth | **Deterministic Python rules engine** |
-| Deciding "is this number anomalous?" | **Statistics** (relative change + z-score) |
-| Approving releases, fixes and claim reprocessing | **Humans** |
+It sounds generous, simple and quick: change a number, add a rule, ship it by Friday.
 
-The adjudication engine is a single pure function with versioned, immutable rulesets. The same function runs the single-claim API, the 10,000-claim simulator, simulated production and the generated tests. Every decision carries a reason code and a rule ID:
+The sentence actually touches two policy clauses, three microservices, two APIs, three rule tables, an event schema, the regression suite, the monitoring dashboards and a legally required 30-day member notice. It also affects money on every physiotherapy claim from that day on.
 
-```json
-{"status": "DENIED", "reason_code": "AUTH_REQUIRED", "rule_id": "AUTH_RULE_184",
- "counted_visits": 10, "engine": "DETERMINISTIC RULES ENGINE (no LLM)"}
-```
+It also contains a trap. Read it again: *"after 10 completed visits."*
 
-The whole demo runs in **demo mode by default: no API key, zero LLM calls, $0**. If you add an Anthropic key, the LLM can only rephrase explanations. It never touches a decision.
+Does a patient need authorization **on** their 10th visit, or **from** their 11th? Two reasonable engineers will read it differently, and whichever one writes the code decides how real people get reimbursed.
+
+That gap between what a business means and what a developer builds is where many expensive defects come from. I wanted to see whether AI could help close that gap without becoming a new source of risk itself.
 
 ---
 
-## One copilot, twelve specialists
+## The rule I set before writing any code
 
-Users talk to one product. Behind it, a LangGraph supervisor routes the work through twelve specialised agents:
+There's a version of this project that would demo beautifully and be a disaster in practice: a chatbot that reads a claim and decides whether to pay it.
 
-**Supervisor → Requirement → Policy → Impact → Architecture → Developer → QA → Security → Governance → Release**, then, after deployment, **Root-Cause → Remediation**.
+I never wanted to build that. You don't hand claim adjudication to a language model. It isn't reproducible, it isn't auditable, and when it's wrong it sounds just as confident as when it's right.
 
-The graph uses typed state and conditional edges, and every node is guarded by budgets:
+So **ClaimForge Copilot** is built around one question asked at every step: *does this actually need an LLM?*
 
-- `MAX_WORKFLOW_STEPS` limits how many nodes one run may visit.
-- `MAX_AGENT_ITERATIONS` caps how many times an agent loop may repeat.
-- `MAX_TOOL_CALLS` and a timeout apply to each agent run.
+- **Paying or denying a claim** is plain Python: one pure, versioned rules function that gives the same answer every time and records a reason code.
+- **Finding the policy clause** is local search with citations. If no clause supports an answer, it says so.
+- **Deciding whether a number is anomalous** is statistics, not vibes.
+- **Approving anything consequential** is a human decision.
+- **Agents** do the parts that are open-ended: routing work, investigating, weighing evidence and explaining it.
 
-Agents can only call tools on an explicit allowlist. The deploy tool is marked *consequential*. **No agent is on its allowlist**, and it refuses to run without a human approval token.
+The whole thing runs in demo mode with **zero LLM calls and $0 in API costs**. AI is optional, and even when it's switched on it only rewrites explanations. It never touches a decision.
 
-```
-START → supervisor → requirement → policy → ambiguity_check ─(critical)→ human_review
-      → impact → architecture → developer → qa → simulation → security → governance → release
-      ─(BLOCKED)→ return_evidence
-      → human_approval → simulated_release → ClaimIQ → anomaly? ─(no)→ healthy
-      → root_cause → release_correlation → remediation → regression_test → defect → SDLC feedback
-```
+You talk to one copilot. Behind it, twelve specialist agents, orchestrated with LangGraph, pass the work along.
 
 ---
 
-## Walking the lifecycle
+## Act I: the copilot that stopped
 
-### 1. The Requirement Agent refuses to guess
+I pasted the PM's sentence in and clicked **Analyze**.
 
-It parses the request into parameters, user stories, business rules and Given/When/Then acceptance criteria. Then it flags the threshold wording as a **CRITICAL ambiguity** and stops the workflow until a person chooses "visit 11 onward" or "starting on visit 10". The agent does not silently invent a business rule.
+The Requirement Agent pulled out user stories, business rules and acceptance criteria, and then it **stopped**:
 
-### 2. Policy evidence, with citations
+> 🧑‍⚖️ **HUMAN REVIEW REQUIRED.** "After 10 visits" is ambiguous. Does authorization begin on visit 10, or from visit 11?
 
-The Policy Agent retrieves `§P-14.2` (the $750 maximum), `§P-14.3` (the 10-visit exemption) and `§P-01.3`. That last section says *cancelled visits do not count toward authorization thresholds*. This turns out to matter later. If nothing relevant exists, the agent returns **"INSUFFICIENT POLICY EVIDENCE"** and does not make up a clause.
+![The copilot refusing to guess](screenshots/copilot_clarification.png)
 
-### 3. Impact, architecture and a development plan
+It wasn't an error. The agent was built to recognise that this decision belongs to a person.
 
-A data-driven impact map marks each component **KEEP / ENHANCE / ADD / REPLACE** with a reason. It finds 3 microservices, 2 APIs, 3 business rules and 3 tables, along with tests, monitoring, docs and member communications. The one REPLACE it recommends is a hardcoded legacy `750` constant. The deterministic claims engine is never replaced: a guardrail raises an error if anything ever tries.
+I picked *"from visit 11 onward,"* and everything downstream unlocked:
 
-### 4. Tests that actually run
+- **The Policy Agent** found the clauses with citations: §P-14.2 for the $750 cap, §P-14.3 for the 10-visit rule, and a small definition in §P-01.3 that says ***cancelled appointments do not count as visits.*** Keep that one in mind.
+- **The Impact Agent** mapped the blast radius: three microservices, two APIs, three rules, three tables, plus tests, dashboards and member letters. It recommended replacing exactly one thing, a hardcoded `750` buried in legacy code, and refused to recommend replacing the claims engine.
+- **The QA Agent** wrote boundary tests for the cases that usually break: the 10th versus the 11th visit, $990 paid against a $1,000 cap, the day before the policy starts. Then it **ran them**, and 19 of 19 passed.
+- **The simulation lab** pushed **10,000 synthetic claims** through the old rules and the new ones side by side. 541 claims changed outcome, and **none of the changes were unexpected**. The projected impact was about $653K a year, labelled as a simulated estimate.
 
-The QA Agent generates boundary tests (visit 10 vs visit 11, $990 paid against a $1,000 cap, the policy effective date) and negative tests. It then **executes** them against the proposed ruleset: 19 of 19 pass.
+The Release Agent scored the risk at 48/100, **MEDIUM**, and said: *Ready — with human approval.*
 
-### 5. Simulating 10,000 claims
+I played the release manager and clicked **Approve**.
 
-The simulation lab runs the *same* seeded synthetic claims through the current and proposed rules:
+![Release assessed and awaiting approval](screenshots/copilot_release_assessed.png)
 
-- **541 outcomes changed, and 0 of those changes were unexpected.** Each change is classified as an expected consequence of the requirement or as a regression signal.
-- **Projected annual impact: about $653K.** This is clearly labelled as a simulated estimate based on synthetic data.
-- **Release risk: 48/100, MEDIUM, "READY WITH APPROVAL".**
-
-### 6. A human approves
-
-The Release Manager reviews the evidence and approves. Deployment is simulated.
-
-![Release assessed](screenshots/copilot_release_assessed.png)
+The copilot handled the hard part of SDLC planning in seconds. In most projects, this is where the story ends.
 
 ---
 
-## Then production happens: ClaimIQ
+## Act II: something goes wrong
 
-To show the second half of the loop, the deployment injects a **controlled synthetic defect**. The release-2.4 build counts *completed plus cancelled* visits toward the authorization threshold. The specification was correct, and the implementation drifted from it, which is a common way for real defects to appear.
+To test the second half of the system, I planted a bug.
 
-### Detecting the anomaly without asking an LLM
+It's a realistic kind of bug. The specification was correct and the tests were correct, but the shipped build counted **completed *and* cancelled** appointments toward the 10-visit threshold.
 
-A naive monitor compares post-release denials with pre-release denials. That would raise an alarm even on a *correct* release, because the new authorization rule is *supposed* to deny some claims.
+Think about who that hurts. Take a patient with 9 real visits and one appointment they cancelled because their kid was sick. The system counts 10 visits, demands authorization she doesn't need yet, and denies her claim.
 
-ClaimIQ uses a **release-aware baseline** instead. It shadow-replays the same post-release claims with the *approved specification* and tests the excess statistically:
+Nothing crashes, and no error appears in any log. The rejection looks like a perfectly valid policy decision.
 
-> **ANOMALY DETECTED:** physiotherapy AUTH_REQUIRED denial rate **4.81% → 8.48% (+76%, z = 7.0)** versus the approved-spec projection.
-
-When the defect isn't injected, no anomaly is raised. There's a test for that case too.
-
-![ClaimIQ anomaly](screenshots/claimiq.png)
-
-### An agent investigates, within a budget
-
-The Root-Cause Agent runs a bounded loop over seven allow-listed deterministic tools:
-
-1. Find the anomalous segment (physiotherapy).
-2. Break down the denial-reason shift. AUTH_REQUIRED accounts for 100% of the excess.
-3. Correlate with releases. The shift starts the week release 2.4 shipped, and `AUTH_RULE_184` changed in that release.
-4. Trace the rule to its requirement (`BR-391`) and policy section (`P-14.3`).
-5. Inspect affected claims. **64 of 64 wrongly denied claims reach the 10-visit threshold only when cancelled visits are added.**
-6. Run the requirement's test suite against the deployed build. The two cancelled-visit tests fail.
-7. Check operational health. There is no latency or rule-exception spike, so an outage is ruled out.
-
-It tests five hypotheses: cancelled visits counted, an off-by-one error, a service outage, intended behaviour, and a change in member mix. One is supported and four are refuted. Confidence is calculated from **deterministic evidence weights** rather than an LLM's self-assessment, and it comes out **HIGH**.
-
-```
-CORRELATED RELEASE: 2.4    CHANGED RULE: AUTH_RULE_184    SOURCE REQUIREMENT: BR-391
-LIKELY DEFECT: cancelled visits counted toward the completed-visit threshold (violates P-01.3)
-```
-
-If the agent runs out of iterations before finishing, it reports **INCONCLUSIVE** and generates no defect.
-
-### Remediation is verified first and stays a proposal
-
-The Remediation Agent proposes a forward fix ("count COMPLETED visits only") and **verifies it by replaying production claims**. The result is zero mismatches against the approved spec, with every test passing. Rollback is kept as a fallback. It notes that rolling back would also undo the member-friendly $1,000 increase.
-
-It then produces:
-
-- **A runnable pytest regression test** that fails on release 2.4 and passes on the 2.4.1 hotfix.
-- **A Jira-style defect, `CLAIMS-1042`.** It is marked High severity, introduced in Release 2.4, and linked to source requirement BR-391. The tracker is mocked.
-- **A reprocessing request for the 64 claims.** It needs human approval.
-
-![Root cause and remediation](screenshots/root_cause.png)
+In a real company, a bug like this can sit unnoticed for weeks until someone in claims operations eventually notices denials creeping up and starts a very long email thread.
 
 ---
 
-## Closing the loop: traceability
+## Act III: ClaimIQ notices
 
-All of this lives in a traceability graph:
+**ClaimIQ** is the production-intelligence half of ClaimForge, and it caught a problem that a naive monitor would have got wrong.
 
-**Requirement → Policy → Business Rule → Component → Implementation → Test → Release → Production Metric → Anomaly → Incident → Defect**
+The naive approach compares denials after the release with denials before it. That raises an alarm even for a perfect release, because the new authorization rule is *supposed* to deny more claims.
 
-That includes a feedback edge from the defect back to the requirement. Starting from the production anomaly, you can trace back to the release, the rule, the requirement and the policy clause. Starting from the requirement, you can trace forward to the defect it eventually produced. The SDLC feedback step turns the incident into backlog items:
+ClaimIQ asks a sharper question: ***what should denials look like if the release did exactly what was approved?*** It replays the same production claims through the approved specification and compares reality against that expectation.
 
-- a requirement revision
-- a new regression test in the release gate
-- a monitoring alert
-- a fix to the test-data generator, which never produced cancelled visits in the first place
+> 🚨 **ANOMALY DETECTED.** Physiotherapy authorization denials: **4.81% expected → 8.48% actual (+76%, z = 7.0).**
 
----
+![ClaimIQ detecting the anomaly](screenshots/claimiq.png)
 
-## What I learned
-
-1. **The most valuable thing an AI copilot does here is stop.** Flagging the ambiguity, refusing to invent a policy clause, and saying "inconclusive" when the evidence runs out all build more trust than fluent output does.
-2. **Agents earn their place in open-ended work.** That means routing, choosing the next investigation step, and weighing hypotheses. Arithmetic and policy rules belong in code you can test.
-3. **The monitoring baseline needs to know what the release was meant to change.** Comparing against the approved specification, rather than last month, separates intended change from defects.
-4. **Label everything honestly.** In the app every capability is tagged DETERMINISTIC, STATISTICAL, RETRIEVAL, SIMULATED, MOCKED or LLM-ASSISTED, and the use-case catalog marks 30 items implemented, 8 partial and 2 planned.
+No LLM was asked whether 8.48% "seemed high." A z-score of 7 is not a matter of opinion. When I re-ran it without the planted bug, ClaimIQ stayed quiet, which matters just as much.
 
 ---
 
-## Tech stack
+## Act IV: the investigation
 
-Python 3.11, **LangGraph**, **FastAPI**, **Streamlit**, Pydantic, pandas/NumPy, Plotly, pytest (36 tests) and Docker. Policy retrieval is local BM25, so no paid embedding API is needed. An optional Anthropic Claude integration is used for narratives only.
+I clicked **Investigate**, and the Root-Cause Agent started working like a careful detective with a strict budget. It ran seven tools in order, and each one narrowed the search:
 
-**Code:** https://github.com/florina787/Data-sets/tree/claude/dreamy-hawking-6m7l6h/claimforge
+1. *Where is it happening?* Only physiotherapy.
+2. *Why are claims denied?* "Authorization required" explains **100%** of the excess.
+3. *When did it start?* The week **Release 2.4** shipped, the release that changed rule **AUTH_RULE_184**.
+4. *Why does that rule exist?* Requirement **BR-391**, policy §P-14.3.
+5. *Who was affected?* This was the key step. Every one of the **64 wrongly denied claims** reached "10 visits" **only when cancelled appointments were included.**
+6. *Do the tests agree?* Run against the deployed build, exactly the two cancelled-visit tests fail.
+7. *Could it be an outage?* No: latency is normal and there are no errors.
 
-Run it locally:
+It considered five explanations: cancelled visits being counted, an off-by-one error, a service outage, intended behaviour, and a change in the patient mix. One survived, and four were ruled out with evidence.
+
+> **Root cause (HIGH confidence):** AUTH_RULE_184 counts cancelled visits toward the completed-visit threshold, violating policy §P-01.3.
+
+That tiny definition from Act I, the one that says cancelled appointments aren't visits, turned out to be the clue that solved it.
+
+The confidence score isn't the agent grading its own work. It's computed from evidence weights. When I limited the agent to three steps, it honestly reported **INCONCLUSIVE** and refused to file a defect. Saying "I don't know" is a designed behaviour here, not a failure.
+
+---
+
+## Act V: closing the loop
+
+Finding the bug is only half the job. The Remediation Agent then:
+
+- **Proposed a fix**, "count COMPLETED visits only," and **verified it** by replaying production claims. That gave zero mismatches against the approved spec, with every test passing.
+- **Warned against the easy option.** Rolling back would also cancel the $1,000 coverage increase, so it would hurt every member to fix a bug that affected some of them.
+- **Wrote a real regression test**, runnable pytest code that fails on the broken build and passes on the fix.
+- **Filed a defect**, `CLAIMS-1042`, linked to the release, rule, requirement and policy clause.
+- **Requested approval** to reprocess the 64 claims, because no agent gets to change payments on its own.
+
+![Root cause, remediation and defect](screenshots/root_cause.png)
+
+Then the defect fed back into the original requirement. The cancelled-visit test became a mandatory release gate, a new monitoring alert was added, and the test-data generator was fixed, since it had never generated cancelled appointments.
+
+You can follow the whole chain in either direction:
+
+**Requirement → Policy → Rule → Code → Test → Release → Metric → Anomaly → Incident → Defect → back to the Requirement.**
+
+---
+
+## What building this taught me
+
+**1. The best AI behaviour is often restraint.** The moments that build trust are the ones where the system stops: *this is ambiguous*, *I have no policy evidence for that*, *I couldn't conclude*. Fluent confidence is cheap.
+
+**2. Agents belong in open-ended work.** Deciding what to investigate next is a good job for an agent. Calculating a reimbursement is not.
+
+**3. Monitoring needs to know what was supposed to change.** Comparing against last month raises false alarms. Comparing against the approved specification finds real defects.
+
+**4. Be honest about what's real.** Everything in the app is labelled deterministic, statistical, simulated, mocked or AI-assisted. Of 40 catalogued use cases, 30 are implemented, 8 are partial and 2 are planned.
+
+---
+
+## Try it yourself
+
+It's open, it runs locally on synthetic data, and it costs nothing:
+
 ```bash
 cd claimforge
 pip install -r requirements.txt
 streamlit run frontend/streamlit_app.py
 ```
 
+**Code:** https://github.com/florina787/Data-sets/tree/claude/dreamy-hawking-6m7l6h/claimforge
+
+*Built with Python, LangGraph, FastAPI, Streamlit and pytest, with 36 passing tests.*
+
 ---
 
-*The LLM does not adjudicate claims. Deterministic systems handle the policy calculations. Agents handle reasoning, investigation and SDLC orchestration, and humans control the consequential actions.*
+> **The LLM doesn't decide anyone's claim.**
+> Deterministic code does the math. Statistics spots the anomaly. Agents investigate and explain.
+> **And humans make the calls that matter.**
 
-*Tags: Artificial Intelligence · Agentic AI · LangGraph · Health Insurance · Software Engineering*
+*If this was useful, a 👏 helps other engineers find it. I'd especially like to hear how you'd handle "inconclusive" in your own agent designs.*
+
+*Tags: Artificial Intelligence · Agentic AI · LangGraph · Software Engineering · HealthTech*
