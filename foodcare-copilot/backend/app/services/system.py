@@ -41,7 +41,9 @@ def reset_demo(actor: str = "system") -> dict:
 def startup() -> None:
     init_db()
     jobs.mark_interrupted()
-    if row("SELECT 1 FROM users LIMIT 1") is None:
+    incomplete = (row("SELECT 1 FROM users LIMIT 1") is None or delivery.current_release() is None
+                  or not (get_settings().storefront_repo / ".git").exists())
+    if incomplete:  # first start, or an earlier reset was interrupted (e.g. git missing)
         reset_demo("startup")
         return
     enterprise_data.ensure_seeded()
