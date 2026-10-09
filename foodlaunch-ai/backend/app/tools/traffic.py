@@ -26,7 +26,14 @@ def _journey(index: int, claim_free: bool) -> dict:
         def call(name: str, method: str, path: str, **kwargs) -> httpx.Response | None:
             started = time.perf_counter()
             try:
-                response = client.request(method, path, **kwargs)
+                try:
+                    response = client.request(method, path, **kwargs)
+                except (httpx.ReadError, httpx.RemoteProtocolError):
+                    if method != "GET":
+                        raise
+                    # The server closes keep-alive connections after an unhandled 500;
+                    # retry an idempotent read once on a fresh connection.
+                    response = client.request(method, path, **kwargs)
                 steps.append({"step": name, "status": response.status_code,
                               "latency_ms": round((time.perf_counter() - started) * 1000, 1)})
                 return response

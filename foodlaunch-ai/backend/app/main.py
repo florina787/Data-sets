@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import warnings
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -31,6 +32,12 @@ warnings.filterwarnings("ignore", message=".*allowed_objects.*")
 async def lifespan(_: FastAPI):
     system.startup()
     yield
+    # By default the deployed storefront keeps running across control-room restarts and
+    # is re-adopted from its PID file. Test harnesses opt in to stopping it on exit.
+    if os.environ.get("FOODLAUNCH_STOP_STOREFRONT_ON_EXIT") == "1":
+        from app.tools import deploy
+
+        deploy.stop_current()
 
 
 app = FastAPI(title="FoodLaunch AI control room (demo)", lifespan=lifespan)

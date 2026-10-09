@@ -9,3 +9,4 @@ __pycache__/
 .env
 test-results/
 playwright-report/
+var-e2e/

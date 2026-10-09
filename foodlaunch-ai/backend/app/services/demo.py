@@ -7,6 +7,7 @@ step expects. Nothing advances on a timer. Pause takes effect between steps.
 
 from __future__ import annotations
 
+import threading
 from typing import Callable
 
 from app import auth
@@ -20,8 +21,21 @@ STATE_KEY = "demo.state"
 BRIEF = delivery.scenario()["brief"]
 
 
+_state_lock = threading.Lock()
+
+
 class StepFailed(Exception):
     pass
+
+
+def _mutate(change: Callable[[dict], None]) -> dict:
+    """Atomic read-modify-write of the shared demo state (job thread and API threads)."""
+    with _state_lock:
+        state = kv_get(STATE_KEY, {})
+        state.setdefault("results", {})
+        change(state)
+        kv_set(STATE_KEY, state)
+        return state
 
 
 def _user(username: str) -> auth.User:
@@ -44,9 +58,7 @@ def _expect(condition: bool, message: str) -> None:
 def step_submit_brief() -> dict:
     maya = _user("maya.marketing")
     run_id = delivery.create_run(maya, BRIEF["title"], BRIEF["text"], "demo")
-    state = kv_get(STATE_KEY, {})
-    state["run_id"] = run_id
-    kv_set(STATE_KEY, state)
+    _mutate(lambda s: s.update(run_id=run_id))
     flow = flows.advance(run_id, "delivery")
     open_q = delivery.open_required_clarifications(run_id)
     _expect(flow["state"] == "waiting" and any(q["id"] == "Q-ONCE" for q in open_q),
@@ -147,9 +159,7 @@ def step_incident() -> dict:
     eli = _user("eli.engineer")
     result = system.open_incident_and_start(eli)
     _expect(result["incident"] is not None, result.get("message", "No incident opened"))
-    state = kv_get(STATE_KEY, {})
-    state["incident_id"] = result["incident"]["id"]
-    kv_set(STATE_KEY, state)
+    _mutate(lambda s: s.update(incident_id=result["incident"]["id"]))
     return {"incident_id": result["incident"]["id"], "checkout_5xx": result["stats"]["checkout_5xx"],
             "hypotheses": [h["id"] for h in result["incident"]["analysis"]["hypotheses"]]}
 
@@ -224,67 +234,72 @@ def describe() -> dict:
         "run_id": state.get("run_id"),
         "incident_id": state.get("incident_id"),
         "pause_requested": state.get("pause_requested", False),
+        "error": state.get("error"),
         "job_id": state.get("job_id"),
         "steps": [{"id": sid, "title": title, "actor": actor, **results.get(sid, {"status": "pending"})}
                   for sid, title, actor, _ in STEPS],
     }
 
 
+def _set_result(sid: str, result: dict, status: str | None = None) -> None:
+    def change(state: dict) -> None:
+        state["results"][sid] = result
+        if status:
+            state["status"] = status
+    _mutate(change)
+
+
 def _execute() -> dict:
-    state = kv_get(STATE_KEY, {})
-    results = state.setdefault("results", {})
-    for sid, _title, _actor, fn in STEPS:
-        if results.get(sid, {}).get("status") == "done":
-            continue
-        state = kv_get(STATE_KEY, {})
-        if state.get("pause_requested"):
-            state.update(status="paused", pause_requested=False)
-            kv_set(STATE_KEY, state)
-            return describe()
-        results = state.setdefault("results", {})
-        results[sid] = {"status": "running", "started_at": now_iso()}
-        kv_set(STATE_KEY, state)
-        try:
-            outcome = fn()
-        except (StepFailed, PlatformError) as exc:
-            message = exc.message if isinstance(exc, PlatformError) else str(exc)
+    try:
+        for sid, _title, _actor, fn in STEPS:
             state = kv_get(STATE_KEY, {})
-            state["results"][sid] = {"status": "failed", "error": message, "finished_at": now_iso()}
-            state["status"] = "failed"
-            kv_set(STATE_KEY, state)
-            return describe()
-        state = kv_get(STATE_KEY, {})
-        state["results"][sid] = {"status": "done", "result": outcome, "finished_at": now_iso()}
-        kv_set(STATE_KEY, state)
-    state = kv_get(STATE_KEY, {})
-    state["status"] = "done"
-    kv_set(STATE_KEY, state)
+            if state.get("results", {}).get(sid, {}).get("status") == "done":
+                continue
+            if state.get("pause_requested"):
+                _mutate(lambda s: s.update(status="paused", pause_requested=False))
+                return describe()
+            _set_result(sid, {"status": "running", "started_at": now_iso()})
+            try:
+                outcome = fn()
+            except (StepFailed, PlatformError) as exc:
+                message = exc.message if isinstance(exc, PlatformError) else str(exc)
+                _set_result(sid, {"status": "failed", "error": message, "finished_at": now_iso()}, "failed")
+                return describe()
+            _set_result(sid, {"status": "done", "result": outcome, "finished_at": now_iso()})
+        _mutate(lambda s: s.update(status="done"))
+    except Exception as exc:
+        message = f"{type(exc).__name__}: {exc}"
+        _mutate(lambda s: s.update(status="failed", error=message))
+        raise
     return describe()
 
 
 def run_or_continue() -> str:
-    state = kv_get(STATE_KEY, {})
-    if state.get("status") == "running":
-        raise PlatformError("Guided demo is already running")
-    if state.get("status") == "done":
-        raise PlatformError("Guided demo finished. Reset Demo to run it again")
-    if state.get("status") == "failed":
-        failed = next((k for k, v in state.get("results", {}).items() if v.get("status") == "failed"), None)
-        if failed:
-            state["results"].pop(failed)
-    state.update(status="running", pause_requested=False)
-    kv_set(STATE_KEY, state)
-    job_id = jobs.submit("guided_demo", state.get("run_id"), _execute, lock_key="guided-demo")
-    state = kv_get(STATE_KEY, {})
-    state["job_id"] = job_id
-    kv_set(STATE_KEY, state)
+    def start(state: dict) -> None:
+        if state.get("status") == "running":
+            raise PlatformError("Guided demo is already running")
+        if state.get("status") == "done":
+            raise PlatformError("Guided demo finished. Reset Demo to run it again")
+        for key, value in list(state["results"].items()):
+            if value.get("status") in ("failed", "running"):
+                state["results"].pop(key)
+        state.update(status="running", pause_requested=False, error=None)
+
+    _mutate(start)
+    try:
+        job_id = jobs.submit("guided_demo", kv_get(STATE_KEY, {}).get("run_id"), _execute, lock_key="guided-demo")
+    except PlatformError:
+        _mutate(lambda s: s.update(status="failed", error="Another demo job is running"))
+        raise
+    _mutate(lambda s: s.update(job_id=job_id))
     return job_id
 
 
 def request_pause() -> dict:
-    state = kv_get(STATE_KEY, {})
-    if state.get("status") != "running":
-        raise PlatformError("Guided demo is not running")
-    state["pause_requested"] = True
-    kv_set(STATE_KEY, state)
+    def pause(state: dict) -> None:
+        if state.get("status") != "running":
+            raise PlatformError("Guided demo is not running")
+        state["pause_requested"] = True
+
+    _mutate(pause)
     return describe()

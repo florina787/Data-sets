@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :focus-visible { outline: 3px solid #3f9563; outline-offset: 2px; }
+  body { font-feature-settings: "tnum"; }
+}
+
+@layer components {
+  .card { @apply rounded-xl border border-cream-300 bg-white p-4 shadow-sm; }
+  .btn { @apply inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-navy-900 text-cream-50 hover:bg-navy-700; }
+  .btn-green { @apply btn bg-leaf-600 text-white hover:bg-leaf-700; }
+  .btn-ghost { @apply btn border border-cream-300 bg-white text-navy-900 hover:bg-cream-200; }
+  .btn-danger { @apply btn bg-brick-700 text-white hover:opacity-90; }
+  .label { @apply text-xs font-semibold uppercase tracking-wide text-navy-600; }
+  .mono { @apply font-mono text-xs; }
+  .table { @apply w-full text-left text-sm; }
+  .table th { @apply border-b border-cream-300 py-1.5 pr-3 text-xs font-semibold uppercase tracking-wide text-navy-600; }
+  .table td { @apply border-b border-cream-200 py-1.5 pr-3 align-top; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -12,7 +12,7 @@ FIXTURES = ROOT / "fixtures"
 
 @dataclass(frozen=True)
 class Settings:
-    var_dir: Path = field(default_factory=lambda: Path(os.environ.get("FOODLAUNCH_VAR_DIR", ROOT / "var")))
+    var_dir: Path = field(default_factory=lambda: Path(os.environ.get("FOODLAUNCH_VAR_DIR", ROOT / "var")).resolve())
     api_host: str = "127.0.0.1"
     api_port: int = int(os.environ.get("FOODLAUNCH_API_PORT", "8700"))
     storefront_port: int = int(os.environ.get("FOODLAUNCH_STOREFRONT_PORT", "8801"))
@@ -28,6 +28,10 @@ class Settings:
     max_repair_attempts: int = 1
     fault_delay_s: float = float(os.environ.get("FOODLAUNCH_FAULT_DELAY_S", "4"))
     session_hours: int = 12
+
+    def __post_init__(self) -> None:
+        # Absolute paths only: child processes run from their own release directories.
+        object.__setattr__(self, "var_dir", Path(self.var_dir).resolve())
 
     @property
     def db_path(self) -> Path:

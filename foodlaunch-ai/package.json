@@ -1,0 +1,12 @@
+{
+  "name": "foodlaunch-ai",
+  "private": true,
+  "version": "0.1.0",
+  "description": "FoodLaunch AI control room and FreshSip storefront UIs (portfolio prototype, synthetic data)",
+  "workspaces": ["apps/control-room", "apps/storefront", "e2e"],
+  "scripts": {
+    "build": "npm run build -w apps/control-room && npm run build -w apps/storefront",
+    "typecheck": "npm run typecheck -w apps/control-room && npm run typecheck -w apps/storefront",
+    "e2e": "npm run test -w e2e"
+  }
+}
