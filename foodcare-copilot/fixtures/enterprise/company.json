@@ -1,0 +1,75 @@
+{
+  "company": "Food Beverage Food Care Private Limited (fictional)",
+  "note": "All figures are synthetic, generated deterministically from this file with a fixed random seed. They are not real business data.",
+  "currency": "CAD",
+  "seed": 2026,
+  "history": {"first_week": "2026-07-06", "weeks": 16},
+  "regions": {
+    "ON": {"name": "Ontario", "weight": 1.00},
+    "QC": {"name": "Quebec", "weight": 0.78},
+    "BC": {"name": "British Columbia", "weight": 0.52},
+    "AB": {"name": "Alberta", "weight": 0.44},
+    "MB": {"name": "Manitoba", "weight": 0.14},
+    "NS": {"name": "Nova Scotia", "weight": 0.11}
+  },
+  "channels": {
+    "retail": {"name": "Grocery retail partners", "weight": 1.00, "net_price_factor": 0.72},
+    "web": {"name": "FreshSip web store", "weight": 0.18, "net_price_factor": 1.00},
+    "marketplace": {"name": "Online marketplace", "weight": 0.27, "net_price_factor": 0.85}
+  },
+  "products": [
+    {"sku": "FS-MANGO-355", "name": "FreshSip Mango", "brand": "FreshSip", "category": "Juice drinks", "price_cents": 249, "base_weekly_units": 1450, "seasonality": "summer"},
+    {"sku": "FS-ORANGE-355", "name": "FreshSip Orange", "brand": "FreshSip", "category": "Juice drinks", "price_cents": 249, "base_weekly_units": 1700, "seasonality": "flat"},
+    {"sku": "FS-APPLE-355", "name": "FreshSip Apple", "brand": "FreshSip", "category": "Juice drinks", "price_cents": 249, "base_weekly_units": 980, "seasonality": "autumn"},
+    {"sku": "FS-SPARKLIME-355", "name": "FreshSip Sparkling Lime", "brand": "FreshSip", "category": "Sparkling", "price_cents": 279, "base_weekly_units": 640, "seasonality": "summer"},
+    {"sku": "BH-COLDBREW-300", "name": "Brewhouse Cold Brew", "brand": "Brewhouse", "category": "Coffee", "price_cents": 399, "base_weekly_units": 820, "seasonality": "flat"},
+    {"sku": "NT-OATMILK-1L", "name": "NutriTerra Oat Milk", "brand": "NutriTerra", "category": "Plant-based dairy", "price_cents": 449, "base_weekly_units": 760, "seasonality": "autumn"}
+  ],
+  "campaigns": [
+    {"id": "CMP-2026-07-BC-MANGO", "name": "Summer Mango Fest", "mechanic": "15% off", "region": "BC", "skus": ["FS-MANGO-355"],
+     "start": "2026-07-20", "end": "2026-08-02", "true_uplift": 1.28, "discount_share": 0.15},
+    {"id": "CMP-2026-08-QC-3FOR2", "name": "Rentrée 3-for-2", "mechanic": "Buy 2 get 1 free", "region": "QC", "skus": ["FS-MANGO-355", "FS-ORANGE-355", "FS-APPLE-355"],
+     "start": "2026-08-24", "end": "2026-09-06", "true_uplift": 1.42, "discount_share": 0.22},
+    {"id": "CMP-2026-09-ON-COLDBREW", "name": "Cold Brew Mornings", "mechanic": "20% off", "region": "ON", "skus": ["BH-COLDBREW-300"],
+     "start": "2026-09-14", "end": "2026-09-27", "true_uplift": 1.19, "discount_share": 0.20}
+  ],
+  "upcoming_campaign": {"id": "FS-ON-WKND-B2G1-2026-10", "name": "FreshSip Ontario Weekend: buy 2, get 1 free", "mechanic": "Buy 2 get 1 free",
+    "region": "ON", "skus": ["FS-MANGO-355", "FS-ORANGE-355", "FS-APPLE-355"], "start": "2026-10-31", "end": "2026-11-01",
+    "comparable_campaign": "CMP-2026-08-QC-3FOR2", "source": "Delivery run (storefront release)"},
+  "warehouses": [
+    {"id": "DC-TOR", "name": "Toronto distribution centre", "serves": ["ON", "MB"], "lead_time_days": 7, "safety_days": 4},
+    {"id": "DC-MTL", "name": "Montreal distribution centre", "serves": ["QC", "NS"], "lead_time_days": 6, "safety_days": 4},
+    {"id": "DC-VAN", "name": "Vancouver distribution centre", "serves": ["BC", "AB"], "lead_time_days": 9, "safety_days": 5}
+  ],
+  "stock_days_of_cover": {
+    "DC-TOR": {"FS-MANGO-355": 21, "FS-ORANGE-355": 18, "FS-APPLE-355": 3.5, "FS-SPARKLIME-355": 26, "BH-COLDBREW-300": 15, "NT-OATMILK-1L": 9},
+    "DC-MTL": {"FS-MANGO-355": 16, "FS-ORANGE-355": 22, "FS-APPLE-355": 14, "FS-SPARKLIME-355": 30, "BH-COLDBREW-300": 12, "NT-OATMILK-1L": 19},
+    "DC-VAN": {"FS-MANGO-355": 25, "FS-ORANGE-355": 13, "FS-APPLE-355": 17, "FS-SPARKLIME-355": 11, "BH-COLDBREW-300": 20, "NT-OATMILK-1L": 6}
+  },
+  "inbound": [
+    {"po": "PO-55102", "warehouse": "DC-TOR", "sku": "FS-APPLE-355", "units": 1800, "eta": "2026-11-04"},
+    {"po": "PO-55117", "warehouse": "DC-VAN", "sku": "NT-OATMILK-1L", "units": 900, "eta": "2026-11-02"},
+    {"po": "PO-55120", "warehouse": "DC-TOR", "sku": "NT-OATMILK-1L", "units": 600, "eta": "2026-11-06"}
+  ],
+  "product_records": [
+    {"sku": "FS-MANGO-355", "version": "2026.09", "approved_by": "Regulatory Affairs", "approved_at": "2026-09-01",
+     "ingredients": ["water", "mango puree", "cane sugar", "citric acid", "ascorbic acid"], "allergens": []},
+    {"sku": "FS-ORANGE-355", "version": "2026.09", "approved_by": "Regulatory Affairs", "approved_at": "2026-09-01",
+     "ingredients": ["water", "orange juice concentrate", "cane sugar", "natural flavour", "ascorbic acid"], "allergens": []},
+    {"sku": "FS-APPLE-355", "version": "2026.09", "approved_by": "Regulatory Affairs", "approved_at": "2026-09-01",
+     "ingredients": ["water", "apple juice concentrate", "cane sugar", "ascorbic acid"], "allergens": []},
+    {"sku": "FS-SPARKLIME-355", "version": "2026.09", "approved_by": "Regulatory Affairs", "approved_at": "2026-09-01",
+     "ingredients": ["carbonated water", "cane sugar", "lime juice concentrate", "citric acid", "natural flavour"], "allergens": []},
+    {"sku": "BH-COLDBREW-300", "version": "2026.09", "approved_by": "Regulatory Affairs", "approved_at": "2026-09-01",
+     "ingredients": ["brewed coffee", "milk", "cane sugar", "natural flavour"], "allergens": ["milk"]},
+    {"sku": "NT-OATMILK-1L", "version": "2026.09", "approved_by": "Regulatory Affairs", "approved_at": "2026-09-01",
+     "ingredients": ["water", "oats", "sunflower oil", "calcium carbonate", "sea salt"], "allergens": ["oats (gluten)"]}
+  ],
+  "listing_overrides": [
+    {"sku": "NT-OATMILK-1L", "channel": "retail", "record_version": "2026.09", "allergens": [],
+     "note": "Retail partner feed dropped the allergen statement during a feed migration (seeded issue)."},
+    {"sku": "BH-COLDBREW-300", "channel": "marketplace", "record_version": "2026.06",
+     "ingredients": ["brewed coffee", "milk", "cane sugar"],
+     "note": "Marketplace listing still shows the June record (seeded issue)."}
+  ]
+}

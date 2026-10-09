@@ -30,4 +30,4 @@ Most Important all the datasets are in CSV ( Comma separated values) format.
 ## Projects in this repository
 
 - [`enterprise-agentic-ai/`](enterprise-agentic-ai/): Enterprise Agentic AI Copilot (LangGraph + RAG)
-- [`sdlc-copilot/`](sdlc-copilot/): SDLC Copilot, an agentic SDLC control room and FreshSip demo storefront (synthetic data, runs without an API key)
+- [`foodcare-copilot/`](foodcare-copilot/): FoodCare Enterprise Copilot, an agentic SDLC control room and FreshSip demo storefront (synthetic data, runs without an API key)
