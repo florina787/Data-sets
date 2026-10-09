@@ -1,0 +1,31 @@
+{
+  "id": "product-info-update",
+  "title": "Product information update",
+  "status": "template_only",
+  "brief": "Update FreshSip Mango ingredient and allergen information on the storefront after a recipe change.",
+  "clarifications": [
+    "Which approved product record version is the source of truth?",
+    "Who signs off on allergen changes?",
+    "Do packaging and web need to change on the same date?"
+  ],
+  "requirements": [
+    {
+      "id": "PI-1",
+      "title": "Record parity",
+      "criteria": [
+        "Displayed ingredients and allergens match the approved product record field for field.",
+        "Publishing is blocked when the web content differs from the approved record."
+      ]
+    }
+  ],
+  "test_plan": [
+    "Field-by-field comparison against the REC-PROD version",
+    "Allergen statement present on PDP, cart and order confirmation",
+    "Rollback restores the previous approved record"
+  ],
+  "risks": [
+    "Allergen safety",
+    "Regulatory labelling"
+  ],
+  "implementation_note": "Template and preview only. These are not implemented end to end in this prototype."
+}

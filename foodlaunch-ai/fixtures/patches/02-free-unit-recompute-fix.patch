@@ -1,0 +1,27 @@
+diff --git a/storefront/pricing.py b/storefront/pricing.py
+index 049012e0c1ce1d1210f741515cf6e502a291f75b..3e65d8827f05655b1f450922929efaad2cc7cb9c 100644
+--- a/storefront/pricing.py
++++ b/storefront/pricing.py
+@@ -89,6 +89,16 @@ def compute_quote(conn: sqlite3.Connection, cart_id: str, now: datetime) -> Quot
+         )
+     evaluation = promotions.evaluate(conn, cart, now)
+     free = carts.free_lines(conn, cart_id)
++    messages: list[str] = []
++    if free and not evaluation.entitled and cart["status"] == "open":
++        # Entitlement is re-derived on every recompute: removing qualifying paid
++        # units (or any other rule change) removes the free unit from the cart.
++        promotions.remove_free_unit(conn, cart_id)
++        free = []
++        messages.append(
++            "Free unit removed: "
++            + " ".join(promotions.REASON_TEXT[r] for r in evaluation.reasons)
++        )
+     for row in free:
+         product = get_product(row["sku"])
+         lines.append(
+@@ -114,4 +124,5 @@ def compute_quote(conn: sqlite3.Connection, cart_id: str, now: datetime) -> Quot
+         discount_cents=discount,
+         total_cents=subtotal - discount,
+         promotion=promotions.summary(evaluation, free),
++        messages=messages,
+     )

@@ -1,0 +1,39 @@
+{
+  "id": "campaign-expiry",
+  "title": "Campaign expiry",
+  "status": "template_only",
+  "brief": "End the FreshSip campaign automatically at the end date and remove banners and prices everywhere.",
+  "clarifications": [
+    "Which timezone defines the end?",
+    "Which caches (CDN, app, search) hold campaign content?",
+    "What happens to carts that already hold promotional items at expiry?"
+  ],
+  "requirements": [
+    {
+      "id": "EX-1",
+      "title": "Exact end",
+      "criteria": [
+        "The offer stops being honoured at the end instant, converted explicitly to UTC, including across a DST transition.",
+        "Checkout re-validates the offer at order time, regardless of quote age."
+      ]
+    },
+    {
+      "id": "EX-2",
+      "title": "Cache invalidation",
+      "criteria": [
+        "Banner and price caches are invalidated within the agreed TTL after expiry.",
+        "Stale cached content cannot grant the offer."
+      ]
+    }
+  ],
+  "test_plan": [
+    "Boundary instants one second before and after the end",
+    "DST-crossing end time",
+    "Checkout with a quote created before expiry",
+    "Cache TTL expiry and purge verification"
+  ],
+  "risks": [
+    "Honouring an expired offer from a stale cache"
+  ],
+  "implementation_note": "Template and preview only. These are not implemented end to end in this prototype."
+}

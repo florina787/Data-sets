@@ -1,0 +1,42 @@
+{
+  "id": "qr-loyalty",
+  "title": "QR loyalty redemption",
+  "status": "template_only",
+  "brief": "Print QR codes on FreshSip multipacks; scanning a code adds 50 loyalty points to the signed-in customer's account.",
+  "clarifications": [
+    "Can one code be redeemed by more than one account?",
+    "How long are codes valid?",
+    "What does the customer see for invalid, expired or already-used codes?",
+    "Is there a daily per-account limit on scans?"
+  ],
+  "requirements": [
+    {
+      "id": "QR-1",
+      "title": "Single-use codes",
+      "criteria": [
+        "A code credits points at most once across all accounts.",
+        "Duplicate scans (double-tap or retry) are idempotent and credit once."
+      ]
+    },
+    {
+      "id": "QR-2",
+      "title": "Invalid codes",
+      "criteria": [
+        "Malformed, unknown, expired and revoked codes are rejected with distinct, non-enumerable messages.",
+        "Failed attempts are rate-limited per account."
+      ]
+    }
+  ],
+  "test_plan": [
+    "Concurrent redemption of the same code by two accounts credits exactly once",
+    "Replay of the same request with the same idempotency key",
+    "Code checksum failure",
+    "Expired code at a timezone boundary",
+    "Rate-limit threshold"
+  ],
+  "risks": [
+    "Code enumeration",
+    "Point fraud through scripted scans"
+  ],
+  "implementation_note": "Template and preview only. These are not implemented end to end in this prototype."
+}

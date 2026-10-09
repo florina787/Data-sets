@@ -1,0 +1,482 @@
+{
+  "scenario_id": "flagship-ontario-b2g1",
+  "title": "FreshSip Ontario weekend: buy 2, get 1 free",
+  "brief": {
+    "title": "FreshSip Ontario weekend campaign",
+    "submitted_by": "marketing",
+    "text": "Launch a weekend Ontario campaign: buy two eligible FreshSip beverages and receive one free, once per customer, while stock lasts."
+  },
+  "clarifications": [
+    {
+      "id": "Q-ONCE",
+      "topic": "Customer limit scope",
+      "question": "Does \"once per customer\" mean once per order or once per customer for the whole campaign?",
+      "trigger": "once per customer",
+      "resolved_by_terms": [
+        "per order",
+        "per campaign",
+        "per account",
+        "whole campaign"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "customer limits scope redemptions per customer",
+      "options": [
+        "Once per order",
+        "Once per authenticated customer per campaign"
+      ],
+      "seeded_decision": "Once per authenticated customer per campaign",
+      "seeded_rationale": "Selected demo decision. Marketing confirmed the offer is meant to bring in new trial, not repeat discounting.",
+      "policy_gap": true,
+      "gap_note": "POL-PROMO \u00a75 requires the brief to state the scope and defines no default."
+    },
+    {
+      "id": "Q-SKU",
+      "topic": "Eligible products",
+      "question": "Which SKUs are \"eligible FreshSip beverages\"? Is FreshSip Sparkling Lime included?",
+      "trigger": "eligible",
+      "resolved_by_terms": [
+        "FS-MANGO",
+        "FS-ORANGE",
+        "FS-APPLE",
+        "SKU"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "eligible products SKU FreshSip sparkling excluded flavour campaigns",
+      "options": [
+        "Mango, orange and apple 355 mL only",
+        "All FreshSip products"
+      ],
+      "seeded_decision": "Mango, orange and apple 355 mL only",
+      "seeded_rationale": "Selected demo decision based on REC-PROD section 2 (sparkling is a separate family).",
+      "policy_gap": false
+    },
+    {
+      "id": "Q-DATES",
+      "topic": "Campaign dates",
+      "question": "Which weekend is it? Give the calendar dates.",
+      "trigger": "weekend",
+      "resolved_by_terms": [
+        "2026-",
+        "October",
+        "November"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "weekend campaigns calendar dates Saturday Monday",
+      "options": [
+        "Sat 31 Oct 00:00 to Mon 2 Nov 00:00, 2026",
+        "Sat 7 Nov 00:00 to Mon 9 Nov 00:00, 2026"
+      ],
+      "seeded_decision": "Sat 31 Oct 00:00 to Mon 2 Nov 00:00, 2026",
+      "seeded_rationale": "Selected demo decision. This weekend includes the end of daylight saving time, so timezone handling is exercised.",
+      "policy_gap": true,
+      "gap_note": "MKT-ON \u00a72 requires calendar dates in the brief; none are given."
+    },
+    {
+      "id": "Q-TZ",
+      "topic": "Timezone",
+      "question": "Which timezone defines the campaign start and end?",
+      "trigger": "campaign",
+      "resolved_by_terms": [
+        "America/Toronto",
+        "Eastern",
+        "EST",
+        "EDT"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "timezone local time UTC conversion daylight-saving",
+      "options": [
+        "America/Toronto",
+        "UTC"
+      ],
+      "seeded_decision": "America/Toronto",
+      "seeded_rationale": "Selected demo decision per MKT-ON section 1.",
+      "policy_gap": false
+    },
+    {
+      "id": "Q-PROVINCE",
+      "topic": "Ontario eligibility basis",
+      "question": "Is \"Ontario\" decided by the shipping address or by the shopper's browser location?",
+      "trigger": "Ontario",
+      "resolved_by_terms": [
+        "shipping",
+        "address"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "geographic eligibility shipping address browser location",
+      "options": [
+        "Shipping province on the order",
+        "Browser location"
+      ],
+      "seeded_decision": "Shipping province on the order",
+      "seeded_rationale": "Selected demo decision per POL-PROMO section 3.",
+      "policy_gap": false
+    },
+    {
+      "id": "Q-STACK",
+      "topic": "Stacking with discount codes",
+      "question": "Can the free unit be combined with discount codes?",
+      "trigger": "free",
+      "resolved_by_terms": [
+        "stack",
+        "discount code",
+        "combine"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "combining offers multi-buy discount codes stacking",
+      "options": [
+        "No stacking",
+        "Stacking allowed"
+      ],
+      "seeded_decision": "No stacking",
+      "seeded_rationale": "Selected demo decision per POL-PROMO section 4.",
+      "policy_gap": false
+    },
+    {
+      "id": "Q-RETURNS",
+      "topic": "Returns behaviour",
+      "question": "How are cancellations and partial returns of promotional orders handled?",
+      "trigger": "free",
+      "resolved_by_terms": [
+        "return",
+        "refund",
+        "cancel"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "cancellation partial returns promotion allocation entitlement",
+      "options": [
+        "Apply POL-RET v2.0 (full cancellation restores entitlement; partial returns refund the allocated amount)",
+        "Do not allow returns of promotional orders"
+      ],
+      "seeded_decision": "Apply POL-RET v2.0 (full cancellation restores entitlement; partial returns refund the allocated amount)",
+      "seeded_rationale": "Selected demo decision. This is the seeded returns policy.",
+      "policy_gap": false
+    },
+    {
+      "id": "Q-IDENTITY",
+      "topic": "Customer identity",
+      "question": "How is a customer identified for the limit? Can guest checkouts receive the free unit?",
+      "trigger": "customer",
+      "resolved_by_terms": [
+        "signed-in",
+        "account",
+        "authenticated",
+        "guest"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "identity customer-limited offers signed-in account anonymous",
+      "options": [
+        "Signed-in customer account only",
+        "Email address on the order"
+      ],
+      "seeded_decision": "Signed-in customer account only",
+      "seeded_rationale": "Selected demo decision per MKT-ON section 3. The demo uses synthetic customer fixtures in place of real accounts.",
+      "policy_gap": false
+    },
+    {
+      "id": "Q-PRICE",
+      "topic": "Mixed prices",
+      "question": "If eligible products had different prices, which unit would be free?",
+      "trigger": "free",
+      "resolved_by_terms": [
+        "cheapest",
+        "lowest price",
+        "same price"
+      ],
+      "required": true,
+      "blocks": "implementation",
+      "doc_query": "list price FreshSip mango orange apple",
+      "options": [
+        "All eligible SKUs share one price (documented simplification)",
+        "Cheapest unit is free"
+      ],
+      "seeded_decision": "All eligible SKUs share one price (documented simplification)",
+      "seeded_rationale": "Selected demo decision. All eligible SKUs are listed at 2.49 in REC-PROD section 1; mixed-price behaviour is out of scope and not generalised.",
+      "policy_gap": true,
+      "gap_note": "No policy defines which unit is free when prices differ."
+    }
+  ],
+  "requirement_sets": [
+    {
+      "version": 1,
+      "source": "brief v1 + recorded clarification decisions",
+      "requirements": [
+        {
+          "id": "REQ-1",
+          "title": "Buy two eligible units, get one free",
+          "decisions": [
+            "Q-SKU",
+            "Q-PRICE"
+          ],
+          "criteria": [
+            {
+              "id": "AC-1.1",
+              "text": "With two paid eligible units in the cart, the customer can add exactly one free eligible unit priced at 0.00.",
+              "critical": true
+            },
+            {
+              "id": "AC-1.2",
+              "text": "Unrelated products, including FreshSip Sparkling Lime, neither count toward the offer nor can be the free unit.",
+              "critical": true
+            },
+            {
+              "id": "AC-1.3",
+              "text": "With fewer than two paid eligible units, no free unit can be added.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-2",
+          "title": "Cart recomputation",
+          "decisions": [
+            "Q-SKU"
+          ],
+          "criteria": [
+            {
+              "id": "AC-2.1",
+              "text": "Removing qualifying paid units, or making any change that ends eligibility, removes the free unit from the cart and from the total.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-3",
+          "title": "Ontario shipping eligibility",
+          "decisions": [
+            "Q-PROVINCE"
+          ],
+          "criteria": [
+            {
+              "id": "AC-3.1",
+              "text": "The offer applies only when the shipping province is ON. A missing or different province makes the cart ineligible.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-4",
+          "title": "Campaign window in America/Toronto",
+          "decisions": [
+            "Q-DATES",
+            "Q-TZ"
+          ],
+          "criteria": [
+            {
+              "id": "AC-4.1",
+              "text": "The offer is active from 2026-10-31 00:00 to 2026-11-02 00:00 (end exclusive) America/Toronto, converted to UTC as 04:00Z and 05:00Z, which spans the end of DST.",
+              "critical": true
+            },
+            {
+              "id": "AC-4.2",
+              "text": "Campaign times that are ambiguous or do not exist in local time (DST transitions) are rejected.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-5",
+          "title": "No stacking",
+          "decisions": [
+            "Q-STACK"
+          ],
+          "criteria": [
+            {
+              "id": "AC-5.1",
+              "text": "A discount code and the free unit cannot be combined, in either order.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-6",
+          "title": "Once per authenticated customer per campaign",
+          "decisions": [
+            "Q-ONCE",
+            "Q-IDENTITY"
+          ],
+          "criteria": [
+            {
+              "id": "AC-6.1",
+              "text": "Each signed-in customer receives at most one free unit per campaign across all orders. Anonymous carts cannot claim the free unit.",
+              "critical": true
+            },
+            {
+              "id": "AC-6.2",
+              "text": "Concurrent checkouts by the same customer redeem at most once.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-7",
+          "title": "Stock reservation and payment integrity",
+          "decisions": [],
+          "criteria": [
+            {
+              "id": "AC-7.1",
+              "text": "Stock for paid and free units is reserved when the order is created. Insufficient stock rejects checkout without committing anything.",
+              "critical": true
+            },
+            {
+              "id": "AC-7.2",
+              "text": "Cart quotes do not consume a redemption or stock.",
+              "critical": true
+            },
+            {
+              "id": "AC-7.3",
+              "text": "A mock payment failure releases the reservation and the redemption.",
+              "critical": true
+            },
+            {
+              "id": "AC-7.4",
+              "text": "Repeating a checkout request with the same idempotency key returns the same order, without a second charge or redemption.",
+              "critical": true
+            }
+          ]
+        },
+        {
+          "id": "REQ-8",
+          "title": "Seeded returns policy",
+          "decisions": [
+            "Q-RETURNS"
+          ],
+          "criteria": [
+            {
+              "id": "AC-8.1",
+              "text": "A full cancellation refunds the total and restores the entitlement.",
+              "critical": true
+            },
+            {
+              "id": "AC-8.2",
+              "text": "A partial return refunds the amount allocated to the unit by the original promotion and does not restore the entitlement.",
+              "critical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "version": 2,
+      "source": "requirement set v1 + incident INC review (dependency resilience)",
+      "adds": [
+        {
+          "id": "REQ-9",
+          "title": "Fail fast when inventory is unavailable",
+          "decisions": [],
+          "criteria": [
+            {
+              "id": "AC-9.1",
+              "text": "If the inventory system does not answer within the 2-second budget, checkout returns 'temporarily unavailable' within 3 seconds, keeps the cart, and creates no order.",
+              "critical": true
+            },
+            {
+              "id": "AC-9.2",
+              "text": "Checkout succeeds again once the inventory system responds.",
+              "critical": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "test_plans": {
+    "1": [
+      "test_campaign_rules.py",
+      "test_checkout.py",
+      "test_returns.py"
+    ],
+    "2": [
+      "test_campaign_rules.py",
+      "test_checkout.py",
+      "test_returns.py",
+      "test_resilience.py"
+    ]
+  },
+  "design": {
+    "summary": "Add a campaign module to the storefront service. Re-derive the entitlement on every cart recompute. Record the redemption in the same transaction as order creation, using a partial unique index.",
+    "components": [
+      {
+        "name": "storefront/promotions.py (new)",
+        "change": "Campaign configuration, explicit America/Toronto to UTC conversion, eligibility evaluation, claim and remove free unit, redemption records."
+      },
+      {
+        "name": "storefront/pricing.py",
+        "change": "Quotes include free lines and a promotion summary. Discount codes are rejected while a free unit is in the cart."
+      },
+      {
+        "name": "storefront/checkout.py",
+        "change": "Promotion-group allocation; pending, then committed or released, redemption inside the order transaction."
+      },
+      {
+        "name": "storefront/returns.py",
+        "change": "Cancellation releases the redemption (entitlement restored)."
+      },
+      {
+        "name": "storefront/inventory_adapter.py",
+        "change": "Order-level reservation call that tags campaign units."
+      },
+      {
+        "name": "storefront/main.py",
+        "change": "GET /api/campaign, POST/DELETE /api/carts/{id}/free-unit."
+      }
+    ],
+    "api_changes": [
+      "GET /api/campaign",
+      "POST /api/carts/{cart_id}/free-unit",
+      "DELETE /api/carts/{cart_id}/free-unit"
+    ],
+    "dependencies": [
+      "Inventory system /reserve (ENG-INV v1.4)",
+      "Mock payment processor"
+    ],
+    "rationale": [
+      "The entitlement is derived state. Recomputing it on every quote avoids stale free lines (REQ-2).",
+      "A partial unique index on active redemptions enforces once-per-customer under concurrency (AC-6.2).",
+      "Promotion allocation is stored per unit at order time, so refunds never depend on current prices (POL-RET section 2)."
+    ]
+  },
+  "patches": {
+    "01-campaign-implementation.patch": {
+      "title": "Implement Ontario buy-2-get-1 campaign",
+      "agent": "Implementation Agent",
+      "addresses": [
+        "REQ-1",
+        "REQ-2",
+        "REQ-3",
+        "REQ-4",
+        "REQ-5",
+        "REQ-6",
+        "REQ-7",
+        "REQ-8"
+      ],
+      "label": "Fixture proposal",
+      "note": "Seeded proposal. Contains the defect demonstrated in episode B (the free line is not re-validated when the cart is recomputed)."
+    },
+    "02-free-unit-recompute-fix.patch": {
+      "title": "Re-derive free-unit entitlement on every cart recompute",
+      "agent": "Repair Agent",
+      "addresses": [
+        "REQ-2"
+      ],
+      "label": "Fixture proposal",
+      "note": "Seeded candidate patch for the failing regression test REG-001."
+    },
+    "03-inventory-timeout-repair.patch": {
+      "title": "Bounded timeout and fail-closed handling for order reservation",
+      "agent": "Repair Agent",
+      "addresses": [
+        "REQ-9"
+      ],
+      "label": "Fixture proposal",
+      "note": "Seeded candidate patch for incident regression REG-002 (ENG-INV section 4)."
+    }
+  }
+}

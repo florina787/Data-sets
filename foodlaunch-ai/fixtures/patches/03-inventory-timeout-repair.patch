@@ -1,0 +1,39 @@
+diff --git a/storefront/__init__.py b/storefront/__init__.py
+index 003d60ff997c402c14afee57771a9685d9572b00..48cca8f4875ca45871f3d2923de6864b975907d1 100644
+--- a/storefront/__init__.py
++++ b/storefront/__init__.py
+@@ -5,4 +5,4 @@ deploys and operates. Every revision of it is a commit in the local storefront
+ repository created by ``scripts/reset_demo``.
+ """
+ 
+-CODE_VERSION = "1.1.0"
++CODE_VERSION = "1.2.0"
+diff --git a/storefront/inventory_adapter.py b/storefront/inventory_adapter.py
+index 1320b8f9026f88fcfd88f6c2a259a73bcba21ede..91aa1d022b4d50171606e34af6fd7d14c67205ed 100644
+--- a/storefront/inventory_adapter.py
++++ b/storefront/inventory_adapter.py
+@@ -116,17 +116,13 @@ class HttpInventory:
+     def reserve_order(
+         self, units: dict[str, int], key: str, campaign_id: str | None = None
+     ) -> str:
+-        """Reserve every unit of an order, tagging campaign units for stock reporting."""
+-        with telemetry.get().timed("inventory", "reserve"):
+-            response = httpx.post(
+-                f"{self.base_url}/reserve",
+-                json={"key": key, "units": units, "campaign_id": campaign_id},
+-                timeout=None,
+-            )
+-            if response.status_code == 409:
+-                raise OutOfStock(response.json().get("sku", "unknown"))
+-            response.raise_for_status()
+-            return response.json()["reservation_id"]
++        """Reserve every unit of an order, tagging campaign units for stock reporting.
++
++        Uses the adapter's bounded timeout; timeouts and upstream failures surface
++        as InventoryUnavailable so checkout fails fast without creating an order.
++        """
++        payload = {"key": key, "units": units, "campaign_id": campaign_id}
++        return self._post("reserve", "/reserve", payload)["reservation_id"]
+ 
+     def commit(self, reservation_id: str) -> None:
+         self._post("commit", "/commit", {"reservation_id": reservation_id})

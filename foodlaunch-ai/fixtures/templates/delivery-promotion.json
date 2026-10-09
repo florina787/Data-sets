@@ -1,0 +1,31 @@
+{
+  "id": "delivery-promotion",
+  "title": "Delivery promotion",
+  "status": "template_only",
+  "brief": "Advertise free next-day delivery in the GTA for FreshSip orders over $25 this month.",
+  "clarifications": [
+    "Which postal codes count as the GTA?",
+    "How is next-day calculated relative to the order cut-off time?",
+    "Does the $25 threshold apply before or after discounts?"
+  ],
+  "requirements": [
+    {
+      "id": "DP-1",
+      "title": "Promise matches fulfilment",
+      "criteria": [
+        "The landing page shows the offer only for postal codes the fulfilment eligibility service accepts.",
+        "The delivery fee at checkout agrees with the promise shown on the landing page."
+      ]
+    }
+  ],
+  "test_plan": [
+    "Postal-code eligibility table compared with fulfilment service responses",
+    "Cut-off time boundary in America/Toronto",
+    "Threshold before and after discount"
+  ],
+  "risks": [
+    "Misleading advertising",
+    "Unfulfillable promises"
+  ],
+  "implementation_note": "Template and preview only. These are not implemented end to end in this prototype."
+}

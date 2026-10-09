@@ -1,0 +1,40 @@
+{
+  "id": "multilingual-page",
+  "title": "Multilingual campaign page",
+  "status": "template_only",
+  "brief": "Publish the FreshSip campaign landing page in English and French for Canadian shoppers.",
+  "clarifications": [
+    "Which locales are required (en-CA, fr-CA)?",
+    "Who approves the translations?",
+    "What happens when a translation is missing: fall back or block publishing?"
+  ],
+  "requirements": [
+    {
+      "id": "ML-1",
+      "title": "Complete translations",
+      "criteria": [
+        "Publishing is blocked when any required key is missing for a required locale.",
+        "Legal copy must come from approved strings, never machine translation."
+      ]
+    },
+    {
+      "id": "ML-2",
+      "title": "Layout robustness",
+      "criteria": [
+        "No text is clipped or overflows at 320 px width in any locale.",
+        "fr-CA strings 30% longer than English render without truncating calls to action."
+      ]
+    }
+  ],
+  "test_plan": [
+    "Translation key completeness check",
+    "Visual overflow check at 320/768/1280 px per locale",
+    "Pseudo-localisation run (+40% length)",
+    "Fallback behaviour when a non-required locale is missing"
+  ],
+  "risks": [
+    "Regulatory language requirements",
+    "Truncated price or offer terms"
+  ],
+  "implementation_note": "Template and preview only. These are not implemented end to end in this prototype."
+}
