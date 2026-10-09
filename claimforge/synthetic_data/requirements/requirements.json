@@ -1,0 +1,8 @@
+{
+  "_notice": "SYNTHETIC DEMO DATA — fictional requirements for NorthStar Health Benefits.",
+  "requirements": [
+    {"requirement_id": "BR-377", "title": "Increase chiropractic annual maximum", "text": "Increase chiropractic annual maximum from $450 to $500.", "status": "RELEASED", "release": "2.3", "facets": ["BENEFIT_LIMIT_CHANGE"], "benefit_type": "CHIROPRACTIC", "policy_sections": ["P-15.1"]},
+    {"requirement_id": "BR-391", "title": "Physiotherapy maximum increase and prior authorization threshold", "text": "Increase annual physiotherapy maximum from $750 to $1,000 and require prior authorization after 10 completed visits.", "status": "IN_DELIVERY", "release": "2.4", "facets": ["BENEFIT_LIMIT_CHANGE", "AUTH_THRESHOLD_ADD", "VISIT_COUNTING"], "benefit_type": "PHYSIOTHERAPY", "policy_sections": ["P-14.2", "P-14.3", "P-01.3", "P-20.3"]},
+    {"requirement_id": "BR-402", "title": "Massage therapy visit limit review", "text": "Review massage therapy visit limit of 20 completed visits per year.", "status": "BACKLOG", "release": null, "facets": ["VISIT_LIMIT_CHANGE"], "benefit_type": "MASSAGE_THERAPY", "policy_sections": ["P-16.2"]}
+  ]
+}
