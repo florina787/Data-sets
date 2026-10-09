@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+backend/*.db
+backend/*.db-*
+*.sqlite
+.env
+node_modules/
+frontend/dist/
+.venv/
+evaluation/results/*.json
+!evaluation/results/eval-baseline.json

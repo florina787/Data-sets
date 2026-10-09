@@ -1,0 +1,20 @@
+{
+  "_notice": "SYNTHETIC thresholds for an independent prototype. Not calibrated against real network data.",
+  "version": "diag-rules-2026.10.1",
+  "units": {
+    "snr_margin_db": "dB", "crc_errors": "count per sample interval", "link_retrains": "count per sample interval",
+    "packet_loss_pct": "percent", "latency_ms": "milliseconds", "cpe_uptime_s": "seconds",
+    "loss_of_signal_events": "count per sample interval", "cpe_unexpected_reboots": "count per sample interval"
+  },
+  "line": {"snr_min_db": 6.0, "crc_errors_per_hour_max": 200, "retrains_per_hour_max": 1, "packet_loss_pct_max": 1.0},
+  "equipment": {"unexpected_reboots_24h_min": 3},
+  "area": {"peer_los_fraction_min": 0.5},
+  "healthy_sample": {"link_state": "up", "loss_of_signal_events_max": 0, "link_retrains_max": 0,
+                      "packet_loss_pct_max": 1.0, "cpe_unexpected_reboots_max": 0},
+  "sufficiency_rules": {
+    "strong": "At least two independent fresh measured signals support the hypothesis and no fresh measurement opposes it.",
+    "moderate": "One fresh measured signal supports it, corroborated by a statement or note; or two signals with one measured opposition.",
+    "weak": "Only customer statements, analyst notes or stale measurements support it.",
+    "insufficient": "No fresh measured signal is available for the relevant period."
+  }
+}
