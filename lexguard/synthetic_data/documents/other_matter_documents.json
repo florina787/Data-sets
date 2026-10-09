@@ -1,0 +1,426 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "documents": [
+  {
+   "doc_id": "AURORA-001",
+   "matter_id": "M-1002",
+   "client_id": "C-002",
+   "title": "Share Purchase Agreement (draft v3) - Project Aurora",
+   "doc_type": "Share Purchase Agreement",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "highly_confidential",
+   "access_label": "matter:M-1002",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Purchase Price",
+     "text": "The aggregate purchase price is USD 145,000,000 subject to a locked-box mechanism."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Change of Control",
+     "text": "Completion constitutes a Change of Control requiring notice to the Target's principal lender within ten (10) business days."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Warranties",
+     "text": "The Sellers give the warranties in Schedule 3 as at signing and completion."
+    }
+   ]
+  },
+  {
+   "doc_id": "AURORA-002",
+   "matter_id": "M-1002",
+   "client_id": "C-002",
+   "title": "Target Disclosure Letter - Project Aurora",
+   "doc_type": "Disclosure Letter",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "highly_confidential",
+   "access_label": "matter:M-1002",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. General Disclosures",
+     "text": "The Data Room as at 12 March 2026 is generally disclosed."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Specific Disclosures",
+     "text": "Warranty 7.2: three customer contracts contain termination rights on a change of control."
+    }
+   ]
+  },
+  {
+   "doc_id": "AURORA-003",
+   "matter_id": "M-1002",
+   "client_id": "C-002",
+   "title": "Key Customer Contract - Aurora Target / Lumen Retail",
+   "doc_type": "Customer Agreement",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "confidential",
+   "access_label": "matter:M-1002",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Term",
+     "text": "The agreement runs to 31 December 2028."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Change of Control",
+     "text": "Lumen Retail may terminate on thirty (30) days' notice following any change of control of the Supplier."
+    }
+   ]
+  },
+  {
+   "doc_id": "BETA-001",
+   "matter_id": "M-1003",
+   "client_id": "C-003",
+   "title": "Privileged Litigation Strategy Memo - Matter Beta",
+   "doc_type": "Internal Memo",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "privileged",
+   "access_label": "matter:M-1003",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Privileged & Confidential",
+     "text": "Attorney work product prepared in anticipation of litigation. Our assessment of Redwood Grid's counterclaim exposure is USD 38 million."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Strategy",
+     "text": "Recommend early mediation while preserving the limitation defence."
+    }
+   ]
+  },
+  {
+   "doc_id": "BETA-002",
+   "matter_id": "M-1003",
+   "client_id": "C-003",
+   "title": "Witness Interview Notes - Matter Beta",
+   "doc_type": "Interview Notes",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "privileged",
+   "access_label": "matter:M-1003",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Interview",
+     "text": "Privileged interview notes with the Halcyon operations director regarding the 2024 outage."
+    }
+   ]
+  },
+  {
+   "doc_id": "BETA-003",
+   "matter_id": "M-1003",
+   "client_id": "C-003",
+   "title": "Expert Damages Report (draft) - Matter Beta",
+   "doc_type": "Expert Report",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "highly_confidential",
+   "access_label": "matter:M-1003",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Damages",
+     "text": "Draft quantum analysis of lost revenue: USD 21.4 million."
+    }
+   ]
+  },
+  {
+   "doc_id": "ORION-001",
+   "matter_id": "M-1004",
+   "client_id": "C-004",
+   "title": "Without Prejudice Settlement Offer - Castellan Freight",
+   "doc_type": "Correspondence",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "confidential",
+   "access_label": "matter:M-1004",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Offer",
+     "text": "Castellan Freight offers USD 20,000,000 in full and final settlement of all claims, open for acceptance until 30 November 2026."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Conditions",
+     "text": "The offer is conditional on mutual releases and confidentiality of the settlement terms."
+    }
+   ]
+  },
+  {
+   "doc_id": "ORION-002",
+   "matter_id": "M-1004",
+   "client_id": "C-004",
+   "title": "Damages Analysis - Orion v. Castellan",
+   "doc_type": "Internal Analysis",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "privileged",
+   "access_label": "matter:M-1004",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Quantum",
+     "text": "Privileged and confidential. Recoverable freight-loss damages are estimated between USD 17 million and USD 31 million depending on the limitation-of-liability ruling."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Litigation Risk",
+     "text": "The limitation-of-liability clause is contested; adverse ruling probability assessed internally as material."
+    }
+   ]
+  },
+  {
+   "doc_id": "ORION-003",
+   "matter_id": "M-1004",
+   "client_id": "C-004",
+   "title": "Mediation Position Paper - Orion",
+   "doc_type": "Mediation Paper",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "privileged",
+   "access_label": "matter:M-1004",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Position",
+     "text": "Orion's mediation position is that Castellan's breach caused the cargo loss on 14 March 2025."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Timeline",
+     "text": "Claim issued on 2 June 2025. Defence served on 18 August 2025. Mediation held on 9 September 2026."
+    }
+   ]
+  },
+  {
+   "doc_id": "GRANITE-001",
+   "matter_id": "M-1005",
+   "client_id": "C-005",
+   "title": "Supervisory Examination Findings Letter",
+   "doc_type": "Regulatory Letter",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "highly_confidential",
+   "access_label": "matter:M-1005",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Findings",
+     "text": "The examiner identified three matters requiring attention relating to BSA/AML monitoring."
+    }
+   ]
+  },
+  {
+   "doc_id": "BELL-001",
+   "matter_id": "M-1006",
+   "client_id": "C-006",
+   "title": "Incident Timeline - Bellweather",
+   "doc_type": "Timeline",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "highly_confidential",
+   "access_label": "matter:M-1006",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Detection",
+     "text": "Unusual access detected on 3 February 2026; containment completed on 5 February 2026."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Notification",
+     "text": "Regulator notification deadline assessed as 60 days from discovery."
+    }
+   ]
+  },
+  {
+   "doc_id": "KESTREL-001",
+   "matter_id": "M-1007",
+   "client_id": "C-007",
+   "title": "Retail Lease - Harbor Books",
+   "doc_type": "Lease",
+   "counterparty": "Harbor Books",
+   "effective_date": "2026-01-15",
+   "sensitivity": "internal",
+   "access_label": "matter:M-1007",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Rent",
+     "text": "Base monthly rent is USD 18,500, escalating 3% annually."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Assignment",
+     "text": "Tenant may not assign the lease or undergo a change of control without Landlord consent, not to be unreasonably withheld."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Term",
+     "text": "The term is ten (10) years from the commencement date."
+    }
+   ]
+  },
+  {
+   "doc_id": "KESTREL-002",
+   "matter_id": "M-1007",
+   "client_id": "C-007",
+   "title": "Retail Lease - Copperleaf Cafe",
+   "doc_type": "Lease",
+   "counterparty": "Copperleaf Cafe",
+   "effective_date": "2026-01-15",
+   "sensitivity": "internal",
+   "access_label": "matter:M-1007",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Rent",
+     "text": "Base monthly rent is USD 9,200, escalating 3% annually."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Assignment",
+     "text": "Tenant may not assign the lease or undergo a change of control without Landlord consent, not to be unreasonably withheld."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Term",
+     "text": "The term is ten (10) years from the commencement date."
+    }
+   ]
+  },
+  {
+   "doc_id": "KESTREL-003",
+   "matter_id": "M-1007",
+   "client_id": "C-007",
+   "title": "Retail Lease - Summit Fitness",
+   "doc_type": "Lease",
+   "counterparty": "Summit Fitness",
+   "effective_date": "2026-01-15",
+   "sensitivity": "internal",
+   "access_label": "matter:M-1007",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Rent",
+     "text": "Base monthly rent is USD 22,000, escalating 3% annually."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Assignment",
+     "text": "Tenant may not assign the lease or undergo a change of control without Landlord consent, not to be unreasonably withheld."
+    },
+    {
+     "section_id": "s3",
+     "heading": "3. Term",
+     "text": "The term is ten (10) years from the commencement date."
+    }
+   ]
+  },
+  {
+   "doc_id": "MAPLE-EMP-001",
+   "matter_id": "M-1008",
+   "client_id": "C-001",
+   "title": "Executive Employment Agreement - CFO",
+   "doc_type": "Employment Agreement",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "confidential",
+   "access_label": "matter:M-1008",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Change in Control Severance",
+     "text": "If employment is terminated without cause within twelve (12) months after a Change in Control, the executive receives two (2) times base salary."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Restrictive Covenants",
+     "text": "Non-competition for twelve (12) months following termination."
+    }
+   ]
+  },
+  {
+   "doc_id": "ARDEN-001",
+   "matter_id": "M-1009",
+   "client_id": "C-008",
+   "title": "Senior Facility Agreement - Arden",
+   "doc_type": "Facility Agreement",
+   "counterparty": null,
+   "effective_date": "2026-01-15",
+   "sensitivity": "confidential",
+   "access_label": "matter:M-1009",
+   "status": "active",
+   "duplicate_of": null,
+   "ocr_status": "ok",
+   "sections": [
+    {
+     "section_id": "s1",
+     "heading": "1. Change of Control",
+     "text": "A Change of Control triggers mandatory prepayment of all Loans within ten (10) business days."
+    },
+    {
+     "section_id": "s2",
+     "heading": "2. Financial Covenants",
+     "text": "Leverage must not exceed 4.25x tested quarterly."
+    }
+   ]
+  }
+ ]
+}

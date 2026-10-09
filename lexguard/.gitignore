@@ -1,0 +1,16 @@
+.env
+*.db
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+node_modules/
+.next/
+out/
+coverage/
+test-results/
+playwright-report/
+*.log
+.DS_Store
+frontend/next-env.d.ts
+frontend/tsconfig.tsbuildinfo

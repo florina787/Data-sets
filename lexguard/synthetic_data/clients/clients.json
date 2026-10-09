@@ -1,0 +1,167 @@
+{
+ "_notice": "SYNTHETIC DATA - fictional firm, clients, matters and documents for demonstration only.",
+ "clients": [
+  {
+   "client_id": "C-001",
+   "name": "Maple Industries",
+   "sector": "Industrial manufacturing",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": true,
+    "allowed_external_providers": [
+     "P-MOCK-LEGAL-AI"
+    ],
+    "max_external_classification": "confidential",
+    "human_review_required": true,
+    "client_facing_ai_disclosure": true,
+    "policy_summary": "AI permitted with controls. External legal-AI limited to approved providers for data up to Confidential. Lawyer review mandatory.",
+    "evidence": {
+     "doc_id": "KN-CI-C001",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-002",
+   "name": "NorthStar Holdings",
+   "sector": "Private holding company",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": false,
+    "allowed_external_providers": [],
+    "max_external_classification": null,
+    "human_review_required": true,
+    "client_facing_ai_disclosure": true,
+    "policy_summary": "External generative AI prohibited. Firm-hosted internal AI permitted for retrieval and drafting support with lawyer review.",
+    "evidence": {
+     "doc_id": "KN-CI-C002",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-003",
+   "name": "Halcyon Energy",
+   "sector": "Energy",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": false,
+    "allowed_external_providers": [],
+    "max_external_classification": null,
+    "human_review_required": true,
+    "client_facing_ai_disclosure": false,
+    "policy_summary": "Internal AI only. No external processing of matter data.",
+    "evidence": {
+     "doc_id": "KN-CI-C003",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-004",
+   "name": "Orion Logistics",
+   "sector": "Logistics",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": true,
+    "allowed_external_providers": [
+     "P-MOCK-LEGAL-AI",
+     "P-LEGAL-RESEARCH"
+    ],
+    "max_external_classification": "confidential",
+    "human_review_required": true,
+    "client_facing_ai_disclosure": true,
+    "policy_summary": "AI permitted with controls. Privileged material may not leave firm systems.",
+    "evidence": {
+     "doc_id": "KN-CI-C004",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-005",
+   "name": "Granite Federal Credit Union",
+   "sector": "Financial services",
+   "ai_policy": {
+    "ai_allowed": false,
+    "internal_ai_allowed": false,
+    "external_ai_allowed": false,
+    "allowed_external_providers": [],
+    "max_external_classification": null,
+    "human_review_required": true,
+    "client_facing_ai_disclosure": true,
+    "policy_summary": "No use of AI (internal or external) on any client matter. Traditional search and human work only.",
+    "evidence": {
+     "doc_id": "KN-CI-C005",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-006",
+   "name": "Bellweather Health",
+   "sector": "Healthcare",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": false,
+    "allowed_external_providers": [],
+    "max_external_classification": null,
+    "human_review_required": true,
+    "client_facing_ai_disclosure": true,
+    "policy_summary": "Internal AI only; patient data must never be processed by external systems.",
+    "evidence": {
+     "doc_id": "KN-CI-C006",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-007",
+   "name": "Kestrel Properties",
+   "sector": "Real estate",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": true,
+    "allowed_external_providers": [
+     "P-MOCK-LEGAL-AI"
+    ],
+    "max_external_classification": "internal",
+    "human_review_required": true,
+    "client_facing_ai_disclosure": false,
+    "policy_summary": "AI permitted. External tools only for non-confidential material.",
+    "evidence": {
+     "doc_id": "KN-CI-C007",
+     "section_id": "s2"
+    }
+   }
+  },
+  {
+   "client_id": "C-008",
+   "name": "Arden Capital Partners",
+   "sector": "Private credit",
+   "ai_policy": {
+    "ai_allowed": true,
+    "internal_ai_allowed": true,
+    "external_ai_allowed": true,
+    "allowed_external_providers": [
+     "P-MOCK-LEGAL-AI",
+     "P-LEGAL-RESEARCH"
+    ],
+    "max_external_classification": "confidential",
+    "human_review_required": true,
+    "client_facing_ai_disclosure": true,
+    "policy_summary": "AI permitted with controls and lawyer review.",
+    "evidence": {
+     "doc_id": "KN-CI-C008",
+     "section_id": "s2"
+    }
+   }
+  }
+ ]
+}

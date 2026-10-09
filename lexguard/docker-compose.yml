@@ -1,0 +1,32 @@
+# docker compose up --build
+#   Frontend: http://localhost:3000   Backend: http://localhost:8000 (docs at /docs)
+# SQLite is used by default (zero setup). Uncomment the db service + DATABASE_URL for PostgreSQL.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DEMO_MODE: "true"
+      CORS_ORIGINS: "http://localhost:3000,http://127.0.0.1:3000"
+      # DATABASE_URL: postgresql+psycopg://lexguard:lexguard@db:5432/lexguard
+    ports:
+      - "8000:8000"
+    volumes:
+      - lexguard-data:/data
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: "http://localhost:8000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+  # db:
+  #   image: postgres:16-alpine
+  #   environment: { POSTGRES_USER: lexguard, POSTGRES_PASSWORD: lexguard, POSTGRES_DB: lexguard }
+  #   ports: ["5432:5432"]
+volumes:
+  lexguard-data:
