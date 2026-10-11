@@ -1,0 +1,36 @@
+# One-command local demo:  docker compose up --build   then open http://localhost:8080
+# Everything runs on synthetic data in DEMO generation mode with SIMULATED connectors.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: telecomresolve
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-only}
+      POSTGRES_DB: telecomresolve
+    volumes: [dbdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U telecomresolve"]
+      interval: 5s
+      retries: 20
+
+  backend:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    env_file: [{ path: .env, required: false }]
+    environment:
+      APP_MODE: ${APP_MODE:-demo}
+      DATABASE_URL: postgresql+psycopg://telecomresolve:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/telecomresolve
+      CHECKPOINT_URL: postgresql+psycopg://telecomresolve:${POSTGRES_PASSWORD:-local-dev-only}@db:5432/telecomresolve
+      GENERATION_MODE: ${GENERATION_MODE:-DEMO}
+      SESSION_SECRET: ${SESSION_SECRET:-local-dev-only-change-me}
+      CORS_ORIGINS: http://localhost:8080
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8000:8000"]
+
+  frontend:
+    build: { context: frontend }
+    depends_on: [backend]
+    ports: ["8080:8080"]
+
+volumes:
+  dbdata:
