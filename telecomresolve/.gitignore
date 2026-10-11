@@ -8,5 +8,6 @@ backend/*.db-*
 node_modules/
 frontend/dist/
 .venv/
-evaluation/results/*.json
-!evaluation/results/eval-baseline.json
+frontend/e2e-results/
+frontend/test-results/
+frontend/playwright-report/

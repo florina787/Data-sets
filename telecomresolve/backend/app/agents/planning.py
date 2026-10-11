@@ -194,7 +194,8 @@ def plan(case_id: str, service_id: str, triage: TriageOutput, bundle: EvidenceBu
         prior_out.append(PriorIntervention(
             source_ref=entries[-1]["source_ref"], action=action, outcome=entries[-1]["outcome"],
             repeated_in_recommendation=repeated,
-            justification=(f"Already performed {n} time(s) without resolving the symptom; not repeated."
+            justification=(f"Recorded as already tried in {n} source(s) "
+                           f"({', '.join(e['source_ref'] for e in entries)}) without resolving the symptom; not repeated."
                            if not repeated else "Repeated because new evidence justifies it.")))
 
     oppose = [r for r in top.opposing_refs]
