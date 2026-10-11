@@ -353,12 +353,12 @@ def evaluation_agent(gw: ToolGateway, facts: dict) -> AgentResult:
     failed = [g["gate_id"] for g in ev["gates"] if g["status"] != "PASS"]
     if failed:
         findings.append("Blocking gates: " + ", ".join(failed) + ".")
-    crosses = [c for c, v in cells.items() if v["delta_ci95_pp"][0] < 0 < v["delta_ci95_pp"][1]]
+    crosses = [c for c, v in cells.items() if v["delta_ci95_pp"][0] <= 0 <= v["delta_ci95_pp"][1]]
     limitations = [
         "Data and predictions are synthetic fixtures; no computer-vision inference or training occurred.",
         "Reference label validity is not established and requires expert review.",
         f"{len(cells)} cells are compared; some intervals will exclude zero by chance (no multiplicity correction applied).",
-        f"{len(crosses)} cell deltas have 95% intervals spanning zero.",
+        f"{len(crosses)} of {len(cells)} cell deltas have 95% intervals that include zero (no detectable change at this sample size).",
         "Deterministic demo gates are illustrative and do not replace a production statistical review.",
         "Subgroup parity on synthetic strata does not demonstrate fairness.",
     ]
