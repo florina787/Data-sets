@@ -1,0 +1,12 @@
+{
+  "note": "Only BR-101 is implemented. The other scenarios are labelled backlog contracts and are NOT working features.",
+  "scenarios": [
+    {"id": "BR-101", "name": "Foundation shade — deeper tones under warm indoor light", "status": "IMPLEMENTED", "change": "Improve shade recommendations for TS-4 × warm_indoor without regressing other cells", "evidence_and_gates": "Per-cell paired top-1/top-3, sample sizes, no-regression, target improvement, privacy/authorization controls, approvals, simulated rollout, monitoring, rollback"},
+    {"id": "SC-LIP-AR", "name": "Lipstick AR", "status": "PLANNED (backlog — not implemented)", "change": "Add a new finish", "evidence_and_gates": "Licensed assets, boundary quality, occlusion, device tests and approved visual references. Requires an actual AR renderer; any coloured illustration must be labelled illustrative."},
+    {"id": "SC-HAIR", "name": "Hair colour", "status": "PLANNED (backlog — not implemented)", "change": "Improve dark and curly hair previews", "evidence_and_gates": "Segmentation coverage, reference quality, texture preservation and device checks"},
+    {"id": "SC-RECO", "name": "Product recommendations", "status": "PLANNED (backlog — not implemented)", "change": "Respect budget and stock", "evidence_and_gates": "Deterministic budget filter, inventory freshness, catalogue IDs and explicit unknown handling"},
+    {"id": "SC-SKIN", "name": "Skincare assistant guardrails", "status": "PLANNED (backlog — not implemented)", "change": "Avoid unsupported medical claims", "evidence_and_gates": "Approved claims list, citation checks, adversarial prompts and appropriate escalation"},
+    {"id": "SC-DELETE", "name": "Photo deletion", "status": "PARTIAL (image sandbox deletion implemented; no production storage)", "change": "Delete user images and derivatives", "evidence_and_gates": "Consent records, storage inventory, deletion jobs and documented backup behaviour"},
+    {"id": "SC-LLM-MIGRATE", "name": "Provider migration", "status": "PLANNED (backlog — not implemented)", "change": "Change the language model", "evidence_and_gates": "Paired quality tests, privacy review, cost, latency and rollback readiness"}
+  ]
+}
