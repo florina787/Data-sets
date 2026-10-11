@@ -31,7 +31,7 @@ def simulate_window(release_id: str, model_id: str, lpm_id: str, index: int, all
     mf = fixtures.models_file()
     prof = mf["fixture_profiles"][model_id]
     lpm = mf["lighting_profile_maps"][lpm_id]
-    rng = np.random.default_rng(_seed("monitor", release_id, index))
+    rng = np.random.default_rng(_seed("monitor", model_id, lpm_id, index))  # fixed seed: reproducible demo
     total = int(SESSIONS_PER_WINDOW_AT_100 * allocation_pct / 100)
     cells = {}
     exposures = labelled = 0
