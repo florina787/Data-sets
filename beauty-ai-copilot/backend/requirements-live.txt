@@ -1,0 +1,3 @@
+# Optional: only for LLM_MODE=live with ANTHROPIC_API_KEY set.
+-r requirements.txt
+anthropic>=0.69

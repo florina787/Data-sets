@@ -1,0 +1,68 @@
+name: beauty-ai-copilot CI
+
+on:
+  push:
+    paths: ["beauty-ai-copilot/**", ".github/workflows/beauty-ai-copilot-ci.yml"]
+  pull_request:
+    paths: ["beauty-ai-copilot/**", ".github/workflows/beauty-ai-copilot-ci.yml"]
+
+defaults:
+  run:
+    working-directory: beauty-ai-copilot
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r backend/requirements-dev.txt
+      - name: Fixtures are reproducible from the fixed seed
+        run: cd backend && python -m app.datagen.synthetic && git diff --exit-code -- ../data/synthetic
+      - name: Migrations match models
+        run: cd backend && DATABASE_URL=sqlite:///$RUNNER_TEMP/m.db alembic upgrade head && DATABASE_URL=sqlite:///$RUNNER_TEMP/m.db alembic check
+      - name: Backend tests (no paid credentials)
+        run: cd backend && python -m pytest -q
+      - name: Dependency audit
+        run: cd backend && pip-audit -r requirements.txt
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: beauty-ai-copilot/frontend/package-lock.json }
+      - run: cd frontend && npm ci
+      - run: cd frontend && npm run typecheck && npm test && npm run build
+      - run: cd frontend && npm audit --omit=dev --audit-level=high
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: beauty-ai-copilot/frontend/package-lock.json }
+      - run: pip install -r backend/requirements.txt
+      - run: cd frontend && npm ci && npx playwright install --with-deps chromium && npm run build
+      - run: mkdir -p var && cd frontend && npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: playwright-traces, path: beauty-ai-copilot/frontend/test-results }
+
+  secrets-and-containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+      - name: Build images
+        run: touch .no-extra-ca && docker compose build
+      - name: Container vulnerability scan (backend)
+        uses: aquasecurity/trivy-action@0.28.0
+        with: { image-ref: "beauty-ai-copilot-backend", severity: "CRITICAL,HIGH", ignore-unfixed: true, exit-code: "0" }

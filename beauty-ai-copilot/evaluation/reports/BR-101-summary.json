@@ -1,0 +1,501 @@
+{
+ "rc1": {
+  "candidate": "shade-matcher-v2.4.0-rc1",
+  "outcome": "FAIL",
+  "overall_top1_delta_pp": 2.51,
+  "overall_top1": [
+   75.67,
+   78.18
+  ],
+  "eligible": 1352,
+  "exclusions": {
+   "image_quality_below_protocol": 25,
+   "retention_expired": 17,
+   "evaluation_not_permitted": 18,
+   "consent_withdrawn": 28
+  },
+  "cells": {
+   "TS-1|daylight_neutral": {
+    "n": 114,
+    "baseline_top1": 84.21,
+    "candidate_top1": 84.21,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-1|warm_indoor": {
+    "n": 114,
+    "baseline_top1": 82.46,
+    "candidate_top1": 85.09,
+    "delta_pp": 2.63,
+    "ci95_pp": [
+     0.0,
+     6.14
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-1|cool_fluorescent": {
+    "n": 116,
+    "baseline_top1": 81.9,
+    "candidate_top1": 81.9,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-2|daylight_neutral": {
+    "n": 111,
+    "baseline_top1": 83.78,
+    "candidate_top1": 83.78,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-2|warm_indoor": {
+    "n": 110,
+    "baseline_top1": 81.82,
+    "candidate_top1": 85.45,
+    "delta_pp": 3.63,
+    "ci95_pp": [
+     0.91,
+     7.27
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-2|cool_fluorescent": {
+    "n": 113,
+    "baseline_top1": 78.76,
+    "candidate_top1": 78.76,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-3|daylight_neutral": {
+    "n": 112,
+    "baseline_top1": 86.61,
+    "candidate_top1": 86.61,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-3|warm_indoor": {
+    "n": 112,
+    "baseline_top1": 58.93,
+    "candidate_top1": 65.18,
+    "delta_pp": 6.25,
+    "ci95_pp": [
+     1.79,
+     11.61
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-3|cool_fluorescent": {
+    "n": 116,
+    "baseline_top1": 76.72,
+    "candidate_top1": 72.41,
+    "delta_pp": -4.31,
+    "ci95_pp": [
+     -8.62,
+     -0.86
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-4|daylight_neutral": {
+    "n": 111,
+    "baseline_top1": 74.77,
+    "candidate_top1": 74.77,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-4|warm_indoor": {
+    "n": 115,
+    "baseline_top1": 47.83,
+    "candidate_top1": 64.35,
+    "delta_pp": 16.52,
+    "ci95_pp": [
+     9.57,
+     24.35
+    ],
+    "coverage_delta_pp": -3.48
+   },
+   "TS-4|cool_fluorescent": {
+    "n": 108,
+    "baseline_top1": 70.37,
+    "candidate_top1": 75.93,
+    "delta_pp": 5.56,
+    "ci95_pp": [
+     1.85,
+     10.19
+    ],
+    "coverage_delta_pp": 0.0
+   }
+  },
+  "gates": {
+   "G-CONFIG": "PASS",
+   "G-ARTIFACT": "PASS",
+   "G-AMBIGUITY": "PASS",
+   "G-EVIDENCE": "PASS",
+   "G-SAMPLES": "PASS",
+   "G-TARGET": "PASS",
+   "G-NO-REGRESSION": "FAIL",
+   "G-COVERAGE": "FAIL",
+   "G-ABSTENTION-DENOMINATOR": "PASS",
+   "G-CONTROLS": "PASS"
+  }
+ },
+ "rc2": {
+  "candidate": "shade-matcher-v2.4.0-rc2",
+  "outcome": "PASS",
+  "overall_top1_delta_pp": 1.77,
+  "overall_top1": [
+   75.67,
+   77.44
+  ],
+  "eligible": 1352,
+  "exclusions": {
+   "image_quality_below_protocol": 25,
+   "retention_expired": 17,
+   "evaluation_not_permitted": 18,
+   "consent_withdrawn": 28
+  },
+  "cells": {
+   "TS-1|daylight_neutral": {
+    "n": 114,
+    "baseline_top1": 84.21,
+    "candidate_top1": 84.21,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-1|warm_indoor": {
+    "n": 114,
+    "baseline_top1": 82.46,
+    "candidate_top1": 83.33,
+    "delta_pp": 0.87,
+    "ci95_pp": [
+     0.0,
+     2.63
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-1|cool_fluorescent": {
+    "n": 116,
+    "baseline_top1": 81.9,
+    "candidate_top1": 81.9,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-2|daylight_neutral": {
+    "n": 111,
+    "baseline_top1": 83.78,
+    "candidate_top1": 83.78,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-2|warm_indoor": {
+    "n": 110,
+    "baseline_top1": 81.82,
+    "candidate_top1": 84.55,
+    "delta_pp": 2.73,
+    "ci95_pp": [
+     0.0,
+     6.36
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-2|cool_fluorescent": {
+    "n": 113,
+    "baseline_top1": 78.76,
+    "candidate_top1": 78.76,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-3|daylight_neutral": {
+    "n": 112,
+    "baseline_top1": 86.61,
+    "candidate_top1": 86.61,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-3|warm_indoor": {
+    "n": 112,
+    "baseline_top1": 58.93,
+    "candidate_top1": 64.29,
+    "delta_pp": 5.36,
+    "ci95_pp": [
+     1.79,
+     9.82
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-3|cool_fluorescent": {
+    "n": 116,
+    "baseline_top1": 76.72,
+    "candidate_top1": 76.72,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-4|daylight_neutral": {
+    "n": 111,
+    "baseline_top1": 74.77,
+    "candidate_top1": 74.77,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-4|warm_indoor": {
+    "n": 115,
+    "baseline_top1": 47.83,
+    "candidate_top1": 60.0,
+    "delta_pp": 12.17,
+    "ci95_pp": [
+     6.09,
+     18.26
+    ],
+    "coverage_delta_pp": 0.0
+   },
+   "TS-4|cool_fluorescent": {
+    "n": 108,
+    "baseline_top1": 70.37,
+    "candidate_top1": 70.37,
+    "delta_pp": 0.0,
+    "ci95_pp": [
+     0.0,
+     0.0
+    ],
+    "coverage_delta_pp": 0.0
+   }
+  },
+  "gates": {
+   "G-CONFIG": "PASS",
+   "G-ARTIFACT": "PASS",
+   "G-AMBIGUITY": "PASS",
+   "G-EVIDENCE": "PASS",
+   "G-SAMPLES": "PASS",
+   "G-TARGET": "PASS",
+   "G-NO-REGRESSION": "PASS",
+   "G-COVERAGE": "PASS",
+   "G-ABSTENTION-DENOMINATOR": "PASS",
+   "G-CONTROLS": "PASS"
+  }
+ },
+ "monitoring": {
+  "alert": {
+   "id": "ALT-e12103995120",
+   "release_id": "REL-c7880fd1771c",
+   "scope": "DEV-T3|warm_indoor",
+   "rule": "labelled \u2265 40, accuracy < reference \u2212 10.0 pp, Wilson 95% upper < reference",
+   "observed": {
+    "accuracy_pct": 42.11,
+    "labelled": 57,
+    "wilson95": [
+     30.19,
+     55.02
+    ],
+    "reference_pct": 72.95
+   },
+   "status": "OPEN",
+   "investigation": null,
+   "created_at": "2026-10-11T03:06:10.040099+00:00"
+  },
+  "windows": [
+   {
+    "index": 0,
+    "allocation_pct": 5,
+    "simulated_sessions": 1000,
+    "labelled": 94
+   },
+   {
+    "index": 1,
+    "allocation_pct": 25,
+    "simulated_sessions": 5000,
+    "labelled": 503
+   },
+   {
+    "index": 2,
+    "allocation_pct": 25,
+    "simulated_sessions": 5000,
+    "labelled": 504
+   }
+  ],
+  "investigation": {
+   "findings": [
+    "DEV-T3|warm_indoor: observed top-1 42.11% on 57 labelled sessions vs reference 72.95% (Wilson 95% upper 55.02%).",
+    "Other DEV-T3 cells: DEV-T3|daylight_neutral: 86.76% (n=68); DEV-T3|cool_fluorescent: 85.0% (n=40)",
+    "Same lighting on other devices: DEV-T1|warm_indoor: 73.37% (n=184); DEV-T2|warm_indoor: 79.35% (n=155)"
+   ],
+   "suspected_cause": {
+    "hypothesis": "Released lighting-profile map lpm-v2 maps DEV-T3/warm_indoor to 'cool_fluorescent' (previous lpm-v1: 'warm_indoor').",
+    "evidence": [
+     "config:lpm-v2:DEV-T3.warm_indoor",
+     "alert:ALT-e12103995120"
+    ],
+    "confidence": "supported by configuration diff and cohort pattern; confirm with a targeted test"
+   },
+   "proposed_response": {
+    "action": "rollback",
+    "target_model_id": "shade-matcher-v2.3.0",
+    "requires": "authorized release-manager approval (prototype policy POL-REL-005 \u00a75)"
+   },
+   "caveats": [
+    "A statistical alert alone does not prove root cause.",
+    "Observations are simulated; reference labels are synthetic and arrive with delay.",
+    "Confirm the hypothesis with a targeted device test before closing the incident."
+   ]
+  },
+  "rollback": {
+   "id": "RB-64fae3dcdd8f",
+   "release_id": "REL-c7880fd1771c",
+   "requested_by": "u-ops",
+   "reason": "DEV-T3 warm_indoor outcome regression",
+   "alert_id": "ALT-e12103995120",
+   "status": "EXECUTED",
+   "approved_by": "u-release",
+   "target_model_id": "shade-matcher-v2.3.0",
+   "compatibility": {
+    "target_model_id": "shade-matcher-v2.3.0",
+    "checks": {
+     "catalogue_compatible": true,
+     "artifact_digest_matches_registry": true,
+     "previous_digest_matches_release_record": true
+    },
+    "compatible": true,
+    "active_catalogue": "CAT-2026.1"
+   },
+   "error": null,
+   "created_at": "2026-10-11T03:06:10.071889",
+   "completed_at": "2026-10-11T03:06:10.081866",
+   "duration_ms": 4.15
+  }
+ },
+ "final_status": "ROLLED_BACK",
+ "telemetry": {
+  "by_agent": {
+   "requirements": {
+    "invocations": 2,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 16,
+    "latency_ms_p50": 6.36,
+    "latency_ms_max": 6.36
+   },
+   "evidence": {
+    "invocations": 1,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 33,
+    "latency_ms_p50": 4.24,
+    "latency_ms_max": 4.24
+   },
+   "impact": {
+    "invocations": 1,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 2,
+    "latency_ms_p50": 2.04,
+    "latency_ms_max": 2.04
+   },
+   "development": {
+    "invocations": 2,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 4,
+    "latency_ms_p50": 3.68,
+    "latency_ms_max": 3.68
+   },
+   "evaluation": {
+    "invocations": 2,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 2,
+    "latency_ms_p50": 1.12,
+    "latency_ms_max": 1.12
+   },
+   "governance": {
+    "invocations": 2,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 4,
+    "latency_ms_p50": 4.75,
+    "latency_ms_max": 4.75
+   },
+   "release": {
+    "invocations": 1,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 1,
+    "latency_ms_p50": 6.89,
+    "latency_ms_max": 6.89
+   },
+   "monitoring": {
+    "invocations": 1,
+    "errors": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost_usd": 0.0,
+    "tool_calls": 2,
+    "latency_ms_p50": 1.28,
+    "latency_ms_max": 1.28
+   }
+  },
+  "note": "Measured latencies of this deployment. Tokens/cost are zero in deterministic mode (no model calls)."
+ }
+}

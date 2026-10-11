@@ -1,0 +1,10 @@
+# Pinned to versions verified with the test suite (Python 3.12/3.13).
+fastapi==0.143.0
+uvicorn==0.53.0
+pydantic==2.13.5
+SQLAlchemy==2.1.4
+alembic==1.20.0
+langgraph==1.2.14
+numpy==2.5.3
+psycopg[binary]==3.3.6
+httpx==0.28.1
