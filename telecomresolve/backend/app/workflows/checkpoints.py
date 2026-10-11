@@ -43,20 +43,24 @@ def reset_checkpoints() -> None:
     """Drop all checkpoints (demo reset / tests)."""
     global _saver, _conn
     with _lock:
-        url = get_settings().checkpoint_url
         if _conn is not None:
-            if url.startswith("sqlite"):
+            if isinstance(_conn, sqlite3.Connection):
                 _conn.close()
             else:
-                with _conn.cursor() as cur:
-                    for t in ("checkpoint_writes", "checkpoint_blobs", "checkpoints"):
-                        cur.execute(f"DELETE FROM {t}")  # noqa: S608 - fixed table names
                 _conn.close()
         _saver = None
         _conn = None
+        url = get_settings().checkpoint_url
         if url.startswith("sqlite"):
             path = Path(url.split("sqlite:///", 1)[1])
             for suffix in ("", "-wal", "-shm"):
                 p = Path(str(path) + suffix)
                 if p.exists():
                     p.unlink()
+            return
+    # Postgres: clear checkpoint tables through a fresh connection.
+    get_checkpointer()
+    with _lock:
+        with _conn.cursor() as cur:
+            for t in ("checkpoint_writes", "checkpoint_blobs", "checkpoints"):
+                cur.execute(f"DELETE FROM {t}")  # noqa: S608 - fixed table names

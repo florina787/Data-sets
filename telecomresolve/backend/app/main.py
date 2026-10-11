@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -33,7 +34,19 @@ log = logging.getLogger("telecomresolve")
 
 def create_app(run_recovery: bool = True) -> FastAPI:
     settings = get_settings()
-    app = FastAPI(title="TelecomResolve Copilot API", version="0.1.0",
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        if run_recovery:
+            try:
+                resumed = recover_incomplete_jobs()
+                if resumed:
+                    log.info("resumed interrupted investigations: %s", resumed)
+            except Exception:  # noqa: BLE001 - startup must not die on recovery
+                log.exception("checkpoint recovery failed")
+        yield
+
+    app = FastAPI(title="TelecomResolve Copilot API", version="0.1.0", lifespan=lifespan,
                   description=f"{DISCLAIMER}. Evidence-backed investigation workflow prototype.")
     app.add_middleware(CORSMiddleware, allow_origins=list(settings.cors_origins), allow_credentials=False,
                        allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type",
@@ -67,16 +80,6 @@ def create_app(run_recovery: bool = True) -> FastAPI:
                                                                  "errors": exc.errors()}})
 
     app.include_router(router)
-
-    if run_recovery:
-        @app.on_event("startup")
-        def _recover():  # pragma: no cover - exercised manually / in startup
-            try:
-                resumed = recover_incomplete_jobs()
-                if resumed:
-                    log.info("resumed interrupted investigations: %s", resumed)
-            except Exception:  # noqa: BLE001
-                log.exception("checkpoint recovery failed")
 
     return app
 

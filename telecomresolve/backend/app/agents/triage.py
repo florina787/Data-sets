@@ -53,9 +53,9 @@ def run_demo(inp: TriageInput) -> TriageOutput:
     freq = re.search(r"(several|many|a few|a couple of|\d+) times a day|every (evening|night|day|morning)[^.,]*", t)
     onset_m = re.search(r"since (this morning|yesterday|last \w+)|this week|today|an hour ago", t)
     onset = onset_m.group(0) if onset_m else "unknown"
-    lookback = 24
-    if "this week" in t:
-        lookback = 168
+    # Lookback follows the reported onset of the current episode, not every
+    # time reference in the text ("dropping today ... outage earlier this week").
+    lookback = 168 if onset == "this week" else 24
     devices = "all" if re.search(r"all (of )?(our|my)? ?devices", t) else (
         "wifi_only" if "wi-fi only" in t or "wifi only" in t else "unknown")
     actions = [a for a, p in _ACTION_PATTERNS.items() if re.search(p, t)]
