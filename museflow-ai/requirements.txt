@@ -1,0 +1,7 @@
+# MuseFlow AI — public demo runtime dependencies (validated on Python 3.11 and 3.13).
+# No LLM SDKs, HTTP clients or external-service connectors on purpose.
+streamlit==1.50.0
+langgraph==1.0.10
+pydantic==2.12.5
+plotly==6.3.0
+pandas==2.3.3

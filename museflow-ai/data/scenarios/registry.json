@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "id": "interview_prep",
+      "title": "Interview Preparation",
+      "emoji": "🎤",
+      "prompt": "Prepare me for a technical interview.",
+      "description": "Builds a study plan, sample questions and technical topics from a synthetic job description.",
+      "specialists": ["planning", "research", "document"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 90,
+      "default_params": {"document_id": "job_description", "role": "Senior Python Engineer", "days_until": 7}
+    },
+    {
+      "id": "email_followup",
+      "title": "Email Assistant",
+      "emoji": "💌",
+      "prompt": "Draft a professional follow-up email.",
+      "description": "Drafts a synthetic email, checks policy, waits for your approval, then simulates sending.",
+      "specialists": ["email"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 15,
+      "default_params": {"email_scenario": "interview_follow_up", "recipient_role": "hiring_manager", "tone": "professional"}
+    },
+    {
+      "id": "weekly_planning",
+      "title": "Weekly Planning",
+      "emoji": "📅",
+      "prompt": "Organize my week.",
+      "description": "Reads your session memories and the synthetic calendar, then time-blocks a productive week.",
+      "specialists": ["memory", "calendar", "planning"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 45,
+      "default_params": {"plan_template": "week"}
+    },
+    {
+      "id": "research",
+      "title": "Research Assistant",
+      "emoji": "🔎",
+      "prompt": "Compare LangGraph and CrewAI.",
+      "description": "Assembles a synthetic research brief; adds an Analytics pass when the topic has a scoring matrix.",
+      "specialists": ["research"],
+      "governance": false,
+      "showcase": true,
+      "minutes_saved_estimate": 60,
+      "default_params": {"topic": "ai_frameworks"}
+    },
+    {
+      "id": "document_analysis",
+      "title": "Document Analysis",
+      "emoji": "📚",
+      "prompt": "Analyze the sample insurance policy.",
+      "description": "Extracts text, key fields and evidence from a bundled synthetic document, plus a glossary from Research.",
+      "specialists": ["document", "research"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 40,
+      "default_params": {"document_id": "insurance_policy"}
+    },
+    {
+      "id": "travel_planning",
+      "title": "Travel Planning",
+      "emoji": "🧳",
+      "prompt": "Plan a weekend getaway.",
+      "description": "Picks a fictional destination, drafts an itinerary, checks the calendar and asks before holding it.",
+      "specialists": ["research", "planning", "calendar"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 75,
+      "default_params": {"budget": "mid", "vibe": "relaxing"}
+    },
+    {
+      "id": "browser",
+      "title": "Simulated Online Booking",
+      "emoji": "🌐",
+      "prompt": "Book the Stardust Suites room for me.",
+      "description": "Simulates browser navigation from fixtures, fills a form, and asks before any simulated submission.",
+      "specialists": ["browser"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 20,
+      "default_params": {"task": "booking"}
+    },
+    {
+      "id": "personal_memory",
+      "title": "Personal Memory",
+      "emoji": "🧠",
+      "prompt": "Remember that I prefer deep-work blocks in the morning.",
+      "description": "Validates and stores a harmless preference in this browser session's memory.",
+      "specialists": ["memory"],
+      "governance": false,
+      "showcase": true,
+      "minutes_saved_estimate": 2,
+      "default_params": {"operation": "add", "category": "Preferences", "text": "I prefer deep-work blocks in the morning."}
+    },
+    {
+      "id": "project_planning",
+      "title": "Project Planning",
+      "emoji": "🗂️",
+      "prompt": "Organize my project.",
+      "description": "Builds a dependency-aware task plan and computes its critical path.",
+      "specialists": ["planning", "analytics"],
+      "governance": true,
+      "showcase": true,
+      "minutes_saved_estimate": 50,
+      "default_params": {"plan_template": "project", "priority": "high", "execute": false}
+    },
+    {
+      "id": "dream_team",
+      "title": "Multi-Agent Collaboration",
+      "emoji": "🦄",
+      "prompt": "Launch my AI dream team.",
+      "description": "Nova plans which specialists to recruit; the Supervisor routes conditionally to each of them.",
+      "specialists": ["planning"],
+      "governance": true,
+      "dynamic": true,
+      "showcase": true,
+      "minutes_saved_estimate": 120,
+      "default_params": {"goals": ["research", "calendar", "email", "analytics"]}
+    },
+    {
+      "id": "memory_recall",
+      "title": "Memory Recall",
+      "emoji": "🌸",
+      "prompt": "What do you remember about me?",
+      "description": "Searches this session's memory garden.",
+      "specialists": ["memory"],
+      "governance": false,
+      "showcase": false,
+      "minutes_saved_estimate": 1,
+      "default_params": {"operation": "search", "query": ""}
+    },
+    {
+      "id": "schedule_meeting",
+      "title": "Schedule a Meeting",
+      "emoji": "🌙",
+      "prompt": "Schedule a meeting.",
+      "description": "Checks conflicts, suggests a free slot, and asks before adding a simulated appointment.",
+      "specialists": ["calendar"],
+      "governance": true,
+      "showcase": false,
+      "minutes_saved_estimate": 10,
+      "default_params": {"title": "Coffee chat with Mentor", "day_offset": 2, "start": "10:00", "duration_min": 30}
+    },
+    {
+      "id": "document_edit",
+      "title": "Document Redline",
+      "emoji": "🖋️",
+      "prompt": "Add a review note to a document.",
+      "description": "Proposes a deterministic redline and asks before applying it to the session copy.",
+      "specialists": ["document"],
+      "governance": true,
+      "showcase": false,
+      "minutes_saved_estimate": 10,
+      "default_params": {"document_id": "meeting_notes", "edit": "add_review_note"}
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "currency_note": "Fictional prices in demo credits (✦).",
+  "destinations": [
+    {"id": "moonlit_bay", "name": "Moonlit Bay", "vibe": "relaxing", "budget": "mid", "price": 420, "travel_hours": 2.5,
+     "highlights": ["Bioluminescent beach walk", "Seaside spa morning", "Lantern-lit night market"],
+     "stay": "Pearl Tide Inn (fictional)"},
+    {"id": "lavender_hollow", "name": "Lavender Hollow", "vibe": "relaxing", "budget": "low", "price": 260, "travel_hours": 1.5,
+     "highlights": ["Lavender-field picnic", "Pottery class", "Stargazing meadow"],
+     "stay": "Hollow Cottage (fictional)"},
+    {"id": "crystal_pines", "name": "Crystal Pines", "vibe": "adventurous", "budget": "mid", "price": 480, "travel_hours": 3,
+     "highlights": ["Sunrise ridge hike", "Glass-canopy zipline", "Fireside cocoa tasting"],
+     "stay": "Pinecrest Lodge (fictional)"},
+    {"id": "aurora_city", "name": "Aurora City", "vibe": "cultural", "budget": "high", "price": 780, "travel_hours": 1,
+     "highlights": ["Holographic art museum", "Rooftop jazz evening", "Chef's tasting menu"],
+     "stay": "Celestine Hotel (fictional)"},
+    {"id": "rosewater_isle", "name": "Rosewater Isle", "vibe": "adventurous", "budget": "high", "price": 860, "travel_hours": 4,
+     "highlights": ["Kayak to the coral garden", "Island bike loop", "Sunset sailing"],
+     "stay": "Rosewater Villas (fictional)"}
+  ]
+}

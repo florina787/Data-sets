@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MuseFlow AI logo">
+  <defs>
+    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7B7D2"/><stop offset="100%" stop-color="#B79CED"/>
+    </linearGradient>
+    <linearGradient id="lh" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#D9A5A0"/><stop offset="100%" stop-color="#FFF0D5"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#lg)"/>
+  <path d="M24 50 L40 10 L36 50 Z" fill="url(#lh)" stroke="#4A315E" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M28 40 L37 41 M30 32 L38 33 M33 24 L39 25" stroke="#4A315E" stroke-width="1.2"/>
+  <path d="M48 14 L50 19 L55 21 L50 23 L48 28 L46 23 L41 21 L46 19 Z" fill="#FFF9FD"/>
+</svg>

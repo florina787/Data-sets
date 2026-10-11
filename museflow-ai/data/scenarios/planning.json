@@ -1,0 +1,65 @@
+{
+  "templates": {
+    "interview": {
+      "title": "Prepare for an interview",
+      "tasks": [
+        {"id": "T1", "title": "Analyze the job description", "hours": 1, "depends_on": [], "agent": "document"},
+        {"id": "T2", "title": "Review Python fundamentals", "hours": 3, "depends_on": ["T1"], "agent": "research"},
+        {"id": "T3", "title": "Practise system-design questions", "hours": 4, "depends_on": ["T1"], "agent": "research"},
+        {"id": "T4", "title": "Prepare STAR stories", "hours": 2, "depends_on": ["T1"], "agent": "memory"},
+        {"id": "T5", "title": "Mock interview rehearsal", "hours": 2, "depends_on": ["T2", "T3", "T4"], "agent": "planning"},
+        {"id": "T6", "title": "Send thank-you note (draft)", "hours": 0.5, "depends_on": ["T5"], "agent": "email"}
+      ]
+    },
+    "vacation": {
+      "title": "Plan a vacation",
+      "tasks": [
+        {"id": "T1", "title": "Choose destination", "hours": 1, "depends_on": [], "agent": "research"},
+        {"id": "T2", "title": "Check calendar availability", "hours": 0.5, "depends_on": [], "agent": "calendar"},
+        {"id": "T3", "title": "Compare stays", "hours": 1.5, "depends_on": ["T1"], "agent": "browser"},
+        {"id": "T4", "title": "Draft itinerary", "hours": 1, "depends_on": ["T1", "T2"], "agent": "planning"},
+        {"id": "T5", "title": "Hold reservation (simulated)", "hours": 0.5, "depends_on": ["T3", "T4"], "agent": "browser"},
+        {"id": "T6", "title": "Share plan with travel buddy (draft)", "hours": 0.5, "depends_on": ["T5"], "agent": "email"}
+      ]
+    },
+    "project": {
+      "title": "Organize a project",
+      "tasks": [
+        {"id": "T1", "title": "Clarify goals & success metrics", "hours": 2, "depends_on": [], "agent": "planning"},
+        {"id": "T2", "title": "Gather requirements", "hours": 4, "depends_on": ["T1"], "agent": "document"},
+        {"id": "T3", "title": "Research technical options", "hours": 5, "depends_on": ["T1"], "agent": "research"},
+        {"id": "T4", "title": "Draft architecture", "hours": 6, "depends_on": ["T2", "T3"], "agent": "planning"},
+        {"id": "T5", "title": "Estimate & sequence work", "hours": 3, "depends_on": ["T4"], "agent": "analytics"},
+        {"id": "T6", "title": "Kickoff meeting", "hours": 1, "depends_on": ["T5"], "agent": "calendar"},
+        {"id": "T7", "title": "Send kickoff summary (draft)", "hours": 1, "depends_on": ["T6"], "agent": "email"}
+      ]
+    },
+    "presentation": {
+      "title": "Prepare a presentation",
+      "tasks": [
+        {"id": "T1", "title": "Define audience & key message", "hours": 1, "depends_on": [], "agent": "planning"},
+        {"id": "T2", "title": "Collect supporting data", "hours": 3, "depends_on": ["T1"], "agent": "research"},
+        {"id": "T3", "title": "Outline the story", "hours": 1.5, "depends_on": ["T1"], "agent": "planning"},
+        {"id": "T4", "title": "Build charts", "hours": 2, "depends_on": ["T2"], "agent": "analytics"},
+        {"id": "T5", "title": "Design slides", "hours": 4, "depends_on": ["T3", "T4"], "agent": "document"},
+        {"id": "T6", "title": "Rehearse twice", "hours": 2, "depends_on": ["T5"], "agent": "calendar"}
+      ]
+    },
+    "week": {
+      "title": "Plan a productive week",
+      "tasks": [
+        {"id": "T1", "title": "Review goals & memories", "hours": 0.5, "depends_on": [], "agent": "memory"},
+        {"id": "T2", "title": "Block deep-work sessions", "hours": 0.5, "depends_on": ["T1"], "agent": "calendar"},
+        {"id": "T3", "title": "Batch email & admin time", "hours": 0.5, "depends_on": ["T1"], "agent": "email"},
+        {"id": "T4", "title": "Schedule wellness breaks", "hours": 0.25, "depends_on": ["T1"], "agent": "calendar"},
+        {"id": "T5", "title": "Friday reflection", "hours": 0.5, "depends_on": ["T2", "T3", "T4"], "agent": "planning"}
+      ]
+    }
+  },
+  "focus_blocks": [
+    {"label": "Deep work", "emoji": "🎯", "duration_min": 120},
+    {"label": "Email & admin", "emoji": "💌", "duration_min": 45},
+    {"label": "Learning", "emoji": "📚", "duration_min": 60},
+    {"label": "Wellness break", "emoji": "🌸", "duration_min": 30}
+  ]
+}

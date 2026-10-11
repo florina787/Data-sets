@@ -1,0 +1,49 @@
+{
+  "note": "All sites are fictional (.example domains). No real browser is launched.",
+  "tasks": {
+    "hotel_search": {
+      "title": "Search for a hotel", "url": "https://stardust-stays.example/search?city=moonlit-bay",
+      "flaky_first_attempt": false,
+      "page_data": {"results": [
+        {"name": "Stardust Suites", "price": 189, "rating": 4.8},
+        {"name": "Pearl Tide Inn", "price": 142, "rating": 4.5},
+        {"name": "Nebula Nook", "price": 118, "rating": 4.1}
+      ]},
+      "form": null, "action_tool": null
+    },
+    "compare_products": {
+      "title": "Compare fictional products", "url": "https://glimmer-market.example/compare?items=lumi-lamp,aurora-lamp",
+      "flaky_first_attempt": false,
+      "page_data": {"results": [
+        {"name": "Lumi Desk Lamp", "price": 59, "rating": 4.7},
+        {"name": "Aurora Glow Lamp", "price": 72, "rating": 4.4},
+        {"name": "Comet Mini Lamp", "price": 35, "rating": 4.0}
+      ]},
+      "form": null, "action_tool": null
+    },
+    "fill_form": {
+      "title": "Fill out a sample form", "url": "https://dreamform.example/newsletter",
+      "flaky_first_attempt": false,
+      "page_data": {"results": []},
+      "form": {"Full name": "Demo Dreamer", "Email": "dreamer@example.com", "Interests": "AI, design, travel"},
+      "action_tool": "browser.simulate_submit_form"
+    },
+    "review_itinerary": {
+      "title": "Review a fictional travel itinerary", "url": "https://wanderlight.example/trips/WL-2048",
+      "flaky_first_attempt": false,
+      "page_data": {"results": [
+        {"name": "Fri 18:00 — Train to Moonlit Bay", "price": 48, "rating": null},
+        {"name": "Sat 10:00 — Seaside spa", "price": 90, "rating": null},
+        {"name": "Sun 16:00 — Train home", "price": 48, "rating": null}
+      ]},
+      "form": null, "action_tool": null
+    },
+    "booking": {
+      "title": "Complete a simulated online booking", "url": "https://stardust-stays.example/book/stardust-suites",
+      "flaky_first_attempt": true,
+      "page_data": {"results": [{"name": "Stardust Suites — Deluxe Queen, 2 nights", "price": 378, "rating": 4.8}]},
+      "form": {"Guest": "Demo Dreamer", "Check-in": "Friday", "Nights": "2", "Payment": "SIMULATED — no card collected"},
+      "action_tool": "browser.simulate_booking"
+    }
+  }
+}

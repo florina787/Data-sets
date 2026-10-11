@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-labelledby="lumiTitle">
+  <title id="lumiTitle">Lumi, the MuseFlow AI unicorn</title>
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFE1EF" stop-opacity="0.95"/>
+      <stop offset="70%" stop-color="#DCC8FF" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#C9E8FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="horn" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#D9A5A0"/>
+      <stop offset="55%" stop-color="#FFF0D5"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="mane1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7B7D2"/>
+      <stop offset="100%" stop-color="#B79CED"/>
+    </linearGradient>
+    <linearGradient id="mane2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C9E8FF"/>
+      <stop offset="100%" stop-color="#DCC8FF"/>
+    </linearGradient>
+    <linearGradient id="mane3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C8F7E5"/>
+      <stop offset="100%" stop-color="#F7B7D2"/>
+    </linearGradient>
+    <linearGradient id="coat" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FFF0F7"/>
+    </linearGradient>
+  </defs>
+  <circle cx="122" cy="122" r="112" fill="url(#halo)"/>
+  <!-- horn -->
+  <path d="M128 78 L170 16 L148 84 Z" fill="url(#horn)" stroke="#D9A5A0" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M138 70 L152 74 M145 58 L158 62 M152 46 L163 49 M158 34 L166 37" stroke="#D9A5A0" stroke-width="2" stroke-linecap="round"/>
+  <!-- head & neck -->
+  <path d="M74 220 C62 172 64 132 82 106 C97 84 121 72 146 74 C171 76 189 92 197 114 C203 130 201 144 191 152 C181 160 166 158 151 152 C141 149 133 152 129 162 C123 180 126 200 133 220 Z"
+        fill="url(#coat)" stroke="#B79CED" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- ear -->
+  <path d="M104 88 L110 50 L132 80 Z" fill="#FFFFFF" stroke="#B79CED" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M110 80 L113 62 L124 78 Z" fill="#F7B7D2"/>
+  <!-- mane -->
+  <path d="M104 74 C78 70 58 92 64 118 C46 128 44 156 60 170 C46 188 52 210 74 220 C70 196 78 176 92 164 C82 146 86 124 102 110 C96 96 98 84 104 74 Z" fill="url(#mane1)"/>
+  <path d="M118 70 C100 62 84 70 80 86 C96 80 108 84 112 96 C116 86 116 78 118 70 Z" fill="url(#mane2)"/>
+  <path d="M90 128 C74 136 70 156 80 170 C84 156 92 148 104 146 C96 140 92 134 90 128 Z" fill="url(#mane3)"/>
+  <path d="M72 180 C62 192 64 206 74 216 C74 204 78 196 86 190 C80 188 76 184 72 180 Z" fill="url(#mane2)"/>
+  <!-- face -->
+  <ellipse cx="152" cy="106" rx="8" ry="10" fill="#4A315E"/>
+  <circle cx="155" cy="102" r="3" fill="#FFFFFF"/>
+  <circle cx="149" cy="110" r="1.6" fill="#FFFFFF"/>
+  <path d="M142 96 L137 91 M146 93 L143 87 M151 92 L150 86" stroke="#4A315E" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="168" cy="128" rx="11" ry="6.5" fill="#F7B7D2" opacity="0.8"/>
+  <path d="M186 132 Q189 128 192 132" stroke="#B79CED" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M170 146 Q179 152 187 145" stroke="#4A315E" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- sparkles -->
+  <g fill="#FFF0D5" stroke="#D9A5A0" stroke-width="1">
+    <path d="M200 40 L203 50 L213 53 L203 56 L200 66 L197 56 L187 53 L197 50 Z"/>
+    <path d="M40 70 L42 77 L49 79 L42 81 L40 88 L38 81 L31 79 L38 77 Z"/>
+    <path d="M208 170 L210 176 L216 178 L210 180 L208 186 L206 180 L200 178 L206 176 Z"/>
+  </g>
+  <circle cx="186" cy="80" r="3" fill="#DCC8FF"/>
+  <circle cx="34" cy="140" r="4" fill="#C9E8FF"/>
+  <circle cx="214" cy="120" r="2.5" fill="#F7B7D2"/>
+</svg>

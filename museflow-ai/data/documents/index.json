@@ -1,0 +1,16 @@
+{
+  "documents": [
+    {"id": "insurance_policy", "file": "insurance_policy.md", "title": "Starlight Home Protection Policy", "type": "Mock insurance policy", "emoji": "🛡️", "glossary_topic": "insurance_glossary",
+     "key_fields": ["Policy Number", "Policyholder", "Effective Date", "Expiry Date", "Annual Premium", "Deductible", "Coverage Limit"]},
+    {"id": "job_description", "file": "job_description.md", "title": "Senior Python Engineer — Agentic Workflows", "type": "Fictional job description", "emoji": "💼", "glossary_topic": "general_glossary",
+     "key_fields": ["Company", "Location", "Team", "Posted", "Interview Process"]},
+    {"id": "project_requirements", "file": "project_requirements.md", "title": "Project Moonbeam — Requirements", "type": "Fictional project requirements", "emoji": "🌙", "glossary_topic": "general_glossary",
+     "key_fields": ["Owner", "Status", "Target Launch", "Budget"]},
+    {"id": "meeting_notes", "file": "meeting_notes.md", "title": "Moonbeam Weekly Sync — Meeting Notes", "type": "Sample meeting notes", "emoji": "📝", "glossary_topic": "general_glossary",
+     "key_fields": ["Date", "Attendees", "Facilitator", "Next Meeting"]},
+    {"id": "business_report", "file": "business_report.md", "title": "Q3 Business Report — Glimmer Goods", "type": "Synthetic business report", "emoji": "📈", "glossary_topic": "general_glossary",
+     "key_fields": ["Company", "Period", "Prepared By", "Revenue", "Gross Margin", "Customer Growth"]},
+    {"id": "tech_spec", "file": "tech_spec.md", "title": "Technical Specification — Approval Service", "type": "Example technical specification", "emoji": "⚙️", "glossary_topic": "general_glossary",
+     "key_fields": ["Version", "Author", "Last Updated", "Latency Budget"]}
+  ]
+}

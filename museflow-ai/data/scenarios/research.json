@@ -1,0 +1,167 @@
+{
+  "disclaimer": "Demo research — synthetic data, not live web results.",
+  "topics": {
+    "ai_frameworks": {
+      "title": "Compare LangGraph and CrewAI",
+      "objective": "Give a builder an educational, side-by-side view of two popular agent-orchestration frameworks.",
+      "plan": [
+        "Frame the comparison criteria a builder cares about",
+        "Collect curated, pre-written evidence cards for each framework",
+        "Score each framework on a weighted matrix (Analytics Agent)",
+        "Summarize trade-offs and recommend when to pick each"
+      ],
+      "evidence": [
+        {"id": "SYN-R01", "source": "MuseFlow curated brief (synthetic)", "claim": "LangGraph models a workflow as an explicit graph of nodes and edges over a shared, typed state object.", "confidence": "high"},
+        {"id": "SYN-R02", "source": "MuseFlow curated brief (synthetic)", "claim": "LangGraph supports checkpointing, which enables pausing a run for human input and resuming it later.", "confidence": "high"},
+        {"id": "SYN-R03", "source": "MuseFlow curated brief (synthetic)", "claim": "CrewAI centres on role-based agents grouped into a crew that works through a list of tasks.", "confidence": "high"},
+        {"id": "SYN-R04", "source": "MuseFlow curated brief (synthetic)", "claim": "CrewAI's role/goal/backstory abstraction makes quick multi-agent prototypes approachable.", "confidence": "medium"},
+        {"id": "SYN-R05", "source": "MuseFlow curated brief (synthetic)", "claim": "Explicit graphs make control flow easy to inspect and test, at the cost of more upfront design.", "confidence": "medium"}
+      ],
+      "findings": [
+        "LangGraph favours explicit, inspectable control flow — a good fit when you need deterministic routing, approvals and resumable state.",
+        "CrewAI favours a higher-level, role-oriented abstraction — a good fit for fast prototyping of collaborative agent teams.",
+        "Both can be combined with any model provider; the orchestration choice is largely about how much control-flow visibility you need."
+      ],
+      "recommendations": [
+        "Choose LangGraph when you need human-in-the-loop checkpoints, audited routing, or fine-grained state control.",
+        "Choose CrewAI when you want to sketch a role-based team quickly and the workflow is mostly sequential.",
+        "Prototype the same small workflow in both before committing; framework APIs evolve quickly."
+      ],
+      "limitations": [
+        "Educational summary written as a fixture; it is not refreshed from live documentation.",
+        "Matrix scores are illustrative opinions, not benchmark results.",
+        "Verify current capabilities in each project's official documentation before deciding."
+      ],
+      "matrix": {
+        "options": ["LangGraph", "CrewAI"],
+        "criteria": [
+          {"name": "Control-flow explicitness", "weight": 0.25, "scores": [5, 3]},
+          {"name": "Human-in-the-loop support", "weight": 0.25, "scores": [5, 3]},
+          {"name": "Speed to first prototype", "weight": 0.2, "scores": [3, 5]},
+          {"name": "Role-based abstraction", "weight": 0.1, "scores": [2, 5]},
+          {"name": "Testability of routing", "weight": 0.2, "scores": [5, 3]}
+        ]
+      }
+    },
+    "industry": {
+      "title": "Industry snapshot: premium pet-wellness (fictional market)",
+      "objective": "Sketch a fictional market so you can practice structuring industry research.",
+      "plan": ["Define market boundaries", "Gather synthetic segment cards", "Identify trends and risks", "Recommend an entry angle"],
+      "evidence": [
+        {"id": "SYN-I01", "source": "Synthetic market card", "claim": "The fictional market is split into nutrition, grooming and wearable health trackers.", "confidence": "illustrative"},
+        {"id": "SYN-I02", "source": "Synthetic market card", "claim": "In this scenario, subscription nutrition is the fastest-growing segment.", "confidence": "illustrative"},
+        {"id": "SYN-I03", "source": "Synthetic survey (fictional)", "claim": "Fictional respondents rank 'vet-approved' as the top purchase driver.", "confidence": "illustrative"}
+      ],
+      "findings": ["Subscription models dominate the fictional growth story.", "Trust signals (vet approval) matter more than price in this scenario."],
+      "recommendations": ["Enter via a niche subscription product with a credible expert partner.", "Validate demand with a small pilot before scaling."],
+      "limitations": ["Every number and segment is invented for the demo.", "No real companies or markets are described."],
+      "matrix": null
+    },
+    "fictional_company": {
+      "title": "Company profile: Starlace Robotics (fictional)",
+      "objective": "Practice a structured company analysis on an invented startup.",
+      "plan": ["Summarize the business model", "Review synthetic financial highlights", "List strengths and risks", "Suggest strategic questions"],
+      "evidence": [
+        {"id": "SYN-C01", "source": "Starlace fictional fact sheet", "claim": "Starlace sells gentle garden-care robots on a monthly lease.", "confidence": "illustrative"},
+        {"id": "SYN-C02", "source": "Starlace fictional fact sheet", "claim": "Fictional FY revenue: 4.2M; gross margin: 38%.", "confidence": "illustrative"},
+        {"id": "SYN-C03", "source": "Starlace fictional fact sheet", "claim": "Customer churn rose in the last two fictional quarters.", "confidence": "illustrative"}
+      ],
+      "findings": ["Leasing creates predictable revenue but makes churn costly.", "Margin headroom is limited by hardware costs."],
+      "recommendations": ["Investigate churn drivers before expanding.", "Explore a service tier to raise margins."],
+      "limitations": ["Starlace Robotics is fictional.", "Figures are invented and unaudited."],
+      "matrix": null
+    },
+    "architectures": {
+      "title": "Compare monolith, modular monolith and microservices",
+      "objective": "Weigh three architecture styles for a small product team.",
+      "plan": ["Define evaluation criteria", "Collect curated evidence cards", "Score options (Analytics Agent)", "Recommend a default"],
+      "evidence": [
+        {"id": "SYN-A01", "source": "MuseFlow curated brief (synthetic)", "claim": "A monolith is simplest to deploy and debug for a small team.", "confidence": "medium"},
+        {"id": "SYN-A02", "source": "MuseFlow curated brief (synthetic)", "claim": "A modular monolith enforces boundaries without distributed-systems overhead.", "confidence": "medium"},
+        {"id": "SYN-A03", "source": "MuseFlow curated brief (synthetic)", "claim": "Microservices enable independent scaling and deployment, at operational cost.", "confidence": "medium"}
+      ],
+      "findings": ["Modular monoliths are a strong default for small teams.", "Microservices pay off once teams and scaling needs diverge."],
+      "recommendations": ["Start modular; extract services when a boundary has a clear scaling or ownership reason."],
+      "limitations": ["Scores are illustrative opinions for a fictional team of five."],
+      "matrix": {
+        "options": ["Monolith", "Modular monolith", "Microservices"],
+        "criteria": [
+          {"name": "Operational simplicity", "weight": 0.3, "scores": [5, 4, 2]},
+          {"name": "Team autonomy", "weight": 0.2, "scores": [2, 3, 5]},
+          {"name": "Independent scaling", "weight": 0.2, "scores": [2, 3, 5]},
+          {"name": "Boundary clarity", "weight": 0.3, "scores": [2, 5, 4]}
+        ]
+      }
+    },
+    "ai_strategy": {
+      "title": "AI implementation strategies: build, buy or partner",
+      "objective": "Compare three ways an organization could adopt AI assistants.",
+      "plan": ["Frame the decision", "Collect curated evidence cards", "Score strategies (Analytics Agent)", "Recommend a phased path"],
+      "evidence": [
+        {"id": "SYN-S01", "source": "MuseFlow curated brief (synthetic)", "claim": "Buying a packaged tool is fastest but limits customization.", "confidence": "medium"},
+        {"id": "SYN-S02", "source": "MuseFlow curated brief (synthetic)", "claim": "Building in-house maximizes control but needs scarce skills.", "confidence": "medium"},
+        {"id": "SYN-S03", "source": "MuseFlow curated brief (synthetic)", "claim": "Partnering shares risk and accelerates learning.", "confidence": "medium"}
+      ],
+      "findings": ["A phased approach (buy → partner → build) balances speed and control."],
+      "recommendations": ["Start with a governed pilot, measure outcomes, then decide what to build."],
+      "limitations": ["Illustrative scoring for a fictional mid-size company."],
+      "matrix": {
+        "options": ["Buy", "Build", "Partner"],
+        "criteria": [
+          {"name": "Time to value", "weight": 0.3, "scores": [5, 2, 4]},
+          {"name": "Customization", "weight": 0.25, "scores": [2, 5, 4]},
+          {"name": "Cost predictability", "weight": 0.2, "scores": [4, 2, 3]},
+          {"name": "Governance control", "weight": 0.25, "scores": [3, 5, 4]}
+        ]
+      }
+    },
+    "interview_tech": {
+      "title": "Technical interview prep: Python & system design",
+      "objective": "Collect the topics and practice questions most relevant to the synthetic job description.",
+      "plan": ["Map job-description skills to topics", "Select practice questions", "Order topics by weight"],
+      "evidence": [
+        {"id": "SYN-Q01", "source": "MuseFlow question bank (synthetic)", "claim": "Explain the difference between a list and a tuple, and when you'd choose each.", "confidence": "practice"},
+        {"id": "SYN-Q02", "source": "MuseFlow question bank (synthetic)", "claim": "Design a rate limiter for a public API. What data structures would you use?", "confidence": "practice"},
+        {"id": "SYN-Q03", "source": "MuseFlow question bank (synthetic)", "claim": "How would you make a long-running workflow resumable after a crash?", "confidence": "practice"},
+        {"id": "SYN-Q04", "source": "MuseFlow question bank (synthetic)", "claim": "Walk through how you'd test an async HTTP client without hitting the network.", "confidence": "practice"},
+        {"id": "SYN-Q05", "source": "MuseFlow question bank (synthetic)", "claim": "Tell me about a time you improved a team's code-review process.", "confidence": "practice"}
+      ],
+      "findings": ["Python fundamentals", "API & system design", "Testing strategy", "Workflow orchestration", "Collaboration stories"],
+      "recommendations": ["Practise out loud with a timer.", "Prepare two STAR stories per behavioural theme."],
+      "limitations": ["Questions are generic practice prompts, not from any real company."],
+      "matrix": null
+    },
+    "insurance_glossary": {
+      "title": "Insurance policy glossary",
+      "objective": "Explain policy terms found in the document in plain language.",
+      "plan": ["Match document terms to glossary cards"],
+      "evidence": [
+        {"id": "SYN-G01", "source": "MuseFlow glossary (synthetic)", "claim": "Deductible: the amount you pay before coverage starts paying.", "confidence": "high"},
+        {"id": "SYN-G02", "source": "MuseFlow glossary (synthetic)", "claim": "Coverage limit: the maximum the policy pays for a covered loss.", "confidence": "high"},
+        {"id": "SYN-G03", "source": "MuseFlow glossary (synthetic)", "claim": "Exclusion: a situation the policy explicitly does not cover.", "confidence": "high"},
+        {"id": "SYN-G04", "source": "MuseFlow glossary (synthetic)", "claim": "Premium: the recurring price paid to keep the policy active.", "confidence": "high"}
+      ],
+      "findings": [], "recommendations": [], "limitations": ["Glossary is general and educational, not legal or financial advice."], "matrix": null
+    },
+    "general_glossary": {
+      "title": "Document context cards",
+      "objective": "Provide plain-language context for terms in the document.",
+      "plan": ["Match document terms to context cards"],
+      "evidence": [
+        {"id": "SYN-G10", "source": "MuseFlow glossary (synthetic)", "claim": "Milestone: a checkpoint used to track progress against a plan.", "confidence": "high"},
+        {"id": "SYN-G11", "source": "MuseFlow glossary (synthetic)", "claim": "Acceptance criteria: conditions a deliverable must meet to be considered done.", "confidence": "high"},
+        {"id": "SYN-G12", "source": "MuseFlow glossary (synthetic)", "claim": "Latency budget: the maximum time a request may take end to end.", "confidence": "high"}
+      ],
+      "findings": [], "recommendations": [], "limitations": ["Generic context cards."], "matrix": null
+    },
+    "destinations": {
+      "title": "Weekend destinations (fictional)",
+      "objective": "Shortlist fictional destinations that match budget and vibe.",
+      "plan": ["Filter fictional destinations by budget", "Rank by vibe match"],
+      "evidence": [], "findings": [], "recommendations": [],
+      "limitations": ["Destinations, prices and schedules are fictional."],
+      "matrix": null
+    }
+  },
+  "studio_topics": ["ai_frameworks", "industry", "fictional_company", "architectures", "ai_strategy"]
+}

@@ -1,0 +1,258 @@
+{
+  "agents": [
+    {
+      "key": "supervisor",
+      "name": "Lumi",
+      "emoji": "🦄",
+      "role": "Supervisor Agent",
+      "color": "#B79CED",
+      "personality": "Warm, confident conductor who always explains who is doing what.",
+      "capabilities": [
+        "Intent routing",
+        "Agent sequencing",
+        "Policy enforcement on routes",
+        "Final response"
+      ],
+      "tools": [],
+      "scenarios": [
+        "interview_prep",
+        "email_followup",
+        "weekly_planning",
+        "research",
+        "dream_team"
+      ]
+    },
+    {
+      "key": "research",
+      "name": "Aurora",
+      "emoji": "🧚",
+      "role": "Research Agent",
+      "color": "#C9E8FF",
+      "personality": "Curious and thorough; loves a well-labelled evidence card.",
+      "capabilities": [
+        "Synthetic evidence lookup",
+        "Findings & recommendations",
+        "Destination shortlists"
+      ],
+      "tools": [
+        "research.lookup_fixture"
+      ],
+      "scenarios": [
+        "research",
+        "interview_prep",
+        "travel_planning",
+        "document_analysis"
+      ]
+    },
+    {
+      "key": "email",
+      "name": "Rosie",
+      "emoji": "💌",
+      "role": "Email Agent",
+      "color": "#F7B7D2",
+      "personality": "Gracious wordsmith with six tones in her pocket.",
+      "capabilities": [
+        "Template-based drafting",
+        "Tone styling",
+        "Simulated send (after approval)"
+      ],
+      "tools": [
+        "email.compose_draft",
+        "email.simulate_send"
+      ],
+      "scenarios": [
+        "email_followup",
+        "dream_team"
+      ]
+    },
+    {
+      "key": "calendar",
+      "name": "Celeste",
+      "emoji": "🌙",
+      "role": "Calendar Agent",
+      "color": "#DCC8FF",
+      "personality": "Calm timekeeper who spots conflicts before they happen.",
+      "capabilities": [
+        "Free-slot search",
+        "Conflict detection",
+        "Time-blocking",
+        "Simulated booking (after approval)"
+      ],
+      "tools": [
+        "calendar.read_events",
+        "calendar.simulate_create_event"
+      ],
+      "scenarios": [
+        "weekly_planning",
+        "schedule_meeting",
+        "travel_planning"
+      ]
+    },
+    {
+      "key": "document",
+      "name": "Athena",
+      "emoji": "📚",
+      "role": "Document Agent",
+      "color": "#FFF0D5",
+      "personality": "Precise and evidence-driven; cites line numbers.",
+      "capabilities": [
+        "Extractive summary",
+        "Key-field extraction",
+        "Evidence snippets",
+        "Simulated redline (after approval)"
+      ],
+      "tools": [
+        "document.read_fixture",
+        "document.simulate_modify"
+      ],
+      "scenarios": [
+        "document_analysis",
+        "interview_prep",
+        "document_edit"
+      ]
+    },
+    {
+      "key": "planning",
+      "name": "Nova",
+      "emoji": "🦋",
+      "role": "Planning Agent",
+      "color": "#C8F7E5",
+      "personality": "Optimistic strategist who turns dreams into dependency graphs.",
+      "capabilities": [
+        "Task decomposition",
+        "Dependency ordering",
+        "Scheduling",
+        "Team recruitment (dream team)"
+      ],
+      "tools": [
+        "planning.build_plan"
+      ],
+      "scenarios": [
+        "project_planning",
+        "weekly_planning",
+        "interview_prep",
+        "dream_team"
+      ]
+    },
+    {
+      "key": "memory",
+      "name": "Iris",
+      "emoji": "🌸",
+      "role": "Memory Agent",
+      "color": "#FFE1EF",
+      "personality": "Gentle gardener of your session memories — never keeps secrets.",
+      "capabilities": [
+        "Add memory",
+        "Search memory",
+        "Personalize plans"
+      ],
+      "tools": [
+        "memory.add",
+        "memory.search"
+      ],
+      "scenarios": [
+        "personal_memory",
+        "memory_recall",
+        "weekly_planning"
+      ]
+    },
+    {
+      "key": "browser",
+      "name": "Wren",
+      "emoji": "🧭",
+      "role": "Browser Agent",
+      "color": "#C9E8FF",
+      "personality": "Nimble navigator of fictional websites; retries gracefully.",
+      "capabilities": [
+        "Simulated navigation",
+        "Fixture page reading",
+        "Form filling",
+        "Simulated booking (after approval)"
+      ],
+      "tools": [
+        "browser.simulate_navigate",
+        "browser.simulate_fill_form",
+        "browser.simulate_submit_form",
+        "browser.simulate_booking"
+      ],
+      "scenarios": [
+        "browser"
+      ]
+    },
+    {
+      "key": "analytics",
+      "name": "Stella",
+      "emoji": "🔮",
+      "role": "Analytics Agent",
+      "color": "#DCC8FF",
+      "personality": "Sparkly with numbers; always labels estimates.",
+      "capabilities": [
+        "Weighted decision matrices",
+        "Critical-path analysis",
+        "Run metrics"
+      ],
+      "tools": [],
+      "scenarios": [
+        "research",
+        "project_planning",
+        "dream_team"
+      ]
+    },
+    {
+      "key": "governance",
+      "name": "Pearl",
+      "emoji": "🛡️",
+      "role": "Governance Agent",
+      "color": "#D9A5A0",
+      "personality": "Kind but firm guardian of the tool allowlist.",
+      "capabilities": [
+        "Allowlist checks",
+        "Input validation",
+        "Approval requirements"
+      ],
+      "tools": [],
+      "scenarios": [
+        "email_followup",
+        "browser",
+        "schedule_meeting"
+      ]
+    },
+    {
+      "key": "approval",
+      "name": "Cora",
+      "emoji": "💖",
+      "role": "Approval Agent",
+      "color": "#F7B7D2",
+      "personality": "Patient host who waits for your decision — and only then acts (in simulation).",
+      "capabilities": [
+        "Interrupt for human decision",
+        "Resume from checkpoint",
+        "Simulated action execution"
+      ],
+      "tools": [
+        "(executes approved consequential tools)"
+      ],
+      "scenarios": [
+        "email_followup",
+        "browser",
+        "travel_planning"
+      ]
+    },
+    {
+      "key": "audit",
+      "name": "Astra",
+      "emoji": "✨",
+      "role": "Audit Agent",
+      "color": "#FFF0D5",
+      "personality": "Meticulous chronicler; every event gets a hash.",
+      "capabilities": [
+        "Hash-chained audit log",
+        "Run summaries"
+      ],
+      "tools": [],
+      "scenarios": [
+        "*"
+      ]
+    }
+  ]
+}

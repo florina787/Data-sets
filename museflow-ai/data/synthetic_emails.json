@@ -1,0 +1,69 @@
+{
+  "note": "All names and addresses are synthetic (example.com is a reserved demo domain).",
+  "recipients": {
+    "hiring_manager": {"name": "Jordan Vale", "address": "jordan.vale@example.com", "role": "Hiring Manager"},
+    "client": {"name": "Priya Stone", "address": "priya.stone@example.com", "role": "Client"},
+    "team_lead": {"name": "Sam Rivera", "address": "sam.rivera@example.com", "role": "Team Lead"},
+    "mentor": {"name": "Morgan Lee", "address": "morgan.lee@example.com", "role": "Mentor"},
+    "vendor": {"name": "Alex Chen", "address": "alex.chen@example.com", "role": "Vendor"}
+  },
+  "scenarios": {
+    "interview_follow_up": {
+      "title": "Follow up after an interview",
+      "subject": "Thank you — {role} conversation",
+      "body": [
+        "Thank you for taking the time to speak with me about the {role} role.",
+        "I especially enjoyed our discussion about building reliable, human-in-the-loop AI workflows.",
+        "I'm excited about the opportunity and happy to share anything else that would be helpful."
+      ],
+      "role": "Senior Python Engineer"
+    },
+    "project_update": {
+      "title": "Project status update",
+      "subject": "Project Moonbeam — weekly update",
+      "body": [
+        "Here is this week's update on Project Moonbeam.",
+        "We completed the workflow-graph milestone and the approval checkpoints are now in testing.",
+        "Next week we will focus on analytics and documentation."
+      ],
+      "role": ""
+    },
+    "meeting_request": {
+      "title": "Request a meeting",
+      "subject": "Could we find 30 minutes next week?",
+      "body": [
+        "I'd love to find 30 minutes next week to align on priorities.",
+        "Tuesday or Thursday afternoon would work well on my side.",
+        "Please let me know what suits you best."
+      ],
+      "role": ""
+    },
+    "thank_you": {
+      "title": "Say thank you",
+      "subject": "Thank you!",
+      "body": [
+        "I wanted to say a heartfelt thank you for your support this month.",
+        "Your guidance made a real difference to how the launch came together."
+      ],
+      "role": ""
+    },
+    "introduction": {
+      "title": "Introduce yourself",
+      "subject": "Nice to meet you",
+      "body": [
+        "I'm reaching out to introduce myself — I lead the AI workflow initiative on my team.",
+        "I'd value the chance to learn how your team approaches automation and governance."
+      ],
+      "role": ""
+    }
+  },
+  "tones": {
+    "professional": {"greeting": "Dear {first},", "opener": "", "closing": "Kind regards,"},
+    "warm": {"greeting": "Hi {first},", "opener": "I hope your week is going beautifully!", "closing": "Warmly,"},
+    "confident": {"greeting": "Hi {first},", "opener": "", "closing": "Looking forward to it,"},
+    "friendly": {"greeting": "Hey {first}!", "opener": "Hope all is well!", "closing": "Cheers,"},
+    "executive": {"greeting": "{first},", "opener": "Quick note.", "closing": "Best,"},
+    "concise": {"greeting": "Hi {first},", "opener": "", "closing": "Thanks,"}
+  },
+  "sender": {"name": "Demo Dreamer", "address": "dreamer@example.com"}
+}
