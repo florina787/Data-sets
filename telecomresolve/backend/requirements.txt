@@ -1,0 +1,15 @@
+# Versions verified together on Python 3.13 on 2026-10-11 (see README "Dependencies").
+fastapi==0.143.0
+uvicorn==0.54.0
+pydantic==2.14.0
+SQLAlchemy==2.1.4
+alembic==1.20.0
+langgraph==1.2.14
+langgraph-checkpoint==4.2.0
+langgraph-checkpoint-sqlite==3.1.1
+langgraph-checkpoint-postgres==3.1.2
+psycopg[binary]==3.3.6
+psycopg-pool==3.3.3
+PyYAML==6.0.3
+# Only used when GENERATION_MODE is LIVE or HYBRID.
+anthropic==1.13.0
