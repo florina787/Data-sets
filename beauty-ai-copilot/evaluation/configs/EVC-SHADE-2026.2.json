@@ -1,0 +1,14 @@
+{
+  "evaluation_config_id": "EVC-SHADE-2026.2",
+  "protocol_ref": {"source_id": "PROT-EVAL-008", "source_version": "2.0"},
+  "split": "test",
+  "strata": ["TS-1", "TS-2", "TS-3", "TS-4"],
+  "lighting": ["daylight_neutral", "warm_indoor", "cool_fluorescent"],
+  "required_cells": "all_strata_x_lighting",
+  "target_cell": "TS-4|warm_indoor",
+  "primary_metric": "top1_accuracy",
+  "secondary_metric": "top3_accuracy",
+  "abstention_policy": "counts_as_incorrect",
+  "bootstrap": {"method": "paired_percentile", "resamples": 2000, "seed": 7, "confidence": 0.95},
+  "accuracy_interval": "wilson_95"
+}

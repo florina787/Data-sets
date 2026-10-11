@@ -1,0 +1,21 @@
+{
+  "note": "Fictional component map for the demo shade-finder system.",
+  "components": [
+    {"id": "svc-preprocess", "kind": "service", "name": "shade_matcher.preprocess", "owner_role": "cv_engineer", "tags": ["lighting", "white_balance", "warm", "compensation", "image"]},
+    {"id": "svc-lighting-detector", "kind": "model", "name": "lighting-detector v1.4", "owner_role": "cv_engineer", "tags": ["lighting", "warm", "indoor", "fluorescent", "daylight"]},
+    {"id": "cfg-lighting-profile-map", "kind": "config", "name": "lighting_profile_map (per device cohort)", "owner_role": "cv_engineer", "tags": ["lighting", "device", "devices", "profile"]},
+    {"id": "mdl-shade-matcher", "kind": "model", "name": "shade-matcher", "owner_role": "ml_engineer", "tags": ["shade", "foundation", "recommendation", "recommendations", "skin", "tones", "match"]},
+    {"id": "svc-catalogue", "kind": "service", "name": "catalogue-service (CAT-2026.1)", "owner_role": "product_owner", "tags": ["shade", "catalogue", "foundation"]},
+    {"id": "app-web-shade-finder", "kind": "service", "name": "web shade finder (simulated target)", "owner_role": "release_manager", "tags": ["recommendation", "recommendations", "device", "devices"]},
+    {"id": "ds-shade-eval", "kind": "dataset", "name": "DS-2026.09-SHADE (synthetic)", "owner_role": "ml_engineer", "tags": ["skin", "tones", "deeper", "lighting", "groups", "tested", "performance"]},
+    {"id": "consent-registry", "kind": "dataset", "name": "consent registry", "owner_role": "privacy_reviewer", "tags": ["image", "skin", "consent", "photo"]},
+    {"id": "mon-outcomes", "kind": "service", "name": "outcome monitoring (simulated reference labels)", "owner_role": "ops_analyst", "tags": ["performance", "preserving", "device", "devices", "recommendations"]}
+  ],
+  "tests": [
+    {"id": "TEST-EVAL-CELLS", "name": "Per-cell paired evaluation (12 cells)", "owner_role": "qa_engineer", "tags": ["skin", "tones", "lighting", "groups", "performance"]},
+    {"id": "TEST-TARGET-CELL", "name": "Target cell improvement TS-4 × warm_indoor", "owner_role": "qa_engineer", "tags": ["deeper", "warm", "indoor"]},
+    {"id": "TEST-NO-REGRESSION", "name": "No-regression gate across required cells", "owner_role": "qa_engineer", "tags": ["preserving", "performance", "groups"]},
+    {"id": "TEST-CONTROLS", "name": "Privacy and authorization control tests", "owner_role": "privacy_reviewer", "tags": ["image", "skin", "consent"]},
+    {"id": "TEST-DEVICE-PROFILES", "name": "Lighting-profile map per device cohort (manual; DEV-T3 has no evaluation data)", "owner_role": "cv_engineer", "tags": ["device", "devices", "lighting", "profile"]}
+  ]
+}

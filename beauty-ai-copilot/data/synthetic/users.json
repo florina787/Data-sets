@@ -1,0 +1,15 @@
+{
+  "note": "Fictional personas for the demo. Not real people.",
+  "tenants": [{"id": "tenant-maison", "name": "Maison Fictive Beauty Tech (fictional)"}, {"id": "tenant-other", "name": "Other Fictional Tenant"}],
+  "users": [
+    {"id": "u-po", "tenant_id": "tenant-maison", "display_name": "Avery Lindqvist", "persona": "Product owner", "roles": ["product_owner"]},
+    {"id": "u-domain", "tenant_id": "tenant-maison", "display_name": "Noor Castellane", "persona": "Beauty domain reviewer", "roles": ["domain_reviewer"]},
+    {"id": "u-cv-eng", "tenant_id": "tenant-maison", "display_name": "Kai Moreau", "persona": "Computer-vision engineer", "roles": ["cv_engineer"]},
+    {"id": "u-ml-eng", "tenant_id": "tenant-maison", "display_name": "Sasha Okafor", "persona": "ML engineer", "roles": ["ml_engineer"]},
+    {"id": "u-qa", "tenant_id": "tenant-maison", "display_name": "Jules Tanaka", "persona": "QA engineer", "roles": ["qa_engineer"]},
+    {"id": "u-privacy", "tenant_id": "tenant-maison", "display_name": "Rowan Adeyemi", "persona": "Privacy reviewer", "roles": ["privacy_reviewer"]},
+    {"id": "u-release", "tenant_id": "tenant-maison", "display_name": "Mika Laurent", "persona": "Release manager", "roles": ["release_manager"]},
+    {"id": "u-ops", "tenant_id": "tenant-maison", "display_name": "Elliot Varga", "persona": "Operations analyst", "roles": ["ops_analyst"]},
+    {"id": "u-other-po", "tenant_id": "tenant-other", "display_name": "Other Tenant Owner", "persona": "Product owner (other tenant)", "roles": ["product_owner", "release_manager"]}
+  ]
+}

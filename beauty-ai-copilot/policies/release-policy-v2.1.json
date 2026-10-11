@@ -1,0 +1,42 @@
+{
+  "policy_id": "POL-REL-005",
+  "policy_version": "2.1-demo",
+  "illustrative": true,
+  "note": "Example demo rules for an independent prototype. Not L'Oréal standards and not scientifically established thresholds.",
+  "source_ref": {"source_id": "POL-REL-005", "source_version": "2.1", "section": "§1"},
+  "thresholds": {
+    "min_samples_per_cell": 100,
+    "max_regression_pp": 2.0,
+    "target_min_improvement_pp": 5.0,
+    "max_coverage_drop_pp": 3.0
+  },
+  "threshold_resolution": "stricter_of_policy_and_acceptance_criteria",
+  "required_reviews": ["code", "domain", "privacy"],
+  "separation_of_duties": {"release_approver_not_author": true, "code_reviewer_not_author": true},
+  "approval_ttl_hours": 72,
+  "evaluation_max_age_days": 14,
+  "rollout_stages_pct": [5, 25, 100],
+  "rollout_stages_label": "prototype settings",
+  "min_windows_per_stage": 1,
+  "monitoring": {
+    "min_labels_per_cohort_cell": 40,
+    "alert_drop_pp": 10.0,
+    "alert_requires_wilson_upper_below_reference": true
+  },
+  "gate_owners": {
+    "G-CONFIG": "ml_engineer",
+    "G-ARTIFACT": "ml_engineer",
+    "G-AMBIGUITY": "product_owner",
+    "G-EVIDENCE": "domain_reviewer",
+    "G-SAMPLES": "qa_engineer",
+    "G-TARGET": "product_owner",
+    "G-NO-REGRESSION": "domain_reviewer",
+    "G-COVERAGE": "qa_engineer",
+    "G-ABSTENTION-DENOMINATOR": "qa_engineer",
+    "G-CONTROLS": "privacy_reviewer",
+    "G-CODE-REVIEW": "qa_engineer",
+    "G-FRESHNESS": "release_manager",
+    "G-REVIEWS": "release_manager",
+    "G-APPROVAL": "release_manager"
+  }
+}

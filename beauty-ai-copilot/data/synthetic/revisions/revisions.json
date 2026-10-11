@@ -1,0 +1,34 @@
+{
+ "revisions": [
+  {
+   "revision_id": "REV-2.4.0-rc1",
+   "author_user_id": "u-cv-eng",
+   "summary": "Apply global warm-light compensation curve before shade matching.",
+   "requirement_refs": [
+    "AC-1",
+    "AC-2"
+   ],
+   "test_refs": [
+    "TEST-EVAL-CELLS",
+    "TEST-TARGET-CELL"
+   ],
+   "diff_file": "REV-2.4.0-rc1.diff"
+  },
+  {
+   "revision_id": "REV-2.4.0-rc2",
+   "author_user_id": "u-cv-eng",
+   "summary": "Gate warm-light compensation on lighting-detector confidence; restrict to warm_indoor; add per-device lighting profile map lpm-v2.",
+   "requirement_refs": [
+    "AC-1",
+    "AC-2",
+    "AC-3"
+   ],
+   "test_refs": [
+    "TEST-EVAL-CELLS",
+    "TEST-TARGET-CELL",
+    "TEST-NO-REGRESSION"
+   ],
+   "diff_file": "REV-2.4.0-rc2.diff"
+  }
+ ]
+}

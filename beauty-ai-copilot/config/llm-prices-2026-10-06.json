@@ -1,0 +1,11 @@
+{
+  "price_config_id": "llm-prices-2026-10-06",
+  "as_of": "2026-10-06",
+  "currency": "USD",
+  "note": "Dated list prices per 1M tokens used to estimate cost of live LLM calls. Verify before relying on them.",
+  "models": {
+    "claude-opus-5-5": {"input_per_mtok": 4.0, "output_per_mtok": 20.0},
+    "claude-sonnet-5-5": {"input_per_mtok": 2.0, "output_per_mtok": 10.0},
+    "claude-haiku-5-5": {"input_per_mtok": 0.10, "output_per_mtok": 0.50}
+  }
+}

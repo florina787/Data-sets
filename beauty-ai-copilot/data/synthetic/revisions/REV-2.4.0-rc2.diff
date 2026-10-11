@@ -1,0 +1,27 @@
+diff --git a/shade_matcher/preprocess.py b/shade_matcher/preprocess.py
+--- a/shade_matcher/preprocess.py
++++ b/shade_matcher/preprocess.py
+@@ -41,7 +41,12 @@ def normalise(image, meta):
+     image = grey_world_white_balance(image)
+-    return image
++    # BR-101: only compensate when the lighting detector is confident the scene is warm indoor
++    profile = LIGHTING_PROFILE_MAP[meta.device_category][meta.lighting_category]
++    if profile == "warm_indoor" and meta.lighting_confidence >= 0.8:
++        image = apply_warm_compensation(image, curve=WARM_CURVE_V2)
++    return image
+diff --git a/config/lighting_profile_map.json b/config/lighting_profile_map.json
+--- a/config/lighting_profile_map.json  (lpm-v1)
++++ b/config/lighting_profile_map.json  (lpm-v2)
+@@ -9,5 +9,5 @@
+   "DEV-T3": {
+     "daylight_neutral": "daylight_neutral",
+-    "warm_indoor": "warm_indoor",
++    "warm_indoor": "cool_fluorescent",
+     "cool_fluorescent": "cool_fluorescent"
+   }
+diff --git a/config/model.yaml b/config/model.yaml
+@@ -3,3 +3,3 @@
+-version: 2.3.0
+-warm_light_compensation: off
++version: 2.4.0-rc2
++warm_light_compensation: gated-warm-only-v2

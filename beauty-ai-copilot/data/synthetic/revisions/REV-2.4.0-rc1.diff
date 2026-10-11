@@ -1,0 +1,17 @@
+diff --git a/shade_matcher/preprocess.py b/shade_matcher/preprocess.py
+--- a/shade_matcher/preprocess.py
++++ b/shade_matcher/preprocess.py
+@@ -41,7 +41,9 @@ def normalise(image, meta):
+     image = grey_world_white_balance(image)
+-    return image
++    # BR-101: compensate warm indoor casts for deeper skin-tone reference patches
++    image = apply_warm_compensation(image, curve=WARM_CURVE_V1)  # applied to every frame
++    return image
+diff --git a/config/model.yaml b/config/model.yaml
+--- a/config/model.yaml
++++ b/config/model.yaml
+@@ -3,3 +3,3 @@
+-version: 2.3.0
+-warm_light_compensation: off
++version: 2.4.0-rc1
++warm_light_compensation: global-curve-v1

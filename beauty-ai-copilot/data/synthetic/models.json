@@ -1,0 +1,303 @@
+{
+ "models": [
+  {
+   "model_id": "shade-matcher-v2.3.0",
+   "role": "baseline",
+   "version": "2.3.0",
+   "code_revision": "REV-2.3.0",
+   "preprocessing": {
+    "white_balance": "grey-world-v1",
+    "warm_light_compensation": "off",
+    "input_size": 384
+   },
+   "lighting_profile_map": "lpm-v1",
+   "provenance": "Synthetic fixture profile; no training performed. Represents the currently released version."
+  },
+  {
+   "model_id": "shade-matcher-v2.4.0-rc1",
+   "role": "candidate",
+   "version": "2.4.0-rc1",
+   "code_revision": "REV-2.4.0-rc1",
+   "preprocessing": {
+    "white_balance": "grey-world-v1",
+    "warm_light_compensation": "global-curve-v1",
+    "input_size": 384
+   },
+   "lighting_profile_map": "lpm-v1",
+   "provenance": "Synthetic fixture profile; no training performed. Seeded to show aggregate gain hiding a subgroup regression."
+  },
+  {
+   "model_id": "shade-matcher-v2.4.0-rc2",
+   "role": "corrected_candidate",
+   "version": "2.4.0-rc2",
+   "code_revision": "REV-2.4.0-rc2",
+   "preprocessing": {
+    "white_balance": "grey-world-v1",
+    "warm_light_compensation": "gated-warm-only-v2",
+    "input_size": 384
+   },
+   "lighting_profile_map": "lpm-v2",
+   "provenance": "Synthetic fixture profile; no training performed. Carries a seeded runtime defect in lpm-v2 for DEV-T3."
+  }
+ ],
+ "lighting_profile_maps": {
+  "lpm-v1": {
+   "DEV-T1": {
+    "daylight_neutral": "daylight_neutral",
+    "warm_indoor": "warm_indoor",
+    "cool_fluorescent": "cool_fluorescent"
+   },
+   "DEV-T2": {
+    "daylight_neutral": "daylight_neutral",
+    "warm_indoor": "warm_indoor",
+    "cool_fluorescent": "cool_fluorescent"
+   },
+   "DEV-T3": {
+    "daylight_neutral": "daylight_neutral",
+    "warm_indoor": "warm_indoor",
+    "cool_fluorescent": "cool_fluorescent"
+   }
+  },
+  "lpm-v2": {
+   "DEV-T1": {
+    "daylight_neutral": "daylight_neutral",
+    "warm_indoor": "warm_indoor",
+    "cool_fluorescent": "cool_fluorescent"
+   },
+   "DEV-T2": {
+    "daylight_neutral": "daylight_neutral",
+    "warm_indoor": "warm_indoor",
+    "cool_fluorescent": "cool_fluorescent"
+   },
+   "DEV-T3": {
+    "daylight_neutral": "daylight_neutral",
+    "warm_indoor": "cool_fluorescent",
+    "cool_fluorescent": "cool_fluorescent"
+   }
+  }
+ },
+ "fixture_profiles": {
+  "shade-matcher-v2.3.0": {
+   "TS-1|daylight_neutral": {
+    "p1": 0.84,
+    "p3": 0.97,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-1|warm_indoor": {
+    "p1": 0.78,
+    "p3": 0.91,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-1|cool_fluorescent": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|daylight_neutral": {
+    "p1": 0.82,
+    "p3": 0.95,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|warm_indoor": {
+    "p1": 0.74,
+    "p3": 0.87,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|cool_fluorescent": {
+    "p1": 0.79,
+    "p3": 0.92,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|daylight_neutral": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|warm_indoor": {
+    "p1": 0.67,
+    "p3": 0.8,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|cool_fluorescent": {
+    "p1": 0.78,
+    "p3": 0.91,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|daylight_neutral": {
+    "p1": 0.76,
+    "p3": 0.89,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|warm_indoor": {
+    "p1": 0.55,
+    "p3": 0.68,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|cool_fluorescent": {
+    "p1": 0.7,
+    "p3": 0.83,
+    "pa": 0.03,
+    "bias": 0.0
+   }
+  },
+  "shade-matcher-v2.4.0-rc1": {
+   "TS-1|daylight_neutral": {
+    "p1": 0.84,
+    "p3": 0.97,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-1|warm_indoor": {
+    "p1": 0.82,
+    "p3": 0.95,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-1|cool_fluorescent": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|daylight_neutral": {
+    "p1": 0.82,
+    "p3": 0.95,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|warm_indoor": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|cool_fluorescent": {
+    "p1": 0.79,
+    "p3": 0.92,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|daylight_neutral": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|warm_indoor": {
+    "p1": 0.74,
+    "p3": 0.87,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|cool_fluorescent": {
+    "p1": 0.7,
+    "p3": 0.83,
+    "pa": 0.03,
+    "bias": 3.0
+   },
+   "TS-4|daylight_neutral": {
+    "p1": 0.76,
+    "p3": 0.89,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|warm_indoor": {
+    "p1": 0.69,
+    "p3": 0.82,
+    "pa": 0.08,
+    "bias": 0.0
+   },
+   "TS-4|cool_fluorescent": {
+    "p1": 0.73,
+    "p3": 0.86,
+    "pa": 0.03,
+    "bias": 0.0
+   }
+  },
+  "shade-matcher-v2.4.0-rc2": {
+   "TS-1|daylight_neutral": {
+    "p1": 0.84,
+    "p3": 0.97,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-1|warm_indoor": {
+    "p1": 0.79,
+    "p3": 0.92,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-1|cool_fluorescent": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|daylight_neutral": {
+    "p1": 0.82,
+    "p3": 0.95,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|warm_indoor": {
+    "p1": 0.77,
+    "p3": 0.9,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-2|cool_fluorescent": {
+    "p1": 0.79,
+    "p3": 0.92,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|daylight_neutral": {
+    "p1": 0.8,
+    "p3": 0.93,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|warm_indoor": {
+    "p1": 0.71,
+    "p3": 0.84,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-3|cool_fluorescent": {
+    "p1": 0.77,
+    "p3": 0.9,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|daylight_neutral": {
+    "p1": 0.76,
+    "p3": 0.89,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|warm_indoor": {
+    "p1": 0.66,
+    "p3": 0.79,
+    "pa": 0.03,
+    "bias": 0.0
+   },
+   "TS-4|cool_fluorescent": {
+    "p1": 0.7,
+    "p3": 0.83,
+    "pa": 0.03,
+    "bias": 0.0
+   }
+  }
+ }
+}

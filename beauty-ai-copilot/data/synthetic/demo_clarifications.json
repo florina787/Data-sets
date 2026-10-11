@@ -1,0 +1,13 @@
+{
+  "note": "Configurable SYNTHETIC clarifications for the BR-101 demo. Example demo rules only — not L'Oréal standards or scientifically established thresholds.",
+  "answers": {
+    "correct_match": {"answer": "Primary metric: top-1 shade accuracy against the reference shade ID. Secondary: top-3 accuracy. Abstentions count as incorrect.", "structured": {"primary_metric": "top1_accuracy", "secondary_metric": "top3_accuracy", "abstention": "counts_as_incorrect"}},
+    "group_definitions": {"answer": "Use the four synthetic tone strata TS-1..TS-4 from grouping protocol GP-DEMO-1. 'Deeper skin tones' = TS-4. Target cell: TS-4 × warm_indoor.", "structured": {"strata": ["TS-1", "TS-2", "TS-3", "TS-4"], "grouping_protocol": "GP-DEMO-1", "target_cell": "TS-4|warm_indoor"}},
+    "lighting_protocol": {"answer": "Use the three declared lighting categories of SPEC-LIGHT-003 §1, captured per §2 with a grey reference card.", "structured": {"lighting": ["daylight_neutral", "warm_indoor", "cool_fluorescent"], "protocol_ref": "SPEC-LIGHT-003 §2"}},
+    "reference_labels": {"answer": "Reference shade IDs from label protocol LP-DEMO-PANEL-01 (synthetic). Label validity still requires expert review.", "structured": {"label_protocol": "LP-DEMO-PANEL-01"}},
+    "acceptable_regression": {"answer": "No required cell may lose more than 2 percentage points of top-1 accuracy against baseline; the target cell must improve by at least 5 percentage points.", "structured": {"max_regression_pp": 2.0, "target_min_improvement_pp": 5.0}},
+    "supported_devices": {"answer": "Validated devices: DEV-T1 and DEV-T2. DEV-T3 is not validated and must be watched in monitoring.", "structured": {"devices": ["DEV-T1", "DEV-T2"], "unvalidated": ["DEV-T3"]}},
+    "recapture": {"answer": "Request another image when SPEC-IQ-002 §2 triggers fire; count such requests as abstentions.", "structured": {"rule_ref": "SPEC-IQ-002 §2"}},
+    "release_evidence": {"answer": "Minimum 100 eligible samples per required cell; all privacy and authorization control tests must pass; evaluation must be current and digest-matched.", "structured": {"min_samples_per_cell": 100, "privacy_tests": "all_pass", "authorization_tests": "all_pass"}}
+  }
+}

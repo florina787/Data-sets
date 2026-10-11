@@ -1,0 +1,326 @@
+{
+ "catalogue_version": "CAT-2026.1",
+ "fictional": true,
+ "shades": [
+  {
+   "shade_id": "SH-01",
+   "ordinal": 1,
+   "family": "Light",
+   "display_name": "Lumen Veil Porcelain Light 01",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-02",
+   "ordinal": 2,
+   "family": "Light",
+   "display_name": "Lumen Veil Ivory Light 02",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-03",
+   "ordinal": 3,
+   "family": "Light",
+   "display_name": "Lumen Veil Shell Light 03",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-04",
+   "ordinal": 4,
+   "family": "Light",
+   "display_name": "Lumen Veil Linen Light 04",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-05",
+   "ordinal": 5,
+   "family": "Light",
+   "display_name": "Lumen Veil Almond Light 05",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-06",
+   "ordinal": 6,
+   "family": "Light",
+   "display_name": "Lumen Veil Honey Light 06",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-07",
+   "ordinal": 7,
+   "family": "Light",
+   "display_name": "Lumen Veil Caramel Light 07",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-08",
+   "ordinal": 8,
+   "family": "Light",
+   "display_name": "Lumen Veil Chestnut Light 08",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-09",
+   "ordinal": 9,
+   "family": "Light",
+   "display_name": "Lumen Veil Cocoa Light 09",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-10",
+   "ordinal": 10,
+   "family": "Light",
+   "display_name": "Lumen Veil Espresso Light 10",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-11",
+   "ordinal": 11,
+   "family": "Medium",
+   "display_name": "Lumen Veil Porcelain Medium 11",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-12",
+   "ordinal": 12,
+   "family": "Medium",
+   "display_name": "Lumen Veil Ivory Medium 12",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-13",
+   "ordinal": 13,
+   "family": "Medium",
+   "display_name": "Lumen Veil Shell Medium 13",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-14",
+   "ordinal": 14,
+   "family": "Medium",
+   "display_name": "Lumen Veil Linen Medium 14",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-15",
+   "ordinal": 15,
+   "family": "Medium",
+   "display_name": "Lumen Veil Almond Medium 15",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-16",
+   "ordinal": 16,
+   "family": "Medium",
+   "display_name": "Lumen Veil Honey Medium 16",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-17",
+   "ordinal": 17,
+   "family": "Medium",
+   "display_name": "Lumen Veil Caramel Medium 17",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-18",
+   "ordinal": 18,
+   "family": "Medium",
+   "display_name": "Lumen Veil Chestnut Medium 18",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-19",
+   "ordinal": 19,
+   "family": "Medium",
+   "display_name": "Lumen Veil Cocoa Medium 19",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-20",
+   "ordinal": 20,
+   "family": "Medium",
+   "display_name": "Lumen Veil Espresso Medium 20",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-21",
+   "ordinal": 21,
+   "family": "Tan",
+   "display_name": "Lumen Veil Porcelain Tan 21",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-22",
+   "ordinal": 22,
+   "family": "Tan",
+   "display_name": "Lumen Veil Ivory Tan 22",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-23",
+   "ordinal": 23,
+   "family": "Tan",
+   "display_name": "Lumen Veil Shell Tan 23",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-24",
+   "ordinal": 24,
+   "family": "Tan",
+   "display_name": "Lumen Veil Linen Tan 24",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-25",
+   "ordinal": 25,
+   "family": "Tan",
+   "display_name": "Lumen Veil Almond Tan 25",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-26",
+   "ordinal": 26,
+   "family": "Tan",
+   "display_name": "Lumen Veil Honey Tan 26",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-27",
+   "ordinal": 27,
+   "family": "Tan",
+   "display_name": "Lumen Veil Caramel Tan 27",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-28",
+   "ordinal": 28,
+   "family": "Tan",
+   "display_name": "Lumen Veil Chestnut Tan 28",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-29",
+   "ordinal": 29,
+   "family": "Tan",
+   "display_name": "Lumen Veil Cocoa Tan 29",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-30",
+   "ordinal": 30,
+   "family": "Tan",
+   "display_name": "Lumen Veil Espresso Tan 30",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-31",
+   "ordinal": 31,
+   "family": "Deep",
+   "display_name": "Lumen Veil Porcelain Deep 31",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-32",
+   "ordinal": 32,
+   "family": "Deep",
+   "display_name": "Lumen Veil Ivory Deep 32",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-33",
+   "ordinal": 33,
+   "family": "Deep",
+   "display_name": "Lumen Veil Shell Deep 33",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-34",
+   "ordinal": 34,
+   "family": "Deep",
+   "display_name": "Lumen Veil Linen Deep 34",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-35",
+   "ordinal": 35,
+   "family": "Deep",
+   "display_name": "Lumen Veil Almond Deep 35",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-36",
+   "ordinal": 36,
+   "family": "Deep",
+   "display_name": "Lumen Veil Honey Deep 36",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-37",
+   "ordinal": 37,
+   "family": "Deep",
+   "display_name": "Lumen Veil Caramel Deep 37",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-38",
+   "ordinal": 38,
+   "family": "Deep",
+   "display_name": "Lumen Veil Chestnut Deep 38",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-39",
+   "ordinal": 39,
+   "family": "Deep",
+   "display_name": "Lumen Veil Cocoa Deep 39",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  },
+  {
+   "shade_id": "SH-40",
+   "ordinal": 40,
+   "family": "Deep",
+   "display_name": "Lumen Veil Espresso Deep 40",
+   "brand": "Maison Fictive (fictional)",
+   "catalogue_version": "CAT-2026.1"
+  }
+ ]
+}
