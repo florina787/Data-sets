@@ -1,0 +1,8 @@
+# Opt-in: give the backend outbound access so it can call the configured LLM provider.
+#   docker compose -f docker-compose.yml -f docker-compose.llm.yml up --build
+# Put FLOPILOT_LLM_PROVIDER=anthropic and ANTHROPIC_API_KEY=... in .env (server-side only).
+services:
+  backend:
+    networks: [internal, egress]
+networks:
+  egress: {}

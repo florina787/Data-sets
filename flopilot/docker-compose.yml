@@ -1,0 +1,57 @@
+# FloPilot — local Docker deployment
+#   cp .env.example .env      (optional; defaults run the deterministic demo without any model key)
+#   docker compose up --build
+#   open http://localhost:8080
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        INSTALL_LIBREOFFICE: ${FLOPILOT_INSTALL_LIBREOFFICE:-false}
+      secrets: [extra_ca]
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      FLOPILOT_DATA_DIR: /data
+      FLOPILOT_CORS_ORIGINS: http://localhost:8080
+    volumes:
+      - flopilot-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    networks: [internal]      # no internet egress by default (see docker-compose.llm.yml)
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      secrets: [extra_ca]
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    networks: [internal, edge]
+    restart: unless-stopped
+
+networks:
+  internal:
+    internal: true            # backend cannot reach the internet
+  edge: {}
+
+volumes:
+  flopilot-data:
+
+secrets:
+  # Only needed behind a TLS-inspecting proxy: FLOPILOT_EXTRA_CA_FILE=/path/to/ca.crt docker compose build
+  extra_ca:
+    file: ${FLOPILOT_EXTRA_CA_FILE:-./.no-extra-ca}
