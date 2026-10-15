@@ -36,8 +36,8 @@ STATUS_STYLE = {
 
 
 def no_autolink(text: str) -> str:
-    """Escape and stop Markdown from turning synthetic addresses into mailto: links."""
-    return e(text).replace("@", "<span>@</span>")
+    """Escape and stop Markdown from turning synthetic addresses / fictional URLs into links."""
+    return e(text).replace("@", "<span>@</span>").replace("://", "<span>://</span>").replace("www.", "www<span>.</span>")
 
 
 def html(markup: str) -> None:
