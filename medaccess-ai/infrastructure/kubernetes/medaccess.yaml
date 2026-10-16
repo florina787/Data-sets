@@ -1,0 +1,57 @@
+# Starting-point manifests for Profile B/C (NOT applied or verified against a cluster in this repo).
+# Secrets must come from a managed secret store (e.g. External Secrets) - never commit them.
+apiVersion: v1
+kind: Namespace
+metadata: { name: medaccess }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: backend, namespace: medaccess }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: backend } }
+  template:
+    metadata: { labels: { app: backend } }
+    spec:
+      securityContext: { runAsNonRoot: true, runAsUser: 10001 }
+      containers:
+        - name: backend
+          image: REGISTRY/medaccess-backend:VERSION
+          ports: [{ containerPort: 8000 }]
+          env:
+            - { name: ENVIRONMENT, value: staging }
+            - { name: DATABASE_URL, valueFrom: { secretKeyRef: { name: medaccess-secrets, key: database_url } } }
+            - { name: JWT_SECRET, valueFrom: { secretKeyRef: { name: medaccess-secrets, key: jwt_secret } } }
+            - { name: FIELD_ENCRYPTION_KEY, valueFrom: { secretKeyRef: { name: medaccess-secrets, key: field_encryption_key } } }
+          readinessProbe: { httpGet: { path: /api/v1/health, port: 8000 }, periodSeconds: 10 }
+          livenessProbe: { httpGet: { path: /api/v1/health, port: 8000 }, periodSeconds: 20 }
+          resources:
+            requests: { cpu: 250m, memory: 384Mi }
+            limits: { cpu: "1", memory: 768Mi }
+          volumeMounts: [{ name: runtime, mountPath: /srv/data/runtime }]
+      volumes: [{ name: runtime, emptyDir: {} }]  # replace with PostgresSaver before scaling >1 replica (see docs)
+---
+apiVersion: v1
+kind: Service
+metadata: { name: backend, namespace: medaccess }
+spec: { selector: { app: backend }, ports: [{ port: 8000, targetPort: 8000 }] }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: frontend, namespace: medaccess }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: frontend } }
+  template:
+    metadata: { labels: { app: frontend } }
+    spec:
+      containers:
+        - name: frontend
+          image: REGISTRY/medaccess-frontend:VERSION
+          ports: [{ containerPort: 8080 }]
+          resources: { requests: { cpu: 50m, memory: 64Mi }, limits: { cpu: 250m, memory: 128Mi } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: frontend, namespace: medaccess }
+spec: { selector: { app: frontend }, ports: [{ port: 80, targetPort: 8080 }] }

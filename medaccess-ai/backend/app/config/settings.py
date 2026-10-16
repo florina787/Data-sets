@@ -9,10 +9,10 @@ from __future__ import annotations
 import secrets
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field, SecretStr, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 PROJECT_DIR = BACKEND_DIR.parent
@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     jwt_ttl_minutes: int = 120
     field_encryption_key: SecretStr = SecretStr("")
 
-    cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:8080"]
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173", "http://localhost:3000", "http://localhost:8080"]
 
     # LLM (optional). Without a key the copilot runs in deterministic mode.
     anthropic_api_key: SecretStr = SecretStr("")

@@ -1,0 +1,106 @@
+{
+  "id": "REQ-7F02D7",
+  "requirement": "A patient has an MRI appointment 90 days away. Patients should be able to find potentially earlier MRI appointments within 25 km.",
+  "service": "MRI",
+  "radius_km": 25,
+  "user_stories": [
+    {
+      "id": "REQ-7F02D7-US1",
+      "story": "As a patient, I want to search for MRI appointments within 25 km so that I can find an earlier option."
+    },
+    {
+      "id": "REQ-7F02D7-US2",
+      "story": "As a patient, I want to see whether each opening is verified so that I don't rely on unconfirmed availability."
+    },
+    {
+      "id": "REQ-7F02D7-US3",
+      "story": "As a patient, I want to know if my requisition is accepted so that I only pursue options I can use."
+    },
+    {
+      "id": "REQ-7F02D7-US4",
+      "story": "As a patient, I want a booking handoff I approve myself so that nothing is submitted without my consent."
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "REQ-7F02D7-AC1",
+      "story": "REQ-7F02D7-US1",
+      "gherkin": "Given a patient in Toronto\nWhen they search for MRI within 25 km\nThen only facilities within 25 km (straight-line, inclusive) are returned"
+    },
+    {
+      "id": "REQ-7F02D7-AC2",
+      "story": "REQ-7F02D7-US2",
+      "gherkin": "Given an advertised but unconfirmed opening\nWhen results are ranked\nThen it is listed as an UNVERIFIED_POSSIBILITY and never as a confirmed alternative"
+    },
+    {
+      "id": "REQ-7F02D7-AC3",
+      "story": "REQ-7F02D7-US3",
+      "gherkin": "Given a facility that does not accept the patient's requisition format\nWhen eligibility is evaluated\nThen the facility is INELIGIBLE and the patient is told to contact their clinician"
+    },
+    {
+      "id": "REQ-7F02D7-AC4",
+      "story": "REQ-7F02D7-US4",
+      "gherkin": "Given a selected opening\nWhen the patient requests a booking handoff\nThen the workflow pauses for patient approval and no booking is marked confirmed without provider confirmation"
+    }
+  ],
+  "dependencies": [
+    "Authorized availability source (adapter)",
+    "Facility directory",
+    "Requisition rules",
+    "Geolocation (location -> coordinates)",
+    "Human approval service",
+    "Audit trail"
+  ],
+  "ambiguities": [
+    {
+      "id": "REQ-7F02D7-Q1",
+      "code": "VERIFIED_ONLY",
+      "question": "Are only verified appointments eligible, or may advertised/unverified openings be presented?",
+      "blocking": true
+    },
+    {
+      "id": "REQ-7F02D7-Q2",
+      "code": "REQUISITION_ELIGIBILITY",
+      "question": "Does an earlier slot qualify if the facility cannot accept the patient's requisition?",
+      "blocking": true
+    },
+    {
+      "id": "REQ-7F02D7-Q3",
+      "code": "NO_RESULT_BEHAVIOUR",
+      "question": "What happens if no appointment exists within the radius?",
+      "blocking": false
+    },
+    {
+      "id": "REQ-7F02D7-Q4",
+      "code": "RADIUS_EXPANSION",
+      "question": "Can users expand the search radius, and who approves it?",
+      "blocking": false
+    },
+    {
+      "id": "REQ-7F02D7-Q5",
+      "code": "PRIVATE_PAY",
+      "question": "Should private-pay facilities be included?",
+      "blocking": false
+    },
+    {
+      "id": "REQ-7F02D7-Q6",
+      "code": "BASELINE",
+      "question": "'Earlier' relative to what baseline - the patient's existing appointment date?",
+      "blocking": false
+    },
+    {
+      "id": "REQ-7F02D7-Q7",
+      "code": "ACCESSIBILITY",
+      "question": "Must accessibility needs (e.g., wheelchair access) filter results?",
+      "blocking": false
+    },
+    {
+      "id": "REQ-7F02D7-Q8",
+      "code": "FRESHNESS",
+      "question": "How recent must availability data be to count as verified?",
+      "blocking": false
+    }
+  ],
+  "status": "NEEDS_CLARIFICATION",
+  "method": "deterministic rule-based analysis"
+}

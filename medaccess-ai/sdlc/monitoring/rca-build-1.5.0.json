@@ -1,0 +1,63 @@
+{
+  "suspect_build": "1.5.0",
+  "baseline_build": "1.4.0",
+  "evidence": [
+    {
+      "type": "test_results",
+      "detail": "3 scenario(s) fail on 1.5.0; 0 fail on 1.4.0",
+      "failing": [
+        "QA-013 Advertised slot is not marked verified",
+        "QA-014 Unverified slots never in confirmed tier",
+        "QA-015 Days saved uses verified alternatives only"
+      ]
+    },
+    {
+      "type": "code_diff",
+      "detail": "status-mapping difference between builds",
+      "diff": "--- verification.py@1.4.0\n+++ verification.py@1.5.0\n@@ -1,5 +1,5 @@\n     SourceSlotStatus.CONFIRMED_BY_FEED: AvailabilityStatus.VERIFIED_AVAILABLE,\n-    SourceSlotStatus.ADVERTISED: AvailabilityStatus.ADVERTISED_UNVERIFIED,\n+    SourceSlotStatus.ADVERTISED: AvailabilityStatus.VERIFIED_AVAILABLE,\n     SourceSlotStatus.CALL_TO_CONFIRM: AvailabilityStatus.CONTACT_REQUIRED,\n     SourceSlotStatus.BOOKED: AvailabilityStatus.UNAVAILABLE,\n     SourceSlotStatus.CANCELLED: AvailabilityStatus.UNAVAILABLE,"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "Status-mapping change in build 1.5.0 maps ADVERTISED slots to VERIFIED_AVAILABLE.",
+      "status": "CONFIRMED",
+      "supporting_evidence": [
+        "code_diff",
+        "test_results",
+        "traces",
+        "change_correlation"
+      ],
+      "reasoning": "Mapping differs; regression scenarios fail on the suspect build and pass on the baseline with only the mapping changed."
+    },
+    {
+      "id": "H2",
+      "statement": "Freshness threshold was relaxed.",
+      "status": "REJECTED",
+      "reasoning": "max_verified_age_hours unchanged (6.0h)",
+      "supporting_evidence": []
+    },
+    {
+      "id": "H3",
+      "statement": "Source reliability degraded upstream.",
+      "status": "REJECTED",
+      "supporting_evidence": [],
+      "reasoning": "Integration reliability values unchanged: INT-SYN-A=0.97, INT-SYN-B=0.92, INT-SYN-NORTH=0.93, INT-SYN-LOWREL=0.55, INT-SYN-PUBLIC=0.85"
+    },
+    {
+      "id": "H4",
+      "statement": "Upstream feed started labelling advertised slots as confirmed.",
+      "status": "REJECTED",
+      "supporting_evidence": [],
+      "reasoning": "Sample traces show raw source_status 'advertised'; the misclassification happens after ingestion, inside verification."
+    }
+  ],
+  "root_cause": "Status-mapping change in build 1.5.0 maps ADVERTISED slots to VERIFIED_AVAILABLE.",
+  "confirmed": true,
+  "failing_tests": [
+    "QA-013",
+    "QA-014",
+    "QA-015"
+  ],
+  "component": "backend/app/services/verification.py::STATUS_MAPPINGS"
+}

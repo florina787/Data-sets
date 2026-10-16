@@ -1,0 +1,107 @@
+# MedAccess AI — Christina Copilot
+
+**Smarter Healthcare Access. Shorter Waits. Better Choices.**
+
+MedAccess AI is a locally runnable prototype with two connected capabilities:
+
+* **Healthcare Access Intelligence.** Dr. Christina, a virtual AI healthcare access assistant (**not a licensed
+  physician**), helps patients in the GTA find potentially earlier imaging, lab and consultation appointments. It
+  keeps verified openings separate from unverified possibilities, checks requisition rules, and prepares booking
+  handoffs only after the patient approves.
+* **Enterprise Agentic AI-SDLC.** The AI-SDLC Command Center runs the *90-Day MRI Wait-Time Challenge*: requirements,
+  ambiguity detection and human clarification, architecture, development, QA, simulation, an injected defect, anomaly
+  detection, root-cause analysis, fix, regression, release approval, deployment and post-release monitoring.
+
+> **DEMONSTRATION DATA — NOT LIVE APPOINTMENT AVAILABILITY.** Every facility, appointment and user is fictional.
+> No real provider integrations are configured, no appointment is ever booked, and deployments in the SDLC demo are
+> simulated inside the backend process.
+
+See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for what is implemented, simulated, partial or planned,
+and the test evidence behind each claim.
+
+## Quick start (Docker)
+
+```bash
+cd medaccess-ai
+docker compose up --build            # UI http://localhost:8080 · API http://localhost:8000/docs
+docker compose --profile monitoring up --build   # adds Prometheus :9090 and Grafana :3001
+```
+
+No API keys, cloud services or real patient data are needed. Sign in with one of the demo accounts on the
+start screen (Demo Patient, Demo Engineer, Demo Release Approver, Demo Administrator).
+Behind a TLS-intercepting proxy, see `docs/deployment/deployment-and-capacity.md` for the CA build secret.
+
+## Local development (no Docker)
+
+Requirements: Python 3.11+ (tested on 3.13), Node 20+ (tested on 22).
+
+```bash
+cd medaccess-ai
+python3 -m venv .venv && .venv/bin/pip install -r backend/requirements-dev.txt
+(cd frontend && npm ci)
+
+make backend     # API on :8000, SQLite at data/medaccess.db, checkpoints at data/checkpoints.sqlite
+make frontend    # UI on http://localhost:5173 (proxies /api to :8000)
+```
+
+Optional settings live in `.env` (copy `.env.example`; it is git-ignored). Setting `LLM_ENABLED=true` and
+`ANTHROPIC_API_KEY` makes Christina rephrase replies with Claude (`claude-haiku-5-5` for routing,
+`claude-sonnet-5-5` for explanations). All workflow decisions stay deterministic. `LANGSMITH_TRACING=true`
+with `LANGSMITH_API_KEY` exports **redacted** traces. Keys stay on the backend; the frontend never sees them.
+
+## Tests
+
+```bash
+make test                         # pytest (129 tests) + JUnit report at sdlc/qa/pytest-report.xml, vitest (7)
+TEST_DATABASE_URL=postgresql+psycopg://user:pw@localhost/medaccess .venv/bin/python -m pytest   # same suite on PostgreSQL
+make lint typecheck               # ruff, mypy, tsc
+# end-to-end (Playwright): backend on :8000, then in frontend/: npm run build && npm run preview, then
+cd frontend && npx playwright test   # 7 tests, desktop + mobile
+```
+
+Test categories: unit, integration (API), agents (LangGraph workflows), security (authn/z, injection, privacy,
+secrets), performance, regression, failure recovery, booking idempotency, availability freshness. The QA Agent's 29
+executable scenarios can also be run from the UI (QA & Test Center).
+
+## Repository layout
+
+```text
+medaccess-ai/
+├── backend/app/
+│   ├── api/            FastAPI routes + middleware (request IDs, rate limit, error envelope)
+│   ├── agents/         agent catalogue (20 patient + 8 SDLC) and node logic
+│   ├── graphs/         LangGraph StateGraphs: patient_graph.py, sdlc_graph.py, typed state
+│   ├── harness/        agent harness: allowlists, permissions, budgets, retries, circuit breakers
+│   ├── tools/ mcp/     typed tools, 9 MCP servers (MCP SDK stdio), LangChain StructuredTools
+│   ├── services/       deterministic engines: geo, verification, eligibility, ranking, booking, synthetic data
+│   ├── integrations/   availability adapters (synthetic, FHIR Slot mapping, partner API interface)
+│   ├── rag/            retrieval pipeline with citation verification
+│   ├── copilot/        Christina conversation engine, optional LLM layer
+│   ├── sdlc_engine/    requirements, architecture, QA, simulation, monitoring, RCA, security, release agents
+│   ├── governance/ security/ telemetry/ models/ database/ config/
+│   └── migrations/     Alembic (31 tables)
+├── frontend/src/       React + TypeScript + Tailwind (components, pages, layouts, hooks, services)
+├── tests/              unit · integration · agents · security · performance
+├── data/knowledge/     approved knowledge base (platform docs, public help lines, fictional facility docs)
+├── sdlc/               exported artifacts generated by the SDLC agents
+├── infrastructure/     nginx, Prometheus/Grafana, Kubernetes starter, load test
+├── docs/               architecture · api · security · deployment · user-guide
+└── docker-compose.yml  postgres · redis · backend · frontend (+ monitoring profile)
+```
+
+CI: `.github/workflows/medaccess-ci.yml` at the repository root (lint → type check → tests on SQLite and
+PostgreSQL → security → container build → ephemeral staging + Playwright → production job gated by a GitHub
+environment approval, with no production target configured).
+
+## Documentation
+
+* [Architecture](docs/architecture/overview.md) · [API](docs/api/README.md) · [Security & privacy](docs/security/security-privacy.md)
+* [Deployment & capacity planning (measured)](docs/deployment/deployment-and-capacity.md)
+* [Demo walkthrough](docs/user-guide/demo-walkthrough.md) · [Availability statuses](docs/user-guide/availability-statuses.md)
+
+## Safety & compliance notice
+
+Christina never diagnoses or judges clinical urgency. Language that suggests an emergency interrupts the search
+and directs the person to 911, Health811 or 988. Security controls are implemented, but the prototype is **not**
+legally compliant by virtue of those controls. A PHIPA/privacy impact assessment and legal review are required
+before any real patient information is processed.

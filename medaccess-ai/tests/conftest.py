@@ -9,7 +9,7 @@ from pathlib import Path
 _TMP = Path(tempfile.mkdtemp(prefix="medaccess-test-"))
 os.environ.update({
     "ENVIRONMENT": "test",
-    "DATABASE_URL": f"sqlite:///{_TMP / 'test.db'}",
+    "DATABASE_URL": os.environ.get("TEST_DATABASE_URL") or f"sqlite:///{_TMP / 'test.db'}",
     "CHECKPOINT_DB_PATH": str(_TMP / "checkpoints.sqlite"),
     "JWT_SECRET": "test-only-secret-not-used-anywhere-else-0123456789",
     "LLM_ENABLED": "false",

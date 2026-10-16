@@ -156,3 +156,8 @@ def test_provider_confirmation_only_from_live_integration():
 
     with pytest.raises(booking.BookingError):
         booking.record_provider_confirmation("BKG-x", "REF-1", "INT-SYN-A", "SYNTHETIC", "tester")
+
+
+def test_cors_origins_from_comma_separated_env(monkeypatch):
+    monkeypatch.setenv("CORS_ORIGINS", "http://localhost:8080, https://example.invalid")
+    assert Settings().cors_origins == ["http://localhost:8080", "https://example.invalid"]

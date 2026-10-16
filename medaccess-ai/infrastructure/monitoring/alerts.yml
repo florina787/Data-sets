@@ -1,0 +1,22 @@
+groups:
+  - name: medaccess
+    rules:
+      - alert: HighToolFailureRate
+        expr: sum(rate(medaccess_tool_calls_total{status!="ok"}[5m])) / clamp_min(sum(rate(medaccess_tool_calls_total[5m])), 1e-9) > 0.2
+        for: 5m
+        labels: { severity: high }
+        annotations: { summary: "Tool failure rate above 20%" }
+      - alert: StaleAvailabilityData
+        expr: medaccess_availability_data_age_hours > 6
+        for: 15m
+        labels: { severity: medium }
+        annotations: { summary: "Median availability record age exceeds the verification limit" }
+      - alert: SlowSearches
+        expr: histogram_quantile(0.95, sum(rate(medaccess_http_request_seconds_bucket{route="/api/v1/search"}[5m])) by (le)) > 3
+        for: 10m
+        labels: { severity: medium }
+        annotations: { summary: "p95 search latency above 3s" }
+      - alert: RetryStorm
+        expr: sum(rate(medaccess_retries_total[5m])) > 1
+        for: 5m
+        labels: { severity: medium }

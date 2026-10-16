@@ -1,0 +1,16 @@
+{
+  "fixed_build": "1.5.1",
+  "file": "backend/app/services/verification.py",
+  "change": "Restore SourceSlotStatus.ADVERTISED -> AvailabilityStatus.ADVERTISED_UNVERIFIED",
+  "diff": "--- verification.py@1.5.0\n+++ verification.py@1.5.1\n@@ -1,5 +1,5 @@\n     SourceSlotStatus.CONFIRMED_BY_FEED: AvailabilityStatus.VERIFIED_AVAILABLE,\n-    SourceSlotStatus.ADVERTISED: AvailabilityStatus.VERIFIED_AVAILABLE,\n+    SourceSlotStatus.ADVERTISED: AvailabilityStatus.ADVERTISED_UNVERIFIED,\n     SourceSlotStatus.CALL_TO_CONFIRM: AvailabilityStatus.CONTACT_REQUIRED,\n     SourceSlotStatus.BOOKED: AvailabilityStatus.UNAVAILABLE,\n     SourceSlotStatus.CANCELLED: AvailabilityStatus.UNAVAILABLE,",
+  "regression_tests": [
+    "QA-013",
+    "QA-014",
+    "QA-015",
+    "QA-017",
+    "QA-022",
+    "QA-027"
+  ],
+  "risk": "Low - single mapping entry; covered by regression scenarios and unit tests.",
+  "requires_approval": "CODE_CHANGE review + PRODUCTION_DEPLOYMENT approval"
+}

@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { @apply bg-canvas text-ink antialiased; }
+:focus-visible { outline: 3px solid #1565C0; outline-offset: 2px; border-radius: 6px; }
+
+@layer components {
+  .card { @apply bg-white rounded-2xl shadow-card border border-slate-100; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary { @apply btn bg-brand text-white hover:bg-brand-700; }
+  .btn-teal { @apply btn bg-teal text-white hover:bg-teal-700; }
+  .btn-ghost { @apply btn bg-white text-ink border border-slate-200 hover:bg-slate-50; }
+  .btn-danger { @apply btn bg-danger text-white hover:bg-red-800; }
+  .input { @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-ink placeholder:text-slate-500 focus:border-brand focus:ring-2 focus:ring-brand-100 outline-none; }
+  .label { @apply block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1; }
+  .h1 { @apply text-2xl font-bold text-ink; }
+  .h2 { @apply text-lg font-semibold text-ink; }
+  .muted { @apply text-sm text-slate-600; }
+  .code { @apply font-mono text-xs bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-auto whitespace-pre; }
+}
+
+/* ---------- Christina avatar animations ---------- */
+@keyframes ch-breathe { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-1px) scaleY(1.012); } }
+@keyframes ch-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes ch-wave { 0%,100% { transform: rotate(-150deg); } 50% { transform: rotate(-128deg); } }
+@keyframes ch-speak { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1.1); } }
+@keyframes ch-dot { 0%,100% { opacity: .2; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+@keyframes ch-bounce { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+@keyframes ch-sparkle { 0% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.4); } }
+@keyframes ch-point { 0%,100% { transform: rotate(-58deg); } 50% { transform: rotate(-64deg); } }
+@keyframes ch-pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+@keyframes node-run { 0% { box-shadow: 0 0 0 0 rgba(21,101,192,.45); } 100% { box-shadow: 0 0 0 10px rgba(21,101,192,0); } }
+
+.ch-body { transform-origin: 120px 260px; animation: ch-breathe 4.5s ease-in-out infinite; }
+.ch-eyes { transform-origin: 120px 101px; animation: ch-blink 5s infinite; }
+.ch-arm-wave { transform-origin: 176px 196px; transform: rotate(-150deg); animation: ch-wave 1.1s ease-in-out 3; }
+.ch-arm-point { transform-origin: 176px 196px; transform: rotate(-60deg); animation: ch-point 1.6s ease-in-out infinite; }
+.ch-mouth-speak { transform-origin: 120px 127px; animation: ch-speak .28s ease-in-out infinite; }
+.ch-dot { animation: ch-dot 1.2s ease-in-out infinite; }
+.ch-celebrate { animation: ch-bounce .9s ease-in-out 2; }
+.ch-sparkle { animation: ch-sparkle 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.ch-warn { animation: ch-pulse 1.2s ease-in-out infinite; }
+.node-running { animation: node-run 1.1s ease-out infinite; }
+
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}

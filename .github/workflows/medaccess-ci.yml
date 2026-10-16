@@ -1,0 +1,129 @@
+name: MedAccess AI CI/CD
+
+on:
+  push:
+    paths: ["medaccess-ai/**", ".github/workflows/medaccess-ci.yml"]
+  pull_request:
+    paths: ["medaccess-ai/**", ".github/workflows/medaccess-ci.yml"]
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: "Request production deployment (requires environment approval)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: medaccess-ai
+
+jobs:
+  backend:
+    name: Lint, type check, unit + integration tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_DB: medaccess, POSTGRES_USER: medaccess, POSTGRES_PASSWORD: ci-only }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U medaccess" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r backend/requirements-dev.txt
+      - name: Lint
+        run: ruff check backend/app tests --config backend/pyproject.toml
+      - name: Type check
+        run: cd backend && mypy app --config-file pyproject.toml
+      - name: Tests (SQLite)
+        run: python -m pytest --junitxml=sdlc/qa/pytest-report.xml --cov=backend/app --cov-report=xml:sdlc/qa/coverage.xml
+      - name: Tests (PostgreSQL)
+        env: { TEST_DATABASE_URL: "postgresql+psycopg://medaccess:ci-only@localhost:5432/medaccess" }
+        run: python -m pytest -m "not performance"
+      - name: Migrations apply cleanly
+        env: { DATABASE_URL: "postgresql+psycopg://medaccess:ci-only@localhost:5432/medaccess_mig" }
+        run: |
+          PGPASSWORD=ci-only psql -h localhost -U medaccess -d medaccess -c "CREATE DATABASE medaccess_mig"
+          cd backend && alembic upgrade head
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: test-reports, path: "medaccess-ai/sdlc/qa/*.xml" }
+
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r backend/requirements-dev.txt pip-audit
+      - name: Dependency audit
+        run: pip-audit -r backend/requirements.txt
+      - name: Static analysis (bandit rules via ruff S)
+        run: ruff check backend/app --config backend/pyproject.toml --select S
+      - name: Secret, injection, leakage and authorization suites
+        run: python -m pytest tests/security -q
+      - name: npm audit
+        working-directory: medaccess-ai/frontend
+        run: npm ci --no-fund && npm audit --omit=dev --audit-level=high
+
+  frontend:
+    name: Frontend type check, unit tests, build
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: medaccess-ai/frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: medaccess-ai/frontend/package-lock.json }
+      - run: npm ci --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: No secrets in bundle
+        run: "! grep -rE 'sk-ant-|ANTHROPIC_API_KEY|LANGSMITH_API_KEY|lsv2_' dist"
+
+  containers:
+    name: Build containers
+    needs: [backend, security, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
+
+  e2e:
+    name: Staging (ephemeral compose) + end-to-end tests
+    needs: [containers]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up --build -d
+      - run: |
+          for i in $(seq 60); do curl -fs localhost:8080/api/v1/health && break; sleep 3; done
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - working-directory: medaccess-ai/frontend
+        run: npm ci --no-fund && npx playwright install --with-deps chromium && E2E_BASE_URL=http://localhost:8080 npx playwright test
+      - if: always()
+        run: docker compose logs --no-color > compose-logs.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: e2e-results, path: "medaccess-ai/frontend/test-results\nmedaccess-ai/compose-logs.txt" }
+
+  production:
+    name: Production deployment (human approval required)
+    needs: [e2e]
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_production
+    runs-on: ubuntu-latest
+    environment: production   # configure required reviewers on this environment in GitHub settings
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy
+        run: |
+          echo "No production target is configured for this prototype."
+          echo "Wire your registry push + deploy here (e.g. kubectl apply -f infrastructure/kubernetes)."
+          exit 1
+      - name: Post-deployment checks
+        run: echo "curl -f https://<prod-host>/api/v1/health && run smoke tests"

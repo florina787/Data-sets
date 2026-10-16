@@ -1,0 +1,303 @@
+{
+  "build_version": "1.5.0",
+  "status_mapping": "defect_unverified_as_confirmed",
+  "executed": 29,
+  "passed": 26,
+  "failed": 3,
+  "pass_rate": 0.8966,
+  "duration_ms": 131.99,
+  "executed_at": "2026-10-16T17:08:17.726984+00:00",
+  "fixture_clock": "2026-10-16T14:00:00+00:00",
+  "results": [
+    {
+      "id": "QA-001",
+      "title": "No eligible availability within a small radius",
+      "category": "workflow",
+      "requirement": "REQ-SEARCH-001",
+      "passed": true,
+      "detail": "confirmed within 2 km: 0 (expected 0)",
+      "error": null,
+      "duration_ms": 4.36
+    },
+    {
+      "id": "QA-002",
+      "title": "Duplicate slots from two feeds are de-duplicated",
+      "category": "data-quality",
+      "requirement": "REQ-DQ-001",
+      "passed": true,
+      "detail": "duplicates removed: ['SLOT-004-008']",
+      "error": null,
+      "duration_ms": 5.87
+    },
+    {
+      "id": "QA-003",
+      "title": "Stale confirmed slot is downgraded",
+      "category": "availability-freshness",
+      "requirement": "REQ-VER-002",
+      "passed": true,
+      "detail": "30h-old confirmed slot -> ADVERTISED_UNVERIFIED",
+      "error": null,
+      "duration_ms": 4.05
+    },
+    {
+      "id": "QA-004",
+      "title": "Requisition format not accepted",
+      "category": "eligibility",
+      "requirement": "REQ-ELIG-001",
+      "passed": true,
+      "detail": "standard requisition at network-only facility -> INELIGIBLE",
+      "error": null,
+      "duration_ms": 3.9
+    },
+    {
+      "id": "QA-005",
+      "title": "No requisition -> not recommended",
+      "category": "eligibility",
+      "requirement": "REQ-ELIG-002",
+      "passed": true,
+      "detail": "recommendations without requisition: 0",
+      "error": null,
+      "duration_ms": 4.39
+    },
+    {
+      "id": "QA-006",
+      "title": "Wrong service type slot rejected",
+      "category": "verification",
+      "requirement": "REQ-VER-003",
+      "passed": true,
+      "detail": "CT slot at MRI/X-ray-only facility -> UNAVAILABLE",
+      "error": null,
+      "duration_ms": 3.92
+    },
+    {
+      "id": "QA-007",
+      "title": "Provider outage handled with fallback",
+      "category": "failure-recovery",
+      "requirement": "REQ-REL-001",
+      "passed": true,
+      "detail": "failed sources ['INT-SYN-NORTH']; FAC-003 excluded from recommendations",
+      "error": null,
+      "duration_ms": 4.75
+    },
+    {
+      "id": "QA-008",
+      "title": "Search radius boundary is inclusive",
+      "category": "unit",
+      "requirement": "REQ-SEARCH-002",
+      "passed": true,
+      "detail": "boundary 6.347 km inclusive; -10 m excluded",
+      "error": null,
+      "duration_ms": 8.09
+    },
+    {
+      "id": "QA-009",
+      "title": "UTC to facility local time conversion",
+      "category": "unit",
+      "requirement": "REQ-TZ-001",
+      "passed": true,
+      "detail": "UTC 2026-10-21T12:00:00+00:00 -> local 2026-10-21T08:00-04:00",
+      "error": null,
+      "duration_ms": 4.64
+    },
+    {
+      "id": "QA-010",
+      "title": "Day counts across DST transition",
+      "category": "unit",
+      "requirement": "REQ-TZ-001",
+      "passed": true,
+      "detail": "across DST change: 2 days, local hour 10",
+      "error": null,
+      "duration_ms": 0.02
+    },
+    {
+      "id": "QA-011",
+      "title": "Expired appointment is unavailable",
+      "category": "verification",
+      "requirement": "REQ-VER-004",
+      "passed": true,
+      "detail": "past slot -> UNAVAILABLE",
+      "error": null,
+      "duration_ms": 4.77
+    },
+    {
+      "id": "QA-012",
+      "title": "Unauthorized booking attempt blocked",
+      "category": "authorization",
+      "requirement": "REQ-SEC-001",
+      "passed": true,
+      "detail": "side-effect tool without approval blocked; cross-patient decision denied",
+      "error": null,
+      "duration_ms": 1.15
+    },
+    {
+      "id": "QA-013",
+      "title": "Advertised slot is not marked verified",
+      "category": "regression",
+      "requirement": "REQ-VER-001",
+      "passed": false,
+      "detail": "advertised slot -> VERIFIED_AVAILABLE (expected ADVERTISED_UNVERIFIED)",
+      "error": null,
+      "duration_ms": 4.46
+    },
+    {
+      "id": "QA-014",
+      "title": "Unverified slots never in confirmed tier",
+      "category": "regression",
+      "requirement": "REQ-VER-001",
+      "passed": false,
+      "detail": "confirmed-tier slots not confirmed by source: ['SLOT-004-007']",
+      "error": null,
+      "duration_ms": 5.55
+    },
+    {
+      "id": "QA-015",
+      "title": "Days saved uses verified alternatives only",
+      "category": "regression",
+      "requirement": "REQ-WAIT-001",
+      "passed": false,
+      "detail": "days saved 87 (expected 85 from verified 5-day slot)",
+      "error": null,
+      "duration_ms": 6.12
+    },
+    {
+      "id": "QA-016",
+      "title": "Low-reliability source is not verified",
+      "category": "verification",
+      "requirement": "REQ-VER-002",
+      "passed": true,
+      "detail": "reliability 0.55 source -> ADVERTISED_UNVERIFIED",
+      "error": null,
+      "duration_ms": 4.29
+    },
+    {
+      "id": "QA-017",
+      "title": "Call-to-confirm maps to CONTACT_REQUIRED",
+      "category": "verification",
+      "requirement": "REQ-VER-001",
+      "passed": true,
+      "detail": "call-to-confirm -> CONTACT_REQUIRED",
+      "error": null,
+      "duration_ms": 4.62
+    },
+    {
+      "id": "QA-018",
+      "title": "Private-pay excluded by default",
+      "category": "eligibility",
+      "requirement": "REQ-ELIG-003",
+      "passed": true,
+      "detail": "private-pay FAC-006 excluded by default",
+      "error": null,
+      "duration_ms": 5.77
+    },
+    {
+      "id": "QA-019",
+      "title": "Private-pay included with conditions when allowed",
+      "category": "eligibility",
+      "requirement": "REQ-ELIG-003",
+      "passed": true,
+      "detail": "private-pay included with conditions",
+      "error": null,
+      "duration_ms": 6.37
+    },
+    {
+      "id": "QA-020",
+      "title": "Accessibility filter respected",
+      "category": "eligibility",
+      "requirement": "REQ-ACC-001",
+      "passed": true,
+      "detail": "only wheelchair-accessible facilities recommended",
+      "error": null,
+      "duration_ms": 17.56
+    },
+    {
+      "id": "QA-021",
+      "title": "Missing timestamp -> UNKNOWN",
+      "category": "data-quality",
+      "requirement": "REQ-DQ-002",
+      "passed": true,
+      "detail": "missing timestamp -> UNKNOWN",
+      "error": null,
+      "duration_ms": 5.55
+    },
+    {
+      "id": "QA-022",
+      "title": "Booked slot is unavailable",
+      "category": "verification",
+      "requirement": "REQ-VER-001",
+      "passed": true,
+      "detail": "booked slot -> UNAVAILABLE",
+      "error": null,
+      "duration_ms": 5.18
+    },
+    {
+      "id": "QA-023",
+      "title": "Urgent symptom interrupts search",
+      "category": "safety",
+      "requirement": "REQ-SAFE-001",
+      "passed": true,
+      "detail": "flags ['chest_pain']",
+      "error": null,
+      "duration_ms": 0.08
+    },
+    {
+      "id": "QA-024",
+      "title": "Negated symptom does not interrupt",
+      "category": "safety",
+      "requirement": "REQ-SAFE-001",
+      "passed": true,
+      "detail": "interrupt=False negated=['chest_pain']",
+      "error": null,
+      "duration_ms": 0.03
+    },
+    {
+      "id": "QA-025",
+      "title": "Prompt injection in tool output neutralised",
+      "category": "prompt-injection",
+      "requirement": "REQ-SEC-002",
+      "passed": true,
+      "detail": "instruction-like tool output removed",
+      "error": null,
+      "duration_ms": 0.04
+    },
+    {
+      "id": "QA-026",
+      "title": "Telemetry redaction of identifiers",
+      "category": "privacy",
+      "requirement": "REQ-PRIV-001",
+      "passed": true,
+      "detail": "Email [REDACTED_EMAIL], phone [REDACTED_PHONE], card [REDACTED_HEALTH_CARD]",
+      "error": null,
+      "duration_ms": 0.04
+    },
+    {
+      "id": "QA-027",
+      "title": "Deterministic ranking order and tiers",
+      "category": "unit",
+      "requirement": "REQ-REC-001",
+      "passed": true,
+      "detail": "confirmed days [3, 5, 12, 21, 31, 90]",
+      "error": null,
+      "duration_ms": 9.59
+    },
+    {
+      "id": "QA-028",
+      "title": "Unknown requisition -> conditional eligibility",
+      "category": "eligibility",
+      "requirement": "REQ-ELIG-002",
+      "passed": true,
+      "detail": "unknown requisition -> ELIGIBLE_WITH_CONDITIONS",
+      "error": null,
+      "duration_ms": 6.67
+    },
+    {
+      "id": "QA-029",
+      "title": "Haversine distance sanity",
+      "category": "unit",
+      "requirement": "REQ-SEARCH-002",
+      "passed": true,
+      "detail": "Toronto->Mississauga centre 22.18 km",
+      "error": null,
+      "duration_ms": 0.02
+    }
+  ]
+}
