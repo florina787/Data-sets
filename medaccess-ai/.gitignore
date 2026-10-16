@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+# local runtime data (synthetic DB + LangGraph checkpoints)
+data/*.db
+data/*.db-*
+data/*.sqlite
+data/*.sqlite-*
+# secrets
+.env
+.env.*
+!.env.example
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+# generated reports (CI artifacts)
+sdlc/qa/pytest-report.xml
+sdlc/qa/coverage.xml

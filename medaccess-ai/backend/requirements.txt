@@ -1,0 +1,22 @@
+# Runtime dependencies (pinned versions verified in this repository's test run)
+fastapi==0.143.3
+uvicorn==0.54.0
+pydantic==2.14.1
+pydantic-settings==2.16.0
+SQLAlchemy==2.1.4
+alembic==1.20.0
+psycopg[binary]==3.3.6
+langgraph==1.2.15
+langgraph-checkpoint-sqlite==3.1.2
+langchain-core==1.6.11
+langchain-anthropic==1.7.6
+langsmith==0.14.11
+opentelemetry-api==1.45.1
+opentelemetry-sdk==1.45.1
+prometheus-client==0.26.0
+PyJWT==2.15.1
+cryptography==50.0.2
+mcp==1.30.0
+redis==8.1.0
+httpx==0.28.1
+tzdata
