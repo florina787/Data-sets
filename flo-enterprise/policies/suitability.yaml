@@ -1,0 +1,17 @@
+# Approved suitability rules (synthetic, illustrative; require validation by Compliance before any real use).
+version: 2026.09
+volatility_bands:   # maximum annualized portfolio volatility per client risk profile
+  Conservative: 0.08
+  Moderately Conservative: 0.10
+  Balanced: 0.13
+  Growth: 0.16
+  Aggressive: 0.22
+single_issuer_limit: 0.10
+kyc_max_age_days: 730
+expected_returns:    # long-run planning assumptions (nominal, annual) per profile - illustrative only
+  Conservative: 0.035
+  Moderately Conservative: 0.042
+  Balanced: 0.05
+  Growth: 0.058
+  Aggressive: 0.065
+inflation_assumption: 0.021

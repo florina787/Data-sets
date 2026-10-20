@@ -1,0 +1,44 @@
+# Attribute-based requirements. A rule applies when the action matches and (if listed) the resource type matches.
+# Every applicable rule's `require` condition must evaluate true, otherwise the request is denied with the rule id.
+# Condition operators: eq, neq, in, contains_any, lte_level (classification ordering), present.
+classification_levels: {public: 0, internal: 1, confidential: 2, restricted: 3}
+rules:
+  - id: ABAC-CLIENT-ASSIGNMENT
+    description: Identifiable client records are visible only to the assigned advisor, or to compliance/privacy officers acting for a recorded purpose.
+    actions: [client:read, comms:draft, comms:send, recommendation:deliver, retirement:run, privacy:rehydrate, export:sensitive]
+    resource_types: [client]
+    require:
+      any:
+        - {attr: resource.advisor_id, op: eq, ref: principal.advisor_id}
+        - all:
+            - {attr: principal.roles, op: contains_any, value: [compliance_officer, privacy_officer]}
+            - {attr: context.purpose, op: in, value: [compliance_review, complaint_investigation, privacy_request, audit]}
+  - id: ABAC-PORTFOLIO-ACCESS
+    description: Advisors see only portfolios of their assigned clients; investment roles see portfolios for investment oversight (client identity masked).
+    actions: [portfolio:read]
+    resource_types: [portfolio]
+    require:
+      any:
+        - {attr: resource.advisor_id, op: eq, ref: principal.advisor_id}
+        - {attr: principal.roles, op: contains_any, value: [cio, investment_analyst]}
+  - id: ABAC-CLASSIFICATION
+    description: Principal clearance must be at or above the resource classification.
+    actions: ["*"]
+    require:
+      all:
+        - {attr: resource.classification, op: lte_level, ref: principal.clearance}
+  - id: ABAC-PRIVATE-WEALTH-SEGREGATION
+    description: External distribution advisors never access private wealth client resources.
+    actions: ["*"]
+    resource_types: [client, portfolio, interaction]
+    require:
+      all:
+        - {attr: principal.business_unit, op: neq, value: external_distribution}
+  - id: ABAC-MODEL-RESIDENCY
+    description: Model providers must be approved for the data classification and run in a region allowed by the tenant residency.
+    actions: [model:invoke]
+    resource_types: [model_provider]
+    require:
+      all:
+        - {attr: resource.region, op: in, ref: context.allowed_regions}
+        - {attr: context.data_classification, op: in, ref: resource.allowed_classifications}

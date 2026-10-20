@@ -1,0 +1,98 @@
+# Role -> permissions. Deny by default: anything not listed is denied.
+# Wildcards: "domain:*" grants every action in the domain.
+roles:
+  executive:
+    - exec:read
+    - finance:read
+    - investment:read_aggregate
+    - risk:read_aggregate
+    - decisions:read
+    - decisions:write
+    - scenarios:run
+    - board:prepare
+    - board:distribute
+    - ask:use
+    - docs:read
+    - export:standard
+    - approvals:decide
+  finance:
+    - finance:read
+    - records:change
+    - export:standard
+  cio:
+    - investment:read
+    - investment:read_aggregate
+    - portfolio:read
+    - research:read
+    - market:read
+    - risk:read
+    - risk:read_aggregate
+    - scenarios:run
+    - ask:use
+    - docs:read
+    - export:standard
+    - portfolio:modify
+    - approvals:decide
+    - decisions:read
+  investment_analyst:
+    - investment:read
+    - investment:read_aggregate
+    - portfolio:read
+    - research:read
+    - market:read
+    - risk:read
+    - scenarios:run
+    - ask:use
+    - docs:read
+  wealth_advisor:
+    - wealth:read
+    - client:read
+    - portfolio:read
+    - comms:draft
+    - comms:send
+    - recommendation:deliver
+    - research:read
+    - product_research:read
+    - market:read
+    - retirement:run
+    - ask:use
+    - docs:read
+    - privacy:rehydrate
+    - export:sensitive
+  external_advisor:
+    - product_research:read
+    - market:read
+    - ask:use
+    - docs:read
+  compliance_officer:
+    - compliance:read
+    - compliance:write
+    - client:read
+    - audit:read
+    - approvals:decide
+    - ask:use
+    - docs:read
+    - research:read
+    - decisions:read
+    - privacy:rehydrate
+    - export:standard
+  privacy_officer:
+    - privacy:admin
+    - privacy:rehydrate
+    - client:read
+    - audit:read
+    - ask:use
+    - docs:read
+  ai_admin:
+    - aiops:read
+    - aiops:manage
+    - audit:read
+    - ask:use
+    - docs:read
+    - evals:run
+# Actions that no role may perform in this demonstration, regardless of grants or approvals.
+prohibited:
+  - trade:execute
+  - shell:execute
+  - db:raw_query
+  - network:unrestricted

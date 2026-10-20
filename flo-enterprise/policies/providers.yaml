@@ -1,0 +1,16 @@
+# Model provider registry. The mock provider runs in-process (no data leaves the service).
+providers:
+  mock-deterministic:
+    region: in-process
+    allowed_classifications: [public, internal, confidential, restricted]
+    description: Local deterministic mock model (default). No external calls.
+  bedrock-ca-central-1:
+    region: ca-central-1
+    allowed_classifications: [public, internal, confidential]
+    description: AWS Bedrock adapter (requires credentials; disabled when unavailable). Restricted data must be masked first.
+  bedrock-us-east-1:
+    region: us-east-1
+    allowed_classifications: [public]
+    description: Example out-of-country region; allowed for public data only and blocked by CA residency for anything else.
+tenant_residency:
+  CA: [in-process, ca-central-1]
