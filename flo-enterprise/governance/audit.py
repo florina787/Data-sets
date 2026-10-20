@@ -10,12 +10,39 @@ from datetime import datetime, timezone
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
+from contextlib import contextmanager
+from functools import lru_cache
+
+from sqlalchemy.orm import sessionmaker
+
+from backend.config import get_settings
 from backend.db import models as m
-from backend.db.session import session_scope
+from backend.db.session import make_engine
 from governance.policy import canonical_json
 
 GENESIS = "0" * 64
 _lock = threading.Lock()
+
+
+@lru_cache
+def _factory(url: str):
+    eng = make_engine(url)
+    if url.startswith("sqlite"):
+        m.Base.metadata.create_all(eng, tables=[m.AuditEvent.__table__])
+    return sessionmaker(bind=eng, expire_on_commit=False)
+
+
+@contextmanager
+def audit_session():
+    s = _factory(get_settings().audit_url)()
+    try:
+        yield s
+        s.commit()
+    except Exception:
+        s.rollback()
+        raise
+    finally:
+        s.close()
 
 
 def _digest(prev: str, body: dict) -> str:
@@ -31,7 +58,7 @@ def _body(e: m.AuditEvent) -> dict:
 def record(*, tenant_id: str, actor: str, action: str, resource_type: str = "-", resource_id: str = "-",
            decision: str = "info", reasons: list | None = None, policy_version: str = "-", details: dict | None = None) -> str:
     from privacy.detect import redact_structure
-    with _lock, session_scope() as s:
+    with _lock, audit_session() as s:
         if s.get_bind().dialect.name == "postgresql":
             s.execute(text("SELECT pg_advisory_xact_lock(74201)"))
         last = s.execute(select(m.AuditEvent.hash).order_by(m.AuditEvent.seq.desc()).limit(1)).scalar()
@@ -45,7 +72,10 @@ def record(*, tenant_id: str, actor: str, action: str, resource_type: str = "-",
         return ev.id
 
 
-def verify_chain(s: Session) -> dict:
+def verify_chain(s: Session | None = None) -> dict:
+    if s is None:
+        with audit_session() as s2:
+            return verify_chain(s2)
     prev = GENESIS
     n = 0
     for e in s.scalars(select(m.AuditEvent).order_by(m.AuditEvent.seq)):

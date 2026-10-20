@@ -90,6 +90,8 @@ roles:
     - ask:use
     - docs:read
     - evals:run
+  orchestrator:   # service identity used by the agent harness (never assigned to humans)
+    - model:invoke
 # Actions that no role may perform in this demonstration, regardless of grants or approvals.
 prohibited:
   - trade:execute

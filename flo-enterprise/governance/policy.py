@@ -155,7 +155,7 @@ class PolicyEngine:
                                 "message": rule["description"] if not ok else "requirement satisfied"})
                 allowed = allowed and ok
         obligations = []
-        if action in self.bundle.approvals["actions"]:
+        if allowed and action in self.bundle.approvals["actions"]:
             obligations.append("approval_required")
         return Decision(allowed, action, reasons, ver, obligations)
 

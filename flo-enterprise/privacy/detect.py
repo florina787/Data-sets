@@ -72,7 +72,7 @@ RX = {
     "POSTAL_CODE": re.compile(r"\b[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ \-]?\d[ABCEGHJ-NPRSTV-Z]\d\b"),
     "HONORIFIC_NAME": re.compile(r"\b(?:Mr|Mrs|Ms|Miss|Dr|Mx|M\.|Mme|Sr|Sra)\.?\s+([A-Z][\w'\-]+(?:\s+[A-Z][\w'\-]+)?)"),
     "CLIENT_NAMED": re.compile(r"\b(?:[Cc]lient|[Cc]liente|[Hh]ousehold)\s+([A-Z][\w'\-]+\s+[A-Z][\w'\-]+)"),
-    "CAP_PAIR": re.compile(r"\b([A-ZÀ-ÖØ-Þ][\wÀ-ÿ'\-]+)\s+([A-ZÀ-ÖØ-Þ][\wÀ-ÿ'\-]+)\b"),
+    "CAP_PAIR": re.compile(r"(?=\b([A-ZÀ-ÖØ-Þ][\wÀ-ÿ'\-]+)\s+([A-ZÀ-ÖØ-Þ][\wÀ-ÿ'\-]+)\b)"),
     "AMOUNT": re.compile(r"(?:CAD|C?\$|USD)\s?\d[\d,]*(?:\.\d{1,2})?\s?(?:[kKmMbB](?:illion|n)?)?\b"),
 }
 SECRET_RX = [(re.compile(p), n) for p, n in SECRET_PATTERNS]
@@ -110,7 +110,7 @@ def detect(text: str) -> list[Finding]:
     for m in RX["CAP_PAIR"].finditer(text):
         full = f"{m.group(1)} {m.group(2)}"
         if full in _NAMES:
-            f.append(Finding("PERSON", m.start(), m.end(), full, 0.97, "crm_gazetteer"))
+            f.append(Finding("PERSON", m.start(1), m.end(2), text[m.start(1):m.end(2)], 0.97, "crm_gazetteer"))
     if presidio_available():  # pragma: no cover - optional dependency
         f += _presidio(text)
     f = _resolve_overlaps(f)

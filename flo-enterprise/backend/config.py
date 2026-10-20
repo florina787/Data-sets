@@ -17,6 +17,9 @@ def _env(name: str, default: str = "") -> str:
 class Settings:
     env: str = field(default_factory=lambda: _env("FLO_ENV", "development"))
     database_url: str = field(default_factory=lambda: _env("FLO_DATABASE_URL", f"sqlite:///{ROOT / 'var' / 'flo.db'}"))
+    # Audit log store: separate connection (dedicated append-only database in production) so audit writes are
+    # independent of business transactions. Defaults to a separate SQLite file in development.
+    audit_database_url: str = field(default_factory=lambda: _env("FLO_AUDIT_DATABASE_URL", ""))
     redis_url: str = field(default_factory=lambda: _env("FLO_REDIS_URL", ""))
     checkpoint_db: str = field(default_factory=lambda: _env("FLO_CHECKPOINT_DB", str(ROOT / "var" / "checkpoints.sqlite")))
     # Demo signing key for the mock identity provider. Production uses the enterprise IdP (OIDC) and never this key.
@@ -33,6 +36,14 @@ class Settings:
     max_input_chars: int = field(default_factory=lambda: int(_env("FLO_MAX_INPUT_CHARS", "4000")))
     cors_origins: str = field(default_factory=lambda: _env("FLO_CORS_ORIGINS", "http://localhost:5173,http://localhost:8080"))
     export_dir: str = field(default_factory=lambda: _env("FLO_EXPORT_DIR", str(ROOT / "var" / "exports")))
+
+    @property
+    def audit_url(self) -> str:
+        if self.audit_database_url:
+            return self.audit_database_url
+        if self.database_url.startswith("sqlite:///"):
+            return self.database_url.replace(".db", "") + "_audit.db"
+        return self.database_url
 
     @property
     def is_production(self) -> bool:
