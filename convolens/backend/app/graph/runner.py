@@ -159,7 +159,7 @@ class FloRunner:
                "model_id": model_id, "visited": [], "tokens_in": 0, "tokens_out": 0}
         cfg = self._config(session_id, request_id, ls_run_id, {"dataset_id": dataset_id, "mode": mode, "page": page or ""})
         yield {"type": "run_started", "request_id": request_id, "mode": mode, "dataset_id": dataset_id,
-               "method": "rules (demonstration)" if mode == "demo" else f"model {model_id}",
+               "method": "rules (demonstration)" if mode == "demo" else (f"model {model_id}" if model_id else "model not configured"),
                "tracing": tracing.status()["configured"]}
         yield from self._stream(inp, cfg, request_id)
 
