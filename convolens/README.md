@@ -8,16 +8,49 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-172B4D) ![FastAPI](https://img.shields.io/badge/FastAPI-backend-087F8C) ![LangGraph](https://img.shields.io/badge/LangGraph-StateGraph-087F8C) ![LangSmith](https://img.shields.io/badge/LangSmith-tracing%20%26%20evals-087F8C) ![React](https://img.shields.io/badge/React%2019-TypeScript-172B4D) ![Tests](https://img.shields.io/badge/tests-65%20backend%20%C2%B7%207%20frontend%20passing-24734B) ![Data](https://img.shields.io/badge/data-Kaggle%20Customer%20Support%20on%20Twitter-A96308)
 
-<img src="docs/screenshots/01-overview-real.png" alt="Executive overview on real Kaggle data: 3,000 conversations with denominators, unknown counts and evidence-backed investigation suggestions" width="100%">
+### 💬 Ask Flo, the built-in chatbot, in plain English
 
-<sub>Executive overview on real data: 3,000 conversations selected from the Kaggle <i>Customer Support on Twitter</i> dataset.</sub>
+<img src="docs/screenshots/00-flo-chatbot-typing.png" alt="Flo chatbot: the user types a question in the message box at the bottom; callouts point to the input box, the Send button and the suggested questions" width="100%">
+
+<sub><b>① Type your question in the message box at the bottom and press Enter (or click ② Send).</b> You can also ③ click a suggested question. Flo answers using the page you are on and the filters you selected.</sub>
 
 </div>
 
 ---
 
+## Talk to Flo
+
+**Flo is a chatbot built into every page of ConvoLens.** Type a question about your customer conversations in the message box, for example:
+
+| You type… | Flo does… |
+|---|---|
+| *Brief me on this dataset.* | Counts conversations, top topics, outcomes and escalation requests |
+| *Why are refund conversations unresolved, and what do customers say?* | Measures outcomes in the refund scope and quotes what customers reported, kept separate from causes |
+| *Compare resolved and unresolved conversations.* | Compares the two groups side by side, with numerators and denominators |
+| *Show the evidence behind this chart.* | Finds and validates example messages for the current filters |
+| *Prepare a decision brief.* | Writes a leadership brief: finding, hypothesis, alternatives, proposed owner, success measure |
+| *Propose an action to reduce unresolved refund issues.* | Drafts an action and **waits for your approval** before saving anything |
+| *What is our CSAT score?* | Says plainly that the data has no CSAT ratings, rather than inventing one |
+
+The answer streams back into the chat:
+
+<img src="docs/screenshots/00-flo-chatbot-answer.png" alt="Flo's answer in the chatbot: the user's question, the finding, validated numbers M1–M12 and evidence quotes E1–E15 with links to the exact messages" width="100%">
+
+<sub>① Your question, with the page and filters Flo used. ② Every answer has a finding, scope and denominator, supporting evidence, limitations and a next step. ③ Every number (<code>M3</code>) is an exact SQL count. ④ Every quote (<code>E1</code>) opens the exact customer message.</sub>
+
+**Where to find Flo:**
+- **Ask Flo** in the left menu opens the full-screen chat shown above, with an evidence panel and the execution trace.
+- **On every other page**, Flo sits in the right-hand panel. Click **Open Flo** in the top bar if it is closed.
+
+<img src="docs/screenshots/01-overview-real.png" alt="Executive overview on real Kaggle data with the Flo chat panel on the right" width="100%">
+
+<sub>Executive overview on real data (3,000 conversations from the Kaggle <i>Customer Support on Twitter</i> dataset), with the Flo chat panel open on the right.</sub>
+
+---
+
 ## Contents
 
+- [Talk to Flo](#talk-to-flo)
 - [Why ConvoLens](#why-convolens)
 - [Meet Flo](#meet-flo-your-customer-intelligence-and-decision-support-assistant)
 - [Real Kaggle data](#running-on-real-kaggle-data)
