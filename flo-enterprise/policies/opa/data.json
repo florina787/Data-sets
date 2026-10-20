@@ -221,6 +221,7 @@
      "evals:run"
     ],
     "cio": [
+     "product_research:read",
      "investment:read",
      "investment:read_aggregate",
      "portfolio:read",
@@ -276,6 +277,7 @@
      "export:standard"
     ],
     "investment_analyst": [
+     "product_research:read",
      "investment:read",
      "investment:read_aggregate",
      "portfolio:read",
@@ -316,6 +318,6 @@
     ]
    }
   },
-  "version": "1.3.1+feb5cd8bbd"
+  "version": "1.3.2+ebcb6d5534"
  }
 }

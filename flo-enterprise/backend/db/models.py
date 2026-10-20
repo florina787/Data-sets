@@ -436,7 +436,7 @@ class Outbox(Base):
     __tablename__ = "outbox"
     id: Mapped[str] = mapped_column(String(40), primary_key=True)
     tenant_id: Mapped[str] = mapped_column(String(32))
-    channel: Mapped[str] = mapped_column(String(24))
+    channel: Mapped[str] = mapped_column(String(120))
     recipient_ref: Mapped[str] = mapped_column(String(80))
     subject: Mapped[str] = mapped_column(String(200))
     body: Mapped[str] = mapped_column(Text)

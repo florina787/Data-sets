@@ -79,9 +79,17 @@ _store: SyntheticStore | None = None
 _store_key: str | None = None
 
 
+_checked_at = 0.0
+VERSION_CHECK_INTERVAL_S = 10.0
+
+
 def get_store(s: Session) -> SyntheticStore:
-    global _store, _store_key
+    global _store, _store_key, _checked_at
+    import time
     key = str(s.get_bind().url)
+    if _store is not None and _store_key == key and time.monotonic() - _checked_at < VERSION_CHECK_INTERVAL_S:
+        return _store  # dataset version re-checked at most every 10 s (invalidate() forces a reload)
+    _checked_at = time.monotonic()
     man = s.get(m.SeedManifest, "dataset")
     version = man.value["tables"]["product_monthly"]["sha256"][:12] if man else None
     with _lock:

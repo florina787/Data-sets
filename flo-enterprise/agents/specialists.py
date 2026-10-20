@@ -450,7 +450,7 @@ def product_research_agent(ctx, q: Question):
     w: list = []
     try_tool(ctx, w, "docs.search", query=q.question or "fund fees comparison", k=3, doc_types=["product_research"])
     facts = {"n": len(funds), "by_strategy": [{"strategy": k, "name": v["name"], "fee_bps": v["fee_bps"], "ret_pct": pct(v["return_12m"])}
-                                              for k, v in sorted(by.items())]}
+                                              for k, v in sorted(by.items())], "window": 12}
     return _out(ctx, "product_research_agent", "product", facts, ["fee_comparison"], w)
 
 

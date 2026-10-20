@@ -1,0 +1,323 @@
+{
+ "flo": {
+  "abac": {
+   "classification_levels": {
+    "confidential": 2,
+    "internal": 1,
+    "public": 0,
+    "restricted": 3
+   },
+   "rules": [
+    {
+     "actions": [
+      "client:read",
+      "comms:draft",
+      "comms:send",
+      "recommendation:deliver",
+      "retirement:run",
+      "privacy:rehydrate",
+      "export:sensitive"
+     ],
+     "description": "Identifiable client records are visible only to the assigned advisor, or to compliance/privacy officers acting for a recorded purpose.",
+     "id": "ABAC-CLIENT-ASSIGNMENT",
+     "require": {
+      "any": [
+       {
+        "attr": "resource.advisor_id",
+        "op": "eq",
+        "ref": "principal.advisor_id"
+       },
+       {
+        "all": [
+         {
+          "attr": "principal.roles",
+          "op": "contains_any",
+          "value": [
+           "compliance_officer",
+           "privacy_officer"
+          ]
+         },
+         {
+          "attr": "context.purpose",
+          "op": "in",
+          "value": [
+           "compliance_review",
+           "complaint_investigation",
+           "privacy_request",
+           "audit"
+          ]
+         }
+        ]
+       }
+      ]
+     },
+     "resource_types": [
+      "client"
+     ]
+    },
+    {
+     "actions": [
+      "portfolio:read"
+     ],
+     "description": "Advisors see only portfolios of their assigned clients; investment roles see portfolios for investment oversight (client identity masked).",
+     "id": "ABAC-PORTFOLIO-ACCESS",
+     "require": {
+      "any": [
+       {
+        "attr": "resource.advisor_id",
+        "op": "eq",
+        "ref": "principal.advisor_id"
+       },
+       {
+        "attr": "principal.roles",
+        "op": "contains_any",
+        "value": [
+         "cio",
+         "investment_analyst"
+        ]
+       }
+      ]
+     },
+     "resource_types": [
+      "portfolio"
+     ]
+    },
+    {
+     "actions": [
+      "*"
+     ],
+     "description": "Principal clearance must be at or above the resource classification.",
+     "id": "ABAC-CLASSIFICATION",
+     "require": {
+      "all": [
+       {
+        "attr": "resource.classification",
+        "op": "lte_level",
+        "ref": "principal.clearance"
+       }
+      ]
+     }
+    },
+    {
+     "actions": [
+      "*"
+     ],
+     "description": "External distribution advisors never access private wealth client resources.",
+     "id": "ABAC-PRIVATE-WEALTH-SEGREGATION",
+     "require": {
+      "all": [
+       {
+        "attr": "principal.business_unit",
+        "op": "neq",
+        "value": "external_distribution"
+       }
+      ]
+     },
+     "resource_types": [
+      "client",
+      "portfolio",
+      "interaction"
+     ]
+    },
+    {
+     "actions": [
+      "model:invoke"
+     ],
+     "description": "Model providers must be approved for the data classification and run in a region allowed by the tenant residency.",
+     "id": "ABAC-MODEL-RESIDENCY",
+     "require": {
+      "all": [
+       {
+        "attr": "resource.region",
+        "op": "in",
+        "ref": "context.allowed_regions"
+       },
+       {
+        "attr": "context.data_classification",
+        "op": "in",
+        "ref": "resource.allowed_classifications"
+       }
+      ]
+     },
+     "resource_types": [
+      "model_provider"
+     ]
+    }
+   ]
+  },
+  "approvals": {
+   "actions": {
+    "board:distribute": {
+     "action_type": "board_report_distribution",
+     "approver_roles": [
+      "executive"
+     ],
+     "expires_minutes": 2880,
+     "risk": "high"
+    },
+    "comms:send": {
+     "action_type": "client_communication",
+     "approver_roles": [
+      "compliance_officer"
+     ],
+     "expires_minutes": 1440,
+     "risk": "high"
+    },
+    "export:sensitive": {
+     "action_type": "sensitive_data_export",
+     "approver_roles": [
+      "privacy_officer",
+      "compliance_officer"
+     ],
+     "expires_minutes": 240,
+     "risk": "high"
+    },
+    "portfolio:modify": {
+     "action_type": "portfolio_modification",
+     "approver_roles": [
+      "cio"
+     ],
+     "expires_minutes": 480,
+     "risk": "critical"
+    },
+    "recommendation:deliver": {
+     "action_type": "client_recommendation",
+     "approver_roles": [
+      "compliance_officer"
+     ],
+     "expires_minutes": 1440,
+     "risk": "high"
+    },
+    "records:change": {
+     "action_type": "financial_record_change",
+     "approver_roles": [
+      "executive"
+     ],
+     "expires_minutes": 480,
+     "risk": "critical"
+    }
+   },
+   "rules": {
+    "payload_binding": "sha256",
+    "revalidate_on_execute": true,
+    "self_approval": false,
+    "single_use": true
+   }
+  },
+  "rbac": {
+   "prohibited": [
+    "trade:execute",
+    "shell:execute",
+    "db:raw_query",
+    "network:unrestricted"
+   ],
+   "roles": {
+    "ai_admin": [
+     "aiops:read",
+     "aiops:manage",
+     "audit:read",
+     "ask:use",
+     "docs:read",
+     "evals:run"
+    ],
+    "cio": [
+     "product_research:read",
+     "investment:read",
+     "investment:read_aggregate",
+     "portfolio:read",
+     "research:read",
+     "market:read",
+     "risk:read",
+     "risk:read_aggregate",
+     "scenarios:run",
+     "ask:use",
+     "docs:read",
+     "export:standard",
+     "portfolio:modify",
+     "approvals:decide",
+     "decisions:read"
+    ],
+    "compliance_officer": [
+     "compliance:read",
+     "compliance:write",
+     "client:read",
+     "audit:read",
+     "approvals:decide",
+     "ask:use",
+     "docs:read",
+     "research:read",
+     "decisions:read",
+     "privacy:rehydrate",
+     "export:standard"
+    ],
+    "executive": [
+     "exec:read",
+     "finance:read",
+     "investment:read_aggregate",
+     "risk:read_aggregate",
+     "decisions:read",
+     "decisions:write",
+     "scenarios:run",
+     "board:prepare",
+     "board:distribute",
+     "ask:use",
+     "docs:read",
+     "export:standard",
+     "approvals:decide"
+    ],
+    "external_advisor": [
+     "product_research:read",
+     "market:read",
+     "ask:use",
+     "docs:read"
+    ],
+    "finance": [
+     "finance:read",
+     "records:change",
+     "export:standard"
+    ],
+    "investment_analyst": [
+     "product_research:read",
+     "investment:read",
+     "investment:read_aggregate",
+     "portfolio:read",
+     "research:read",
+     "market:read",
+     "risk:read",
+     "scenarios:run",
+     "ask:use",
+     "docs:read"
+    ],
+    "orchestrator": [
+     "model:invoke"
+    ],
+    "privacy_officer": [
+     "approvals:decide",
+     "privacy:admin",
+     "privacy:rehydrate",
+     "client:read",
+     "audit:read",
+     "ask:use",
+     "docs:read"
+    ],
+    "wealth_advisor": [
+     "wealth:read",
+     "client:read",
+     "portfolio:read",
+     "comms:draft",
+     "comms:send",
+     "recommendation:deliver",
+     "research:read",
+     "product_research:read",
+     "market:read",
+     "retirement:run",
+     "ask:use",
+     "docs:read",
+     "privacy:rehydrate",
+     "export:sensitive"
+    ]
+   }
+  },
+  "version": "1.3.2+ebcb6d5534"
+ }
+}

@@ -23,7 +23,6 @@ def engine() -> PolicyEngine:
     from backend.config import get_settings
     s = get_settings()
     if s.opa_url:
-        from governance.opa import OpaPolicyEngine
         return _opa(s.opa_url)
     return get_policy_engine()
 

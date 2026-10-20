@@ -134,8 +134,8 @@ reg("investment.enterprise_concentration", "Aggregate issuer and sector concentr
 reg("investment.portfolio_list", "Metrics for all managed portfolios", "investment:read", NoArgs, lambda c, a: fin.portfolio_list(c.adapters), _firm("investment"))
 reg("investment.portfolio_detail", "Performance, risk, allocation and holdings for one portfolio", "portfolio:read", PortfolioArg,
     lambda c, a: fin.portfolio_detail(c.adapters, a.portfolio_id), _port_res)
-reg("investment.fund_list", "Fund range metrics", "product_research:read", NoArgs, lambda c, a: fin.fund_list(c.adapters), _firm("product"))
-reg("investment.fund_detail", "One fund's history and holdings", "product_research:read", ProductArg, lambda c, a: fin.fund_detail(c.adapters, a.product_id), _firm("product"))
+reg("investment.fund_list", "Fund range metrics", "product_research:read", NoArgs, lambda c, a: fin.fund_list(c.adapters), _firm("product", "public"))
+reg("investment.fund_detail", "One fund's history and holdings", "product_research:read", ProductArg, lambda c, a: fin.fund_detail(c.adapters, a.product_id), _firm("product", "public"))
 reg("investment.correlation", "Sector correlation matrix", "risk:read", NoArgs, lambda c, a: fin.sector_correlation(c.adapters), _firm("risk"))
 reg("risk.heatmap", "Enterprise risk register heatmap", "risk:read_aggregate", NoArgs, lambda c, a: fin.risk_heatmap(c.adapters), _firm("risk"))
 reg("market.intelligence", "Benchmark and sector returns from the market data provider", "market:read", NoArgs,

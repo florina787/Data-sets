@@ -126,3 +126,54 @@ class TTLCache:
     def stats(self) -> dict:
         total = self.hits + self.misses
         return {"hits": self.hits, "misses": self.misses, "hit_rate": round(self.hits / total, 4) if total else 0.0, "size": len(self.d)}
+
+
+class RedisTTLCache:
+    """Shared cache for multi-replica deployments (FLO_REDIS_URL). Falls back to the local TTLCache on any Redis error,
+    so cache failure degrades performance, never correctness or authorization (keys are computed after authorization)."""
+
+    def __init__(self, url: str, ttl_s: float = 120, prefix: str = "flo:cache:"):
+        import redis
+        self.r = redis.Redis.from_url(url, socket_timeout=0.2, socket_connect_timeout=0.2)
+        self.ttl, self.prefix = int(ttl_s), prefix
+        self.local = TTLCache(ttl_s)
+        self.hits = self.misses = self.errors = 0
+
+    def get(self, key: str) -> Any | None:
+        import json
+        try:
+            v = self.r.get(self.prefix + key)
+        except Exception:  # noqa: BLE001
+            self.errors += 1
+            return self.local.get(key)
+        if v is None:
+            self.misses += 1
+            return None
+        self.hits += 1
+        return json.loads(v)
+
+    def put(self, key: str, value: Any) -> None:
+        import json
+        try:
+            self.r.setex(self.prefix + key, self.ttl, json.dumps(value, default=str))
+        except Exception:  # noqa: BLE001
+            self.errors += 1
+            self.local.put(key, value)
+
+    def stats(self) -> dict:
+        total = self.hits + self.misses
+        return {"backend": "redis", "hits": self.hits, "misses": self.misses, "errors": self.errors,
+                "hit_rate": round(self.hits / total, 4) if total else 0.0}
+
+
+def make_cache(ttl_s: float = 120):
+    from backend.config import get_settings
+    url = get_settings().redis_url
+    if url:
+        try:
+            c = RedisTTLCache(url, ttl_s)
+            c.r.ping()
+            return c
+        except Exception:  # noqa: BLE001
+            pass
+    return TTLCache(ttl_s=ttl_s, max_items=5000)

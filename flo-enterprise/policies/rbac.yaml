@@ -20,6 +20,7 @@ roles:
     - records:change
     - export:standard
   cio:
+    - product_research:read
     - investment:read
     - investment:read_aggregate
     - portfolio:read
@@ -35,6 +36,7 @@ roles:
     - approvals:decide
     - decisions:read
   investment_analyst:
+    - product_research:read
     - investment:read
     - investment:read_aggregate
     - portfolio:read

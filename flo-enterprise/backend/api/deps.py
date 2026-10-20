@@ -13,11 +13,11 @@ from backend.db.session import get_db
 from governance import audit
 from governance.identity import AuthError, Principal
 from governance.policy import Resource
-from harness.resilience import TTLCache
+from harness.resilience import make_cache
 from integrations.mock.adapters import Adapters
 from integrations.mock.store import SyntheticStore
 
-response_cache = TTLCache(ttl_s=120, max_items=5000)
+response_cache = make_cache(120)
 
 
 @dataclass

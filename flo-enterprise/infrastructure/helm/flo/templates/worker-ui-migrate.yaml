@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: {{ .Release.Name }}-worker }
+spec:
+  replicas: {{ .Values.worker.replicas }}
+  selector: { matchLabels: { app: {{ .Release.Name }}-worker } }
+  template:
+    metadata: { labels: { app: {{ .Release.Name }}-worker } }
+    spec:
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 10001 }
+      containers:
+        - name: worker
+          image: "{{ .Values.image.api }}:{{ .Values.image.tag }}"
+          command: ["python", "-m", "backend.worker"]
+          env: {{- include "flo.env" . | nindent 12 }}
+          envFrom: [{ secretRef: { name: {{ .Values.existingSecret }} } }]
+          {{- include "flo.secure" . | nindent 10 }}
+          volumeMounts: [{ name: var, mountPath: /app/var }]
+      volumes: [{ name: var, emptyDir: {} }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: {{ .Release.Name }}-ui }
+spec:
+  replicas: {{ .Values.ui.replicas }}
+  selector: { matchLabels: { app: {{ .Release.Name }}-ui } }
+  template:
+    metadata: { labels: { app: {{ .Release.Name }}-ui } }
+    spec:
+      containers:
+        - name: ui
+          image: "{{ .Values.image.ui }}:{{ .Values.image.tag }}"
+          ports: [{ containerPort: 8080 }]
+          env:
+            - { name: NGINX_RESOLVER, value: {{ .Values.ui.dnsResolver | quote }} }
+            - { name: FLO_API_UPSTREAM, value: "http://{{ .Release.Name }}-api.{{ .Release.Namespace }}.svc.cluster.local:8000" }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: {{ .Release.Name }}-ui }
+spec: { selector: { app: {{ .Release.Name }}-ui }, ports: [{ port: 8080 }] }
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-migrate-{{ .Release.Revision }}
+  annotations: { "helm.sh/hook": pre-install,pre-upgrade, "helm.sh/hook-delete-policy": before-hook-creation }
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.api }}:{{ .Values.image.tag }}"
+          command: ["python", "-m", "backend.db.seed"]
+          env: {{- include "flo.env" . | nindent 12 }}
+          envFrom: [{ secretRef: { name: {{ .Values.existingSecret }} } }]

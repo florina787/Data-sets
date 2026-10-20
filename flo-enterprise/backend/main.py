@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import TimeoutError as SATimeoutError
 
 from backend.api import routes_ai, routes_compliance, routes_core, routes_exec, routes_invest, routes_wealth
 from backend.config import get_settings
@@ -18,7 +19,7 @@ from observability.telemetry import HTTP_LATENCY
 
 log = logging.getLogger("flo.api")
 MAX_BODY = 6 * 1024 * 1024
-MAX_INFLIGHT = int(os.environ.get("FLO_MAX_INFLIGHT", "256"))
+MAX_INFLIGHT = int(os.environ.get("FLO_MAX_INFLIGHT", "32"))  # per process; keep below DB pool capacity
 _inflight = 0
 _lock = threading.Lock()
 
@@ -72,6 +73,13 @@ async def guard(request: Request, call_next):
     resp.headers.update({"X-Request-ID": rid, "X-Content-Type-Options": "nosniff", "X-Frame-Options": "DENY", "Referrer-Policy": "no-referrer",
                          "Cache-Control": "no-store", "X-FLO-Data": "synthetic"})
     return resp
+
+
+@app.exception_handler(SATimeoutError)
+async def pool_exhausted(request: Request, exc: SATimeoutError):
+    # graceful degradation: database saturation is reported as retryable backpressure, never as a 500
+    return JSONResponse({"detail": {"code": "BACKPRESSURE", "message": "database capacity exhausted; retry shortly"}}, status_code=503,
+                        headers={"Retry-After": "2"})
 
 
 for r in (routes_core, routes_exec, routes_invest, routes_wealth, routes_ai, routes_compliance):

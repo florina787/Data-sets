@@ -150,3 +150,8 @@ def test_every_agent_registers_full_contract():
             assert c[k] is not None
         assert c["allowed_roles"] and c["allowed_tools"]
         assert "trading.execute_trade" not in c["allowed_tools"] and "crm.export_client_data" not in c["allowed_tools"]
+
+
+def test_external_advisor_product_research_agent_works_without_client_data(ctx_for):
+    out = get_harness().run("product_research_agent", ctx_for("u-external"), {"question": "Compare low-fee ETF products"})
+    assert out.facts["by_strategy"] and "client" not in out.narrative.lower()

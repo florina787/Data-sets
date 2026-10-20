@@ -55,10 +55,14 @@ def ingest_bytes(s: Session, filename: str, data: bytes, meta: dict | None = Non
                      injection_flags=inj["hits"], ingested_at=datetime.now(timezone.utc).replace(tzinfo=None))
     doc = s.merge(doc)
     s.query(m.DocChunk).filter(m.DocChunk.document_id == doc.id).delete()
+    vecs = []
     for i, (sec, text) in enumerate(chunk(sections)):
-        s.add(m.DocChunk(id=f"{doc.id}#{i}", document_id=doc.id, ordinal=i, section=sec[:200], text=text,
-                         embedding=emb.embed(f"{doc.title} {sec} {text}")))
+        v = emb.embed(f"{doc.title} {sec} {text}")
+        s.add(m.DocChunk(id=f"{doc.id}#{i}", document_id=doc.id, ordinal=i, section=sec[:200], text=text, embedding=v))
+        vecs.append((f"{doc.id}#{i}", v))
     s.flush()
+    from retrieval.vectorstore import write_vectors
+    write_vectors(s, vecs)
     from retrieval.search import invalidate_index
     invalidate_index()
     return doc

@@ -11,7 +11,7 @@ from decimal import Decimal
 
 from analytics import aum as aum_mod
 from analytics import profitability, returns, revenue, risk
-from analytics.money import from_cents, money
+from analytics.money import from_cents
 from analytics.semantic import SEMANTIC_LAYER_VERSION, describe
 from integrations.mock.adapters import Adapters
 

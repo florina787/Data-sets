@@ -114,18 +114,22 @@ def search(s: Session, engine: PolicyEngine, p: Principal, query: str, k: int = 
                 sc += idf * tf[t] * (k1 + 1) / (tf[t] + k1 * (1 - b + b * dl / idx["avgdl"]))
         bm[c["id"]] = sc
     qv = emb.embed(expanded)
-    cos = {c["id"]: emb.cosine(qv, c["emb"]) for c in cands}
+    from retrieval.vectorstore import mode as vmode, scores as vscores
+    cos = vscores(s, qv, cands)
     rrf: dict[str, float] = defaultdict(float)
     for scores in (bm, cos):
         for rank, cid in enumerate(sorted(scores, key=lambda x: -scores[x])):
             rrf[cid] += 1 / (60 + rank + 1)
     pool = sorted(rrf, key=lambda x: -rrf[x])[:25]
     results = []
+    doc_ok: dict[str, bool] = {}
     for cid in pool:
         c = idx["chunks"][cid]
         doc = idx["docs"][c["doc"]]
-        d = engine.authorize(p, "docs:read", Resource("document", doc["id"], doc["tenant_id"], {"classification": doc["classification"]}))
-        if not d.allowed:
+        if doc["id"] not in doc_ok:  # one policy decision per document (not per chunk)
+            doc_ok[doc["id"]] = engine.authorize(p, "docs:read", Resource("document", doc["id"], doc["tenant_id"],
+                                                                         {"classification": doc["classification"]})).allowed
+        if not doc_ok[doc["id"]]:
             continue
         text_toks = set(emb.tokens(f"{doc['title']} {c['section']} {c['text']}"))
         coverage = len(set(q_toks) & text_toks) / max(1, len(set(q_toks)))
@@ -147,7 +151,7 @@ def search(s: Session, engine: PolicyEngine, p: Principal, query: str, k: int = 
         top.append(r)
         if len(top) == k:
             break
-    return {"query": query, "language": lang, "results": top, "candidates_considered": len(cands),
+    return {"query": query, "language": lang, "results": top, "candidates_considered": len(cands), "vector_backend": vmode(s),
             "documents_excluded_by_authorization": excluded}
 
 

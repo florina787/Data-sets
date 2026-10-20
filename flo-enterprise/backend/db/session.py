@@ -24,7 +24,10 @@ def make_engine(url: str) -> Engine:
             cur.close()
 
         return engine
-    return create_engine(url, pool_size=10, max_overflow=20, pool_pre_ping=True)
+    import os
+    # pool sized together with FLO_MAX_INFLIGHT; a short pool timeout makes saturation fail fast (503) instead of queueing
+    return create_engine(url, pool_size=int(os.environ.get("FLO_DB_POOL_SIZE", "20")), max_overflow=int(os.environ.get("FLO_DB_MAX_OVERFLOW", "20")),
+                         pool_timeout=float(os.environ.get("FLO_DB_POOL_TIMEOUT", "5")), pool_pre_ping=True)
 
 
 @lru_cache
