@@ -1,0 +1,6 @@
+{"id": "r01", "query": "refund still not received", "relevant_topic": "billing_refunds", "language": "en"}
+{"id": "r02", "query": "package never arrived tracking not updated", "relevant_topic": "orders_delivery", "language": "en"}
+{"id": "r03", "query": "cannot log in password reset", "relevant_topic": "account_access", "language": "en"}
+{"id": "r04", "query": "app crashing after update", "relevant_topic": "app_technical", "language": "en"}
+{"id": "r05", "query": "no signal outage", "relevant_topic": "network_connectivity", "language": "en"}
+{"id": "r06", "query": "lost baggage flight delayed", "relevant_topic": "travel_disruption", "language": "en"}

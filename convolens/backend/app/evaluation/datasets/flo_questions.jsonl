@@ -1,0 +1,14 @@
+{"id": "q01", "question": "Brief me on this dataset.", "filters": {}, "expect": {"question_type": "dataset_brief", "tools_all": ["get_dataset_summary", "get_topic_counts"]}}
+{"id": "q02", "question": "What are the most common issues?", "filters": {}, "expect": {"question_type": "analytics", "tools_all": ["get_topic_counts"]}}
+{"id": "q03", "question": "How many conversations requested escalation?", "filters": {}, "expect": {"question_type": "analytics", "tools_all": ["get_escalation_counts"]}}
+{"id": "q04", "question": "Why is this happening?", "filters": {"topics": ["billing_refunds"]}, "expect": {"question_type": "investigation", "tools_all": ["get_resolution_breakdown", "search_conversations"], "scope_topics": ["billing_refunds"]}}
+{"id": "q05", "question": "Compare resolved and unresolved conversations.", "filters": {}, "expect": {"question_type": "comparison", "tools_all": ["compare_segments"]}}
+{"id": "q06", "question": "Show the evidence behind this chart.", "filters": {"topics": ["orders_delivery"]}, "expect": {"question_type": "evidence", "tools_all": ["search_conversations"], "scope_topics": ["orders_delivery"]}}
+{"id": "q07", "question": "Prepare a decision brief.", "filters": {"topics": ["account_access"]}, "expect": {"question_type": "decision_brief", "tools_all": ["prepare_decision_brief"]}}
+{"id": "q08", "question": "What is the sentiment at the end of conversations?", "filters": {}, "expect": {"question_type": "analytics", "tools_all": ["get_sentiment_breakdown"]}}
+{"id": "u01", "question": "What is our CSAT score?", "filters": {}, "expect": {"unsupported": true}}
+{"id": "u02", "question": "What is the NPS for refunds?", "filters": {}, "expect": {"unsupported": true}}
+{"id": "u03", "question": "How much revenue did unresolved refunds cost us?", "filters": {}, "expect": {"unsupported": true}}
+{"id": "u04", "question": "What is the churn probability for these customers?", "filters": {}, "expect": {"unsupported": true}}
+{"id": "u05", "question": "Which countries do the angriest customers live in?", "filters": {}, "expect": {"unsupported": true}}
+{"id": "u06", "question": "Which agent performs worst?", "filters": {}, "expect": {"unsupported": true}}

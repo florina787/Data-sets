@@ -1,0 +1,137 @@
+tweet_id,author_id,inbound,created_at,text,response_tweet_id,in_response_to_tweet_id
+900007,570089,True,Mon Oct 02 10:15:00 +0000 2017,"@BrightCartHelp Devolví el pedido hace tres semanas y todavía no tengo el reembolso de 45,99 €",900011,
+900011,BrightCartHelp,False,Mon Oct 02 14:20:00 +0000 2017,@570089 Lo sentimos. ¿Puedes enviarnos un DM con el número de pedido?,900012,900007
+900012,570089,True,Mon Oct 02 17:43:00 +0000 2017,"@BrightCartHelp Ya lo envié. Sigue sin llegar el reembolso, no funciona nada",,900011
+900019,344873,True,Mon Oct 02 19:23:00 +0000 2017,@BrightCartHelp Mi pedido no ha llegado y el seguimiento no cambia desde el 12/11,900020,
+900020,BrightCartHelp,False,Mon Oct 02 22:35:00 +0000 2017,@344873 Hemos enviado un reemplazo por envío urgente. Disculpa las molestias.,900025,900019
+900025,344873,True,Tue Oct 03 01:38:00 +0000 2017,"@BrightCartHelp Llegó hoy, gracias, ya funciona todo",,900020
+900027,957153,True,Tue Oct 03 05:38:00 +0000 2017,"@LumenAppCare Je n'arrive pas à me connecter, le mot de passe ne fonctionne pas depuis la mise à jour",900031,
+900031,LumenAppCare,False,Tue Oct 03 06:13:00 +0000 2017,@957153 Veuillez essayer de réinitialiser votre mot de passe depuis le site web.,,900027
+900032,867377,True,Tue Oct 03 08:08:00 +0000 2017,@BrightCartHelp On m'a facturé deux fois 30 € pour la même commande. Je veux un remboursement,900038,
+900038,BrightCartHelp,False,Tue Oct 03 12:00:00 +0000 2017,@867377 Nous avons transmis votre demande à l'équipe facturation.,900045,900032
+900045,867377,True,Tue Oct 03 16:07:00 +0000 2017,@BrightCartHelp Toujours pas de remboursement après 10 jours. Je vais déposer une réclamation,,900038
+900046,901922,True,Tue Oct 03 17:18:00 +0000 2017,@NorthwindMobile Seit heute Morgen kein Netz in meiner Gegend. Gibt es eine Störung?,900050,
+900050,NorthwindMobile,False,Tue Oct 03 17:27:00 +0000 2017,@901922 Wir haben die Störung behoben. Bitte starten Sie Ihr Gerät neu.,900052,900046
+900052,901922,True,Tue Oct 03 21:01:00 +0000 2017,"@NorthwindMobile Danke, es funktioniert jetzt wieder",,900050
+900057,627820,True,Tue Oct 03 22:08:00 +0000 2017,"@NorthwindMobile Die Rechnung ist 20 € höher als vereinbart, bitte um Rückerstattung",900061,
+900061,NorthwindMobile,False,Wed Oct 04 00:10:00 +0000 2017,@627820 Bitte schicken Sie uns Ihre Kundennummer per DM.,900063,900057
+900063,627820,True,Wed Oct 04 03:10:00 +0000 2017,"@NorthwindMobile Habe ich gemacht. Immer noch nicht erstattet, ich will eine Beschwerde einreichen",,900061
+900064,700756,True,Wed Oct 04 06:01:00 +0000 2017,"@AsterAirSupport Minha mala não chegou no voo de ontem, já faz 24 horas",900069,
+900069,AsterAirSupport,False,Wed Oct 04 09:51:00 +0000 2017,@700756 Lamentamos. Sua mala foi localizada e será entregue hoje.,,900064
+900075,952887,True,Wed Oct 04 11:29:00 +0000 2017,"@BrightCartHelp O pedido chegou danificado, a caixa estava amassada",900078,
+900078,BrightCartHelp,False,Wed Oct 04 15:59:00 +0000 2017,@952887 Por favor envie fotos por DM para abrirmos uma troca.,900081,900075
+900081,952887,True,Wed Oct 04 16:37:00 +0000 2017,@BrightCartHelp Enviei as fotos há uma semana e ainda não tive resposta,,900078
+900082,735498,True,Wed Oct 04 16:51:00 +0000 2017,"@BrightCartHelp mera refund abhi tak nahi aaya hai, 2 hafte ho gaye kya kar rahe ho aap log",900086,
+900086,BrightCartHelp,False,Wed Oct 04 19:04:00 +0000 2017,@735498 Sorry for the delay. Please DM us your order number.,900092,900082
+900092,735498,True,Wed Oct 04 20:38:00 +0000 2017,"@BrightCartHelp DM kar diya bhai, phir bhi kuch nahi hua. still not refunded",,900086
+900099,624528,True,Wed Oct 04 23:38:00 +0000 2017,"@NorthwindMobile yaar internet bahut slow hai aaj, kuch karo please",900103,
+900103,NorthwindMobile,False,Thu Oct 05 00:00:00 +0000 2017,@624528 We've reset your line from our side. Please restart the router.,900106,900099
+900106,624528,True,Thu Oct 05 01:08:00 +0000 2017,"@NorthwindMobile works now, thank you so much",,900103
+900108,687707,True,Thu Oct 05 02:58:00 +0000 2017,"@LumenAppCare I can't log in to my cuenta, la contraseña no funciona since yesterday",900113,
+900113,LumenAppCare,False,Thu Oct 05 05:39:00 +0000 2017,@687707 Please try resetting your password from the website.,900118,900108
+900118,687707,True,Thu Oct 05 07:00:00 +0000 2017,"@LumenAppCare ya lo intenté, still not working",,900113
+900123,380452,True,Thu Oct 05 09:15:00 +0000 2017,@LumenAppCare the app keeps crashing after the update on my phone,900127,
+900127,LumenAppCare,False,Thu Oct 05 11:41:00 +0000 2017,@380452 Please update to version 4.2.1 which fixes this crash.,900130,900123
+900130,380452,True,Thu Oct 05 13:05:00 +0000 2017,"@LumenAppCare Thanks, that worked!",,900127
+900132,374726,True,Thu Oct 05 16:54:00 +0000 2017,"@BrightCartHelp Devolví el pedido hace tres semanas y todavía no tengo el reembolso de 45,99 €",900137,
+900137,BrightCartHelp,False,Thu Oct 05 18:23:00 +0000 2017,@374726 Lo sentimos. ¿Puedes enviarnos un DM con el número de pedido?,900141,900132
+900141,374726,True,Thu Oct 05 20:06:00 +0000 2017,"@BrightCartHelp Ya lo envié. Sigue sin llegar el reembolso, no funciona nada",,900137
+900147,238092,True,Thu Oct 05 22:00:00 +0000 2017,@BrightCartHelp Mi pedido no ha llegado y el seguimiento no cambia desde el 12/11,900149,
+900149,BrightCartHelp,False,Fri Oct 06 00:55:00 +0000 2017,@238092 Hemos enviado un reemplazo por envío urgente. Disculpa las molestias.,900156,900147
+900156,238092,True,Fri Oct 06 04:22:00 +0000 2017,"@BrightCartHelp Llegó hoy, gracias, ya funciona todo",,900149
+900160,896550,True,Fri Oct 06 07:03:00 +0000 2017,"@LumenAppCare Je n'arrive pas à me connecter, le mot de passe ne fonctionne pas depuis la mise à jour",900164,
+900164,LumenAppCare,False,Fri Oct 06 11:11:00 +0000 2017,@896550 Veuillez essayer de réinitialiser votre mot de passe depuis le site web.,,900160
+900165,262286,True,Fri Oct 06 14:22:00 +0000 2017,@BrightCartHelp On m'a facturé deux fois 30 € pour la même commande. Je veux un remboursement,900172,
+900172,BrightCartHelp,False,Fri Oct 06 18:04:00 +0000 2017,@262286 Nous avons transmis votre demande à l'équipe facturation.,900174,900165
+900174,262286,True,Fri Oct 06 20:17:00 +0000 2017,@BrightCartHelp Toujours pas de remboursement après 10 jours. Je vais déposer une réclamation,,900172
+900180,650871,True,Fri Oct 06 23:12:00 +0000 2017,@NorthwindMobile Seit heute Morgen kein Netz in meiner Gegend. Gibt es eine Störung?,900184,
+900184,NorthwindMobile,False,Sat Oct 07 01:02:00 +0000 2017,@650871 Wir haben die Störung behoben. Bitte starten Sie Ihr Gerät neu.,900191,900180
+900191,650871,True,Sat Oct 07 03:26:00 +0000 2017,"@NorthwindMobile Danke, es funktioniert jetzt wieder",,900184
+900194,241718,True,Sat Oct 07 04:36:00 +0000 2017,"@NorthwindMobile Die Rechnung ist 20 € höher als vereinbart, bitte um Rückerstattung",900199,
+900199,NorthwindMobile,False,Sat Oct 07 08:36:00 +0000 2017,@241718 Bitte schicken Sie uns Ihre Kundennummer per DM.,900204,900194
+900204,241718,True,Sat Oct 07 13:10:00 +0000 2017,"@NorthwindMobile Habe ich gemacht. Immer noch nicht erstattet, ich will eine Beschwerde einreichen",,900199
+900206,316919,True,Sat Oct 07 14:25:00 +0000 2017,"@AsterAirSupport Minha mala não chegou no voo de ontem, já faz 24 horas",900212,
+900212,AsterAirSupport,False,Sat Oct 07 17:22:00 +0000 2017,@316919 Lamentamos. Sua mala foi localizada e será entregue hoje.,,900206
+900215,907260,True,Sat Oct 07 22:05:00 +0000 2017,"@BrightCartHelp O pedido chegou danificado, a caixa estava amassada",900221,
+900221,BrightCartHelp,False,Sat Oct 07 22:11:00 +0000 2017,@907260 Por favor envie fotos por DM para abrirmos uma troca.,900223,900215
+900223,907260,True,Sun Oct 08 01:57:00 +0000 2017,@BrightCartHelp Enviei as fotos há uma semana e ainda não tive resposta,,900221
+900224,172293,True,Sun Oct 08 04:15:00 +0000 2017,"@BrightCartHelp mera refund abhi tak nahi aaya hai, 2 hafte ho gaye kya kar rahe ho aap log",900225,
+900225,BrightCartHelp,False,Sun Oct 08 06:08:00 +0000 2017,@172293 Sorry for the delay. Please DM us your order number.,900230,900224
+900230,172293,True,Sun Oct 08 08:44:00 +0000 2017,"@BrightCartHelp DM kar diya bhai, phir bhi kuch nahi hua. still not refunded",,900225
+900235,623625,True,Sun Oct 08 11:36:00 +0000 2017,"@NorthwindMobile yaar internet bahut slow hai aaj, kuch karo please",900238,
+900238,NorthwindMobile,False,Sun Oct 08 13:48:00 +0000 2017,@623625 We've reset your line from our side. Please restart the router.,900245,900235
+900245,623625,True,Sun Oct 08 16:16:00 +0000 2017,"@NorthwindMobile works now, thank you so much",,900238
+900251,463153,True,Sun Oct 08 16:48:00 +0000 2017,"@LumenAppCare I can't log in to my cuenta, la contraseña no funciona since yesterday",900257,
+900257,LumenAppCare,False,Sun Oct 08 21:42:00 +0000 2017,@463153 Please try resetting your password from the website.,900262,900251
+900262,463153,True,Sun Oct 08 22:45:00 +0000 2017,"@LumenAppCare ya lo intenté, still not working",,900257
+900264,146675,True,Sun Oct 08 23:01:00 +0000 2017,@LumenAppCare the app keeps crashing after the update on my phone,900267,
+900267,LumenAppCare,False,Mon Oct 09 03:55:00 +0000 2017,@146675 Please update to version 4.2.1 which fixes this crash.,900268,900264
+900268,146675,True,Mon Oct 09 08:30:00 +0000 2017,"@LumenAppCare Thanks, that worked!",,900267
+900270,961983,True,Mon Oct 09 12:15:00 +0000 2017,"@BrightCartHelp Devolví el pedido hace tres semanas y todavía no tengo el reembolso de 45,99 €",900274,
+900274,BrightCartHelp,False,Mon Oct 09 14:23:00 +0000 2017,@961983 Lo sentimos. ¿Puedes enviarnos un DM con el número de pedido?,900281,900270
+900281,961983,True,Mon Oct 09 19:06:00 +0000 2017,"@BrightCartHelp Ya lo envié. Sigue sin llegar el reembolso, no funciona nada",,900274
+900285,945771,True,Mon Oct 09 22:05:00 +0000 2017,@BrightCartHelp Mi pedido no ha llegado y el seguimiento no cambia desde el 12/11,900292,
+900292,BrightCartHelp,False,Mon Oct 09 22:33:00 +0000 2017,@945771 Hemos enviado un reemplazo por envío urgente. Disculpa las molestias.,900295,900285
+900295,945771,True,Tue Oct 10 01:14:00 +0000 2017,"@BrightCartHelp Llegó hoy, gracias, ya funciona todo",,900292
+900299,988851,True,Tue Oct 10 02:19:00 +0000 2017,"@LumenAppCare Je n'arrive pas à me connecter, le mot de passe ne fonctionne pas depuis la mise à jour",900306,
+900306,LumenAppCare,False,Tue Oct 10 05:26:00 +0000 2017,@988851 Veuillez essayer de réinitialiser votre mot de passe depuis le site web.,,900299
+900312,679887,True,Tue Oct 10 08:03:00 +0000 2017,@BrightCartHelp On m'a facturé deux fois 30 € pour la même commande. Je veux un remboursement,900318,
+900318,BrightCartHelp,False,Tue Oct 10 08:59:00 +0000 2017,@679887 Nous avons transmis votre demande à l'équipe facturation.,900325,900312
+900325,679887,True,Tue Oct 10 10:45:00 +0000 2017,@BrightCartHelp Toujours pas de remboursement après 10 jours. Je vais déposer une réclamation,,900318
+900328,993598,True,Tue Oct 10 13:35:00 +0000 2017,@NorthwindMobile Seit heute Morgen kein Netz in meiner Gegend. Gibt es eine Störung?,900331,
+900331,NorthwindMobile,False,Tue Oct 10 16:00:00 +0000 2017,@993598 Wir haben die Störung behoben. Bitte starten Sie Ihr Gerät neu.,900333,900328
+900333,993598,True,Tue Oct 10 16:49:00 +0000 2017,"@NorthwindMobile Danke, es funktioniert jetzt wieder",,900331
+900334,916667,True,Tue Oct 10 17:16:00 +0000 2017,"@NorthwindMobile Die Rechnung ist 20 € höher als vereinbart, bitte um Rückerstattung",900337,
+900337,NorthwindMobile,False,Tue Oct 10 20:36:00 +0000 2017,@916667 Bitte schicken Sie uns Ihre Kundennummer per DM.,900339,900334
+900339,916667,True,Wed Oct 11 01:35:00 +0000 2017,"@NorthwindMobile Habe ich gemacht. Immer noch nicht erstattet, ich will eine Beschwerde einreichen",,900337
+900342,786057,True,Wed Oct 11 05:23:00 +0000 2017,"@AsterAirSupport Minha mala não chegou no voo de ontem, já faz 24 horas",900344,
+900344,AsterAirSupport,False,Wed Oct 11 07:45:00 +0000 2017,@786057 Lamentamos. Sua mala foi localizada e será entregue hoje.,,900342
+900351,755739,True,Wed Oct 11 09:14:00 +0000 2017,"@BrightCartHelp O pedido chegou danificado, a caixa estava amassada",900356,
+900356,BrightCartHelp,False,Wed Oct 11 13:43:00 +0000 2017,@755739 Por favor envie fotos por DM para abrirmos uma troca.,900358,900351
+900358,755739,True,Wed Oct 11 16:19:00 +0000 2017,@BrightCartHelp Enviei as fotos há uma semana e ainda não tive resposta,,900356
+900363,705373,True,Wed Oct 11 17:20:00 +0000 2017,"@BrightCartHelp mera refund abhi tak nahi aaya hai, 2 hafte ho gaye kya kar rahe ho aap log",900364,
+900364,BrightCartHelp,False,Wed Oct 11 18:54:00 +0000 2017,@705373 Sorry for the delay. Please DM us your order number.,900367,900363
+900367,705373,True,Wed Oct 11 21:02:00 +0000 2017,"@BrightCartHelp DM kar diya bhai, phir bhi kuch nahi hua. still not refunded",,900364
+900371,638765,True,Thu Oct 12 01:30:00 +0000 2017,"@NorthwindMobile yaar internet bahut slow hai aaj, kuch karo please",900376,
+900376,NorthwindMobile,False,Thu Oct 12 02:44:00 +0000 2017,@638765 We've reset your line from our side. Please restart the router.,900381,900371
+900381,638765,True,Thu Oct 12 06:23:00 +0000 2017,"@NorthwindMobile works now, thank you so much",,900376
+900382,591069,True,Thu Oct 12 07:52:00 +0000 2017,"@LumenAppCare I can't log in to my cuenta, la contraseña no funciona since yesterday",900389,
+900389,LumenAppCare,False,Thu Oct 12 11:07:00 +0000 2017,@591069 Please try resetting your password from the website.,900390,900382
+900390,591069,True,Thu Oct 12 11:56:00 +0000 2017,"@LumenAppCare ya lo intenté, still not working",,900389
+900397,781826,True,Thu Oct 12 14:43:00 +0000 2017,@LumenAppCare the app keeps crashing after the update on my phone,900398,
+900398,LumenAppCare,False,Thu Oct 12 16:01:00 +0000 2017,@781826 Please update to version 4.2.1 which fixes this crash.,900405,900397
+900405,781826,True,Thu Oct 12 16:36:00 +0000 2017,"@LumenAppCare Thanks, that worked!",,900398
+900408,292551,True,Thu Oct 12 17:46:00 +0000 2017,"@BrightCartHelp Devolví el pedido hace tres semanas y todavía no tengo el reembolso de 45,99 €",900415,
+900415,BrightCartHelp,False,Thu Oct 12 20:21:00 +0000 2017,@292551 Lo sentimos. ¿Puedes enviarnos un DM con el número de pedido?,900420,900408
+900420,292551,True,Thu Oct 12 21:21:00 +0000 2017,"@BrightCartHelp Ya lo envié. Sigue sin llegar el reembolso, no funciona nada",,900415
+900427,819764,True,Thu Oct 12 22:46:00 +0000 2017,@BrightCartHelp Mi pedido no ha llegado y el seguimiento no cambia desde el 12/11,900433,
+900433,BrightCartHelp,False,Fri Oct 13 02:20:00 +0000 2017,@819764 Hemos enviado un reemplazo por envío urgente. Disculpa las molestias.,900438,900427
+900438,819764,True,Fri Oct 13 03:44:00 +0000 2017,"@BrightCartHelp Llegó hoy, gracias, ya funciona todo",,900433
+900441,791012,True,Fri Oct 13 06:20:00 +0000 2017,"@LumenAppCare Je n'arrive pas à me connecter, le mot de passe ne fonctionne pas depuis la mise à jour",900443,
+900443,LumenAppCare,False,Fri Oct 13 07:54:00 +0000 2017,@791012 Veuillez essayer de réinitialiser votre mot de passe depuis le site web.,,900441
+900447,570890,True,Fri Oct 13 09:23:00 +0000 2017,@BrightCartHelp On m'a facturé deux fois 30 € pour la même commande. Je veux un remboursement,900449,
+900449,BrightCartHelp,False,Fri Oct 13 12:54:00 +0000 2017,@570890 Nous avons transmis votre demande à l'équipe facturation.,900452,900447
+900452,570890,True,Fri Oct 13 14:03:00 +0000 2017,@BrightCartHelp Toujours pas de remboursement après 10 jours. Je vais déposer une réclamation,,900449
+900457,503822,True,Fri Oct 13 15:17:00 +0000 2017,@NorthwindMobile Seit heute Morgen kein Netz in meiner Gegend. Gibt es eine Störung?,900462,
+900462,NorthwindMobile,False,Fri Oct 13 18:07:00 +0000 2017,@503822 Wir haben die Störung behoben. Bitte starten Sie Ihr Gerät neu.,900466,900457
+900466,503822,True,Fri Oct 13 20:14:00 +0000 2017,"@NorthwindMobile Danke, es funktioniert jetzt wieder",,900462
+900471,487789,True,Fri Oct 13 21:03:00 +0000 2017,"@NorthwindMobile Die Rechnung ist 20 € höher als vereinbart, bitte um Rückerstattung",900476,
+900476,NorthwindMobile,False,Fri Oct 13 23:56:00 +0000 2017,@487789 Bitte schicken Sie uns Ihre Kundennummer per DM.,900483,900471
+900483,487789,True,Sat Oct 14 03:54:00 +0000 2017,"@NorthwindMobile Habe ich gemacht. Immer noch nicht erstattet, ich will eine Beschwerde einreichen",,900476
+900490,883098,True,Sat Oct 14 04:47:00 +0000 2017,"@AsterAirSupport Minha mala não chegou no voo de ontem, já faz 24 horas",900495,
+900495,AsterAirSupport,False,Sat Oct 14 09:26:00 +0000 2017,@883098 Lamentamos. Sua mala foi localizada e será entregue hoje.,,900490
+900502,925816,True,Sat Oct 14 14:24:00 +0000 2017,"@BrightCartHelp O pedido chegou danificado, a caixa estava amassada",900507,
+900507,BrightCartHelp,False,Sat Oct 14 15:29:00 +0000 2017,@925816 Por favor envie fotos por DM para abrirmos uma troca.,900512,900502
+900512,925816,True,Sat Oct 14 17:44:00 +0000 2017,@BrightCartHelp Enviei as fotos há uma semana e ainda não tive resposta,,900507
+900515,202165,True,Sat Oct 14 19:06:00 +0000 2017,"@BrightCartHelp mera refund abhi tak nahi aaya hai, 2 hafte ho gaye kya kar rahe ho aap log",900522,
+900522,BrightCartHelp,False,Sat Oct 14 21:55:00 +0000 2017,@202165 Sorry for the delay. Please DM us your order number.,900523,900515
+900523,202165,True,Sun Oct 15 01:28:00 +0000 2017,"@BrightCartHelp DM kar diya bhai, phir bhi kuch nahi hua. still not refunded",,900522
+900524,664357,True,Sun Oct 15 02:23:00 +0000 2017,"@NorthwindMobile yaar internet bahut slow hai aaj, kuch karo please",900530,
+900530,NorthwindMobile,False,Sun Oct 15 04:00:00 +0000 2017,@664357 We've reset your line from our side. Please restart the router.,900537,900524
+900537,664357,True,Sun Oct 15 07:40:00 +0000 2017,"@NorthwindMobile works now, thank you so much",,900530
+900538,372633,True,Sun Oct 15 10:27:00 +0000 2017,"@LumenAppCare I can't log in to my cuenta, la contraseña no funciona since yesterday",900544,
+900544,LumenAppCare,False,Sun Oct 15 11:46:00 +0000 2017,@372633 Please try resetting your password from the website.,900550,900538
+900550,372633,True,Sun Oct 15 14:11:00 +0000 2017,"@LumenAppCare ya lo intenté, still not working",,900544
+900553,231042,True,Sun Oct 15 17:26:00 +0000 2017,@LumenAppCare the app keeps crashing after the update on my phone,900559,
+900559,LumenAppCare,False,Sun Oct 15 20:26:00 +0000 2017,@231042 Please update to version 4.2.1 which fixes this crash.,900566,900553
+900566,231042,True,Sun Oct 15 21:49:00 +0000 2017,"@LumenAppCare Thanks, that worked!",,900559

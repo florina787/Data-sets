@@ -1,0 +1,1283 @@
+{
+ "note": "SYNTHETIC multilingual scenarios with reviewed reference labels. Not Kaggle data; never merged with imported datasets or counted as independent customers.",
+ "conversations": [
+  {
+   "root_id": "900007",
+   "scenario_language": "es",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900007",
+    "900011",
+    "900012"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900019",
+   "scenario_language": "es",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900019",
+    "900020",
+    "900025"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900027",
+   "scenario_language": "fr",
+   "primary_topic": "account_access",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900027",
+    "900031"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900032",
+   "scenario_language": "fr",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900032",
+    "900038",
+    "900045"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900046",
+   "scenario_language": "de",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900046",
+    "900050",
+    "900052"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900057",
+   "scenario_language": "de",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900057",
+    "900061",
+    "900063"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900064",
+   "scenario_language": "pt",
+   "primary_topic": "travel_disruption",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900064",
+    "900069"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900075",
+   "scenario_language": "pt",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900075",
+    "900078",
+    "900081"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900082",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900082",
+    "900086",
+    "900092"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900099",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900099",
+    "900103",
+    "900106"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900108",
+   "scenario_language": "mixed",
+   "primary_topic": "account_access",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900108",
+    "900113",
+    "900118"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900123",
+   "scenario_language": "en",
+   "primary_topic": "app_technical",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900123",
+    "900127",
+    "900130"
+   ],
+   "replica": 0
+  },
+  {
+   "root_id": "900132",
+   "scenario_language": "es",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900132",
+    "900137",
+    "900141"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900147",
+   "scenario_language": "es",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900147",
+    "900149",
+    "900156"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900160",
+   "scenario_language": "fr",
+   "primary_topic": "account_access",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900160",
+    "900164"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900165",
+   "scenario_language": "fr",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900165",
+    "900172",
+    "900174"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900180",
+   "scenario_language": "de",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900180",
+    "900184",
+    "900191"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900194",
+   "scenario_language": "de",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900194",
+    "900199",
+    "900204"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900206",
+   "scenario_language": "pt",
+   "primary_topic": "travel_disruption",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900206",
+    "900212"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900215",
+   "scenario_language": "pt",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900215",
+    "900221",
+    "900223"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900224",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900224",
+    "900225",
+    "900230"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900235",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900235",
+    "900238",
+    "900245"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900251",
+   "scenario_language": "mixed",
+   "primary_topic": "account_access",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900251",
+    "900257",
+    "900262"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900264",
+   "scenario_language": "en",
+   "primary_topic": "app_technical",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900264",
+    "900267",
+    "900268"
+   ],
+   "replica": 1
+  },
+  {
+   "root_id": "900270",
+   "scenario_language": "es",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900270",
+    "900274",
+    "900281"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900285",
+   "scenario_language": "es",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900285",
+    "900292",
+    "900295"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900299",
+   "scenario_language": "fr",
+   "primary_topic": "account_access",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900299",
+    "900306"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900312",
+   "scenario_language": "fr",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900312",
+    "900318",
+    "900325"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900328",
+   "scenario_language": "de",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900328",
+    "900331",
+    "900333"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900334",
+   "scenario_language": "de",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900334",
+    "900337",
+    "900339"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900342",
+   "scenario_language": "pt",
+   "primary_topic": "travel_disruption",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900342",
+    "900344"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900351",
+   "scenario_language": "pt",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900351",
+    "900356",
+    "900358"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900363",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900363",
+    "900364",
+    "900367"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900371",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900371",
+    "900376",
+    "900381"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900382",
+   "scenario_language": "mixed",
+   "primary_topic": "account_access",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900382",
+    "900389",
+    "900390"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900397",
+   "scenario_language": "en",
+   "primary_topic": "app_technical",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900397",
+    "900398",
+    "900405"
+   ],
+   "replica": 2
+  },
+  {
+   "root_id": "900408",
+   "scenario_language": "es",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900408",
+    "900415",
+    "900420"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900427",
+   "scenario_language": "es",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900427",
+    "900433",
+    "900438"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900441",
+   "scenario_language": "fr",
+   "primary_topic": "account_access",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900441",
+    "900443"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900447",
+   "scenario_language": "fr",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900447",
+    "900449",
+    "900452"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900457",
+   "scenario_language": "de",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900457",
+    "900462",
+    "900466"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900471",
+   "scenario_language": "de",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900471",
+    "900476",
+    "900483"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900490",
+   "scenario_language": "pt",
+   "primary_topic": "travel_disruption",
+   "resolution_status": "solution_offered_unconfirmed",
+   "message_ids": [
+    "900490",
+    "900495"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900502",
+   "scenario_language": "pt",
+   "primary_topic": "orders_delivery",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900502",
+    "900507",
+    "900512"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900515",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "billing_refunds",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900515",
+    "900522",
+    "900523"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900524",
+   "scenario_language": "hi-Latn",
+   "primary_topic": "network_connectivity",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900524",
+    "900530",
+    "900537"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900538",
+   "scenario_language": "mixed",
+   "primary_topic": "account_access",
+   "resolution_status": "unresolved_explicit",
+   "message_ids": [
+    "900538",
+    "900544",
+    "900550"
+   ],
+   "replica": 3
+  },
+  {
+   "root_id": "900553",
+   "scenario_language": "en",
+   "primary_topic": "app_technical",
+   "resolution_status": "resolved_confirmed",
+   "message_ids": [
+    "900553",
+    "900559",
+    "900566"
+   ],
+   "replica": 3
+  }
+ ],
+ "messages": {
+  "900007": {
+   "language": "es",
+   "reference_translation_en": "I returned the order three weeks ago and I still don't have the refund of €45.99",
+   "role": "customer"
+  },
+  "900011": {
+   "language": "es",
+   "reference_translation_en": "We're sorry. Can you send us a DM with the order number?",
+   "role": "support"
+  },
+  "900012": {
+   "language": "es",
+   "reference_translation_en": "I already sent it. The refund still hasn't arrived, nothing works",
+   "role": "customer"
+  },
+  "900019": {
+   "language": "es",
+   "reference_translation_en": "My order hasn't arrived and the tracking hasn't changed since 12/11",
+   "role": "customer"
+  },
+  "900020": {
+   "language": "es",
+   "reference_translation_en": "We have sent a replacement by express shipping. Sorry for the inconvenience.",
+   "role": "support"
+  },
+  "900025": {
+   "language": "es",
+   "reference_translation_en": "It arrived today, thanks, everything works now",
+   "role": "customer"
+  },
+  "900027": {
+   "language": "fr",
+   "reference_translation_en": "I can't log in, the password hasn't worked since the update",
+   "role": "customer"
+  },
+  "900031": {
+   "language": "fr",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900032": {
+   "language": "fr",
+   "reference_translation_en": "I was charged €30 twice for the same order. I want a refund",
+   "role": "customer"
+  },
+  "900038": {
+   "language": "fr",
+   "reference_translation_en": "We have passed your request to the billing team.",
+   "role": "support"
+  },
+  "900045": {
+   "language": "fr",
+   "reference_translation_en": "Still no refund after 10 days. I am going to file a complaint",
+   "role": "customer"
+  },
+  "900046": {
+   "language": "de",
+   "reference_translation_en": "No network in my area since this morning. Is there an outage?",
+   "role": "customer"
+  },
+  "900050": {
+   "language": "de",
+   "reference_translation_en": "We have fixed the outage. Please restart your device.",
+   "role": "support"
+  },
+  "900052": {
+   "language": "de",
+   "reference_translation_en": "Thanks, it works again now",
+   "role": "customer"
+  },
+  "900057": {
+   "language": "de",
+   "reference_translation_en": "The bill is €20 higher than agreed, please refund",
+   "role": "customer"
+  },
+  "900061": {
+   "language": "de",
+   "reference_translation_en": "Please send us your customer number by DM.",
+   "role": "support"
+  },
+  "900063": {
+   "language": "de",
+   "reference_translation_en": "I did. Still not refunded, I want to file a complaint",
+   "role": "customer"
+  },
+  "900064": {
+   "language": "pt",
+   "reference_translation_en": "My bag did not arrive on yesterday's flight, it has been 24 hours",
+   "role": "customer"
+  },
+  "900069": {
+   "language": "pt",
+   "reference_translation_en": "We're sorry. Your bag has been located and will be delivered today.",
+   "role": "support"
+  },
+  "900075": {
+   "language": "pt",
+   "reference_translation_en": "The order arrived damaged, the box was crushed",
+   "role": "customer"
+  },
+  "900078": {
+   "language": "pt",
+   "reference_translation_en": "Please send photos by DM so we can open an exchange.",
+   "role": "support"
+  },
+  "900081": {
+   "language": "pt",
+   "reference_translation_en": "I sent the photos a week ago and still haven't had a reply",
+   "role": "customer"
+  },
+  "900082": {
+   "language": "hi-Latn",
+   "reference_translation_en": "My refund still hasn't come, it's been 2 weeks, what are you people doing",
+   "role": "customer"
+  },
+  "900086": {
+   "language": "en",
+   "reference_translation_en": "Sorry for the delay. Please DM us your order number.",
+   "role": "support"
+  },
+  "900092": {
+   "language": "mixed",
+   "reference_translation_en": "I sent the DM, still nothing happened. still not refunded",
+   "role": "customer"
+  },
+  "900099": {
+   "language": "mixed",
+   "reference_translation_en": "Man, the internet is very slow today, please do something",
+   "role": "customer"
+  },
+  "900103": {
+   "language": "en",
+   "reference_translation_en": "We've reset your line from our side. Please restart the router.",
+   "role": "support"
+  },
+  "900106": {
+   "language": "en",
+   "reference_translation_en": "works now, thank you so much",
+   "role": "customer"
+  },
+  "900108": {
+   "language": "mixed",
+   "reference_translation_en": "I can't log in to my account, the password doesn't work since yesterday",
+   "role": "customer"
+  },
+  "900113": {
+   "language": "en",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900118": {
+   "language": "mixed",
+   "reference_translation_en": "I already tried it, still not working",
+   "role": "customer"
+  },
+  "900123": {
+   "language": "en",
+   "reference_translation_en": "the app keeps crashing after the update on my phone",
+   "role": "customer"
+  },
+  "900127": {
+   "language": "en",
+   "reference_translation_en": "Please update to version 4.2.1 which fixes this crash.",
+   "role": "support"
+  },
+  "900130": {
+   "language": "en",
+   "reference_translation_en": "Thanks, that worked!",
+   "role": "customer"
+  },
+  "900132": {
+   "language": "es",
+   "reference_translation_en": "I returned the order three weeks ago and I still don't have the refund of €45.99",
+   "role": "customer"
+  },
+  "900137": {
+   "language": "es",
+   "reference_translation_en": "We're sorry. Can you send us a DM with the order number?",
+   "role": "support"
+  },
+  "900141": {
+   "language": "es",
+   "reference_translation_en": "I already sent it. The refund still hasn't arrived, nothing works",
+   "role": "customer"
+  },
+  "900147": {
+   "language": "es",
+   "reference_translation_en": "My order hasn't arrived and the tracking hasn't changed since 12/11",
+   "role": "customer"
+  },
+  "900149": {
+   "language": "es",
+   "reference_translation_en": "We have sent a replacement by express shipping. Sorry for the inconvenience.",
+   "role": "support"
+  },
+  "900156": {
+   "language": "es",
+   "reference_translation_en": "It arrived today, thanks, everything works now",
+   "role": "customer"
+  },
+  "900160": {
+   "language": "fr",
+   "reference_translation_en": "I can't log in, the password hasn't worked since the update",
+   "role": "customer"
+  },
+  "900164": {
+   "language": "fr",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900165": {
+   "language": "fr",
+   "reference_translation_en": "I was charged €30 twice for the same order. I want a refund",
+   "role": "customer"
+  },
+  "900172": {
+   "language": "fr",
+   "reference_translation_en": "We have passed your request to the billing team.",
+   "role": "support"
+  },
+  "900174": {
+   "language": "fr",
+   "reference_translation_en": "Still no refund after 10 days. I am going to file a complaint",
+   "role": "customer"
+  },
+  "900180": {
+   "language": "de",
+   "reference_translation_en": "No network in my area since this morning. Is there an outage?",
+   "role": "customer"
+  },
+  "900184": {
+   "language": "de",
+   "reference_translation_en": "We have fixed the outage. Please restart your device.",
+   "role": "support"
+  },
+  "900191": {
+   "language": "de",
+   "reference_translation_en": "Thanks, it works again now",
+   "role": "customer"
+  },
+  "900194": {
+   "language": "de",
+   "reference_translation_en": "The bill is €20 higher than agreed, please refund",
+   "role": "customer"
+  },
+  "900199": {
+   "language": "de",
+   "reference_translation_en": "Please send us your customer number by DM.",
+   "role": "support"
+  },
+  "900204": {
+   "language": "de",
+   "reference_translation_en": "I did. Still not refunded, I want to file a complaint",
+   "role": "customer"
+  },
+  "900206": {
+   "language": "pt",
+   "reference_translation_en": "My bag did not arrive on yesterday's flight, it has been 24 hours",
+   "role": "customer"
+  },
+  "900212": {
+   "language": "pt",
+   "reference_translation_en": "We're sorry. Your bag has been located and will be delivered today.",
+   "role": "support"
+  },
+  "900215": {
+   "language": "pt",
+   "reference_translation_en": "The order arrived damaged, the box was crushed",
+   "role": "customer"
+  },
+  "900221": {
+   "language": "pt",
+   "reference_translation_en": "Please send photos by DM so we can open an exchange.",
+   "role": "support"
+  },
+  "900223": {
+   "language": "pt",
+   "reference_translation_en": "I sent the photos a week ago and still haven't had a reply",
+   "role": "customer"
+  },
+  "900224": {
+   "language": "hi-Latn",
+   "reference_translation_en": "My refund still hasn't come, it's been 2 weeks, what are you people doing",
+   "role": "customer"
+  },
+  "900225": {
+   "language": "en",
+   "reference_translation_en": "Sorry for the delay. Please DM us your order number.",
+   "role": "support"
+  },
+  "900230": {
+   "language": "mixed",
+   "reference_translation_en": "I sent the DM, still nothing happened. still not refunded",
+   "role": "customer"
+  },
+  "900235": {
+   "language": "mixed",
+   "reference_translation_en": "Man, the internet is very slow today, please do something",
+   "role": "customer"
+  },
+  "900238": {
+   "language": "en",
+   "reference_translation_en": "We've reset your line from our side. Please restart the router.",
+   "role": "support"
+  },
+  "900245": {
+   "language": "en",
+   "reference_translation_en": "works now, thank you so much",
+   "role": "customer"
+  },
+  "900251": {
+   "language": "mixed",
+   "reference_translation_en": "I can't log in to my account, the password doesn't work since yesterday",
+   "role": "customer"
+  },
+  "900257": {
+   "language": "en",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900262": {
+   "language": "mixed",
+   "reference_translation_en": "I already tried it, still not working",
+   "role": "customer"
+  },
+  "900264": {
+   "language": "en",
+   "reference_translation_en": "the app keeps crashing after the update on my phone",
+   "role": "customer"
+  },
+  "900267": {
+   "language": "en",
+   "reference_translation_en": "Please update to version 4.2.1 which fixes this crash.",
+   "role": "support"
+  },
+  "900268": {
+   "language": "en",
+   "reference_translation_en": "Thanks, that worked!",
+   "role": "customer"
+  },
+  "900270": {
+   "language": "es",
+   "reference_translation_en": "I returned the order three weeks ago and I still don't have the refund of €45.99",
+   "role": "customer"
+  },
+  "900274": {
+   "language": "es",
+   "reference_translation_en": "We're sorry. Can you send us a DM with the order number?",
+   "role": "support"
+  },
+  "900281": {
+   "language": "es",
+   "reference_translation_en": "I already sent it. The refund still hasn't arrived, nothing works",
+   "role": "customer"
+  },
+  "900285": {
+   "language": "es",
+   "reference_translation_en": "My order hasn't arrived and the tracking hasn't changed since 12/11",
+   "role": "customer"
+  },
+  "900292": {
+   "language": "es",
+   "reference_translation_en": "We have sent a replacement by express shipping. Sorry for the inconvenience.",
+   "role": "support"
+  },
+  "900295": {
+   "language": "es",
+   "reference_translation_en": "It arrived today, thanks, everything works now",
+   "role": "customer"
+  },
+  "900299": {
+   "language": "fr",
+   "reference_translation_en": "I can't log in, the password hasn't worked since the update",
+   "role": "customer"
+  },
+  "900306": {
+   "language": "fr",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900312": {
+   "language": "fr",
+   "reference_translation_en": "I was charged €30 twice for the same order. I want a refund",
+   "role": "customer"
+  },
+  "900318": {
+   "language": "fr",
+   "reference_translation_en": "We have passed your request to the billing team.",
+   "role": "support"
+  },
+  "900325": {
+   "language": "fr",
+   "reference_translation_en": "Still no refund after 10 days. I am going to file a complaint",
+   "role": "customer"
+  },
+  "900328": {
+   "language": "de",
+   "reference_translation_en": "No network in my area since this morning. Is there an outage?",
+   "role": "customer"
+  },
+  "900331": {
+   "language": "de",
+   "reference_translation_en": "We have fixed the outage. Please restart your device.",
+   "role": "support"
+  },
+  "900333": {
+   "language": "de",
+   "reference_translation_en": "Thanks, it works again now",
+   "role": "customer"
+  },
+  "900334": {
+   "language": "de",
+   "reference_translation_en": "The bill is €20 higher than agreed, please refund",
+   "role": "customer"
+  },
+  "900337": {
+   "language": "de",
+   "reference_translation_en": "Please send us your customer number by DM.",
+   "role": "support"
+  },
+  "900339": {
+   "language": "de",
+   "reference_translation_en": "I did. Still not refunded, I want to file a complaint",
+   "role": "customer"
+  },
+  "900342": {
+   "language": "pt",
+   "reference_translation_en": "My bag did not arrive on yesterday's flight, it has been 24 hours",
+   "role": "customer"
+  },
+  "900344": {
+   "language": "pt",
+   "reference_translation_en": "We're sorry. Your bag has been located and will be delivered today.",
+   "role": "support"
+  },
+  "900351": {
+   "language": "pt",
+   "reference_translation_en": "The order arrived damaged, the box was crushed",
+   "role": "customer"
+  },
+  "900356": {
+   "language": "pt",
+   "reference_translation_en": "Please send photos by DM so we can open an exchange.",
+   "role": "support"
+  },
+  "900358": {
+   "language": "pt",
+   "reference_translation_en": "I sent the photos a week ago and still haven't had a reply",
+   "role": "customer"
+  },
+  "900363": {
+   "language": "hi-Latn",
+   "reference_translation_en": "My refund still hasn't come, it's been 2 weeks, what are you people doing",
+   "role": "customer"
+  },
+  "900364": {
+   "language": "en",
+   "reference_translation_en": "Sorry for the delay. Please DM us your order number.",
+   "role": "support"
+  },
+  "900367": {
+   "language": "mixed",
+   "reference_translation_en": "I sent the DM, still nothing happened. still not refunded",
+   "role": "customer"
+  },
+  "900371": {
+   "language": "mixed",
+   "reference_translation_en": "Man, the internet is very slow today, please do something",
+   "role": "customer"
+  },
+  "900376": {
+   "language": "en",
+   "reference_translation_en": "We've reset your line from our side. Please restart the router.",
+   "role": "support"
+  },
+  "900381": {
+   "language": "en",
+   "reference_translation_en": "works now, thank you so much",
+   "role": "customer"
+  },
+  "900382": {
+   "language": "mixed",
+   "reference_translation_en": "I can't log in to my account, the password doesn't work since yesterday",
+   "role": "customer"
+  },
+  "900389": {
+   "language": "en",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900390": {
+   "language": "mixed",
+   "reference_translation_en": "I already tried it, still not working",
+   "role": "customer"
+  },
+  "900397": {
+   "language": "en",
+   "reference_translation_en": "the app keeps crashing after the update on my phone",
+   "role": "customer"
+  },
+  "900398": {
+   "language": "en",
+   "reference_translation_en": "Please update to version 4.2.1 which fixes this crash.",
+   "role": "support"
+  },
+  "900405": {
+   "language": "en",
+   "reference_translation_en": "Thanks, that worked!",
+   "role": "customer"
+  },
+  "900408": {
+   "language": "es",
+   "reference_translation_en": "I returned the order three weeks ago and I still don't have the refund of €45.99",
+   "role": "customer"
+  },
+  "900415": {
+   "language": "es",
+   "reference_translation_en": "We're sorry. Can you send us a DM with the order number?",
+   "role": "support"
+  },
+  "900420": {
+   "language": "es",
+   "reference_translation_en": "I already sent it. The refund still hasn't arrived, nothing works",
+   "role": "customer"
+  },
+  "900427": {
+   "language": "es",
+   "reference_translation_en": "My order hasn't arrived and the tracking hasn't changed since 12/11",
+   "role": "customer"
+  },
+  "900433": {
+   "language": "es",
+   "reference_translation_en": "We have sent a replacement by express shipping. Sorry for the inconvenience.",
+   "role": "support"
+  },
+  "900438": {
+   "language": "es",
+   "reference_translation_en": "It arrived today, thanks, everything works now",
+   "role": "customer"
+  },
+  "900441": {
+   "language": "fr",
+   "reference_translation_en": "I can't log in, the password hasn't worked since the update",
+   "role": "customer"
+  },
+  "900443": {
+   "language": "fr",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900447": {
+   "language": "fr",
+   "reference_translation_en": "I was charged €30 twice for the same order. I want a refund",
+   "role": "customer"
+  },
+  "900449": {
+   "language": "fr",
+   "reference_translation_en": "We have passed your request to the billing team.",
+   "role": "support"
+  },
+  "900452": {
+   "language": "fr",
+   "reference_translation_en": "Still no refund after 10 days. I am going to file a complaint",
+   "role": "customer"
+  },
+  "900457": {
+   "language": "de",
+   "reference_translation_en": "No network in my area since this morning. Is there an outage?",
+   "role": "customer"
+  },
+  "900462": {
+   "language": "de",
+   "reference_translation_en": "We have fixed the outage. Please restart your device.",
+   "role": "support"
+  },
+  "900466": {
+   "language": "de",
+   "reference_translation_en": "Thanks, it works again now",
+   "role": "customer"
+  },
+  "900471": {
+   "language": "de",
+   "reference_translation_en": "The bill is €20 higher than agreed, please refund",
+   "role": "customer"
+  },
+  "900476": {
+   "language": "de",
+   "reference_translation_en": "Please send us your customer number by DM.",
+   "role": "support"
+  },
+  "900483": {
+   "language": "de",
+   "reference_translation_en": "I did. Still not refunded, I want to file a complaint",
+   "role": "customer"
+  },
+  "900490": {
+   "language": "pt",
+   "reference_translation_en": "My bag did not arrive on yesterday's flight, it has been 24 hours",
+   "role": "customer"
+  },
+  "900495": {
+   "language": "pt",
+   "reference_translation_en": "We're sorry. Your bag has been located and will be delivered today.",
+   "role": "support"
+  },
+  "900502": {
+   "language": "pt",
+   "reference_translation_en": "The order arrived damaged, the box was crushed",
+   "role": "customer"
+  },
+  "900507": {
+   "language": "pt",
+   "reference_translation_en": "Please send photos by DM so we can open an exchange.",
+   "role": "support"
+  },
+  "900512": {
+   "language": "pt",
+   "reference_translation_en": "I sent the photos a week ago and still haven't had a reply",
+   "role": "customer"
+  },
+  "900515": {
+   "language": "hi-Latn",
+   "reference_translation_en": "My refund still hasn't come, it's been 2 weeks, what are you people doing",
+   "role": "customer"
+  },
+  "900522": {
+   "language": "en",
+   "reference_translation_en": "Sorry for the delay. Please DM us your order number.",
+   "role": "support"
+  },
+  "900523": {
+   "language": "mixed",
+   "reference_translation_en": "I sent the DM, still nothing happened. still not refunded",
+   "role": "customer"
+  },
+  "900524": {
+   "language": "mixed",
+   "reference_translation_en": "Man, the internet is very slow today, please do something",
+   "role": "customer"
+  },
+  "900530": {
+   "language": "en",
+   "reference_translation_en": "We've reset your line from our side. Please restart the router.",
+   "role": "support"
+  },
+  "900537": {
+   "language": "en",
+   "reference_translation_en": "works now, thank you so much",
+   "role": "customer"
+  },
+  "900538": {
+   "language": "mixed",
+   "reference_translation_en": "I can't log in to my account, the password doesn't work since yesterday",
+   "role": "customer"
+  },
+  "900544": {
+   "language": "en",
+   "reference_translation_en": "Please try resetting your password from the website.",
+   "role": "support"
+  },
+  "900550": {
+   "language": "mixed",
+   "reference_translation_en": "I already tried it, still not working",
+   "role": "customer"
+  },
+  "900553": {
+   "language": "en",
+   "reference_translation_en": "the app keeps crashing after the update on my phone",
+   "role": "customer"
+  },
+  "900559": {
+   "language": "en",
+   "reference_translation_en": "Please update to version 4.2.1 which fixes this crash.",
+   "role": "support"
+  },
+  "900566": {
+   "language": "en",
+   "reference_translation_en": "Thanks, that worked!",
+   "role": "customer"
+  }
+ },
+ "retrieval_questions": [
+  {
+   "id": "rq1",
+   "query": "refund still not received",
+   "relevant_topic": "billing_refunds"
+  },
+  {
+   "id": "rq2",
+   "query": "cannot log in password not working",
+   "relevant_topic": "account_access"
+  },
+  {
+   "id": "rq3",
+   "query": "lost luggage",
+   "relevant_topic": "travel_disruption"
+  },
+  {
+   "id": "rq4",
+   "query": "network outage no signal",
+   "relevant_topic": "network_connectivity"
+  },
+  {
+   "id": "rq5",
+   "query": "package damaged on arrival",
+   "relevant_topic": "orders_delivery"
+  }
+ ],
+ "reviewer": "fixture author (synthetic gold labels)"
+}
