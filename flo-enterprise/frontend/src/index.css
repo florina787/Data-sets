@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root, :root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 11 18 32;      /* #0B1220 */
+  --side: 16 27 45;    /* #101B2D */
+  --card: 22 35 56;    /* #162338 */
+  --line: 38 54 80;
+  --ink: 236 240 246;
+  --muted: 148 163 184;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: 244 246 250;
+  --side: 255 255 255;
+  --card: 255 255 255;
+  --line: 222 228 238;
+  --ink: 15 23 42;
+  --muted: 82 96 117;
+}
+html, body, #root { height: 100%; }
+body { background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: Inter, system-ui, sans-serif; }
+:focus-visible { outline: 2px solid #D4AF37; outline-offset: 2px; }
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 4px; }
+.maplibregl-canvas { outline: none; }
