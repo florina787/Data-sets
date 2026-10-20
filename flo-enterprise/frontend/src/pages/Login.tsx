@@ -21,7 +21,7 @@ export default function Login() {
           the identity provider is a mock that issues short-lived tokens for the synthetic users below. Trading is prohibited.
         </Card>
         {users.isLoading && <Spinner />}
-        {(users.error || err) && <ErrorState error={users.error || err} />}
+        {(users.error || err) ? <ErrorState error={users.error || err} /> : null}
         <div className="grid gap-3 sm:grid-cols-2">
           {users.data?.users.map((u: any) => (
             <button key={u.id} data-user={u.id} onClick={() => login(u.id).catch(setErr)}

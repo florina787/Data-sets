@@ -41,7 +41,7 @@ _glossary = yaml.safe_load((ROOT / "data" / "glossary.yaml").read_text())
 
 
 def _numbers(text: str) -> list[str]:
-    return sorted(re.findall(r"\d[\d,]*(?:\.\d+)?", text))
+    return sorted(re.findall(r"\d+(?:,\d{3})*(?:\.\d+)?", text))
 
 
 def validate_translation(master: str, localized: str) -> dict:

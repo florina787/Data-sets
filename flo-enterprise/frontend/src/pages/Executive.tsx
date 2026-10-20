@@ -56,7 +56,7 @@ export default function Executive() {
     });
     const colors = d.steps.map((s: any) => (s.kind === "total" ? tk.series[0] : s.kind === "increase" ? tk.series[2] : tk.series[1]));
     return { ...baseOption(), tooltip: { ...baseOption().tooltip, trigger: "axis", formatter: (p: any) => `${p[1].name}: CAD ${compact(v[p[1].dataIndex])}` },
-      xAxis: axis({ type: "category", data: d.steps.map((s: any) => s.step) }), yAxis: axis({ type: "value", axisLabel: { color: tk.muted, formatter: compact } }),
+      xAxis: axis({ type: "category", data: d.steps.map((s: any) => s.step), axisLabel: { interval: 0, color: tk.muted } }), yAxis: axis({ type: "value", axisLabel: { color: tk.muted, formatter: compact } }),
       series: [{ type: "bar", stack: "w", itemStyle: { color: "transparent" }, data: base, silent: true },
         { type: "bar", stack: "w", barWidth: "45%", data: val.map((x, i) => ({ value: x, itemStyle: { color: colors[i], borderRadius: 4 } })),
           label: { show: true, position: "top", color: tk.ink, formatter: (p: any) => compact(v[p.dataIndex]) } }] };

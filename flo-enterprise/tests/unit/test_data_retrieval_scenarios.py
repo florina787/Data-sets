@@ -187,3 +187,12 @@ def test_suitability_rules(st, engine):
     client = {"risk_profile": "Conservative", "kyc_last_review": date(2020, 1, 1)}
     r = suitability_check(client, [{"id": "PF", "volatility": 0.12, "top_weight": 0.2}], engine.bundle.suitability, date(2026, 9, 30))
     assert {f["rule"] for f in r["findings"]} == {"SUIT-VOL-BAND", "SUIT-SINGLE-ISSUER", "SUIT-KYC-STALE"}
+
+
+@pytest.mark.parametrize("lang", ["en", "fr", "es", "hi", "ta", "ko"])
+def test_communication_drafts_validate_in_every_language(ctx_for, a001_client, lang):
+    from agents.comms import draft_communication, validate_translation
+    d = draft_communication(ctx_for("u-advisor"), a001_client, "portfolio_review", lang)
+    assert d["translation_validation"]["valid"], d["translation_validation"]
+    assert d["compliance_precheck"]["passed"]
+    assert not validate_translation("Value CAD 1,234.50 on 2026-09-30.", "Valeur CAD 1 234,50")["valid"]  # altered number is caught
