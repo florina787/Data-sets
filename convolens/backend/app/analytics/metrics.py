@@ -87,15 +87,17 @@ def sample_evidence(db: Session, dataset_id: str, f: Filters | None, field: str 
     conds = conditions(dataset_id, f)
     if field and value is not None:
         conds.append(GROUPABLE[field][0] == value)
-    rows = db.execute(select(Conversation.key, Conversation.analysis_id).where(*conds).order_by(Conversation.key).limit(limit * 4)).all()
+    rows = db.execute(select(Conversation.key, Conversation.analysis_id).where(*conds).order_by(Conversation.key).limit(limit * 10)).all()
     out: list[dict] = []
+    seen_quotes: set[str] = set()
     for key, aid in rows:
         a = db.get(Analysis, aid) if aid else None
         spans = (a.fields.get("evidence") if a else None) or []
         want = {"primary_topic": "topic:", "resolution_status": "resolution_status", "escalation_requested": "escalation_requested",
                 "sentiment_end": "sentiment", "sentiment_start": "sentiment"}.get(field or "", "")
         chosen = next((sp for sp in spans if sp.get("supports", "").startswith(want)), spans[0] if spans else None)
-        if chosen:
+        if chosen and chosen["quote"].strip().lower() not in seen_quotes:
+            seen_quotes.add(chosen["quote"].strip().lower())
             out.append({"id": evidence_id(key, chosen["message_id"], chosen.get("start"), chosen.get("end")),
                         "conversation_key": key, "message_id": chosen["message_id"], "quote": chosen["quote"],
                         "supports": chosen.get("supports")})
