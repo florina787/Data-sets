@@ -392,7 +392,8 @@ def resume_communication(ctx: RunContext, thread_id: str, payload: dict | None =
     ctx.workflow_id = thread_id
     COMMS_CTX[thread_id] = ctx
     try:
-        out = graph.invoke(Command(resume={"payload": payload} if payload is not None else {}), config=cfg)
+        resume = {"action": "execute", **({"payload": payload} if payload is not None else {})}  # must be non-empty for LangGraph
+        out = graph.invoke(Command(resume=resume), config=cfg)
     finally:
         COMMS_CTX.pop(thread_id, None)
     return {"thread_id": thread_id, "status": out.get("status"), "result": out.get("result"), "approval_id": out.get("approval_id")}

@@ -53,7 +53,7 @@ def ingest_bytes(s: Session, filename: str, data: bytes, meta: dict | None = Non
                      jurisdiction=meta["jurisdiction"], language=meta.get("language") or detect_language(full),
                      doc_type=meta.get("doc_type", "document"), sha256=hashlib.sha256(data).hexdigest(), status=status,
                      injection_flags=inj["hits"], ingested_at=datetime.now(timezone.utc).replace(tzinfo=None))
-    s.merge(doc)
+    doc = s.merge(doc)
     s.query(m.DocChunk).filter(m.DocChunk.document_id == doc.id).delete()
     for i, (sec, text) in enumerate(chunk(sections)):
         s.add(m.DocChunk(id=f"{doc.id}#{i}", document_id=doc.id, ordinal=i, section=sec[:200], text=text,

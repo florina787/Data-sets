@@ -104,8 +104,8 @@ def _port_res(ctx, a):
     return resources.portfolio(ctx.adapters.store, a.portfolio_id)
 
 
-def _firm(kind):
-    return lambda ctx, a: Resource(kind, "enterprise", ctx.principal.tenant_id, {"classification": "confidential"})
+def _firm(kind, classification="confidential"):
+    return lambda ctx, a: Resource(kind, "enterprise", ctx.principal.tenant_id, {"classification": classification})
 
 
 def reg(name, desc, perm, model, handler, resource=None, upstream="analytics", side_effect=False, cls="internal", timeout=8.0):
@@ -296,9 +296,9 @@ def _breakers(c, a):
     return {"breakers": all_breakers()}
 
 
-reg("aiops.traces", "Agent trace statistics (redacted)", "aiops:read", NoArgs, _traces, _firm("aiops"), upstream="observability")
-reg("aiops.breakers", "Circuit breaker states", "aiops:read", NoArgs, _breakers, _firm("aiops"))
-reg("data_quality.run", "Run data quality checks", "aiops:read", NoArgs, lambda c, a: data_quality.run_checks(c.adapters), _firm("aiops"))
+reg("aiops.traces", "Agent trace statistics (redacted)", "aiops:read", NoArgs, _traces, _firm("aiops", "internal"), upstream="observability")
+reg("aiops.breakers", "Circuit breaker states", "aiops:read", NoArgs, _breakers, _firm("aiops", "internal"))
+reg("data_quality.run", "Run data quality checks", "aiops:read", NoArgs, lambda c, a: data_quality.run_checks(c.adapters), _firm("aiops", "internal"))
 
 # ---------------------------------------------------------------- deliberately dangerous tools (always blocked by policy)
 reg("crm.export_client_data", "Bulk client export (approval-gated; not allowlisted for any agent)", "export:sensitive", ExportArgs,
