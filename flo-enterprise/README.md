@@ -81,7 +81,9 @@ All are automated in `tests/e2e/test_journeys.py` (API) and `frontend/e2e/journe
 | OPA policy tests (`opa test policies/opa`) + Python/OPA parity | 7/7 + parity on ~2,000 decisions |
 | Frontend typecheck + production build | pass |
 | Playwright browser journeys | 6/6 against the dev stack and against the Docker stack |
+| Backup / restore drill | `scripts/backup_restore_drill.sh`: identical row counts; audit hash chain valid on the restored copy |
 | Docker Compose deployment | all services healthy; OPA PDP, pgvector retrieval, Redis cache, Prometheus target up, Grafana dashboard provisioned |
+| Kubernetes / Helm | `helm lint` passes and `helm template` renders 8 valid objects; plain manifests parse (15 objects). **Not applied to a real cluster.** |
 | Terraform | module contracts pass `terraform validate`; the AWS example was not validated (provider registry unreachable here) and never applied |
 | Load tests | see [docs/OPERATIONS.md](docs/OPERATIONS.md) — measured, not estimated |
 
