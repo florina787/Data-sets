@@ -1,0 +1,17 @@
+{"id": "rr01", "query": "charged twice for the same order", "relevant_topic": "billing_refunds"}
+{"id": "rr02", "query": "my money back still hasn't shown up", "relevant_topic": "billing_refunds"}
+{"id": "rr03", "query": "why is my bill higher than expected", "relevant_topic": "billing_refunds"}
+{"id": "rr04", "query": "my package never showed up", "relevant_topic": "orders_delivery"}
+{"id": "rr05", "query": "parcel stuck in transit for a week", "relevant_topic": "orders_delivery"}
+{"id": "rr06", "query": "they delivered the wrong item", "relevant_topic": "orders_delivery"}
+{"id": "rr07", "query": "locked out of my account", "relevant_topic": "account_access"}
+{"id": "rr08", "query": "the verification code never arrives", "relevant_topic": "account_access"}
+{"id": "rr09", "query": "the app keeps freezing on my phone", "relevant_topic": "app_technical"}
+{"id": "rr10", "query": "website shows an error at checkout", "relevant_topic": "app_technical"}
+{"id": "rr11", "query": "internet keeps dropping at home", "relevant_topic": "network_connectivity"}
+{"id": "rr12", "query": "no mobile data since this morning", "relevant_topic": "network_connectivity"}
+{"id": "rr13", "query": "flight delayed and I missed my connection", "relevant_topic": "travel_disruption"}
+{"id": "rr14", "query": "train cancelled with no information", "relevant_topic": "travel_disruption"}
+{"id": "rr15", "query": "how do I end my subscription", "relevant_topic": "cancellation"}
+{"id": "rr16", "query": "staff at the store were rude to me", "relevant_topic": "service_experience"}
+{"id": "rr17", "query": "waited on hold for an hour", "relevant_topic": "service_experience"}

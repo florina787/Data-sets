@@ -12,6 +12,7 @@ provider-reported; when no chunk reports usage the result says so (``mode="missi
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from itertools import pairwise
 
 _KEYS = ("input_tokens", "output_tokens")
 _DETAIL_KEYS = ("input_token_details", "output_token_details")
@@ -36,7 +37,7 @@ class StreamUsage:
         inputs = [int(x.get("input_tokens") or 0) for x in r]
         outputs = [int(x.get("output_tokens") or 0) for x in r]
         # The prompt is the same on every chunk and output never shrinks: running totals.
-        if len(set(inputs)) == 1 and inputs[0] > 0 and all(b >= a for a, b in zip(outputs, outputs[1:])):
+        if len(set(inputs)) == 1 and inputs[0] > 0 and all(b >= a for a, b in pairwise(outputs)):
             return "cumulative"
         return "incremental"
 

@@ -14,6 +14,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.analytics.labels import CORRECTABLE
+from app.evaluation.metrics import classification_report
 from app.models.orm import Analysis, Conversation, ReviewLabel
 
 FIELDS = ["primary_topic", "resolution_status", "sentiment_start", "sentiment_end", "escalation_requested"]
@@ -75,6 +76,7 @@ def accuracy(db: Session, dataset_id: str) -> dict:
             gold[r.conversation_id] = r.labels
     stats: dict[str, dict[str, dict]] = defaultdict(dict)
     agg: dict[tuple[str, str], Counter] = defaultdict(Counter)
+    pairs: dict[tuple[str, str], list[tuple[str, str]]] = defaultdict(list)
     confusion: dict[tuple[str, str], Counter] = defaultdict(Counter)
     for cid, labels in gold.items():
         conv = db.get(Conversation, cid)
@@ -84,6 +86,7 @@ def accuracy(db: Session, dataset_id: str) -> dict:
                 if h is None:
                     continue
                 c = agg[(sys_name, f)]
+                pairs[(sys_name, f)].append((h, p or "missing"))
                 c["n"] += 1
                 c["agree"] += int(h == p)
                 if p == "unknown":
@@ -100,6 +103,7 @@ def accuracy(db: Session, dataset_id: str) -> dict:
             "precision_when_answered": round(c["answered_agree"] / c["answered"], 3) if c["answered"] else None,
             "answered": c["answered"],
             "top_disagreements": [{"system_to_human": k, "count": v} for k, v in confusion[(sys_name, f)].most_common(3)],
+            "classification": classification_report(pairs[(sys_name, f)]),  # human = gold, system = predicted
         }
     inter = None
     if second:
@@ -112,4 +116,6 @@ def accuracy(db: Session, dataset_id: str) -> dict:
                 "precision_when_answered": "accuracy restricted to conversations where the system gave a label other than 'unknown'",
                 "abstained": "system said 'unknown'",
                 "ci95": "Wilson score interval; wide intervals mean too few reviews to compare systems",
+                "classification": "per-class precision, recall and F1 with the human label as gold; macro and weighted F1; "
+                                  "confusion[gold][predicted]. 'unknown' is a class like any other.",
             }}
