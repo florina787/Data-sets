@@ -1,0 +1,46 @@
+name: ConvoLens CI
+
+on:
+  pull_request:
+    paths: ["convolens/**", ".github/workflows/convolens-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["convolens/**", ".github/workflows/convolens-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: convolens/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - run: uv sync --frozen
+      # Deterministic tests only: scripted models, no network, no API keys.
+      - run: uv run pytest
+        env:
+          MODEL_PROVIDER: none
+          LANGSMITH_TRACING: "false"
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: convolens/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: convolens/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

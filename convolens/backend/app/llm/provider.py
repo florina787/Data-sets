@@ -37,8 +37,9 @@ def get_chat_model(max_tokens: int | None = None):
     s = get_settings()
     if not s.model_configured:
         raise ModelNotConfigured(
-            "No model provider is configured. Set MODEL_PROVIDER=anthropic with ANTHROPIC_API_KEY, or "
-            "MODEL_PROVIDER=bedrock with BEDROCK_MODEL_ID and AWS_REGION (AWS credentials via the standard chain).")
+            "No model provider is configured. Set MODEL_PROVIDER=gemini with GOOGLE_API_KEY (or GEMINI_KEY_VIA_PROXY=true), "
+            "MODEL_PROVIDER=anthropic with ANTHROPIC_API_KEY, or MODEL_PROVIDER=bedrock with BEDROCK_MODEL_ID and AWS_REGION "
+            "(AWS credentials via the standard chain).")
     mt = max_tokens or s.model_max_tokens
     limiter = None
     if s.model_requests_per_minute:

@@ -74,6 +74,9 @@ function ToolActivityList({ turn, defaultOpen }: { turn: FloTurn; defaultOpen?: 
                 <span className="sr-only">status {t.status}</span>
               </div>
               {t.filters && <div className="ml-4.5 pl-[18px] text-muted">Filters: {t.filters}</div>}
+              {t.args && Object.keys(t.args).length > 0 && (
+                <div className="pl-[18px] font-mono text-[11px] text-muted">Arguments: {Object.entries(t.args).map(([k, v]) => `${k}=${JSON.stringify(v)}`).join(", ")}</div>
+              )}
               {t.summary && <div className="pl-[18px] text-ink">{t.summary}</div>}
             </li>
           ))}
