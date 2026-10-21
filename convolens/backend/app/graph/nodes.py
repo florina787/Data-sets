@@ -339,6 +339,23 @@ def _resolve_args(args: dict, results: dict[str, dict], q: str) -> dict:
     return out
 
 
+def _shown_args(args: dict) -> dict:
+    """Tool arguments as shown in the execution trace: filters are shown separately, long values are cut."""
+    out = {}
+    for k, v in args.items():
+        if k == "filters":
+            continue
+        if isinstance(v, str):
+            out[k] = v[:200]
+        elif isinstance(v, list):
+            out[k] = v[:12] + (["…"] if len(v) > 12 else [])
+        elif isinstance(v, (int, float, bool)) or v is None:
+            out[k] = v
+        else:
+            out[k] = "(object)"
+    return out
+
+
 def _summarize(tool: str, r: dict) -> str:
     if "error" in r:
         return f"Error: {r['error']}"
@@ -383,7 +400,8 @@ def execute_tools(state: dict, config: RunnableConfig) -> dict:
             _emit("tool", step=step["id"], tool=step["tool"], purpose=step["purpose"], status="skipped", summary="No evidence ids to validate")
             continue
         _emit("tool", step=step["id"], tool=step["tool"], purpose=step["purpose"], status="running",
-              filters=_filters(args.get("filters")).describe() if isinstance(args.get("filters"), dict) else None)
+              filters=_filters(args.get("filters")).describe() if isinstance(args.get("filters"), dict) else None,
+              args=_shown_args(args))
         try:
             r = tools[step["tool"]].invoke(args)
             status = r.get("tool_meta", {}).get("status", "ok")

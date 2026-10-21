@@ -4,7 +4,7 @@ import { api, sessionHeaders, streamSSE, type Dataset, type Filters, type FloEve
 
 export type Mode = "demo" | "connected";
 
-export type ToolActivity = { step: string; tool: string; purpose: string; status: string; summary?: string; filters?: string | null; evidence_ids?: string[] };
+export type ToolActivity = { step: string; tool: string; purpose: string; status: string; summary?: string; filters?: string | null; evidence_ids?: string[]; args?: Record<string, unknown> };
 export type NodeState = Record<string, "running" | "completed" | "failed" | "awaiting_approval">;
 
 export type FloTurn = {
@@ -122,7 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         case "tool": {
           const tools = [...t.tools];
           const i = tools.findIndex((x) => x.step === e.step);
-          const entry = { step: e.step, tool: e.tool, purpose: e.purpose, status: e.status, summary: e.summary, filters: e.filters, evidence_ids: e.evidence_ids };
+          const entry = { step: e.step, tool: e.tool, purpose: e.purpose, status: e.status, summary: e.summary, filters: e.filters, evidence_ids: e.evidence_ids, ...(e.args ? { args: e.args } : {}) };
           if (i >= 0) tools[i] = { ...tools[i], ...entry }; else tools.push(entry);
           return { ...t, tools };
         }

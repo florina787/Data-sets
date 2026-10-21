@@ -154,3 +154,15 @@ def test_explicit_action_request_gets_action_steps_when_model_omits_them(runner,
     assert "approval_required" in [e["type"] for e in evs]
     planned = [e["tool"] for e in evs if e["type"] == "tool" and e.get("status") == "ok"]
     assert "prepare_decision_brief" in planned and "propose_action" in planned
+
+
+def test_tool_events_show_the_models_arguments(runner, imported_id, small_ok):
+    plan = _plan("evidence", [{"tool": "search_conversations", "purpose": "find examples", "args": {"query": "refund not received", "k": 4}}])
+    model = CumulativeModel(plans=plan, answers=["**Finding**\nExamples are listed [E1]."])
+    set_model_override(model)
+    try:
+        evs = _run(runner, imported_id, "Show examples of refund problems")
+    finally:
+        set_model_override(None)
+    running = next(e for e in evs if e["type"] == "tool" and e["status"] == "running")
+    assert running["args"] == {"query": "refund not received", "k": 4}  # filters are shown separately
