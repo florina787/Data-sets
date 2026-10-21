@@ -32,3 +32,9 @@ export const TOPIC_LABELS: Record<string, string> = {
 export const SENTIMENT_LABELS: Record<string, string> = { negative: "Negative", neutral: "Neutral", positive: "Positive", unknown: "Unknown" };
 export const ESCALATION_LABELS: Record<string, string> = { yes: "Escalation requested", no: "No escalation request", unknown: "Unknown" };
 export const colorFor = (k: string) => TOPIC_COLORS[k] ?? RESOLUTION_COLORS[k] ?? SENTIMENT_COLORS[k] ?? "#5F6B7A";
+export const HANDOFF_LABELS: Record<string, string> = {
+  confirmed: "Moved to private channel (customer confirmed)",
+  requested: "Support asked to move to private channel",
+  none: "Stayed in public thread",
+  unknown: "Unknown",
+};

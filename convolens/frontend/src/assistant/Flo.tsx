@@ -6,7 +6,7 @@ import { api, sessionHeaders, type Filters } from "../lib/api";
 import { Markdown } from "../lib/markdown";
 import { useApp, type FloTurn } from "../lib/state";
 import { Badge, Button, Monogram, inputCls } from "../components/ui";
-import { RESOLUTION_LABELS, TOPIC_LABELS, SENTIMENT_LABELS, ESCALATION_LABELS } from "../lib/palette";
+import { RESOLUTION_LABELS, TOPIC_LABELS, SENTIMENT_LABELS, ESCALATION_LABELS, HANDOFF_LABELS } from "../lib/palette";
 
 export const OPENING = "Hello, I’m Flo. I can help you investigate customer issues, compare conversation patterns, and prepare evidence-backed decisions.";
 export const SUGGESTIONS = [
@@ -24,6 +24,7 @@ export function describeFilters(f: Filters): { key: keyof Filters; value: string
   f.resolution?.forEach((v) => out.push({ key: "resolution", value: v, label: `Outcome: ${RESOLUTION_LABELS[v] ?? v}` }));
   f.sentiment_end?.forEach((v) => out.push({ key: "sentiment_end", value: v, label: `Ending sentiment: ${SENTIMENT_LABELS[v] ?? v}` }));
   f.escalation?.forEach((v) => out.push({ key: "escalation", value: v, label: ESCALATION_LABELS[v] ?? v }));
+  f.handoff?.forEach((v) => out.push({ key: "handoff", value: v, label: HANDOFF_LABELS[v] ?? v }));
   f.languages?.forEach((v) => out.push({ key: "languages", value: v, label: `Language: ${v}` }));
   f.brands?.forEach((v) => out.push({ key: "brands", value: v, label: `Account: ${v}` }));
   if (f.date_from || f.date_to) out.push({ key: "date_from", value: "", label: `Dates: ${f.date_from ?? "…"} – ${f.date_to ?? "…"}` });

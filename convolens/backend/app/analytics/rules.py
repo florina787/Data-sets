@@ -252,3 +252,26 @@ def validate_evidence(evidence: list[dict], texts: dict[str, str]) -> tuple[list
         else:
             valid.append({**e, "start": idx, "end": idx + len(quote)})
     return valid, invalid
+
+
+_DM_ASK = _rx(["dm us", "dm me", "send us a dm", "send me a dm", "send us a direct message", "direct message", "private message",
+               "pm us", "message us privately", "follow and dm", "follow us and dm", "drop us a dm", "slide into our dms",
+               "send us a message", "send us a private", "via dm", "by dm", "in dm", "dms", "dm'd", "dm",
+               "mensaje privado", "mensaje directo", "por md", "message privé", "en mp", "privatnachricht", "direktnachricht"])
+_DM_DONE = _rx(["sent", "dm sent", "dm'd", "dmed", "messaged", "done", "just sent", "have sent", "replied", "check your dm*",
+                "sent you a dm", "sent a dm", "enviado", "envoyé", "gesendet"])
+
+
+def channel_handoff(msgs: list[Msg]) -> tuple[str, list[dict]]:
+    """Observable label: did support ask to move the conversation to a private channel, and did the customer follow?"""
+    support = [m for m in msgs if m.role == "support"]
+    if not support:
+        return "unknown", []
+    for i, m in enumerate(msgs):
+        if m.role == "support" and _DM_ASK.search(m.text):
+            ev = [_span(m, _DM_ASK, "channel_handoff")]
+            later = next((c for c in msgs[i + 1:] if c.role == "customer" and _DM_DONE.search(c.text)), None)
+            if later:
+                return "confirmed", ev + [_span(later, _DM_DONE, "channel_handoff")]
+            return "requested", ev
+    return ("none" if all(_covered(m) for m in support) else "unknown"), []

@@ -4,7 +4,7 @@ import { GitBranch, CornerDownRight, Download } from "lucide-react";
 import { api, dsPath, filtersParam, type Filters } from "../lib/api";
 import { useApp, useData } from "../lib/state";
 import { fmtDate, fmtInt } from "../lib/format";
-import { ESCALATION_LABELS, RESOLUTION_LABELS, SENTIMENT_LABELS, TOPIC_LABELS } from "../lib/palette";
+import { ESCALATION_LABELS, HANDOFF_LABELS, RESOLUTION_LABELS, SENTIMENT_LABELS, TOPIC_LABELS } from "../lib/palette";
 import { Badge, Button, Card, Empty, ErrorBox, Field, PageHeader, Spinner, inputCls } from "../components/ui";
 import { ChartCard } from "../charts/ChartCard";
 import { SentimentJourney } from "../charts/charts";
@@ -14,6 +14,7 @@ const SELECTS: { key: keyof Filters; label: string; options: Record<string, stri
   { key: "resolution", label: "Outcome", options: RESOLUTION_LABELS },
   { key: "sentiment_end", label: "Ending sentiment", options: SENTIMENT_LABELS },
   { key: "escalation", label: "Escalation", options: ESCALATION_LABELS },
+  { key: "handoff", label: "Private channel", options: HANDOFF_LABELS },
 ];
 
 export function FilterBar() {
@@ -163,6 +164,11 @@ function ConversationDetail({ datasetId, convKey, messageId, span }: { datasetId
             ))}
           </tbody>
         </table>
+        <div className="mt-2 flex flex-wrap items-center gap-2 border-t border-line pt-2 text-sm">
+          <span className="text-xs font-medium text-muted">Private channel (observed)</span>
+          <span>{HANDOFF_LABELS[d.labels.channel_handoff] ?? d.labels.channel_handoff}</span>
+          {d.labels.handoff_evidence?.map((e: any) => <Badge key={e.message_id + e.start} title={`message ${e.message_id}`}>“{e.quote.slice(0, 60)}”</Badge>)}
+        </div>
         {msg && <p className="mt-2 text-xs text-teal" role="status">{msg}</p>}
         {d.analysis && (
           <div className="mt-3 space-y-1 text-xs">

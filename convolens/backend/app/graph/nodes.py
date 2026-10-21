@@ -453,6 +453,13 @@ def validate_claims(state: dict, config: RunnableConfig) -> dict:
                 metrics_out.append({"label": f"{it['label']} ({res['field'].replace('_', ' ')})", "numerator": it["count"],
                                     "denominator": res["denominator"], "share": it["share"], "unknown": res.get("unknown", 0),
                                     "scope": scope, "tool": r["tool"], "step": r["step_id"]})
+            if res.get("handoff"):
+                h = res["handoff"]
+                for it in h["items"]:
+                    if it["key"] in ("confirmed", "requested") and it["count"]:
+                        metrics_out.append({"label": f"{it['label']} (private-channel handoff)", "numerator": it["count"],
+                                            "denominator": h["denominator"], "share": it["share"], "unknown": h["unknown"],
+                                            "scope": scope, "tool": r["tool"], "step": r["step_id"]})
         elif r["tool"] == "get_dataset_summary":
             metrics_out.append({"label": "Conversations in scope", "numerator": res["denominator"], "denominator": None,
                                 "share": None, "unknown": 0, "scope": scope, "tool": r["tool"], "step": r["step_id"]})
@@ -576,6 +583,10 @@ def _rules_compose(state: dict, lims: list[str]) -> tuple[str, str]:
                    if unres and known else "No explicitly unresolved conversations in scope")
         if esc:
             finding += f"; {esc['numerator']} of {esc['denominator']} requested escalation [{esc['id']}]"
+        moved = sum(m["numerator"] for m in res if "private-channel handoff" in m["label"])
+        if moved and unk:
+            finding += (f". {moved} of {unres['denominator'] if unres else '?'} were moved to a private channel by support, "
+                        "which is why many outcomes are not visible in the public thread")
         finding += (". The quotes below show what customers reported. They are reported patterns, not verified causes; "
                     "Flo cannot establish why from these labels alone.")
     elif ms:

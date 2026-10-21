@@ -87,6 +87,8 @@ class Conversation(Base):
     sentiment_start: Mapped[str] = mapped_column(String(20), default="unknown")
     sentiment_end: Mapped[str] = mapped_column(String(20), default="unknown")
     escalation_requested: Mapped[str] = mapped_column(String(10), default="unknown")  # yes | no | unknown
+    channel_handoff: Mapped[str] = mapped_column(String(12), default="unknown")  # observable; independent of labelling method
+    handoff_evidence: Mapped[list] = mapped_column(JSON, default=list)
     analysis_id: Mapped[int | None] = mapped_column(Integer)
     corrected: Mapped[bool] = mapped_column(Boolean, default=False)
 

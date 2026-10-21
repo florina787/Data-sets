@@ -88,7 +88,7 @@ class BriefArgs(FiltersArg):
 TOOL_DESCRIPTIONS = {
     "get_dataset_summary": "Dataset identity, conversation count, time range, sampling, available and unavailable fields.",
     "get_topic_counts": "Exact counts of conversations by primary topic in scope, with unknowns and evidence.",
-    "get_resolution_breakdown": "Exact counts by resolution status (confirmed resolved, explicitly unresolved, solution offered/unconfirmed, unknown).",
+    "get_resolution_breakdown": "Exact counts by resolution status (confirmed resolved, explicitly unresolved, solution offered/unconfirmed, unknown), plus how many conversations were moved to a private channel.",
     "get_sentiment_breakdown": "Exact counts by inferred customer sentiment at the start or end of the conversation.",
     "get_escalation_counts": "Exact counts of conversations where the customer requested escalation.",
     "compare_segments": "Compare characteristics of two filtered segments (counts, turns, first response, escalation, topics).",
@@ -139,7 +139,13 @@ def build_tools(ctx: ToolContext) -> dict[str, StructuredTool]:
         return r
 
     def resolution(db, a: FiltersArg):
-        return metrics.breakdown(db, ds, a.filters, "resolution_status")
+        r = metrics.breakdown(db, ds, a.filters, "resolution_status")
+        # Observable context for unknown outcomes: how many conversations were moved to a private channel.
+        h = metrics.breakdown(db, ds, a.filters, "channel_handoff", evidence_per_category=1)
+        r["handoff"] = {"items": h["items"], "denominator": h["denominator"], "unknown": h["unknown"]}
+        r["evidence"] += h["evidence"]
+        r["evidence_ids"] += h["evidence_ids"]
+        return r
 
     def sentiment(db, a: SentimentArgs):
         return metrics.breakdown(db, ds, a.filters, f"sentiment_{a.which}")
@@ -201,6 +207,7 @@ def get_conversation_detail(db, dataset_id: str, key: str) -> dict:
         "labels": {"primary_topic": conv.primary_topic, "secondary_topics": conv.secondary_topics, "subtheme": conv.subtheme,
                    "resolution_status": conv.resolution_status, "sentiment_start": conv.sentiment_start,
                    "sentiment_end": conv.sentiment_end, "escalation_requested": conv.escalation_requested,
+                   "channel_handoff": conv.channel_handoff, "handoff_evidence": conv.handoff_evidence,
                    "corrected": conv.corrected},
         "analysis": ({"method": a.method, "model_id": a.model_id, "prompt_version": a.prompt_version,
                       "summary": a.fields.get("summary"), "customer_intent": a.fields.get("customer_intent"),
