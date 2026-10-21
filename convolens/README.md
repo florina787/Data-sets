@@ -7,7 +7,7 @@
 **An agentic AI system that analyses 3,000 real customer-support conversations from an open-source Kaggle dataset.<br>
 Ask questions in plain English. Get answers backed by exact counts and real customer quotes, and turn them into owned actions.**
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-172B4D) ![FastAPI](https://img.shields.io/badge/FastAPI-backend-087F8C) ![LangGraph](https://img.shields.io/badge/LangGraph-agent%20workflow-087F8C) ![LangChain](https://img.shields.io/badge/LangChain-tools%20%26%20models-087F8C) ![Gemini](https://img.shields.io/badge/Google%20Gemini-free%20tier%2C%20live-087F8C) ![Claude](https://img.shields.io/badge/Claude-Anthropic%20%7C%20Bedrock-172B4D) ![React](https://img.shields.io/badge/React%2019-TypeScript-172B4D) ![Tests](https://img.shields.io/badge/tests-84%20passing-24734B) ![Data](https://img.shields.io/badge/real%20data-Kaggle%20Customer%20Support%20on%20Twitter-A96308)
+![Python](https://img.shields.io/badge/Python-3.11%2B-172B4D) ![FastAPI](https://img.shields.io/badge/FastAPI-backend-087F8C) ![LangGraph](https://img.shields.io/badge/LangGraph-agent%20workflow-087F8C) ![LangChain](https://img.shields.io/badge/LangChain-tools%20%26%20models-087F8C) ![Gemini](https://img.shields.io/badge/Google%20Gemini-free%20tier%2C%20live-087F8C) ![Claude](https://img.shields.io/badge/Claude-Anthropic%20%7C%20Bedrock-172B4D) ![React](https://img.shields.io/badge/React%2019-TypeScript-172B4D) ![Tests](https://img.shields.io/badge/tests-101%20passing-24734B) ![Data](https://img.shields.io/badge/real%20data-Kaggle%20Customer%20Support%20on%20Twitter-A96308)
 
 <table>
 <tr>
@@ -291,7 +291,7 @@ flowchart LR
 |---|---|
 | **Models** | `gemini-3.5-flash-lite` (labelling and Flo) and `gemini-embedding-001` (search), through Gemini's OpenAI-compatible API |
 | **Requests used so far** | About **40** labelling and chat requests, plus 663 embedded texts: all within the free tier |
-| **Labelled by Gemini** | **300** real conversations (full comparison below), and **154 of the 3,000**, continuing daily |
+| **Labelled by Gemini** | **300** real conversations (full comparison below), and **440 of the 3,000** (including those 300), continuing daily |
 | **Key handling** | The key is never in the code or the repository. The environment's network layer adds it to requests sent to Google. |
 
 ### 1. Labelling: before and after on the same 300 real conversations
@@ -695,12 +695,13 @@ Every suite runs from the command line and from the app, and results are reporte
 |---|---|
 | Flo answers with Gemini | 2 of 2 completed, **claims validated** |
 | Gemini semantic search | Paraphrase query returns 4 of 4 on-topic results (keywords: 2 of 4) |
-| Gemini labelling | 300 labelled with 374 verified quotes; 154 of 3,000 so far |
+| Gemini labelling | 300 labelled with 374 verified quotes; 440 of 3,000 so far |
+| Retrieval on real data (17 paraphrased questions, silver judgments) | Precision@5: keyword 0.34 · **semantic 0.67** · hybrid 0.60 ([report](docs/EVALUATION_REPORT.md)) |
 | Label accuracy vs humans | Ready on the Human review page; awaiting reviews |
 
 The weak spots are shown on purpose. Reporting per language shows where work is still needed.
 
-**Automated tests:** 76 backend and 8 frontend, **84 in total, all passing**. They cover:
+**Automated tests:** 93 backend and 8 frontend, **101 in total, all passing**, run by CI on every pull request. They cover:
 - conversation reconstruction (branches, missing parents, loops), parsing, and reproducible sampling,
 - denominators and unknown outcomes, evidence validity, and chart, filter and table consistency,
 - follow-up filters, tool limits, approval resume without duplicates, and session isolation,
@@ -761,11 +762,11 @@ It imports earlier progress, labels only what is new, stops at the cap, and expo
 
 | | Status |
 |---|---|
-| ✅ **Built and verified** | Full app (11 pages) · import of 3,000 real Kaggle conversations · agentic Flo with approvals · **Flo live on real data with Gemini** · **Gemini labelling** of 300 real conversations · **Gemini semantic search** · sign-off redaction and private-channel label · blind human review with accuracy scoring · charts, maps, decisions, impact review · Docker · 84 passing tests |
-| ⏳ **In progress** | Gemini labels for all 3,000: **154 done**, about 180 more per day with `scripts/daily_label.sh` (about 2 weeks on the free tier). Until then, the 3,000 use rule-based labels |
+| ✅ **Built and verified** | Full app (11 pages) · import of 3,000 real Kaggle conversations · agentic Flo with approvals · **Flo live on real data with Gemini** · **Gemini labelling** of 300 real conversations · **Gemini semantic search** (300 sample) · accurate streamed token accounting · sign-off redaction and private-channel label · blind human review with accuracy scoring · charts, maps, decisions, impact review · Docker · CI · 101 passing tests |
+| ⏳ **In progress** | Gemini labels for all 3,000: **440 done**, 2,560 left (about 171 requests). Semantic search on the full 3,000: 5,641 customer texts left to embed. Until then, the 3,000 use rule-based labels and keyword search |
 | 🔑 **Needs your input** | Accuracy numbers need about **100 human reviews** · LangSmith traces need a LangSmith key ([setup](docs/LANGSMITH_SETUP.md)) |
 | ⚠️ **Known gaps** | Most public threads have no visible outcome (36% move to private messages) · Gemini embeddings cover customer messages only · cross-language semantic search is untested on real data · the import used a 30 MB extract of the Kaggle file (the full file was tested only at synthetic scale) |
 
-📖 More detail: [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [LangSmith setup](docs/LANGSMITH_SETUP.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md) · [Medium article](https://medium.com/@florinaregius/a-conversational-analysis-agentic-ai-system-using-3-000-customer-support-conversations-from-an-c75aef6aff68) · [Build diary: 17 challenges](docs/MEDIUM_ARTICLE.md)
+📖 More detail: [Baseline audit](docs/BASELINE_AUDIT.md) · [Acceptance test](docs/ACCEPTANCE_TEST.md) · [Evaluation report](docs/EVALUATION_REPORT.md) · [Dataset reproducibility](docs/DATASET_REPRODUCIBILITY.md) · [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [LangSmith setup](docs/LANGSMITH_SETUP.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md) · [Medium article](https://medium.com/@florinaregius/a-conversational-analysis-agentic-ai-system-using-3-000-customer-support-conversations-from-an-c75aef6aff68) · [Build diary: 17 challenges](docs/MEDIUM_ARTICLE.md)
 
 <sub>Data: “Customer Support on Twitter” by Thought Vector on Kaggle, CC BY-NC-SA 4.0. The dataset is not included in this repository. Screenshots show redacted text, with customer handles replaced by <code>@[CUSTOMER]</code>. The chatbot, approval, decisions and evaluation screenshots use synthetic demonstration data with fictional brands. The overview, maps, data-quality, language, Gemini, live Flo, search and review screenshots use real, redacted Kaggle conversations.</sub>
