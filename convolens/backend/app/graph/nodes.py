@@ -25,6 +25,7 @@ from app.config import get_settings
 from app.db import session_scope
 from app.graph import prompts
 from app.llm.provider import get_chat_model, structured_invoke
+from app.llm.usage import StreamUsage
 from app.models.orm import Action, ActionEvent
 from app.models.schemas import Filters, ProposedAction
 from app.tools.catalog import TOOL_DESCRIPTIONS, ToolContext, ToolLimitExceeded, build_tools, resolve_evidence
@@ -299,10 +300,17 @@ def plan_analysis(state: dict, config: RunnableConfig) -> dict:
             errors.append({"node": "plan_analysis", "type": "invalid_tool_args", "message": f"{st.tool}: {str(exc)[:200]}"})
             continue
         steps.append({"id": f"s{len(steps) + 1}", "tool": st.tool, "args": args, "purpose": st.purpose, "status": "planned", "depends_on": None})
-    if not steps and plan.question_type not in ("limitations", "unclear"):
-        steps = _rules_plan(plan.question_type, state["question"], f)  # plan template for the model-classified type
+    qtype = plan.question_type
+    if asked_for_action and not any(st["tool"] == "propose_action" for st in steps):
+        # The user explicitly asked for an action and the model left it out: use the standard action plan
+        # (brief from SQL counts + evidence, then a draft that still waits for human approval).
+        qtype, steps = "action_proposal", _rules_plan("action_proposal", state["question"], f)
+        errors.append({"node": "plan_analysis", "type": "note",
+                       "message": "The question asks for an action but the model's plan had no action step; used the standard action plan."})
+    elif not steps and qtype not in ("limitations", "unclear"):
+        steps = _rules_plan(qtype, state["question"], f)  # plan template for the model-classified type
         errors.append({"node": "plan_analysis", "type": "note", "message": "Model proposed no valid steps; used the standard plan for this question type."})
-    return {"question_type": plan.question_type, "analysis_plan": steps, "errors": state.get("errors", []) + errors,
+    return {"question_type": qtype, "analysis_plan": steps, "errors": state.get("errors", []) + errors,
             "tokens_in": state.get("tokens_in", 0) + ti, "tokens_out": state.get("tokens_out", 0) + to}
 
 
@@ -721,6 +729,7 @@ def compose_response(state: dict, config: RunnableConfig) -> dict:
                    "\n</untrusted_evidence>\n\nLIMITATIONS:\n" + "\n".join(f"- {l}" for l in lims) +
                    f"\n\nSCOPE: {resp['scope']['description']}\nQUESTION TYPE: {qtype}\nQUESTION: {state['question']}")
         ti_total, to_total = 0, 0
+        usage_modes: list[str] = []
         text, bad = "", []
         for attempt in range(2):
             msgs = [SystemMessage(prompts.COMPOSE_SYSTEM), HumanMessage(payload)]
@@ -728,17 +737,18 @@ def compose_response(state: dict, config: RunnableConfig) -> dict:
                 msgs.append(HumanMessage(f"Your previous answer used numbers not in the validated metrics: {', '.join(bad)}. "
                                          "Rewrite using only validated metric values."))
             chunks = []
-            agg = None
+            usage = StreamUsage()  # providers differ (cumulative, final-only, incremental); never sum blindly
             for ch in model.stream(msgs):
                 piece = ch.content if isinstance(ch.content, str) else "".join(
                     p.get("text", "") for p in ch.content if isinstance(p, dict))
                 if piece:
                     chunks.append(piece)
                     _emit("token", text=piece, attempt=attempt)
-                agg = ch if agg is None else agg + ch
-            ti, to = _usage(agg)
-            ti_total += ti
-            to_total += to
+                usage.add(ch)
+            u = usage.totals()
+            ti_total += u["input_tokens"]
+            to_total += u["output_tokens"]
+            usage_modes.append(u["mode"])
             text = "".join(chunks)
             bad = check_numbers(text, ms, state["question"], [e["quote"] for e in evs] + lims)
             cited_e = set(re.findall(r"\[(E\d+)\]", text))
@@ -756,6 +766,7 @@ def compose_response(state: dict, config: RunnableConfig) -> dict:
             first = re.search(r"\*\*Finding\*\*\s*\n+(.+)", text)
             resp.update(finding=(first.group(1).strip() if first else text[:200]), text=text,
                         validation={"status": "passed", "checks": checks})
+        resp["usage"] = {"compose_input_tokens": ti_total, "compose_output_tokens": to_total, "reporting": usage_modes}
         out.update(tokens_in=state.get("tokens_in", 0) + ti_total, tokens_out=state.get("tokens_out", 0) + to_total)
     if mode == "demo":
         resp["validation"] = {"status": "passed", "checks": [{"check": "evidence_spans_resolve", "passed": True},
