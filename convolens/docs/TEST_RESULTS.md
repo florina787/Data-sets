@@ -6,7 +6,7 @@ Every result below was produced in the development environment on 20 October 202
 
 | Suite | Command | Result |
 |---|---|---|
-| Backend (pytest) | `uv run pytest` | **65 passed** |
+| Backend (pytest) | `uv run pytest` | **68 passed** |
 | Frontend (vitest) | `npm test` | **7 passed** |
 | Frontend typecheck / build | `npm run build` | **passed** |
 
@@ -68,6 +68,33 @@ The model analysis job (Connected analysis) is the intended labelling method for
 
 A synthetic file with the TWCS schema and real-world size (2.8M rows) imported in 139 seconds. It selected exactly 3,000 of 754,223 eligible threads.
 
+## Gemini labelling on real data (executed)
+
+The run used Google Gemini `gemini-3.5-flash-lite`, free tier, through the OpenAI-compatible endpoint. The key was injected by the environment's network layer.
+
+- **Sample:** 300 conversations from the real extract, selected with the same seed (dataset `ds_7a7fdb1e455c`).
+- **Requests:** 21 in total. That is 20 batches of 15 conversations, plus one retry of a batch that failed with a Google 502 gateway error. Automatic retries were off.
+- **Results:** 300 of 300 labelled and activated. 374 evidence quotes were validated exactly against the stored text; 7 were invalid and dropped. 294 conversations have at least one verified quote. 8 labels without support were downgraded to `unknown`. Ending sentiment was set to `unknown` for 162 conversations where the customer wrote only once.
+
+| Same 300 conversations | Rules | Gemini |
+|---|---|---|
+| Topic assigned (not other or unknown) | 163 | 287 |
+| Outcome observable | 22 | 59 |
+| Customer-confirmed resolved / explicitly unresolved | 3 / 2 | 21 / 10 |
+| Negative ending sentiment | 11 | 79 |
+| Escalation requested | 14 | 4 |
+
+These are differences between the two methods, not accuracy scores; there are no human-reviewed labels yet.
+
+Found during the run and fixed:
+
+- **Free-tier limit:** 20 requests per day per model for Flash. The run switched to Flash-Lite with batching and a hard cap.
+- **Missing evidence:** the model omitted optional evidence fields. Evidence is now required in the schema, and unsupported labels are downgraded.
+- **Schema rejected:** Gemini rejected `$ref` schemas, so the schema is now flattened.
+- **Name leak:** customer first names appeared in agent greetings. Redaction v2 removes them, and the data was re-imported before any model call.
+
+**Flo's live chat with Gemini was not run.** It was skipped to save the free daily quota.
+
 ## Docker (executed)
 
 - Both images built and ran.
@@ -113,7 +140,7 @@ Weak spots stay visible by language:
 | 8 | Approve once and verify a single saved record | **Passed**: UI and API; a second approval returns 409 and creates no duplicate |
 | 9 | Ask for CSAT without ratings | **Passed**: explicit "not available" limitation |
 | 10 | Import Kaggle data and show real ingestion results | **Passed with partial data**: the 30 MB extract above. The full `twcs.csv` was not available in this environment. |
-| 11 | Configure a model and run actual analysis | **Not verified**: no Anthropic or Bedrock credentials. Code paths are tested with scripted models. |
+| 11 | Configure a model and run actual analysis | **Passed for labelling:** Gemini free tier labelled 300 real conversations. Flo live chat with a model is **not verified** (not run, to save quota). |
 | 12 | Configure LangSmith and inspect a real trace | **Not verified**: no LangSmith credentials. Disabled operation is tested. |
 
 ## Not verified

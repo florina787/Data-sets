@@ -189,5 +189,9 @@ def activate_llm_analysis(dataset_id: str, prompt_version: str = EXTRACT_VERSION
             else:
                 counts["ok"] += 1
                 apply_effective_labels(c, a.fields, a.id)
+                if c.customer_turns < 2 and c.sentiment_end != "unknown":
+                    # Ending sentiment needs a later customer turn to observe; a single message cannot show a change.
+                    c.sentiment_end = "unknown"
+                    counts["sentiment_end_unobservable"] = counts.get("sentiment_end_unobservable", 0) + 1
         db.get(Dataset, dataset_id).active_analysis = f"llm:{model_id}:{prompt_version}"
     return counts

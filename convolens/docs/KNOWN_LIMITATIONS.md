@@ -13,10 +13,17 @@
   - miss sarcasm (for example "thanks for nothing"),
   - can mislabel text such as "Yes thank you! … same problem".
 
-  Model extraction is the intended method for real data. It has not been run here, because no credentials were available.
+  Model extraction is the intended method for real data. Gemini (free tier) has labelled a 300-conversation sample; see below.
+- **Redaction gaps:** some agent sign-offs (for example "~ Jess") and names outside greetings are not removed.
 - **Rules sentiment and escalation cover en/es/fr/de only.** Other languages get `unknown`.
 - **Subthemes are keyword groupings**, not causes. Opportunity severity is a transparent rubric, and effort is only ever reviewer-entered.
 - **Journey stages are inferred per message by rules**; transitions follow real reply links.
+
+## Gemini (free tier)
+- **Daily quota:** the free tier allows about 20 requests per day per Flash model. Labelling all 3,000 conversations needs about 200 batched requests, i.e. several days of free quota, or a paid tier.
+- **Coverage:** only a 300-conversation sample is labelled by Gemini. The 3,000-conversation dataset still uses rules labels.
+- **Accuracy unmeasured:** the model's accuracy has not been measured against human-reviewed labels.
+- **Topic boundaries:** Flash-Lite sometimes picks the nearest topic loosely, for example a removed menu item labelled "cancellation". Evidence quotes make such cases visible for reviewers.
 
 ## Retrieval and multilingual
 - **Semantic retrieval needs the optional `embeddings` extra and a model download.** Without them, search is keyword-only and says so.
