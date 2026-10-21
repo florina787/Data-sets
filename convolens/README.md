@@ -39,15 +39,16 @@ Ask questions in plain English. Get answers backed by exact counts and real cust
 4. [The real data: 3,000 Kaggle conversations](#-the-real-data-3000-kaggle-conversations)
 5. [The AI layer: Gemini on the free tier](#-the-ai-layer-gemini-on-the-free-tier)
 6. [Measuring accuracy: human review](#-measuring-accuracy-human-review)
-7. [Dashboards and charts](#-dashboards-and-charts)
-8. [Insight maps](#%EF%B8%8F-insight-maps)
-9. [From finding to owned action](#-from-finding-to-owned-action)
-10. [Trust and safety guardrails](#%EF%B8%8F-trust-and-safety-guardrails)
-11. [How it works: architecture and flowcharts](#%EF%B8%8F-how-it-works-architecture-and-flowcharts)
-12. [Data quality, languages and observability](#-data-quality-languages-and-observability)
-13. [Evaluation and tests](#-evaluation-and-tests)
-14. [Run it yourself](#-run-it-yourself)
-15. [Honest status and limitations](#-honest-status-and-limitations)
+7. [Independent audit and hardening](#-independent-audit-and-hardening)
+8. [Dashboards and charts](#-dashboards-and-charts)
+9. [Insight maps](#%EF%B8%8F-insight-maps)
+10. [From finding to owned action](#-from-finding-to-owned-action)
+11. [Trust and safety guardrails](#%EF%B8%8F-trust-and-safety-guardrails)
+12. [How it works: architecture and flowcharts](#%EF%B8%8F-how-it-works-architecture-and-flowcharts)
+13. [Data quality, languages and observability](#-data-quality-languages-and-observability)
+14. [Evaluation and tests](#-evaluation-and-tests)
+15. [Run it yourself](#-run-it-yourself)
+16. [Honest status and limitations](#-honest-status-and-limitations)
 
 ---
 
@@ -290,7 +291,7 @@ flowchart LR
 | | |
 |---|---|
 | **Models** | `gemini-3.5-flash-lite` (labelling and Flo) and `gemini-embedding-001` (search), through Gemini's OpenAI-compatible API |
-| **Requests used so far** | About **40** labelling and chat requests, plus 663 embedded texts: all within the free tier |
+| **Requests used so far** | About **50** labelling, chat and audit requests, plus 665 embedded texts: all within the free tier |
 | **Labelled by Gemini** | **300** real conversations (full comparison below), and **440 of the 3,000** (including those 300), continuing daily |
 | **Key handling** | The key is never in the code or the repository. The environment's network layer adds it to requests sent to Google. |
 
@@ -400,6 +401,114 @@ flowchart LR
 Reviews never change dashboard labels; corrections in the explorer do that. With fewer than 30 reviews, the page warns that the intervals are too wide to tell systems apart. The target is **100**.
 
 <img src="docs/screenshots/human-review.png" alt="Human review page: a conversation on the left, blind label form on the right, accuracy table below" width="100%">
+
+---
+
+## 🔬 Independent audit and hardening
+
+A working dashboard is not proof. So before calling the assignment done, ConvoLens went through an **evidence-based audit**: every claim checked against the code, the database and live runs, with nothing assumed. The audit found real defects, and this section shows what they were and how each was fixed and proven. Full detail: [Baseline audit](docs/BASELINE_AUDIT.md) · [Acceptance test](docs/ACCEPTANCE_TEST.md) · [Evaluation report](docs/EVALUATION_REPORT.md).
+
+```mermaid
+flowchart LR
+  A["🔎 Audit<br/><sub>code · SQL · live runs</sub>"] --> B["🐞 Defects ranked<br/><sub>high · medium · low</sub>"]
+  B --> C["🧪 Failing test first<br/><sub>reproduce the bug</sub>"]
+  C --> D["🔧 Fix"]
+  D --> E["✅ Test passes<br/><sub>+ live Gemini proof</sub>"]
+  E --> F["🤖 CI on every PR"]
+  style B fill:#FBF1E4,stroke:#A96308
+  style E fill:#E6F2EB,stroke:#24734B
+  style F fill:#E7F4F4,stroke:#087F8C
+```
+
+### What the audit checked
+
+| Area | How it was checked | Result |
+|---|---|---|
+| 3,000 conversations | Direct SQL, separate from the app's own code | ✅ 3,000 threads, 11,359 messages (6,341 customer, 5,018 support); every thread starts with a customer and has a support reply |
+| Agent really runs | 53 real streamed graph events captured from the browser | ✅ 7 LangGraph nodes ran in order; the model chose 2 tools |
+| Real LLM | Every request and response to Gemini logged from outside the app | ✅ 2 Gemini calls per question: plan (structured output) and answer (streamed) |
+| Numbers are right | Each number in Flo's answer recounted with independent SQL | ✅ all 6 metrics matched |
+| Quotes are real | Quotes compared with the stored messages | ✅ every checked quote matched exactly |
+| Fresh checkout | Clean export of `master`: install, tests, build, start | ✅ passed (real data must be imported separately) |
+| Token accounting | Prompt size vs reported tokens | ❌ **over-counted 13–35×** → fixed below |
+
+### Defect 1 (high): tokens were counted up to 35 times over
+
+Gemini streams its answer in chunks, and **every chunk repeats the running total** of tokens used so far. ConvoLens added the chunks together, so a 3,900-character prompt was recorded as **35,376** input tokens.
+
+| Same live answer | Input tokens | Output tokens |
+|---|---|---|
+| Gemini's own final report | **603** | **293** |
+| Old ConvoLens (summing chunks) | 8,442 | 2,186 |
+| **Fixed ConvoLens** | **603** | **293** |
+
+This was worse than a wrong number on a dashboard. Flo stops any run that goes over **24,000 tokens**, and the inflated count pushed real runs over that limit right at the approval step. So **asking Flo to propose an action would have failed** on Gemini.
+
+**Fix:** a small `StreamUsage` class (`backend/app/llm/usage.py`) that recognises the three ways providers report streaming usage (a running total on every chunk, a single final report, or per-chunk increments) and never double counts. If a provider reports nothing, it says "missing" instead of guessing.
+
+**Proof:** 12 new tests. The key one fails on the old code with exactly `Model token budget of 24000 exceeded`, and passes on the new code.
+
+### Defect 2 (high, found during the live check): the model skipped the action
+
+Asked *"Propose an action to reduce unresolved billing and refund issues"*, `gemini-3.5-flash-lite` planned counts and a search, but **no action step**. Flo now notices when you explicitly ask for an action and the model leaves it out, and uses its standard action plan: a decision brief built from SQL counts and evidence, then a draft action that **still waits for a person to approve it**.
+
+**Live proof:** the same question now stops at the approval card, with nothing saved: 1,295 / 493 tokens, 11.7 seconds.
+
+### Smaller fixes
+
+- **Tool arguments are visible.** Flo's tool list now shows what the model asked each tool for, e.g. `query="refund unresolved", k=5`, next to the filters it used.
+- **Clearer error.** The "no model configured" message now explains how to set up Gemini, not just Claude.
+- **CI.** Every pull request now runs the backend tests and the frontend type check, tests and build on GitHub Actions, with no API keys.
+
+### The acceptance test, after the fixes (live, real data, nothing simulated)
+
+> *"Why are customers experiencing unresolved billing and refund issues, and what evidence supports your findings?"*
+
+<img src="docs/screenshots/acceptance-billing-live.png" alt="Ask Flo answering the billing and refund acceptance question live with Gemini on the 3,000 real conversations" width="100%">
+
+| Step | What happened |
+|---|---|
+| Scope | Flo read "billing and refund" in the question and narrowed to **Billing & refunds: 194 conversations** |
+| Graph path | `interpret_request → resolve_context → plan_analysis → execute_tools → inspect_results → validate_claims → compose_response` |
+| Tools the model chose | `get_resolution_breakdown {}` · `search_conversations {"query": "refund unresolved", "k": 5}` |
+| Counts (all matched independent SQL) | Unknown outcome **176 of 194** · solution offered 15 · explicitly unresolved 2 · confirmed resolved 1 · support asked to move to DMs 80 · customer confirmed DMs 7 |
+| Evidence | 13 quotes, each opening the exact message, e.g. *"still waiting for a refund..."*, *"Three days, and case still unresolved"* |
+| Validation | Numbers ✅ · citations ✅ |
+| Cost and speed | **1,773 / 763 tokens** (was recorded as 36,074 / 14,443 before the fix) · **4.5 seconds** |
+
+What Flo **didn't** do matters just as much: 91% of billing outcomes are not visible in the public threads, so it reported the patterns it could see and said plainly that they are not verified causes.
+
+| Other live checks | Result |
+|---|---|
+| *"Prove that slow refunds caused customers to churn and how much revenue we lost."* | Refused **before any model call**: no churn or revenue data exists. 0 tokens. |
+| *"What are the most common customer issues?"* then *"What about delivery?"* | The follow-up kept the conversation and narrowed to **Orders & delivery (279)**. Claims validated. |
+
+### Search quality, measured on real data
+
+17 reworded support questions (e.g. *"my money back still hasn't shown up"*, *"locked out of my account"*), on the 300 real conversations that have Gemini labels and embeddings:
+
+| Search mode | Precision@5 | MRR | nDCG@5 | Wrong results in top 5 |
+|---|---|---|---|---|
+| Keyword (BM25) | 0.34 | 0.67 | 0.39 | 66% |
+| **Semantic (Gemini embeddings)** | **0.67** | **0.90** | **0.70** | **33%** |
+| Hybrid (equal-weight fusion) | 0.60 | 0.68 | 0.60 | 40% |
+
+Semantic search **doubles precision** over keywords. Hybrid lands just below semantic alone, because equal weighting lets weak keyword matches in. That is recorded as a tuning task rather than tuned on these same 17 questions. Relevance here uses Gemini's topic labels as **silver judgments, not human ground truth**.
+
+### Audit scorecard
+
+| Requirement | Status |
+|---|---|
+| 3,000 real Kaggle conversations | ✅ Complete |
+| Real LLM integrated and working | ✅ Complete |
+| Genuinely agentic, LangGraph executing real workflows | ✅ Complete |
+| Grounded answers (numbers and quotes validated) | ✅ Complete |
+| Accurate token accounting | ✅ Fixed |
+| Tests and CI | ✅ 101 tests, CI on every pull request |
+| Gemini labels on all 3,000 | ⏳ 440 done, 2,560 to go |
+| Semantic search on all 3,000 | ⏳ 300-conversation sample done; 5,641 texts to embed |
+| Label accuracy vs human reviewers | ⏳ Metrics built; needs about 100 reviews |
+| Deployment | Local and Docker only |
 
 ---
 
@@ -546,7 +655,7 @@ You choose a baseline, a follow-up period and an intervention date. ConvoLens th
 | **Silent fallback when the model fails** | A clear error appears; Flo never switches to demo rules | Tested with failing and missing models |
 | **Questions the data can't answer** | Built-in refusals for CSAT, NPS, revenue, churn, location and agent ranking | 6 of 6 |
 | **Leaking personal data** | Redaction happens at import, before any model sees the text: handles, emails, URLs, phones, cards, IDs, greeting names and agent sign-offs. Traces are redacted again | Counts in every import manifest |
-| **Draining a free quota** | Request caps, no automatic retries, caching by content hash, paced embeddings | ≈40 requests for everything shown here |
+| **Draining a free quota** | Request caps, no automatic retries, caching by content hash, paced embeddings | ≈50 requests for everything shown here |
 | **Runaway cost or loops** | Limits on tool calls, retries, tokens and time; a cancel button | Tested |
 | **Stored XSS and spreadsheet injection** | Text is always rendered as plain text; strict content security policy; CSV cells are escaped | Tested |
 
@@ -693,7 +802,8 @@ Every suite runs from the command line and from the app, and results are reporte
 
 | Live check on real data | Result |
 |---|---|
-| Flo answers with Gemini | 2 of 2 completed, **claims validated** |
+| Flo answers with Gemini | 5 of 5 live runs completed, **claims validated**, counts matched independent SQL ([acceptance test](docs/ACCEPTANCE_TEST.md)) |
+| Token accounting | Recorded tokens equal Gemini's own report (603 / 293) |
 | Gemini semantic search | Paraphrase query returns 4 of 4 on-topic results (keywords: 2 of 4) |
 | Gemini labelling | 300 labelled with 374 verified quotes; 440 of 3,000 so far |
 | Retrieval on real data (17 paraphrased questions, silver judgments) | Precision@5: keyword 0.34 · **semantic 0.67** · hybrid 0.60 ([report](docs/EVALUATION_REPORT.md)) |
@@ -707,7 +817,9 @@ The weak spots are shown on purpose. Reporting per language shows where work is 
 - follow-up filters, tool limits, approval resume without duplicates, and session isolation,
 - prompt injection, running without LangSmith, and failing models with no silent fallback,
 - Gemini schema handling, evidence enforcement, name and sign-off redaction, and the private-channel label,
-- the embedding cache and request cap, the blind review queue and accuracy scoring, the label cache, and grouped citations.
+- the embedding cache and request cap, the blind review queue and accuracy scoring, the label cache, and grouped citations,
+- streamed token usage in every reporting style, interrupted streams, provider errors, the token-budget boundary, and an action request reaching approval,
+- evaluation metrics (precision, recall, F1, confusion matrix, MRR, nDCG) checked against hand-calculated values.
 
 ---
 
@@ -730,7 +842,10 @@ uv run python -m app.ingestion.cli list                # shows the actual counts
 export MODEL_PROVIDER=gemini GOOGLE_API_KEY=your_key GEMINI_MODEL=gemini-3.5-flash-lite MODEL_MAX_RETRIES=0
 uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15 --max-requests 12
 
-# 5) Optional: semantic search with Gemini embeddings (customer messages, paced and cached)
+# 5) Optional: measure search quality on real data (keyword vs semantic vs hybrid)
+uv run python -m app.evaluation.retrieval_eval --dataset <dataset_id>
+
+# 6) Optional: semantic search with Gemini embeddings (customer messages, paced and cached)
 uv run python -m app.ingestion.cli embed <dataset_id> --max-texts 700
 export EMBEDDING_PROVIDER=gemini                        # then restart the backend
 ```

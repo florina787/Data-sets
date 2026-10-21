@@ -34,6 +34,7 @@ This is the story of **ConvoLens AI**, a customer conversation intelligence app,
 - **The AI:** **Flo**, a chatbot built as a LangGraph agent. It plans, calls tools, counts with SQL, quotes real messages, **checks its own claims before replying**, and **asks a human before saving anything**.
 - **The twist:** I connected a **free Google Gemini key**. On the same 300 conversations, the share with a real topic jumped from **54% to 96%**, and conversations with a visible outcome went from **22 to 59**. That labelling run cost **21 free requests**.
 - **Then it went live:** Flo now answers questions on the real data with Gemini (about 2 requests per question, every number checked), search understands meaning thanks to Gemini embeddings, and a **blind human-review page** measures which labels are actually *right*.
+- **Then I audited myself:** I asked for a ruthless, evidence-only audit of my own project. It found a bug that counted tokens up to **35 times over** and would have broken every live action proposal. Challenges 18–21 are that story.
 
 ---
 
@@ -483,6 +484,85 @@ And when I asked Flo *"does moving to a private channel lead to resolution?"*, i
 
 ---
 
+### Challenge 18: I asked for an audit, and it found a real bug 🔬
+
+When everything looked finished, I did the scariest thing I could think of: I asked for a rigorous audit of my own project. The rules were strict. Don't trust the dashboard, read the code, query the database directly, and run the real thing. And never claim something passed without proof.
+
+Most of it held up. The 3,000 conversations were really 3,000 threads, 11,359 messages, every one starting with a customer. LangGraph really ran seven steps, Gemini really planned and wrote the answer, and every number in Flo's answer matched an independent SQL recount.
+
+Then the audit compared the **size of a prompt** with the **tokens it was reported to cost**. A prompt of about 3,900 characters was recorded as **35,376 input tokens**. Text averages about 4 characters per token. That number was impossible.
+
+I streamed one tiny answer from Gemini and printed what every chunk reported:
+
+```
+1 'Parcels arrive on our doorstep'   {'input_tokens': 8, 'output_tokens': 14}
+2 ' tape. Opening them feels like'   {'input_tokens': 8, 'output_tokens': 38}
+3 ' every day.'                      {'input_tokens': 8, 'output_tokens': 41}
+4 ''                                 {'input_tokens': 8, 'output_tokens': 41}
+SUMMED (my old code): {'input_tokens': 32, 'output_tokens': 134}
+```
+
+There it was. Gemini repeats the **running total** on every chunk, and my code added the chunks together. On that tiny test the real cost was 8 tokens in, 41 out, and I recorded 32 and 134. On a real answer with dozens of chunks, the error grew to 13–35 times.
+
+### Challenge 19: Why a wrong number was a broken feature 💣
+
+A wrong cost figure is embarrassing. But this one was dangerous, and here's why.
+
+Flo has a safety budget: any run that goes over **24,000 tokens** is stopped. It's there so a confused agent can't run up a bill. With the over-count, a perfectly normal answer "cost" around 50,000 tokens. The next step after writing the answer is the **approval pause**, and it checks the budget first.
+
+So any time someone asked Flo to *propose an action*, it would write the brief, reach the approval step, and stop with:
+
+```
+Model token budget of 24000 exceeded
+```
+
+My most important safety feature, human approval before saving anything, was unreachable on Gemini. I'd only ever tested approvals in demo mode and with scripted test models, which reported usage once. Real providers don't all behave the same way.
+
+**The fix** was a small class, `StreamUsage`, that recognises the three ways providers report streaming usage:
+- a **running total on every chunk** (Gemini): use the last one,
+- **one final report** (many OpenAI-style APIs): use it,
+- **per-chunk increments** (Anthropic-style): add them up.
+
+If no chunk reports usage at all, it says **"missing"** rather than guessing. I wrote the test first, with a fake model that streams like Gemini, and watched it fail on the old code with exactly the budget error. Then I fixed it and watched it pass.
+
+The live check afterwards:
+
+| Same live answer | Input tokens | Output tokens |
+|---|---|---|
+| Gemini's own report | 603 | 293 |
+| My old code | 8,442 | 2,186 |
+| My fixed code | **603** | **293** |
+
+### Challenge 20: The model forgot what I asked for 🙃
+
+With the budget fixed, I asked Flo live: *"Propose an action to reduce unresolved billing and refund issues."*
+
+It answered nicely, and never proposed an action. The small model, `gemini-3.5-flash-lite`, had planned some counts and a search, and simply left out the action step.
+
+Flo already knew, from a simple rule, when a user explicitly asks for an action. So now, if you clearly ask for one and the model's plan leaves it out, Flo uses its standard action plan: a decision brief from SQL counts and evidence, then a draft action. **The draft still waits for a person to approve it.** The fallback only makes sure your request isn't silently dropped; it never skips the human.
+
+The same question, live again: it stopped at the approval card, nothing saved, 11.7 seconds.
+
+**Lesson:** test the path your users will actually take, with the model they'll actually use. My scripted tests were too polite.
+
+### Challenge 21: Measuring search instead of admiring it 📏
+
+I'd been proudly showing one search example: *"my package never showed up"*. One example is an anecdote, not a measurement. So I wrote 17 reworded support questions, deliberately avoiding the words customers actually used: *"my money back still hasn't shown up"*, *"locked out of my account"*, *"waited on hold for an hour"*.
+
+Then I ran each one through three kinds of search on the 300 real conversations that have Gemini labels and embeddings:
+
+| Search mode | Precision@5 | Wrong results in top 5 |
+|---|---|---|
+| Keyword | 0.34 | 66% |
+| Semantic (Gemini embeddings) | **0.67** | **33%** |
+| Hybrid (both, equal weight) | 0.60 | 40% |
+
+Two surprises. Semantic search **doubled** precision. And my "best of both worlds" hybrid scored *below* semantic alone, because giving weak keyword matches an equal vote drags good results down.
+
+I didn't tune the weights on these same 17 questions. That would just teach the system to pass my own test. It's on the list, with a fresh question set.
+
+One honest caveat: "relevant" here means the result's conversation has the right topic according to **Gemini's** labels. That's a silver standard, not human ground truth. The human review page exists for exactly that reason.
+
 ## 📊 The results: what changed when a real LLM joined
 
 Remember the "pause and predict" question? Here's the answer.
@@ -534,7 +614,9 @@ If you remember one section, make it this one:
 7. **Pause for humans before any write.** And make sure approving twice can't create two records.
 8. **Fail loudly.** If the model is down, show an error. Never quietly switch to a weaker method.
 9. **Report quality per language.** One overall score hides the languages where you're weakest.
-10. **Respect the free tier.** Caps, caching and no automatic retries. Everything in this article cost about 40 free requests.
+10. **Respect the free tier.** Caps, caching and no automatic retries. Everything in this article cost about 50 free requests.
+11. **Audit yourself, with evidence.** Read the code, query the data directly, run the real thing. My worst bug was invisible on the dashboard.
+12. **Test with the real provider's behaviour.** Scripted test models are polite; real streams and small models are not.
 
 ---
 
@@ -547,6 +629,7 @@ If you remember one section, make it this one:
 5. What does Flo say when you ask for the CSAT score?
 6. Why did 100 embeddings in one request break the free tier?
 7. Why are system labels hidden on the Human review page?
+8. Why did a wrong token count break human approval?
 
 <details>
 <summary>Answers</summary>
@@ -558,6 +641,7 @@ If you remember one section, make it this one:
 5. "Not available from this data", with no invented number.
 6. On the free tier, every text in a batch counts as one request, and the limit is 100 per minute.
 7. So the reviewer isn't anchored by the AI's answer. Otherwise you'd measure agreement, not accuracy.
+8. Gemini repeats running totals on every chunk; adding them up pushed normal runs over the 24,000-token safety budget, which is checked right before the approval step.
 
 </details>
 
@@ -569,17 +653,20 @@ If you remember one section, make it this one:
 
 I promised myself this project would never overclaim, so:
 
-When I first published this, four things were missing. Three are now done:
+Done since the first version:
 
-- ✅ **Flo's live chat on the real data with Gemini.** Done (Challenge 14).
-- ✅ **Semantic search.** Done, with Gemini embeddings (Challenge 15).
-- ✅ **Agent sign-offs like "~ Jess".** Now redacted (Challenge 13).
-- ⏳ **Gemini labels for all 3,000.** 154 so far; a capped daily script adds about 180 a day, so roughly two more weeks of free quota.
+- ✅ **Flo's live chat on the real data with Gemini** (Challenge 14), now checked in five live runs, every number matching an independent SQL recount.
+- ✅ **Semantic search** with Gemini embeddings (Challenge 15), now measured (Challenge 21).
+- ✅ **Agent sign-offs like "~ Jess"** are redacted (Challenge 13).
+- ✅ **Token accounting** is accurate, and action proposals reach the approval pause on Gemini (Challenges 18–20).
+- ✅ **101 automated tests**, run by CI on every pull request.
 
 Still open:
-- **Accuracy numbers** need about 100 human reviews. The page is built; the reviews are my homework.
+- ⏳ **Gemini labels for all 3,000.** 440 so far (I'd misreported this as 154 earlier; the audit caught that too). 2,560 to go, about 171 free requests.
+- ⏳ **Semantic search on all 3,000.** The 300-conversation sample is embedded; 5,641 customer messages to go.
+- ⏳ **Accuracy numbers** need about 100 human reviews. The metrics are built; the reviews are my homework.
 - **LangSmith tracing** needs a LangSmith key. The setup guide is in the repo.
-- **Most public threads have no visible outcome.** That's the data, not a bug, and now the app explains why.
+- **Most public threads have no visible outcome.** That's the data, not a bug, and the app explains why.
 
 ---
 
