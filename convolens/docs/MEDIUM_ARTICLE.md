@@ -21,9 +21,9 @@ This is the story of **ConvoLens AI**, a customer conversation intelligence app,
 - how you can run it yourself, for free,
 - and the challenges and error messages that nearly broke me along the way. I've included all of them, with the actual error text, because I wish more people wrote about the messy middle.
 
-**🔗 The code:** [github.com/florina787/Data-sets — `convolens/`](https://github.com/florina787/Data-sets/tree/claude/awesome-bohr-jqq4uz/convolens)
+**🔗 The code:** [github.com/florina787/Data-sets — `convolens/`](https://github.com/florina787/Data-sets/tree/master/convolens)
 
-![Flo, the chatbot: type a question in the box at the bottom](https://raw.githubusercontent.com/florina787/Data-sets/claude/awesome-bohr-jqq4uz/convolens/docs/screenshots/00-flo-chatbot-typing.png)
+![Flo, the chatbot: type a question in the box at the bottom](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/00-flo-chatbot-typing.png)
 
 ---
 
@@ -32,7 +32,8 @@ This is the story of **ConvoLens AI**, a customer conversation intelligence app,
 - **The data:** 3,000 real customer-support conversations from the open-source Kaggle dataset **Customer Support on Twitter**: real customers talking to AmazonHelp, AppleSupport, Uber_Support, Delta, SpotifyCares and others.
 - **The app:** dashboards, charts and interactive maps showing *what customers contact you about*, *which conversations end unresolved*, and *what to fix first*.
 - **The AI:** **Flo**, a chatbot built as a LangGraph agent. It plans, calls tools, counts with SQL, quotes real messages, **checks its own claims before replying**, and **asks a human before saving anything**.
-- **The twist:** I connected a **free Google Gemini key**. On the same 300 conversations, the share with a real topic jumped from **54% to 96%**, and conversations with a visible outcome went from **22 to 59**. The whole run cost **21 free requests**.
+- **The twist:** I connected a **free Google Gemini key**. On the same 300 conversations, the share with a real topic jumped from **54% to 96%**, and conversations with a visible outcome went from **22 to 59**. That labelling run cost **21 free requests**.
+- **Then it went live:** Flo now answers questions on the real data with Gemini (about 2 requests per question, every number checked), search understands meaning thanks to Gemini embeddings, and a **blind human-review page** measures which labels are actually *right*.
 
 ---
 
@@ -77,7 +78,7 @@ Each step answers a question a support leader actually asks:
 | Who owns the fix? | Flo **proposes**, a human **approves**, and the owner is confirmed by a person |
 | Did it work? | Before/after comparison, with a warning that a difference ≠ proof |
 
-![Executive overview on the real data](https://raw.githubusercontent.com/florina787/Data-sets/claude/awesome-bohr-jqq4uz/convolens/docs/screenshots/01-overview-real.png)
+![Executive overview on the real data](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/01-overview-real.png)
 
 ---
 
@@ -89,7 +90,7 @@ Flo is the chatbot on every page. I gave Flo a small teal circle with an **F** i
 
 Here's what happens when you ask Flo a real question:
 
-![Flo's answer, annotated](https://raw.githubusercontent.com/florina787/Data-sets/claude/awesome-bohr-jqq4uz/convolens/docs/screenshots/00-flo-chatbot-answer.png)
+![Flo's answer, annotated](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/00-flo-chatbot-answer.png)
 
 1. **Flo knows your context.** If you filtered the dashboard to *Billing & refunds* and ask *"Why is this happening?"*, Flo analyses **that** scope and tells you so.
 2. **Every answer has the same structure:** Finding → Scope and denominator → Supporting evidence → Limitations → Proposed next action.
@@ -119,9 +120,7 @@ You don't need any API keys to start. ConvoLens has a **Demonstration mode** wit
 
 ```bash
 git clone https://github.com/florina787/Data-sets.git
-cd Data-sets
-git checkout claude/awesome-bohr-jqq4uz
-cd convolens
+cd Data-sets/convolens
 ```
 
 ### Step 2: Start the backend
@@ -164,13 +163,24 @@ The importer rebuilds conversations, picks **up to 3,000** with a fixed random s
 export MODEL_PROVIDER=gemini
 export GOOGLE_API_KEY=your_key_here
 export GEMINI_MODEL=gemini-3.5-flash-lite
-export MODEL_REQUESTS_PER_MINUTE=8
-uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15
+export MODEL_MAX_RETRIES=0
+uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15 --max-requests 12
 ```
 
 3. In the app, switch the top bar to **Connected analysis**.
 
-> 💡 **Tip:** the free tier has **daily request limits per model**. Batching 15 conversations per request is what makes it workable. More on that pain below. 😅
+> 💡 **Tip:** the free tier has **daily request limits per model**. Batching 15 conversations per request, and stopping at a cap, is what makes it workable. More on that pain below. 😅
+
+### Step 6 (optional): Search by meaning, and label a little every day
+
+```bash
+# Embed customer messages once (paced for the free tier, cached forever)
+uv run python -m app.ingestion.cli embed <dataset_id> --max-texts 700
+export EMBEDDING_PROVIDER=gemini     # then restart the backend
+
+# One capped day of labelling; run it again tomorrow to continue
+DATASET_ID=<dataset_id> MAX_REQUESTS=12 ../scripts/daily_label.sh
+```
 
 Prefer Docker? `docker compose up --build`, then open http://127.0.0.1:8080.
 
@@ -195,7 +205,7 @@ requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.kaggle.com', port=
 ... Tunnel connection failed: 403 Forbidden
 ```
 
-The environment's network policy blocked Kaggle completely. Hugging Face was blocked too, which is why semantic search with downloaded embeddings is still untested.
+The environment's network policy blocked Kaggle completely. Hugging Face was blocked too, so I couldn't download an embedding model for semantic search. (Spoiler: Gemini rescued that later, in Challenge 15.)
 
 **What I did:** I didn't wait. I built the whole pipeline against **synthetic data in the exact Kaggle schema**, with deliberate defects baked in: duplicate rows, a reply loop, missing parents, an invalid boolean, a broken timestamp, and even a **prompt-injection attack** hidden in a customer tweet. When the real data finally arrived, the pipeline already knew how to handle every one of those.
 
@@ -405,15 +415,81 @@ To restart my server, I ran `pkill -f "uvicorn ..."`. The pattern also matched *
 
 No lesson here, really. I just think you deserve to know. 🙃
 
+### Challenge 13: "~ Jess" kept slipping through 🕵️‍♀️
+
+My redaction removed customer handles, emails, phone numbers and greeting names. But support agents on Twitter sign their replies: *"…we'll sort this out ~ Jess"*, *"^MK"*, *"-Dan"*. Those are real staff names, and they were flowing straight to the model.
+
+The tricky part: *"~ Jess"* at the end of a **support** message is a signature. The same shape in a **customer** message might be anything. So the new rule only strips sign-offs from support messages, with a small list of words that look like sign-offs but aren't names (*"^Team"*, *"-Support"*).
+
+That removed **2,723** sign-offs from the 3,000 conversations. I re-imported everything, and only **42** conversations changed enough to need re-labelling, because labels are cached by a hash of the redacted text. Three free requests. 🎉
+
+### Challenge 14: Flo meets Gemini, and the tools won't fit 🧩
+
+Labelling worked, but Flo's *planning* step failed on Gemini. The planner returns a list of tool calls, each with its own arguments, so the schema had an open-ended "arguments" object. Gemini's structured output wants every field spelled out in advance, and an "anything goes" object didn't fit.
+
+**Fix:** the planner now returns arguments as a **JSON string** (`{"top_n": 5}`). I parse it, validate it against the tool's own typed schema, and reject anything invalid *before* a tool runs. It's less elegant, but safer.
+
+Then the first live answer came back, and the citations looked like this: **[E1, E2, E3, E4, E5]**. Plain text, not clickable. My renderer expected one reference per bracket. It now splits a group into one button each, with a test so it stays that way.
+
+The result: **Flo's first live answer on real data, with every claim validated, in 9.2 seconds, for 2 free requests.**
+
+![Flo answering a real question with Gemini, claims validated](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/flo-gemini-live-1.png)
+
+### Challenge 15: Embeddings, and the request that counts 100 times 🔢
+
+With Hugging Face blocked, I tried Gemini's own embedding model for semantic search. One test call with two sentences worked perfectly. So I sent 100 messages in one batch request, and got:
+
+```
+"code": 429, "Quota exceeded for metric:
+generativelanguage.googleapis.com/embed_content_free_tier_requests, limit: 100"
+```
+
+On the free tier, **every text in a batch counts as one request**, with a limit of 100 per minute. My single "request" was really 100, plus the 2 from the test.
+
+**What I did:**
+- **Embed only customer messages.** That's what search looks at by default, and it halves the cost. Support replies stay searchable by keyword.
+- **Pace it** at 90 texts per minute.
+- **Cache every vector forever**, keyed by a hash of the text. A message is paid for once; after that, a search costs about one request.
+
+It was worth it. For *"my package never showed up"*, keyword search returned a food-delivery cancellation and **an Uber free-ride complaint** (it matched on "never"). Semantic search returned four genuinely missing parcels: *"tracking says they were handed to resident"*, *"Where is it???"*.
+
+![Hybrid keyword + Gemini semantic search](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/semantic-search-gemini.png)
+
+### Challenge 16: The crash that cost nothing (luckily) 💥
+
+To label all 3,000 on the free tier, I wrote a daily script: label up to 12 batches, stop, continue tomorrow. Its first run died instantly:
+
+```
+sqlite3.IntegrityError: UNIQUE constraint failed: analyses.conversation_id, analyses.method, ...
+```
+
+My cache reuses a label when the same conversation text was already labelled anywhere. But it looked up *the oldest* matching label, which belonged to another dataset, and then copied it onto a conversation that **already had its own copy**. Two identical rows → boom.
+
+The good news: it crashed while checking the cache, **before calling Gemini**, so not a single free request was wasted. I wrote a test that fails without the fix, then fixed it: always prefer the conversation's own row.
+
+The rerun labelled 67 new conversations. Five of its 10 requests failed with `upstream request failed`, Google's gateway having a moment. Failed conversations are stored as *failed*, never cached, so tomorrow's run retries them.
+
+### Challenge 17: "Why is everything unknown?" 🤷
+
+Every dashboard I showed had the same awkward bar: **outcome unknown** for most conversations. People kept asking why.
+
+I knew the answer from reading threads: support says *"Can you DM us your order number?"*, and the rest happens in private. But "I read some threads" isn't evidence. So I made it a label: a **private-channel** flag, set only when the thread *shows* it, with the quote attached.
+
+The numbers on the 3,000: support asked to move to DMs in **994**, customers confirmed in **85**. **36%** of conversations leave the public thread. Now the overview has a banner, *"Why are outcomes often unknown?"*, and one click shows exactly those conversations.
+
+And when I asked Flo *"does moving to a private channel lead to resolution?"*, it put the two numbers side by side and **did not claim a causal link**. That's the behaviour I spent weeks building. 💙
+
+![Flo on private channels: numbers side by side, no causal claim](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/flo-gemini-live-2.png)
+
 ---
 
 ## 📊 The results: what changed when a real LLM joined
 
 Remember the "pause and predict" question? Here's the answer.
 
-**With keyword rules, only 22 of 300 conversations showed a clear outcome in the thread. With Gemini, 59 of 300, about 20%.** So the answer is **C**. Most public support conversations quickly move to private messages ("please DM us"), so the outcome is simply not visible. ConvoLens says *unknown* instead of pretending.
+**With keyword rules, only 22 of 300 conversations showed a clear outcome in the thread. With Gemini, 59 of 300, about 20%.** So the answer is **C**. Most public support conversations quickly move to private messages ("please DM us"; that's 36% of them, see Challenge 17), so the outcome is simply not visible. ConvoLens says *unknown* instead of pretending.
 
-![Keyword rules vs Gemini on the same 300 conversations](https://raw.githubusercontent.com/florina787/Data-sets/claude/awesome-bohr-jqq4uz/convolens/docs/screenshots/gemini-vs-rules.png)
+![Keyword rules vs Gemini on the same 300 conversations](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/gemini-vs-rules.png)
 
 | Same 300 real conversations | Keyword rules | Gemini (free tier) |
 |---|---|---|
@@ -429,9 +505,19 @@ Three things surprised me:
 
 1. **Keyword rules can't read real people.** *"Why is your rice always undercooked"* has none of my keywords, so the rules called it "other". Gemini knew it was a service complaint instantly.
 2. **The AI was *stricter* about escalation.** Rules flagged any tweet containing "complaint". Gemini only flagged explicit requests like *"I asked for a supervisor or senior manager"*.
-3. **These are differences, not accuracy scores.** Without human-checked labels, I can't say which is *right*, only how they *differ*. The app has reviewer-correction buttons, so that's the next step.
+3. **These are differences, not accuracy scores.** Without human-checked labels, I can't say which is *right*, only how they *differ*. So I built a way to find out (next section).
 
-![A real conversation with Gemini's evidence highlighted](https://raw.githubusercontent.com/florina787/Data-sets/claude/awesome-bohr-jqq4uz/convolens/docs/screenshots/gemini-explorer-real.png)
+![A real conversation with Gemini's evidence highlighted](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/gemini-explorer-real.png)
+
+### So which one is right? Ask a human, blind 🙈
+
+I added a **Human review** page. It shows one conversation and asks you to pick the topic, outcome, sentiment and escalation yourself, **with the AI's answers hidden**. If you saw Gemini's label first, you'd be tempted to agree with it. Only after you submit does it reveal what the rules and Gemini said.
+
+Every review becomes a "gold" label, and each system is scored against them, field by field, with a **95% confidence interval**. Conversations come in a fixed random order, so the reviewed ones are a fair sample. With fewer than 30 reviews, the page warns you that the intervals are too wide to call a winner. If a second person reviews the same conversation, it also measures how often *humans* agree, which tells you how hard the task really is.
+
+![Blind human review: label first, then see what the AI said](https://raw.githubusercontent.com/florina787/Data-sets/master/convolens/docs/screenshots/human-review.png)
+
+My next weekend: 100 reviews, and the first real accuracy numbers.
 
 ---
 
@@ -442,11 +528,13 @@ If you remember one section, make it this one:
 1. **Let SQL do the counting.** The model plans and explains; it never computes a number.
 2. **Validate every claim before showing it.** Check numbers against tool results, and check quotes against stored text.
 3. **No evidence, no label.** Downgrade to "unknown" and record the downgrade.
-4. **Refuse what the data can't support.** CSAT, revenue, churn and location get a clear "not available".
-5. **Treat customer text as untrusted data.** Someone *will* type "IGNORE ALL PREVIOUS INSTRUCTIONS" into a support chat. Mine did, in the test data, on purpose.
-6. **Pause for humans before any write.** And make sure approving twice can't create two records.
-7. **Fail loudly.** If the model is down, show an error. Never quietly switch to a weaker method.
-8. **Report quality per language.** One overall score hides the languages where you're weakest.
+4. **Measure accuracy blind.** Hide the AI's answer from the person checking it.
+5. **Refuse what the data can't support.** CSAT, revenue, churn and location get a clear "not available".
+6. **Treat customer text as untrusted data.** Someone *will* type "IGNORE ALL PREVIOUS INSTRUCTIONS" into a support chat. Mine did, in the test data, on purpose.
+7. **Pause for humans before any write.** And make sure approving twice can't create two records.
+8. **Fail loudly.** If the model is down, show an error. Never quietly switch to a weaker method.
+9. **Report quality per language.** One overall score hides the languages where you're weakest.
+10. **Respect the free tier.** Caps, caching and no automatic retries. Everything in this article cost about 40 free requests.
 
 ---
 
@@ -457,6 +545,8 @@ If you remember one section, make it this one:
 3. What happens to a Gemini label that has no supporting quote?
 4. How many free Gemini requests did the 300-conversation labelling cost?
 5. What does Flo say when you ask for the CSAT score?
+6. Why did 100 embeddings in one request break the free tier?
+7. Why are system labels hidden on the Human review page?
 
 <details>
 <summary>Answers</summary>
@@ -466,6 +556,8 @@ If you remember one section, make it this one:
 3. It becomes "unknown", and the downgrade is recorded.
 4. 21: 20 batches of 15, plus one retry.
 5. "Not available from this data", with no invented number.
+6. On the free tier, every text in a batch counts as one request, and the limit is 100 per minute.
+7. So the reviewer isn't anchored by the AI's answer. Otherwise you'd measure agreement, not accuracy.
 
 </details>
 
@@ -477,10 +569,17 @@ If you remember one section, make it this one:
 
 I promised myself this project would never overclaim, so:
 
-- **Flo's live chat on the real data with Gemini** isn't shown yet. I skipped it to protect the free daily quota. The code path is tested with scripted models.
-- **Gemini labelling covers 300 conversations, not all 3,000.** The rest would take about 180 more requests, several days of free quota.
-- **There are no human-checked labels yet,** so accuracy isn't measured.
-- **Some agent sign-offs**, like "~ Jess", still slip through redaction.
+When I first published this, four things were missing. Three are now done:
+
+- ✅ **Flo's live chat on the real data with Gemini.** Done (Challenge 14).
+- ✅ **Semantic search.** Done, with Gemini embeddings (Challenge 15).
+- ✅ **Agent sign-offs like "~ Jess".** Now redacted (Challenge 13).
+- ⏳ **Gemini labels for all 3,000.** 154 so far; a capped daily script adds about 180 a day, so roughly two more weeks of free quota.
+
+Still open:
+- **Accuracy numbers** need about 100 human reviews. The page is built; the reviews are my homework.
+- **LangSmith tracing** needs a LangSmith key. The setup guide is in the repo.
+- **Most public threads have no visible outcome.** That's the data, not a bug, and now the app explains why.
 
 ---
 
@@ -488,7 +587,7 @@ I promised myself this project would never overclaim, so:
 
 Everything is open source:
 
-**👉 [github.com/florina787/Data-sets — `convolens/`](https://github.com/florina787/Data-sets/tree/claude/awesome-bohr-jqq4uz/convolens)**
+**👉 [github.com/florina787/Data-sets — `convolens/`](https://github.com/florina787/Data-sets/tree/master/convolens)**
 
 Clone it, run it, ask Flo something tricky, and please tell me where it breaks. And if you've ever had an AI tool confidently hand you a made-up number in front of your boss… I see you. This one's for us. 💙
 

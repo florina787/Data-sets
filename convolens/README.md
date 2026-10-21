@@ -24,6 +24,8 @@ Ask questions in plain English. Get answers backed by exact counts and real cust
 </tr>
 </table>
 
+📝 **The story behind it:** [*I Built an AI Analyst That Refuses to Make Things Up*](docs/MEDIUM_ARTICLE.md), 17 real challenges, with the actual error messages, from a blocked Kaggle download to free-tier quotas.
+
 </div>
 
 ---
@@ -763,6 +765,6 @@ It imports earlier progress, labels only what is new, stops at the cap, and expo
 | 🔑 **Needs your input** | Accuracy numbers need about **100 human reviews** · LangSmith traces need a LangSmith key ([setup](docs/LANGSMITH_SETUP.md)) |
 | ⚠️ **Known gaps** | Most public threads have no visible outcome (36% move to private messages) · Gemini embeddings cover customer messages only · cross-language semantic search is untested on real data · the import used a 30 MB extract of the Kaggle file (the full file was tested only at synthetic scale) |
 
-📖 More detail: [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [LangSmith setup](docs/LANGSMITH_SETUP.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md) · [The story behind it (Medium draft)](docs/MEDIUM_ARTICLE.md)
+📖 More detail: [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [LangSmith setup](docs/LANGSMITH_SETUP.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md) · [The story behind it: 17 challenges (Medium article)](docs/MEDIUM_ARTICLE.md)
 
 <sub>Data: “Customer Support on Twitter” by Thought Vector on Kaggle, CC BY-NC-SA 4.0. The dataset is not included in this repository. Screenshots show redacted text, with customer handles replaced by <code>@[CUSTOMER]</code>. The chatbot, approval, decisions and evaluation screenshots use synthetic demonstration data with fictional brands. The overview, maps, data-quality, language, Gemini, live Flo, search and review screenshots use real, redacted Kaggle conversations.</sub>
