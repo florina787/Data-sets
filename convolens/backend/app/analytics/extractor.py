@@ -120,10 +120,14 @@ def analyze_batch(conv_ids: list[int], model=None) -> dict:
     with session_scope() as db:
         for cid in conv_ids:
             conv = db.get(Conversation, cid)
-            cached = db.scalar(select(Analysis).where(Analysis.conversation_id == cid, Analysis.method == "llm", Analysis.model_id == model_id,
+            # Cache key = content hash + model + prompt version (identical conversations in other datasets reuse it).
+            cached = db.scalar(select(Analysis).where(Analysis.method == "llm", Analysis.model_id == model_id,
                                                       Analysis.prompt_version == EXTRACT_BATCH_VERSION, Analysis.content_hash == conv.content_hash,
-                                                      Analysis.source_text == "original", Analysis.status == "ok"))
+                                                      Analysis.source_text == "original", Analysis.status == "ok").order_by(Analysis.id))
             if cached:
+                if cached.conversation_id != cid:
+                    db.add(Analysis(conversation_id=cid, method="llm", model_id=model_id, prompt_version=EXTRACT_BATCH_VERSION,
+                                    content_hash=conv.content_hash, source_text="original", fields=cached.fields, status="ok"))
                 continue
             msgs = db.scalars(select(Message).where(Message.conversation_id == cid).order_by(Message.position)).all()
             todo.append((cid, conv.key))

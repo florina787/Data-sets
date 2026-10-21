@@ -50,7 +50,7 @@ def get_chat_model(max_tokens: int | None = None):
         # Thinking tokens count against max_tokens on Gemini, so allow more room than for Claude.
         return ChatOpenAI(model=s.gemini_model, base_url=s.gemini_base_url, api_key=key, max_tokens=max(mt, s.gemini_max_tokens),
                           reasoning_effort=s.gemini_reasoning_effort, timeout=max(s.model_timeout_s, 120),
-                          max_retries=max(s.model_max_retries, 5), rate_limiter=limiter, stream_usage=True)
+                          max_retries=s.model_max_retries, rate_limiter=limiter, stream_usage=True)
     if s.model_provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
         return ChatAnthropic(model=s.anthropic_model, api_key=s.anthropic_api_key.get_secret_value(), max_tokens=mt,
