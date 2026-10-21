@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { safeCell, toCSV } from "../lib/csv";
 import { Markdown } from "../lib/markdown";
@@ -25,5 +25,9 @@ describe("Markdown renderer", () => {
     screen.getByRole("button", { name: "Open evidence E2" }).click();
     expect(onCite).toHaveBeenCalledWith("E2");
     expect(screen.getByRole("button", { name: "Open metric M1" })).toBeInTheDocument();
+  });
+  it("splits grouped citations into individual buttons", () => {
+    const { container } = render(<Markdown text="Customers report it [E1, E2, M3]." onCite={() => undefined} />);
+    for (const name of ["Open evidence E1", "Open evidence E2", "Open metric M3"]) expect(within(container).getByRole("button", { name })).toBeInTheDocument();
   });
 });
