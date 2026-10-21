@@ -24,7 +24,7 @@ from app.analytics.taxonomy import RESOLUTION, TOPICS, topic_label
 from app.config import get_settings
 from app.db import session_scope
 from app.graph import prompts
-from app.llm.provider import get_chat_model
+from app.llm.provider import get_chat_model, structured_invoke
 from app.models.orm import Action, ActionEvent
 from app.models.schemas import Filters, ProposedAction
 from app.tools.catalog import TOOL_DESCRIPTIONS, ToolContext, ToolLimitExceeded, build_tools, resolve_evidence
@@ -268,8 +268,7 @@ def plan_analysis(state: dict, config: RunnableConfig) -> dict:
     history = "\n".join(f"{m['role']}: {m['content'][:300]}" for m in state.get("messages", [])[-6:-1])
     user = (f"Page: {state.get('page')}\nActive scope (applied automatically): {f.describe()}\n"
             f"Recent conversation:\n{history or '(none)'}\nQuestion: {state['question']}")
-    structured = model.with_structured_output(LLMPlan, include_raw=True)
-    out = structured.invoke([SystemMessage(sys), HumanMessage(user)])
+    out = structured_invoke(model, LLMPlan, [SystemMessage(sys), HumanMessage(user)])
     ti, to = _usage(out.get("raw"))
     plan: LLMPlan | None = out.get("parsed")
     if plan is None:

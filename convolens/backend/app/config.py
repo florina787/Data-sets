@@ -28,11 +28,20 @@ class Settings(BaseSettings):
     max_conversation_messages: int = 50
 
     # Model provider (connected analysis)
-    model_provider: Literal["none", "anthropic", "bedrock"] = "none"
+    model_provider: Literal["none", "anthropic", "bedrock", "gemini"] = "none"
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str = "claude-sonnet-5-5"
     bedrock_model_id: str | None = None
     aws_region: str | None = None
+    # Google Gemini via its OpenAI-compatible endpoint. The key may be set here (GOOGLE_API_KEY) or injected by an
+    # egress proxy as an Authorization header (GEMINI_KEY_VIA_PROXY=true), in which case it never enters the process.
+    google_api_key: SecretStr | None = None
+    gemini_model: str = "gemini-3.5-flash"
+    gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
+    gemini_key_via_proxy: bool = False
+    gemini_reasoning_effort: str = "low"  # thinking budget; low keeps latency and free-tier usage down
+    gemini_max_tokens: int = 8000
+    model_requests_per_minute: float = 0  # 0 = unlimited; set for free-tier quotas
     model_max_tokens: int = 1500
     model_timeout_s: float = 60.0
     model_max_retries: int = 2
@@ -73,6 +82,8 @@ class Settings(BaseSettings):
             return bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
         if self.model_provider == "bedrock":
             return bool(self.bedrock_model_id and self.aws_region)
+        if self.model_provider == "gemini":
+            return bool(self.gemini_key_via_proxy or (self.google_api_key and self.google_api_key.get_secret_value()))
         return False
 
     @property
@@ -81,6 +92,8 @@ class Settings(BaseSettings):
             return self.anthropic_model
         if self.model_provider == "bedrock":
             return self.bedrock_model_id
+        if self.model_provider == "gemini":
+            return self.gemini_model
         return None
 
     @property

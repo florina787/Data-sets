@@ -49,6 +49,7 @@ def main() -> None:
     an = sub.add_parser("analyze")
     an.add_argument("dataset_id")
     an.add_argument("--limit", type=int, default=None)
+    an.add_argument("--batch-size", type=int, default=15, help="conversations per model request (fewer requests on free tiers)")
     sub.add_parser("list")
     args = p.parse_args()
     init_db()
@@ -63,19 +64,35 @@ def main() -> None:
     elif args.cmd == "file":
         _import(Path(args.path), f"local:{Path(args.path).name}", args)
     elif args.cmd == "analyze":
-        from app.analytics.extractor import activate_llm_analysis, analyze_conversation
+        import time
+        from app.analytics.extractor import activate_llm_analysis, analyze_batch
+        from app.graph.prompts import EXTRACT_BATCH_VERSION
         from app.llm.provider import get_chat_model
         from app.models.orm import Conversation
         model = get_chat_model()
         with session_scope() as s:
             ids = s.scalars(select(Conversation.id).where(Conversation.dataset_id == args.dataset_id).order_by(Conversation.key)).all()
         ids = ids[: args.limit] if args.limit else ids
-        failed = 0
-        for i, cid in enumerate(ids):
-            failed += analyze_conversation(cid, model=model).status != "ok"
-            _progress(f"analysed {i + 1}/{len(ids)} failures {failed}", (i + 1) / len(ids))
-        print()
-        print("Activation:", activate_llm_analysis(args.dataset_id))
+        ok = failed = cached = 0
+        quota_stops = 0
+        t0 = time.time()
+        for i in range(0, len(ids), args.batch_size):
+            r = analyze_batch(ids[i:i + args.batch_size], model=model)
+            ok, failed, cached = ok + r["ok"], failed + r["failed"], cached + r["cached"]
+            err = r.get("error") or ""
+            _progress(f"{min(i + args.batch_size, len(ids))}/{len(ids)} ok={ok} cached={cached} failed={failed}", min(i + args.batch_size, len(ids)) / len(ids))
+            if "429" in err or "quota" in err.lower():
+                quota_stops += 1
+                print(f"\nQuota/rate limit hit: {err[:300]}")
+                if "PerDay" in err or quota_stops >= 3:
+                    print("Daily quota exhausted - stopping. Re-run later: cached conversations are skipped.")
+                    break
+                time.sleep(65)
+        print(f"\nDone in {time.time() - t0:.0f}s: newly labelled {ok}, cached {cached}, failed {failed}")
+        if ok + cached == len(ids):
+            print("Activation:", activate_llm_analysis(args.dataset_id, EXTRACT_BATCH_VERSION))
+        else:
+            print(f"Not activated: {ok + cached} of {len(ids)} conversations have model labels. Re-run to finish (cached work is reused).")
     else:
         with session_scope() as s:
             for d in s.scalars(select(Dataset)):

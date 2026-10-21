@@ -9,7 +9,7 @@ import hashlib
 import re
 from collections import Counter
 
-REDACTOR_VERSION = "redact-v1"
+REDACTOR_VERSION = "redact-v2"
 
 _EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b")
 _URL = re.compile(r"\b(?:https?://|www\.)\S+", re.IGNORECASE)
@@ -19,6 +19,9 @@ _PHONE = re.compile(r"(?<![\w@])(?:\+?\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?|\d{2
 _LONG_ID = re.compile(r"\b(?=[A-Z0-9-]*\d)[A-Z0-9][A-Z0-9-]{7,}\b")
 _MENTION = re.compile(r"@(\w{1,30})")
 _SIGNOFF = re.compile(r"(?:\s[\^*~]\s?[A-Z]{1,3}\b|\s-\s?[A-Z][a-z]{1,15}\s*$)")
+# Support agents often greet customers by first name ("Hi Debbie,"). Not a proper name detector; see docs.
+_GREETING_NAME = re.compile(r"\b((?i:hi|hello|hey|hiya|dear|thanks|thank you|sorry|welcome))\s+([A-Z][a-z]{2,15})\b(?=\s*[,!.:;)-]|\s+(?:we|i|we'd|we're|i'm|please|sorry|thanks|thank|what|can|could|that|this|let|you|it)\b)")
+_NOT_NAMES = {"There", "Again", "Team", "Everyone", "All", "Guys", "Folks", "Friend", "Sir", "Madam", "You", "For", "Much", "So", "From", "Again", "Back", "Our", "The", "Please", "Again", "Very", "Delta", "Apple", "Amazon"}
 _NAME_INTRO = re.compile(r"\b((?i:my name is|this is|name's))\s+([A-Z][a-z]{1,20})(\s[A-Z][a-z]{1,20})?\b")
 
 
@@ -70,6 +73,14 @@ def redact(text: str, keep_handles: set[str] | None = None) -> tuple[str, dict[s
         return f"{m.group(1)} [NAME]"
 
     out = _NAME_INTRO.sub(name, out)
+
+    def greeting(m: re.Match) -> str:
+        if m.group(2) in _NOT_NAMES or m.group(2).lower() in keep:
+            return m.group(0)
+        counts["NAME"] += 1
+        return f"{m.group(1)} [NAME]"
+
+    out = _GREETING_NAME.sub(greeting, out)
 
     def signoff(m: re.Match) -> str:
         counts["AGENT_SIGNOFF"] += 1

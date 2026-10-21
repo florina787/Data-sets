@@ -103,3 +103,11 @@ class ProposedAction(BaseModel):
     intended_outcome: str = Field(default="", max_length=600)
     success_measure: str = Field(default="", max_length=600)
     evidence_ids: list[str] = Field(default_factory=list, max_length=20)
+
+
+class KeyedConversationAnalysis(ConversationAnalysis):
+    conversation_key: str = Field(description="The conversation_key given in the input")
+
+
+class ConversationBatchAnalysis(BaseModel):
+    items: list[KeyedConversationAnalysis] = Field(max_length=25)
