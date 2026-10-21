@@ -11,6 +11,7 @@ import { Impact } from "./pages/Impact";
 import { DataQuality } from "./pages/DataQuality";
 import { Observability } from "./pages/Observability";
 import { Languages } from "./pages/Languages";
+import { Review } from "./pages/Review";
 
 export function App() {
   return (
@@ -24,6 +25,7 @@ export function App() {
           <Route path="/opportunities" element={<Opportunities />} />
           <Route path="/decisions" element={<Decisions />} />
           <Route path="/impact" element={<Impact />} />
+          <Route path="/review" element={<Review />} />
           <Route path="/languages" element={<Languages />} />
           <Route path="/quality" element={<DataQuality />} />
           <Route path="/observability" element={<Observability />} />

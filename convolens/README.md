@@ -264,7 +264,7 @@ Simple keyword rules are fast, but they don't understand real customer language.
 
 **Most public threads still have no visible outcome** (241 of 300). The conversation usually moves to private messages. ConvoLens reports that honestly instead of guessing.
 
-**These are differences, not accuracy scores.** No human-reviewed labels exist yet. The app has reviewer-correction controls, so those can be collected.
+**These are differences, not accuracy scores.** Accuracy needs human labels. The [Human review](#human-review-measuring-accuracy-instead-of-guessing-it) page collects them blind and scores every system; the target is 100 reviewed conversations.
 
 <table>
 <tr>
@@ -282,7 +282,49 @@ Simple keyword rules are fast, but they don't understand real customer language.
 | A label looked like a guess (*“@O2 ? [URL]”* marked as resolved) | Caught by the same evidence rule |
 | The model gave an “ending sentiment” for one-message conversations | Ending sentiment now counts **only if the customer wrote again** (162 set to unknown) |
 | A support reply exposed a first name (*“Hi Debbie”*) | Redaction now removes names in greetings **before** any text reaches the model (536 names removed) |
+| Agent sign-offs such as *“~ Jess”* or *“^MK”* leaked staff names | Redaction v3 strips sign-offs from **support** messages only (2,723 removed across the 3,000) |
 | Gemini rejected nested JSON schemas | Schemas are flattened for Gemini, and the full structure is still validated afterwards |
+| Flo's planner sent tool arguments Gemini could not fit into a schema | Arguments travel as a JSON string and are validated before any tool runs |
+| Flo cited several messages at once (*[E1, E2, E3]*) and they showed as plain text | Each reference in a group is now its own clickable citation |
+| “Why is the outcome unknown?” had no answer | A new, observable **private-channel** label: support asked to move to DMs in 994 conversations, and customers confirmed in 85 (36% in total) |
+
+### Flo, live on real data with Gemini
+
+Two real questions, answered by Flo with `gemini-3.5-flash-lite` on the 300 real conversations. Every number was checked against SQL before display (**Claims validated**), and every quote opens the exact message.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/flo-gemini-live-1.png" alt="Flo answering why orders and delivery conversations are unresolved"><br><sub><b>“Why are orders and delivery conversations unresolved, and what do customers say?”</b> 2 Gemini requests, 9.2 seconds. Flo used the resolution breakdown and search tools and quoted customers directly.</sub></td>
+<td width="50%"><img src="docs/screenshots/flo-gemini-live-2.png" alt="Flo answering how often customers are moved to a private channel"><br><sub><b>“How often do customers get moved to a private channel?”</b> Support asked in 105 of 300 (35%); customers confirmed in 4. Grouped citations such as <code>[M1, M2]</code> are each clickable.</sub></td>
+</tr>
+</table>
+
+Note what Flo did **not** do: it was asked whether moving to DMs *leads to* resolution, and it reported both numbers side by side without claiming a causal link.
+
+### Semantic search with Gemini embeddings
+
+Keyword search misses paraphrases. Search now fuses keywords (BM25) with **Gemini `gemini-embedding-001`** vectors (768 dimensions, FAISS), using reciprocal rank fusion.
+
+| Query: *“my package never showed up”* | Top results |
+|---|---|
+| Keywords only | A food-delivery cancellation, a UPS misplacement, and **an Uber free-ride complaint** (matched on “never”) |
+| **Gemini semantic** | Four missing-parcel cases: *“ensure I receive a package…”*, *“tracking says they were handed to resident”*, *“Where is it???”* |
+
+<img src="docs/screenshots/semantic-search-gemini.png" alt="Conversation explorer showing hybrid keyword and Gemini semantic search results" width="100%">
+
+**Free-tier cost:** the free tier counts **each text** as one request, at 100 per minute. So ConvoLens embeds only **customer** messages (the default search target), paces the run at 90 per minute, and caches each vector in SQLite by text hash. That makes it a one-time cost: 663 texts for the 300-conversation sample, then about one per new query. Support replies stay keyword-searchable.
+
+### Human review: measuring accuracy instead of guessing it
+
+The table above shows how much rules and Gemini *differ*, not which is *right*. The new **Human review** page fixes that:
+
+1. A reviewer labels a conversation **blind**: system labels are hidden until they submit.
+2. They then see how the rules and Gemini labelled the same conversation.
+3. Every system is scored against those human labels, per field, with **Wilson 95% intervals** and the most common mistakes.
+
+Conversations come in a fixed pseudo-random order per dataset, so the reviewed set is a fair sample. A second reviewer on the same conversation measures inter-reviewer agreement. Reviews never change dashboard labels; corrections in the explorer still do that.
+
+<img src="docs/screenshots/human-review.png" alt="Human review page: a conversation on the left, blind label form on the right, accuracy table below" width="100%">
 
 ---
 
@@ -566,12 +608,13 @@ Every suite runs from the command line and from the app, and results are reporte
 
 The weak spots are shown on purpose. Reporting per language shows where work is still needed.
 
-**Automated tests:** 68 backend and 7 frontend, **75 in total, all passing**. They cover:
+**Automated tests:** 76 backend and 8 frontend, **84 in total, all passing**. They cover:
 - conversation reconstruction (branches, missing parents, loops), parsing, and reproducible sampling,
 - denominators and unknown outcomes, evidence validity, and chart, filter and table consistency,
 - follow-up filters, tool limits, approval resume without duplicates, and session isolation,
 - prompt injection, running without LangSmith, and failing models with no silent fallback,
-- Gemini schema handling, evidence enforcement, and name redaction.
+- Gemini schema handling, evidence enforcement, name and sign-off redaction, and the private-channel label,
+- the Gemini embedding cache and request cap, the blind review queue and accuracy scoring, and grouped citations.
 
 ---
 
@@ -592,11 +635,21 @@ uv run python -m app.ingestion.cli list                # shows the actual counts
 
 # 4) Label with Gemini, free key from https://aistudio.google.com/apikey
 export MODEL_PROVIDER=gemini GOOGLE_API_KEY=your_key GEMINI_MODEL=gemini-3.5-flash-lite MODEL_REQUESTS_PER_MINUTE=8
-uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15
+uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15 --max-requests 12
+
+# 5) Optional: semantic search with Gemini embeddings (customer messages, paced and cached)
+uv run python -m app.ingestion.cli embed <dataset_id> --max-texts 700
+export EMBEDDING_PROVIDER=gemini                          # then restart the backend
+```
+
+**Labelling all 3,000 on the free tier:** `scripts/daily_label.sh` runs one capped day of work. It reuses cached labels, stops at `MAX_REQUESTS`, and exports progress to `data/labels/gemini_labels.jsonl` so another machine can continue:
+
+```bash
+DATASET_ID=<dataset_id> MAX_REQUESTS=12 scripts/daily_label.sh
 ```
 
 - **Claude:** set `MODEL_PROVIDER=anthropic` and `ANTHROPIC_API_KEY`, or use `bedrock` with `BEDROCK_MODEL_ID` and `AWS_REGION`.
-- **Tracing:** add `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY`.
+- **Tracing:** add `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY`. Step-by-step, including the cloud-environment secret: [docs/LANGSMITH_SETUP.md](docs/LANGSMITH_SETUP.md).
 - **Docker:** `cd convolens && docker compose up --build`, then open http://127.0.0.1:8080.
 - **Large file:** tools in `convolens/tools/` make smaller files that keep complete conversations, e.g. for uploads under 20 MB.
 
@@ -614,9 +667,10 @@ uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15
 
 | | Status |
 |---|---|
-| ✅ **Built and verified** | Full app · demo mode · import of 3,000 real conversations · **Gemini labelling of 300 real conversations (21 free-tier requests)** · charts, maps, approvals · Docker · 75 passing tests |
-| ⏳ **Built, not yet run live** | Flo's live chat on real data with Gemini (skipped to save the free daily quota; tested with scripted models) · Gemini on all 3,000 (about 200 requests, roughly 10 days of free quota) · LangSmith traces · semantic search with downloaded embeddings |
-| ⚠️ **Known gaps** | No human-reviewed labels yet, so accuracy is not measured · some agent sign-offs (e.g. “~ Jess”) are not redacted · most public threads have no visible outcome |
+| ✅ **Built and verified** | Full app · demo mode · import of 3,000 real conversations · **Gemini labelling of 300 real conversations** · **Flo live chat on real data with Gemini** (2 questions, claims validated) · **Gemini semantic search** · sign-off redaction and private-channel label · blind human review with accuracy scoring · charts, maps, approvals · Docker · 84 passing tests |
+| ⏳ **In progress** | Gemini labels for all 3,000: **154 done**, about 12 requests a day with `scripts/daily_label.sh` (about 2 weeks on the free tier) |
+| 🔑 **Needs your input** | LangSmith traces need a LangSmith key ([setup](docs/LANGSMITH_SETUP.md)) · accuracy numbers need about 100 human reviews on the Human review page |
+| ⚠️ **Known gaps** | Most public threads have no visible outcome (support moves 36% of them to private messages) · Gemini embeddings cover customer messages only · cross-language semantic search is untested on real data |
 
 📖 More detail: [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md)
 

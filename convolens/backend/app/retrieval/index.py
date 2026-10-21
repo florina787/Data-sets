@@ -1,4 +1,4 @@
-"""Hybrid retrieval over redacted messages: BM25 keyword + sentence-transformer/FAISS semantic,
+"""Hybrid retrieval over redacted messages: BM25 keyword + FAISS semantic (local sentence-transformer or Gemini),
 fused with reciprocal rank fusion, restricted by metadata filters resolved in SQL.
 
 Retrieval locates *examples*; it never produces counts (counts come from SQL in analytics.metrics).
@@ -100,6 +100,7 @@ class DatasetIndex:
     texts: list[str]
     bm25: BM25
     faiss_index: object | None = None
+    sem_pos: list[int] | None = None  # positions covered by faiss_index, in its order (None = all)
     semantic_error: str | None = None
     built_at: float = field(default_factory=time.time)
 
@@ -115,7 +116,11 @@ def get_encoder() -> Encoder | None:
     if not s.embeddings_enabled:
         return None
     if _encoder is None:
-        _encoder = Encoder(s.embedding_model)
+        if s.embedding_provider == "gemini":
+            from app.retrieval.gemini_embed import GeminiEncoder
+            _encoder = GeminiEncoder()
+        else:
+            _encoder = Encoder(s.embedding_model)
     return _encoder
 
 
@@ -137,8 +142,8 @@ def semantic_status() -> dict:
 
 
 def _build(db: Session, dataset_id: str) -> DatasetIndex:
-    rows = db.execute(select(Message.id, Message.conversation_id, Message.text).where(Message.dataset_id == dataset_id)
-                      .order_by(Message.id)).all()
+    rows = db.execute(select(Message.id, Message.conversation_id, Message.text, Message.role)
+                      .where(Message.dataset_id == dataset_id).order_by(Message.id)).all()
     texts = [r.text for r in rows]
     idx = DatasetIndex(dataset_id, [r.id for r in rows], [r.conversation_id for r in rows], texts, BM25([tokenize(t) for t in texts]))
     enc = get_encoder()
@@ -147,7 +152,10 @@ def _build(db: Session, dataset_id: str) -> DatasetIndex:
     elif texts:
         try:
             import faiss
-            vecs = enc.encode(texts)
+            roles = getattr(enc, "roles", None)  # remote encoders embed only the roles search targets, to save quota
+            if roles:
+                idx.sem_pos = [i for i, r in enumerate(rows) if r.role in roles]
+            vecs = enc.encode([texts[i] for i in idx.sem_pos] if idx.sem_pos is not None else texts)
             fi = faiss.IndexFlatIP(vecs.shape[1])
             fi.add(vecs)
             idx.faiss_index = fi
@@ -195,13 +203,18 @@ def search(db: Session, dataset_id: str, query: str, filters: Filters | None = N
     if mode in ("hybrid", "semantic"):
         if idx.faiss_index is not None and pos_ok:
             import faiss  # noqa: F401
-            enc = get_encoder()
-            qv = enc.encode(queries)
-            kk = min(len(idx.texts), 400)
-            D, I = idx.faiss_index.search(qv, kk)
-            for row in I:
-                rankings.append([int(i) for i in row if int(i) in pos_set][:200])
-            used.append("semantic_faiss")
+            try:
+                qv = get_encoder().encode(queries)
+            except Exception as exc:
+                qv, semantic_note = None, f"Query embedding failed: {str(exc)[:200]}"
+            if qv is not None:
+                kk = min(idx.faiss_index.ntotal, 400)
+                D, I = idx.faiss_index.search(qv, kk)
+                pos = idx.sem_pos
+                for row in I:
+                    mapped = (int(i) if pos is None else pos[int(i)] for i in row if int(i) >= 0)
+                    rankings.append([i for i in mapped if i in pos_set][:200])
+                used.append("semantic_faiss")
         else:
             semantic_note = idx.semantic_error or "No documents in scope"
     fused: dict[int, float] = defaultdict(float)

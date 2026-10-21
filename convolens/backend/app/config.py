@@ -49,6 +49,13 @@ class Settings(BaseSettings):
     # Retrieval
     embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     embeddings_enabled: bool = True
+    # "local" = sentence-transformers on this machine; "gemini" = gemini-embedding-001 over the OpenAI-compatible
+    # endpoint. Gemini vectors are cached in SQLite by text hash, so each message is embedded once, ever.
+    embedding_provider: Literal["local", "gemini"] = "local"
+    gemini_embedding_model: str = "gemini-embedding-001"
+    gemini_embedding_dims: int = 768
+    gemini_embedding_batch: int = 90  # free tier: 100 texts per minute
+    gemini_embedding_max_requests: int = 50  # texts embedded per process at query time; protects the free-tier quota
 
     # LangSmith
     langsmith_tracing: bool = False

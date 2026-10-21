@@ -50,3 +50,27 @@ def test_channel_handoff_is_observed_from_messages():
     assert channel_handoff(ask + [Msg("3", "customer", "sent", "en")])[0] == "confirmed"
     assert channel_handoff([ask[0], Msg("2", "support", "We have processed the refund.", "en")])[0] == "none"
     assert channel_handoff([ask[0]])[0] == "unknown"
+
+
+def test_batch_cache_does_not_copy_a_label_twice(imported_id, demo_ids, monkeypatch):
+    """A conversation that already holds a (copied or imported) label is served from its own row."""
+    from sqlalchemy import func, select
+    from app.analytics import extractor
+    from app.db import session_scope
+    from app.graph.prompts import EXTRACT_BATCH_VERSION
+    from app.models.orm import Analysis, Conversation
+
+    monkeypatch.setattr(extractor, "provider_status", lambda: {"model_id": "fake-model"})
+    with session_scope() as db:
+        a = db.scalars(select(Conversation).where(Conversation.dataset_id == imported_id)).first()
+        other = db.scalars(select(Conversation).where(Conversation.dataset_id == demo_ids["demo"])).first()
+        row = dict(method="llm", model_id="fake-model", prompt_version=EXTRACT_BATCH_VERSION, content_hash=a.content_hash,
+                   source_text="original", fields={"primary_topic": "unknown"}, status="ok")
+        db.add(Analysis(conversation_id=other.id, **row))  # older row elsewhere: the cross-dataset cache source
+        db.flush()
+        db.add(Analysis(conversation_id=a.id, **row))      # this conversation already has its copy
+        aid = a.id
+    r = extractor.analyze_batch([aid], model=object())
+    assert r == {"ok": 0, "failed": 0, "cached": 1}
+    with session_scope() as db:
+        assert db.scalar(select(func.count(Analysis.id)).where(Analysis.conversation_id == aid, Analysis.model_id == "fake-model")) == 1
