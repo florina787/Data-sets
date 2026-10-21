@@ -1,0 +1,30 @@
+# ConvoLens AI - local deployment. Ports bind to 127.0.0.1 only: there is no user authentication.
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        INSTALL_EMBEDDINGS: ${INSTALL_EMBEDDINGS:-false}
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - convolens-data:/app/backend/var
+      - ./data/imports:/app/data/imports
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped
+
+volumes:
+  convolens-data:

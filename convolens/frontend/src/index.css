@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-app: #F3F5F8;
+  --color-sidebar: #14243B;
+  --color-sidebar-sel: #213A55;
+  --color-card: #FFFFFF;
+  --color-ink: #172B4D;
+  --color-muted: #5F6B7A;
+  --color-teal: #087F8C;
+  --color-teal-light: #E7F4F4;
+  --color-line: #DCE3EB;
+  --color-amber: #A96308;
+  --color-red: #B83D45;
+  --color-green: #24734B;
+  --color-amber-light: #FBF1E4;
+  --color-red-light: #F8E9EA;
+  --color-green-light: #E6F2EB;
+  --radius-card: 10px;
+}
+
+html, body, #root { height: 100%; overflow: hidden; }
+body { background: var(--color-app); color: var(--color-ink); font-family: var(--font-sans); line-height: 1.5; }
+.tnum { font-variant-numeric: tabular-nums; }
+:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.react-flow__attribution { font-size: 10px; }

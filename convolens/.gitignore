@@ -1,0 +1,11 @@
+backend/.venv/
+backend/var/
+backend/**/__pycache__/
+**/__pycache__/
+.pytest_cache/
+data/imports/
+frontend/node_modules/
+frontend/dist/
+.env
+*.db
+frontend/tsconfig.tsbuildinfo
