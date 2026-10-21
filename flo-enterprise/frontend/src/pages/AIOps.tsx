@@ -75,7 +75,7 @@ function Traces() {
   const g = useQuery({ queryKey: ["wf", wf], queryFn: () => api(`/api/aiops/workflows/${wf}`), enabled: !!wf });
   const tk = tokens();
   const opt = useMemo(() => g.data && ({ ...baseOption(), tooltip: { ...baseOption().tooltip, formatter: (p: any) => p.data.tip ?? p.name },
-    series: [{ type: "graph", layout: "force", roam: true, force: { repulsion: 180, edgeLength: 70 }, label: { show: true, color: tk.ink, fontSize: 10 }, edgeSymbol: ["none", "arrow"],
+    series: [{ type: "graph", layout: "force", roam: true, zoom: 1.05, force: { repulsion: 240, edgeLength: 80 }, label: { show: true, color: tk.ink, fontSize: 11, position: "bottom" }, edgeSymbol: ["none", "arrow"],
       lineStyle: { color: tk.muted, opacity: 0.6 },
       data: Array.from(new Map(g.data.nodes.map((n: any) => [n.id, n])).values()).map((n: any) => ({ name: n.id, label: { formatter: n.label ?? n.id.replace("_agent", "") },
         symbolSize: n.type === "supervisor" ? 34 : n.type === "agent" ? 26 : 14, tip: `${n.type} ${n.status ?? ""} ${n.latency_ms ? n.latency_ms + "ms" : ""} ${n.failure_class ?? ""}`,

@@ -20,6 +20,13 @@ export function GeoMap({ rows, height = 300, onSelect }: { rows: GeoRow[]; heigh
     const tk = tokens();
     const byNum = Object.fromEntries(rows.map((r) => [NUM[r.country], r]));
     const fc = feature(world as any, (world as any).objects.countries) as any;
+    // drop rings that cross the antimeridian (they render as bands in Web Mercator) and Antarctica
+    const crosses = (ring: number[][]) => ring.some((p, i) => i > 0 && Math.abs(p[0] - ring[i - 1][0]) > 180);
+    fc.features = fc.features.filter((f: any) => f.id !== "010" && f.geometry).map((f: any) => {
+      const g = f.geometry;
+      if (g.type === "Polygon") return crosses(g.coordinates[0]) ? null : f;
+      return { ...f, geometry: { ...g, coordinates: g.coordinates.filter((poly: number[][][]) => !crosses(poly[0])) } };
+    }).filter(Boolean);
     fc.features.forEach((f: any) => {
       const r = byNum[f.id];
       f.properties = { ...f.properties, weight: r ? r.weight : 0, code: r?.country ?? "", value: r?.value ?? 0 };
@@ -31,6 +38,7 @@ export function GeoMap({ rows, height = 300, onSelect }: { rows: GeoRow[]; heigh
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.on("load", () => {
+      map.fitBounds([[-165, -50], [175, 72]], { padding: 6, duration: 0 }); // whole investable world in view
       map.addSource("c", { type: "geojson", data: fc });
       map.addLayer({ id: "fill", type: "fill", source: "c", paint: {
         "fill-color": ["case", ["==", ["get", "weight"], 0], tk.dark ? "#1b2a42" : "#dfe5ee",
