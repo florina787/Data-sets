@@ -10,7 +10,7 @@ import { ScopeChips } from "../assistant/Flo";
 
 type OverviewData = {
   dataset: any; summary: any; topics: Breakdown; resolution: Breakdown; sentiment: Breakdown; escalation: Breakdown;
-  limitations: any; suggestions: { title: string; basis: string; question: string; filters: Filters; evidence: any[] }[];
+  handoff?: Breakdown; limitations: any; suggestions: { title: string; basis: string; question: string; filters: Filters; evidence: any[] }[];
 };
 
 function count(b: Breakdown | undefined, key: string) {
@@ -60,6 +60,15 @@ export function Overview() {
             <Stat label="Escalation requests" tone="amber" value={fmtInt(esc)} sub={`of ${fmtInt(n - escUnknown)} with known value · ${fmtInt(escUnknown)} unknown`} />
             <Stat label="Unknown outcome" value={fmtInt(resUnknown)} sub={`of ${fmtInt(n)} · no outcome evidence in thread`} />
           </div>
+          {d.handoff && (
+            <div className="rounded-[10px] border border-line bg-card px-4 py-3 text-sm">
+              <span className="font-medium">Why are outcomes often unknown?</span>{" "}
+              <span className="tnum">{fmtInt(count(d.handoff, "confirmed") + count(d.handoff, "requested"))}</span> of <span className="tnum">{fmtInt(n)}</span> conversations
+              were moved to a private channel by support (<span className="tnum">{fmtInt(count(d.handoff, "confirmed"))}</span> with the customer confirming), so the outcome happens out of view.{" "}
+              <button type="button" className="text-teal underline" onClick={() => setFilters({ ...filters, handoff: ["confirmed", "requested"] })}>Show these conversations</button>
+              <span className="ml-1 text-xs text-muted">(observed from support messages such as “please DM us”)</span>
+            </div>
+          )}
 
           <Card title="Investigation suggestions" subtitle="Each suggestion is computed from the counts below and shows supporting messages.">
             <div className="grid gap-3 lg:grid-cols-3">

@@ -58,7 +58,7 @@ const AppCtx = createContext<Ctx | null>(null);
 const PAGE_NAMES: Record<string, string> = {
   "/": "Executive overview", "/ask": "Ask Flo", "/explorer": "Conversation explorer", "/maps": "Insight maps",
   "/opportunities": "Opportunity portfolio", "/decisions": "Decisions and actions", "/impact": "Impact review",
-  "/quality": "Data quality", "/observability": "Observability and evaluation", "/languages": "Language intelligence",
+  "/quality": "Data quality", "/observability": "Observability and evaluation", "/languages": "Language intelligence", "/review": "Human review",
 };
 
 function store<T>(key: string, value?: T): T | null {

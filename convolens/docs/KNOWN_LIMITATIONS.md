@@ -36,4 +36,6 @@
 - **Single-process job worker.** Jobs run one at a time. A restart marks running jobs as `interrupted`; resuming restarts them from the beginning (imports are idempotent).
 - **SQLite.** Suited to local, single-user use. Not tested with concurrent multi-user load.
 - **Memory.** Importing the full 2.8M-row file holds the reply graph in memory (about 1–2 GB).
-- **Partial real-mode verification.** Live Claude calls, LangSmith traces and semantic retrieval have not been verified against real services in this environment. See [TEST_RESULTS.md](TEST_RESULTS.md).
+- **Partial real-mode verification.** Gemini labelling, Flo live chat and Gemini semantic retrieval are verified on real data. Live Claude calls and LangSmith traces are not (no credentials). See [TEST_RESULTS.md](TEST_RESULTS.md).
+- **Gemini embeddings cover customer messages only.** The free tier bills every text as a request, so support replies are keyword-searchable but not semantically indexed.
+- **No accuracy numbers until people review.** The Human review page computes them, but nobody has reviewed conversations yet.

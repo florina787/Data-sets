@@ -144,7 +144,7 @@ def classify_rules(q: str) -> tuple[str, str | None]:
 class PlanStep(BaseModel):
     tool: Literal[tuple(TOOL_DESCRIPTIONS)]  # type: ignore[valid-type]
     purpose: str = Field(max_length=200)
-    args: dict = Field(default_factory=dict)
+    args_json: str = Field(default="{}", description='Tool arguments as a JSON object string, e.g. {"top_n": 5}')
 
 
 class LLMPlan(BaseModel):
@@ -283,7 +283,13 @@ def plan_analysis(state: dict, config: RunnableConfig) -> dict:
         if st.tool == "propose_action" and not asked_for_action:
             errors.append({"node": "plan_analysis", "type": "policy", "message": "Dropped propose_action: the user did not ask for an action."})
             continue
-        args = dict(st.args)
+        try:
+            args = json.loads(st.args_json or "{}")
+            if not isinstance(args, dict):
+                raise ValueError("arguments must be a JSON object")
+        except ValueError as exc:
+            errors.append({"node": "plan_analysis", "type": "invalid_tool_args", "message": f"{st.tool}: {str(exc)[:200]}"})
+            continue
         if "filters" in tools[st.tool].args_schema.model_fields:
             merged = {**(args.get("filters") or {}), **f.model_dump(mode="json", exclude_defaults=True)}  # active scope wins
             args["filters"] = merged
@@ -453,6 +459,13 @@ def validate_claims(state: dict, config: RunnableConfig) -> dict:
                 metrics_out.append({"label": f"{it['label']} ({res['field'].replace('_', ' ')})", "numerator": it["count"],
                                     "denominator": res["denominator"], "share": it["share"], "unknown": res.get("unknown", 0),
                                     "scope": scope, "tool": r["tool"], "step": r["step_id"]})
+            if res.get("handoff"):
+                h = res["handoff"]
+                for it in h["items"]:
+                    if it["key"] in ("confirmed", "requested") and it["count"]:
+                        metrics_out.append({"label": f"{it['label']} (private-channel handoff)", "numerator": it["count"],
+                                            "denominator": h["denominator"], "share": it["share"], "unknown": h["unknown"],
+                                            "scope": scope, "tool": r["tool"], "step": r["step_id"]})
         elif r["tool"] == "get_dataset_summary":
             metrics_out.append({"label": "Conversations in scope", "numerator": res["denominator"], "denominator": None,
                                 "share": None, "unknown": 0, "scope": scope, "tool": r["tool"], "step": r["step_id"]})
@@ -576,6 +589,10 @@ def _rules_compose(state: dict, lims: list[str]) -> tuple[str, str]:
                    if unres and known else "No explicitly unresolved conversations in scope")
         if esc:
             finding += f"; {esc['numerator']} of {esc['denominator']} requested escalation [{esc['id']}]"
+        moved = sum(m["numerator"] for m in res if "private-channel handoff" in m["label"])
+        if moved and unk:
+            finding += (f". {moved} of {unres['denominator'] if unres else '?'} were moved to a private channel by support, "
+                        "which is why many outcomes are not visible in the public thread")
         finding += (". The quotes below show what customers reported. They are reported patterns, not verified causes; "
                     "Flo cannot establish why from these labels alone.")
     elif ms:

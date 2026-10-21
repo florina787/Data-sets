@@ -4,6 +4,7 @@ export type Filters = {
   resolution?: string[];
   sentiment_end?: string[];
   escalation?: string[];
+  handoff?: string[];
   brands?: string[];
   languages?: string[];
   date_from?: string;

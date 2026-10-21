@@ -13,7 +13,7 @@ from datetime import datetime, time as dtime, timezone
 from sqlalchemy import and_, exists, func, select
 from sqlalchemy.orm import Session
 
-from app.analytics.taxonomy import ESCALATION, JOURNEY_LABELS, JOURNEY_STAGES, RESOLUTION, SENTIMENT, TOPIC_KEYS, TOPICS, topic_label
+from app.analytics.taxonomy import ESCALATION, HANDOFF, JOURNEY_LABELS, JOURNEY_STAGES, RESOLUTION, SENTIMENT, TOPIC_KEYS, TOPICS, topic_label
 from app.models.orm import Analysis, Conversation, Dataset, Message
 from app.models.schemas import Filters
 
@@ -23,6 +23,7 @@ GROUPABLE = {
     "sentiment_start": (Conversation.sentiment_start, list(SENTIMENT), SENTIMENT.get),
     "sentiment_end": (Conversation.sentiment_end, list(SENTIMENT), SENTIMENT.get),
     "escalation_requested": (Conversation.escalation_requested, list(ESCALATION), ESCALATION.get),
+    "channel_handoff": (Conversation.channel_handoff, list(HANDOFF), HANDOFF.get),
 }
 
 
@@ -50,6 +51,8 @@ def conditions(dataset_id: str, f: Filters | None) -> list:
         c.append(Conversation.sentiment_end.in_(f.sentiment_end))
     if f.escalation:
         c.append(Conversation.escalation_requested.in_(f.escalation))
+    if f.handoff:
+        c.append(Conversation.channel_handoff.in_(f.handoff))
     if f.brands:
         c.append(Conversation.brand.in_(f.brands))
     if f.conversation_keys:
@@ -94,7 +97,10 @@ def sample_evidence(db: Session, dataset_id: str, f: Filters | None, field: str 
         a = db.get(Analysis, aid) if aid else None
         spans = (a.fields.get("evidence") if a else None) or []
         want = {"primary_topic": "topic:", "resolution_status": "resolution_status", "escalation_requested": "escalation_requested",
-                "sentiment_end": "sentiment", "sentiment_start": "sentiment"}.get(field or "", "")
+                "sentiment_end": "sentiment", "sentiment_start": "sentiment", "channel_handoff": "channel_handoff"}.get(field or "", "")
+        if field == "channel_handoff":
+            conv_ev = db.scalar(select(Conversation.handoff_evidence).where(Conversation.dataset_id == dataset_id, Conversation.key == key)) or []
+            spans = conv_ev + spans
         chosen = next((sp for sp in spans if sp.get("supports", "").startswith(want)), spans[0] if spans else None)
         if chosen and chosen["quote"].strip().lower() not in seen_quotes:
             seen_quotes.add(chosen["quote"].strip().lower())

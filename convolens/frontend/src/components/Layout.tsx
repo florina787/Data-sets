@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Activity, BarChart3, ClipboardCheck, Database, Gauge, Globe2, Lightbulb, MessageSquare, Network, Search, TrendingUp } from "lucide-react";
+import { Activity, BarChart3, ClipboardCheck, Database, Gauge, Globe2, Lightbulb, ListChecks, MessageSquare, Network, Search, TrendingUp } from "lucide-react";
 import { useApp, type Mode } from "../lib/state";
 import { fmtDate, fmtInt } from "../lib/format";
 import { FloPanel } from "../assistant/Flo";
@@ -14,6 +14,7 @@ const NAV = [
   { to: "/opportunities", label: "Opportunity portfolio", icon: Lightbulb },
   { to: "/decisions", label: "Decisions and actions", icon: ClipboardCheck },
   { to: "/impact", label: "Impact review", icon: TrendingUp },
+  { to: "/review", label: "Human review", icon: ListChecks },
   { to: "/languages", label: "Language intelligence", icon: Globe2 },
   { to: "/quality", label: "Data quality and imports", icon: Database },
   { to: "/observability", label: "Observability and evaluation", icon: Activity },

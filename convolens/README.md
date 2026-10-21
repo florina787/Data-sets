@@ -5,9 +5,9 @@
 ## Customer Conversation Intelligence, with Flo, an AI analyst you can audit
 
 **An agentic AI system that analyses 3,000 real customer-support conversations from an open-source Kaggle dataset.<br>
-Ask questions in plain English and get answers backed by exact counts and real customer quotes.**
+Ask questions in plain English. Get answers backed by exact counts and real customer quotes, and turn them into owned actions.**
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-172B4D) ![FastAPI](https://img.shields.io/badge/FastAPI-backend-087F8C) ![LangGraph](https://img.shields.io/badge/LangGraph-agent%20workflow-087F8C) ![LangChain](https://img.shields.io/badge/LangChain-tools%20%26%20models-087F8C) ![Gemini](https://img.shields.io/badge/Google%20Gemini-free%20tier%20tested-087F8C) ![Claude](https://img.shields.io/badge/Claude-Anthropic%20%7C%20Bedrock-172B4D) ![React](https://img.shields.io/badge/React%2019-TypeScript-172B4D) ![Tests](https://img.shields.io/badge/tests-75%20passing-24734B) ![Data](https://img.shields.io/badge/real%20data-Kaggle%20Customer%20Support%20on%20Twitter-A96308)
+![Python](https://img.shields.io/badge/Python-3.11%2B-172B4D) ![FastAPI](https://img.shields.io/badge/FastAPI-backend-087F8C) ![LangGraph](https://img.shields.io/badge/LangGraph-agent%20workflow-087F8C) ![LangChain](https://img.shields.io/badge/LangChain-tools%20%26%20models-087F8C) ![Gemini](https://img.shields.io/badge/Google%20Gemini-free%20tier%2C%20live-087F8C) ![Claude](https://img.shields.io/badge/Claude-Anthropic%20%7C%20Bedrock-172B4D) ![React](https://img.shields.io/badge/React%2019-TypeScript-172B4D) ![Tests](https://img.shields.io/badge/tests-84%20passing-24734B) ![Data](https://img.shields.io/badge/real%20data-Kaggle%20Customer%20Support%20on%20Twitter-A96308)
 
 <table>
 <tr>
@@ -30,19 +30,37 @@ Ask questions in plain English and get answers backed by exact counts and real c
 
 ## 📚 Table of contents
 
-1. [What is ConvoLens?](#-what-is-convolens)
-2. [Meet Flo: the chatbot](#-meet-flo-the-chatbot)
-3. [The real data: 3,000 Kaggle conversations](#-the-real-data-3000-kaggle-conversations)
-4. [Gemini (free tier): how the AI changed the results](#-gemini-free-tier-how-the-ai-changed-the-results)
-5. [Dashboards and charts](#-dashboards-and-charts)
-6. [Insight maps](#%EF%B8%8F-insight-maps)
-7. [From finding to owned action](#-from-finding-to-owned-action)
-8. [Trust and safety guardrails](#%EF%B8%8F-trust-and-safety-guardrails)
-9. [How it works: architecture and flowcharts](#%EF%B8%8F-how-it-works-architecture-and-flowcharts)
-10. [Data quality, languages and observability](#-data-quality-languages-and-observability)
-11. [Evaluation results](#-evaluation-results)
-12. [Run it yourself](#-run-it-yourself)
-13. [Honest status and limitations](#-honest-status-and-limitations)
+1. [The assignment, and how ConvoLens meets it](#-the-assignment-and-how-convolens-meets-it)
+2. [What is ConvoLens?](#-what-is-convolens)
+3. [Meet Flo: the chatbot](#-meet-flo-the-chatbot)
+4. [The real data: 3,000 Kaggle conversations](#-the-real-data-3000-kaggle-conversations)
+5. [The AI layer: Gemini on the free tier](#-the-ai-layer-gemini-on-the-free-tier)
+6. [Measuring accuracy: human review](#-measuring-accuracy-human-review)
+7. [Dashboards and charts](#-dashboards-and-charts)
+8. [Insight maps](#%EF%B8%8F-insight-maps)
+9. [From finding to owned action](#-from-finding-to-owned-action)
+10. [Trust and safety guardrails](#%EF%B8%8F-trust-and-safety-guardrails)
+11. [How it works: architecture and flowcharts](#%EF%B8%8F-how-it-works-architecture-and-flowcharts)
+12. [Data quality, languages and observability](#-data-quality-languages-and-observability)
+13. [Evaluation and tests](#-evaluation-and-tests)
+14. [Run it yourself](#-run-it-yourself)
+15. [Honest status and limitations](#-honest-status-and-limitations)
+
+---
+
+## 🎓 The assignment, and how ConvoLens meets it
+
+> *Develop a conversational analysis Agentic AI system using 3,000 customer support conversations from an open-source Kaggle dataset.*
+
+| Requirement | How ConvoLens meets it | Status |
+|---|---|---|
+| **Agentic AI** | Flo is a **LangGraph** agent. It interprets the question, plans which of **11 typed tools** to call, runs them, checks whether the evidence is enough, validates every number and quote, writes the answer, and **pauses for a person** before saving any action. | ✅ |
+| **Conversational** | A chat on every page. Answers stream in, cite exact messages, offer follow-up chips, and keep the page's filters as context. | ✅ |
+| **Analysis** | Topic, outcome, sentiment, escalation and private-channel labels per conversation; exact SQL metrics; 7 chart types; 3 maps; hybrid keyword + semantic search; decision briefs; impact review. | ✅ |
+| **3,000 conversations** | Exactly **3,000** complete reply threads, drawn with a fixed seed from **40,914** eligible threads. | ✅ |
+| **Open-source Kaggle dataset** | [Customer Support on Twitter](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) (Thought Vector, CC BY-NC-SA 4.0). | ✅ |
+| **A real model in the loop** | **Google Gemini** (free tier) labels conversations, powers Flo's live answers on the real data, and provides semantic-search embeddings. Claude (Anthropic or Bedrock) is supported by the same setting. | ✅ |
+| **Measured, not assumed, quality** | A blind **Human review** page scores rules and Gemini against human labels. | ✅ built · needs reviews |
 
 ---
 
@@ -65,7 +83,7 @@ flowchart LR
   A["💬 Conversation data<br/><sub>3,000 real threads</sub>"] --> B["📊 Calculated metrics<br/><sub>exact SQL counts</sub>"]
   B --> C["🔎 Evidence-backed investigation<br/><sub>Flo + quotes</sub>"]
   C --> D["📝 Proposed decision<br/><sub>leadership brief</sub>"]
-  D --> E["👤 Human review<br/><sub>approve · edit · reject</sub>"]
+  D --> E["👤 Human approval<br/><sub>approve · edit · reject</sub>"]
   E --> F["✅ Assigned action<br/><sub>owner · due date</sub>"]
   F --> G["📈 Impact measurement<br/><sub>before vs after</sub>"]
   style A fill:#E7F4F4,stroke:#087F8C,color:#172B4D
@@ -116,6 +134,17 @@ flowchart LR
 </tr>
 </table>
 
+### Flo, live on the real data with Gemini
+
+These two answers were produced by `gemini-3.5-flash-lite` on real Kaggle conversations. The **Claims validated** badge means every number in the text matched a SQL result before it was shown.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/flo-gemini-live-1.png" alt="Flo answering why orders and delivery conversations are unresolved"><br><sub><b>“Why are orders and delivery conversations unresolved, and what do customers say?”</b> 2 Gemini requests, 9.2 seconds. Flo chose the resolution-breakdown and search tools on its own and quoted customers directly.</sub></td>
+<td width="50%"><img src="docs/screenshots/flo-gemini-live-2.png" alt="Flo answering how often customers are moved to a private channel"><br><sub><b>“How often do customers get moved to a private channel, and does that lead to resolution?”</b> Support asked in 105 of 300 (35%); customers confirmed in 4. Flo put the numbers side by side and <b>did not claim a causal link</b>.</sub></td>
+</tr>
+</table>
+
 ### What a Flo answer looks like
 
 Every substantial answer has the same five parts: **Finding · Scope and denominator · Supporting evidence · Limitations · Proposed next action.**
@@ -128,7 +157,7 @@ Every substantial answer has the same five parts: **Finding · Scope and denomin
 <td valign="top">
 
 - **Numbers are measured, not written by the model.** Every figure (`M1`, `M2`, …) comes from a SQL tool and shows its numerator and denominator, e.g. *“13 of 79 (16%)”*. Before the answer is shown, Flo checks that every number in the text matches one of those results.
-- **Quotes are real.** Every quote (`E1`, `E2`, …) is checked against the stored message. Click it to open the exact message in its conversation.
+- **Quotes are real.** Every quote (`E1`, `E2`, …) is checked against the stored message. Click it to open the exact message in its conversation. Grouped references such as `[E1, E2, E3]` become one button each.
 - **Patterns are not causes.** For “why” questions, Flo writes things like *“These are reported patterns, not verified causes,”* and labels hypotheses as hypotheses.
 - **Follow-up chips** narrow the scope in one click, e.g. *Focus on Billing & refunds* or *Only explicitly unresolved*.
 - **Feedback:** 👍 / 👎, a correction box, and *Save investigation*.
@@ -204,9 +233,9 @@ flowchart TD
   G --> H{"Eligible?<br/>customer starts it · has a reply<br/>≤ 50 messages · no loop"}
   H -->|"yes: 40,914"| I["🎲 Seeded random sample<br/>3,000 conversations"]
   H -->|no| X2["Recorded exclusions<br/>577 not customer-started<br/>154 start missing · 16 too long"]
-  I --> J["🔒 Redact PII<br/>handles · URLs · names · phones · cards"]
+  I --> J["🔒 Redact PII<br/>handles · URLs · names · sign-offs · phones · cards"]
   J --> K["🌐 Detect language<br/>per message"]
-  K --> L["🏷️ Label each conversation<br/>rules or Gemini/Claude"]
+  K --> L["🏷️ Label each conversation<br/>rules, then Gemini/Claude"]
   L --> M["📋 Import manifest<br/>file hash · seed · counts · exclusions"]
   style I fill:#E7F4F4,stroke:#087F8C
   style J fill:#FBF1E4,stroke:#A96308
@@ -221,7 +250,8 @@ flowchart TD
 | **Selected for analysis** | **3,000** conversations · 11,359 messages |
 | Conversations with branching replies | 420 (543 branch points) |
 | Languages detected per message | English 9,927 · Spanish 157 · French 94 · Portuguese 94 · Japanese 74 · German 71 · unknown 904 |
-| Personal data removed **before** storage or AI | 8,282 customer handles · 2,489 URLs · 2,169 agent sign-offs · 536 names · 133 IDs · 55 phone numbers |
+| Personal data removed **before** storage or AI | 8,282 customer handles · 2,723 agent sign-offs (e.g. *“~ Jess”*) · 2,489 URLs · 536 names · 133 IDs · 55 phone numbers |
+| Moved to a private channel | Support asked in **994**, customer confirmed in **85**: **36%** of conversations leave the public thread |
 | Scale test (synthetic file at the full 2.8M-row size) | 3,000 selected from 754,223 eligible threads in **139 seconds** |
 
 ```mermaid
@@ -234,20 +264,34 @@ pie showData
   "Over 50 messages" : 16
 ```
 
+**Why are so many outcomes “unknown”?** Because support often moves the customer to private messages, and the rest of the conversation is not public. ConvoLens labels that move as an **observable fact** (*“Can you DM us your order number?”*), with the quote as evidence, so the unknowns are explained rather than guessed. You can filter any chart by **Private channel**.
+
 ---
 
-## 🤖 Gemini (free tier): how the AI changed the results
+## 🤖 The AI layer: Gemini on the free tier
 
-Simple keyword rules are fast, but they don't understand real customer language. To show what a real LLM adds, we connected **Google Gemini through a free Google AI Studio key**, at no cost and with no billing.
+Keyword rules are fast and transparent, but they don't understand real customer language. To show what a real LLM adds, ConvoLens is connected to **Google Gemini through a free Google AI Studio key**: no billing, no cost. Gemini does three jobs:
+
+```mermaid
+flowchart LR
+  K["🔑 Free Gemini key<br/><sub>added by the network layer,<br/>never in code or repo</sub>"] --> G1 & G2 & G3
+  G1["🏷️ Labelling<br/><sub>gemini-3.5-flash-lite<br/>15 conversations per request</sub>"] --> DB[("SQLite<br/>labels + evidence")]
+  G2["💬 Flo's planning and writing<br/><sub>about 2 requests per question</sub>"] --> ANS["Validated answer"]
+  G3["🔎 Embeddings<br/><sub>gemini-embedding-001 · 768d</sub>"] --> FAISS[("FAISS index<br/>cached vectors")]
+  style K fill:#FBF1E4,stroke:#A96308
+  style DB fill:#E7F4F4,stroke:#087F8C
+  style FAISS fill:#E7F4F4,stroke:#087F8C
+  style ANS fill:#E6F2EB,stroke:#24734B
+```
 
 | | |
 |---|---|
-| **Model** | `gemini-3.5-flash-lite`, through Gemini's OpenAI-compatible API |
-| **Requests used** | **21 in total**: 15 conversations per request, plus one retry after a Google gateway error |
-| **Conversations labelled** | **300**, sampled with the same seed from the real Kaggle data |
+| **Models** | `gemini-3.5-flash-lite` (labelling and Flo) and `gemini-embedding-001` (search), through Gemini's OpenAI-compatible API |
+| **Requests used so far** | About **40** labelling and chat requests, plus 663 embedded texts: all within the free tier |
+| **Labelled by Gemini** | **300** real conversations (full comparison below), and **154 of the 3,000**, continuing daily |
 | **Key handling** | The key is never in the code or the repository. The environment's network layer adds it to requests sent to Google. |
 
-### Before and after: same 300 real conversations
+### 1. Labelling: before and after on the same 300 real conversations
 
 <img src="docs/screenshots/gemini-vs-rules.png" alt="Bar chart comparing keyword rules with Gemini on six measures" width="100%">
 
@@ -262,9 +306,9 @@ Simple keyword rules are fast, but they don't understand real customer language.
 | Escalation requested | 14 | **4** | Gemini is **stricter**: only explicit requests such as *“I asked for a supervisor”* |
 | Verified evidence quotes | — | **374** (7 rejected) | 294 of 300 conversations have at least one |
 
-**Most public threads still have no visible outcome** (241 of 300). The conversation usually moves to private messages. ConvoLens reports that honestly instead of guessing.
+**Most public threads still have no visible outcome** (241 of 300), because the conversation moves to private messages. ConvoLens reports that instead of guessing.
 
-**These are differences, not accuracy scores.** No human-reviewed labels exist yet. The app has reviewer-correction controls, so those can be collected.
+**These are differences, not accuracy scores.** Which system is *right* is measured on the [Human review](#-measuring-accuracy-human-review) page.
 
 <table>
 <tr>
@@ -273,16 +317,86 @@ Simple keyword rules are fast, but they don't understand real customer language.
 </tr>
 </table>
 
-### What we fixed while testing Gemini
+### 2. Flo's live answers
+
+Flo uses Gemini twice per question: once to **plan** which tools to call, and once to **write** the answer from validated facts only. Examples are in [Flo, live on the real data](#flo-live-on-the-real-data-with-gemini) above.
+
+### 3. Semantic search
+
+Keyword search misses paraphrases. Search fuses keywords (**BM25**) with **Gemini embeddings** in **FAISS**, using reciprocal-rank fusion inside the active filters.
+
+| Query: *“my package never showed up”* | Top results |
+|---|---|
+| Keywords only | A food-delivery cancellation, a UPS misplacement, and **an Uber free-ride complaint** (matched on “never”) |
+| **Gemini semantic** | Four missing-parcel cases: *“ensure I receive a package…”*, *“tracking says they were handed to resident”*, *“Where is it???”* |
+
+<img src="docs/screenshots/semantic-search-gemini.png" alt="Conversation explorer showing hybrid keyword and Gemini semantic search results" width="100%">
+
+The free tier counts **each text** as one request, at 100 per minute. So ConvoLens embeds only **customer** messages (the default search target), paces itself at 90 per minute, and caches every vector by text hash. Each message is paid for once, ever; after that, a search costs about one request. Support replies stay keyword-searchable.
+
+### Staying inside the free tier
+
+```mermaid
+flowchart LR
+  A["Conversations to label"] --> B{"Already labelled?<br/><sub>same text + model + prompt</sub>"}
+  B -->|yes| C["Reuse cached label<br/><sub>0 requests</sub>"]
+  B -->|no| D["Batch of 15"]
+  D --> E{"Request cap<br/>reached?"}
+  E -->|no| F["1 Gemini request<br/><sub>no automatic retries</sub>"]
+  E -->|yes| G["Stop · resume tomorrow"]
+  F --> H{"Every label has<br/>a verified quote?"}
+  H -->|yes| I["Store label + evidence"]
+  H -->|no| J["Label becomes 'unknown'"]
+  F -->|"error"| K["Stored as failed<br/><sub>retried next run</sub>"]
+  style C fill:#E6F2EB,stroke:#24734B
+  style G fill:#FBF1E4,stroke:#A96308
+  style J fill:#FBF1E4,stroke:#A96308
+```
+
+`scripts/daily_label.sh` runs one capped day of this (12 requests ≈ 180 conversations). Progress is exported to a portable labels file, so any machine can continue where the last one stopped.
+
+### What we fixed while testing on real data
 
 | Problem found | Fix |
 |---|---|
-| The free tier allows only **20 requests per day** for Gemini Flash | Switched to Flash-Lite, **batched 15 conversations per request**, capped the number of requests, turned off automatic retries, and cached every label |
-| The model **left out evidence** when it was optional | Evidence is now **required**. Any label without a verified quote becomes **“unknown”**, and the change is recorded. |
+| The free tier allows only **20 requests per day** for Gemini Flash | Switched to Flash-Lite, **batched 15 conversations per request**, capped requests, turned off automatic retries, and cached every label |
+| The model **left out evidence** when it was optional | Evidence is now **required**. Any label without a verified quote becomes **“unknown”**, and the change is recorded |
 | A label looked like a guess (*“@O2 ? [URL]”* marked as resolved) | Caught by the same evidence rule |
 | The model gave an “ending sentiment” for one-message conversations | Ending sentiment now counts **only if the customer wrote again** (162 set to unknown) |
-| A support reply exposed a first name (*“Hi Debbie”*) | Redaction now removes names in greetings **before** any text reaches the model (536 names removed) |
-| Gemini rejected nested JSON schemas | Schemas are flattened for Gemini, and the full structure is still validated afterwards |
+| A support reply exposed a first name (*“Hi Debbie”*) | Redaction removes names in greetings **before** any text reaches the model (536 removed) |
+| Agent sign-offs such as *“~ Jess”* or *“^MK”* exposed staff names | Redaction v3 strips sign-offs from **support** messages only (2,723 removed) |
+| Gemini rejected nested JSON schemas | Schemas are flattened for Gemini; the full structure is still validated afterwards |
+| Flo's planner sent tool arguments Gemini could not fit into a schema | Arguments travel as a JSON string and are validated before any tool runs |
+| Grouped citations (*[E1, E2, E3]*) showed as plain text | Each reference is now its own clickable citation |
+| Embeddings hit a **100 texts per minute** limit on the first try | Customer messages only, 90 per minute, cached forever |
+| A label imported from another run was copied twice and crashed the daily job | Fixed and covered by a test; the crash happened before any model call, so no quota was lost |
+| “Why is the outcome unknown?” had no answer | The new **private-channel** label: 36% of conversations move to DMs |
+
+---
+
+## 👤 Measuring accuracy: human review
+
+The comparison above shows how much rules and Gemini *differ*, not which one is *right*. The **Human review** page measures that.
+
+```mermaid
+flowchart LR
+  Q["🎲 Next conversation<br/><sub>fixed pseudo-random order<br/>= a fair sample</sub>"] --> L["👤 Reviewer labels it<br/><b>blind</b><br/><sub>system labels hidden</sub>"]
+  L --> S["💾 Saved as a gold label<br/><sub>dashboards unchanged</sub>"]
+  S --> R["🔍 Reveal<br/><sub>rules vs Gemini vs you</sub>"]
+  S --> A["📏 Accuracy per field<br/><sub>Wilson 95% intervals<br/>most common mistakes</sub>"]
+  R --> Q
+  style L fill:#FBF1E4,stroke:#A96308
+  style A fill:#E6F2EB,stroke:#24734B
+```
+
+1. A reviewer reads one conversation and picks a topic, outcome, starting and ending sentiment, and escalation. **System labels stay hidden until they submit**, so the review is not anchored by the AI's answer.
+2. After submitting, they see how the rules and Gemini labelled the same conversation.
+3. Every labelling system is scored against the human labels, per field: accuracy, a **Wilson 95% interval**, how often it said “unknown”, accuracy when it did answer, and its most common mistake.
+4. A second reviewer on the same conversation measures **inter-reviewer agreement**: how hard the task is for people.
+
+Reviews never change dashboard labels; corrections in the explorer do that. With fewer than 30 reviews, the page warns that the intervals are too wide to tell systems apart. The target is **100**.
+
+<img src="docs/screenshots/human-review.png" alt="Human review page: a conversation on the left, blind label form on the right, accuracy table below" width="100%">
 
 ---
 
@@ -311,6 +425,8 @@ Every chart follows the same rules:
 </table>
 
 **6. Sentiment journey.** Inside each conversation in the explorer, a chart shows the inferred sentiment of each customer turn, with the supporting message in the tooltip.
+
+The overview also explains its own gaps: a **“Why are outcomes often unknown?”** banner links straight to the conversations that moved to a private channel.
 
 ---
 
@@ -418,14 +534,16 @@ You choose a baseline, a follow-up period and an intervention date. ConvoLens th
 
 | Risk | How ConvoLens prevents it | Proof |
 |---|---|---|
-| **Made-up numbers** | Numbers in Flo's answers must match validated SQL results. If they don't, Flo retries once, then shows only the verified results with a warning. | A test model that invents *“87%”* is blocked |
+| **Made-up numbers** | Numbers in Flo's answers must match validated SQL results. If they don't, Flo retries once, then shows only the verified results with a warning | A test model that invents *“87%”* is blocked; live Gemini answers show **Claims validated** |
 | **Fake quotes** | Every quote must match a stored message exactly | 72 of 72 citations valid |
+| **Labels without evidence** | A Gemini label without a verified quote is downgraded to “unknown” | 374 verified quotes, 7 rejected |
 | **Prompt injection in customer text** | Customer text is marked as untrusted data; tools come from a fixed allowlist; actions happen only when **you** ask | 4 of 4 checks pass; no action saved |
 | **An agent acting on its own** | The workflow pauses before any save; idempotency keys prevent duplicates | Approving twice gives one record |
 | **A model widening the scope** | Your filters are forced onto every tool call | Tested |
 | **Silent fallback when the model fails** | A clear error appears; Flo never switches to demo rules | Tested with failing and missing models |
 | **Questions the data can't answer** | Built-in refusals for CSAT, NPS, revenue, churn, location and agent ranking | 6 of 6 |
-| **Leaking personal data** | Redaction happens at import; original text is never stored; traces are redacted again | Counts in every import manifest |
+| **Leaking personal data** | Redaction happens at import, before any model sees the text: handles, emails, URLs, phones, cards, IDs, greeting names and agent sign-offs. Traces are redacted again | Counts in every import manifest |
+| **Draining a free quota** | Request caps, no automatic retries, caching by content hash, paced embeddings | ≈40 requests for everything shown here |
 | **Runaway cost or loops** | Limits on tool calls, retries, tokens and time; a cancel button | Tested |
 | **Stored XSS and spreadsheet injection** | Text is always rendered as plain text; strict content security policy; CSV cells are escaped | Tested |
 
@@ -438,29 +556,32 @@ You choose a baseline, a follow-up period and an intervention date. ConvoLens th
 ```mermaid
 flowchart LR
   subgraph Browser["🖥️ Browser: React + TypeScript"]
-    UI["10 pages · Recharts charts<br/>React Flow maps"]
+    UI["11 pages · Recharts charts<br/>React Flow maps · Human review"]
     FLO["Flo chat panel<br/>(streaming)"]
   end
   subgraph Backend["⚙️ FastAPI backend"]
     API["REST + Server-Sent Events"]
-    JOBS["Background jobs<br/>import · labelling · translation"]
+    JOBS["Background jobs + CLI<br/>import · labelling · embedding"]
     ING["Ingestion<br/>schema · reply graph · sampling · redaction"]
     SQL["Analytics<br/>exact SQL counts"]
-    RET["Hybrid search<br/>BM25 + embeddings/FAISS"]
+    RET["Hybrid search<br/>BM25 + Gemini embeddings/FAISS"]
+    REV["Review + accuracy<br/>blind gold labels"]
     G["Flo agent<br/>LangGraph StateGraph"]
     TOOLS["11 typed tools<br/>(read-only)"]
     LLM["Model adapter<br/>Gemini · Claude · Bedrock"]
   end
-  DB[("SQLite<br/>conversations · labels · actions")]
+  DB[("SQLite<br/>conversations · labels · reviews<br/>actions · embedding cache")]
   CK[("SQLite<br/>agent checkpoints")]
   LS["LangSmith<br/>(optional, redacted)"]
   UI --> API
   FLO --> API
   API --> G --> TOOLS --> SQL & RET
+  API --> REV --> DB
   G --> LLM
   G --> CK
   API --> JOBS --> ING --> DB
   JOBS --> LLM
+  RET --> LLM
   SQL --> DB
   G -. traces .-> LS
 ```
@@ -505,7 +626,7 @@ sequenceDiagram
   UI->>G: question + page + filters (streaming)
   G->>G: interpret (supported? which kind?)
   G->>M: plan which tools to use
-  M-->>G: plan (validated against the allowlist)
+  M-->>G: plan (arguments validated against the allowlist)
   G->>T: resolution breakdown · escalation counts · search for quotes
   T-->>G: exact counts + validated quotes
   G->>G: validate claims (numbers, citations)
@@ -522,12 +643,13 @@ sequenceDiagram
 |---|---|---|
 | Agent workflow | **LangGraph** `StateGraph`, one shared state, conditional routing, bounded loops, `interrupt()` for approvals, SQLite checkpoints | Explicit, testable control flow, and safe pauses for human approval |
 | Tools | 11 typed **LangChain** tools (`get_topic_counts`, `get_resolution_breakdown`, `compare_segments`, `search_conversations`, `get_evidence`, `prepare_decision_brief`, `propose_action`…) | Validated inputs; parameterised SQL only; model-written SQL or code is never run |
-| Models | **Gemini** (OpenAI-compatible API), **Claude** (Anthropic API or Amazon Bedrock) | Switch provider with one setting; keys stay on the server |
-| Search | BM25 keywords + sentence-transformer embeddings in **FAISS**, merged by reciprocal-rank fusion within SQL filters | Finds example messages; counting is always done in SQL |
+| Models | **Gemini** (OpenAI-compatible API, free tier tested), **Claude** (Anthropic API or Amazon Bedrock) | Switch provider with one setting; keys stay on the server |
+| Search | BM25 keywords + **Gemini `gemini-embedding-001`** (or a local sentence-transformer) in **FAISS**, merged by reciprocal-rank fusion within SQL filters | Finds example messages by meaning; counting is always done in SQL |
+| Quality | Blind human review, per-field accuracy with Wilson intervals, inter-reviewer agreement | Accuracy is measured, not assumed |
 | Data | **SQLAlchemy + SQLite**, Pydantic schemas | Exact, reproducible counts |
 | Observability | **LangSmith** tracing (redacted), run summaries, feedback, trace links | See what the agent did and what it cost |
 | Frontend | **React 19 + TypeScript**, Tailwind CSS, Radix (accessible components), **Recharts**, **React Flow** | A clear enterprise UI |
-| Delivery | **Docker Compose** (nginx + strict CSP), lockfiles, 75 automated tests | Runs anywhere and stays reproducible |
+| Delivery | **Docker Compose** (nginx + strict CSP), lockfiles, 84 automated tests | Runs anywhere and stays reproducible |
 
 ---
 
@@ -541,14 +663,16 @@ sequenceDiagram
 </table>
 
 **Observability and evaluation page:**
-- model provider status, LangSmith status, and search status,
+- model provider status, LangSmith status, and search status (which embedding model, and whether it is loaded),
 - every Flo run, with its status, tools, latency, tokens and trace link,
 - the model and prompt versions in use,
 - evaluation results by suite and language.
 
+LangSmith tracing is optional and off by default. [docs/LANGSMITH_SETUP.md](docs/LANGSMITH_SETUP.md) explains how to turn it on, locally or as a cloud-environment secret.
+
 ---
 
-## 🧪 Evaluation results
+## 🧪 Evaluation and tests
 
 Every suite runs from the command line and from the app, and results are reported **per language with sample sizes**. Deterministic checks, human judgments and LLM-judge scores are kept apart, and an LLM-judge score is never presented as ground truth.
 
@@ -564,14 +688,22 @@ Every suite runs from the command line and from the app, and results are reporte
 | Language identification | English 7/7 · Spanish 6/6 · German 6/6 · French 5/5 · Portuguese 5/5 · **mixed 2/4** |
 | Search precision@5 (keywords only) | English 26/30 · **Spanish 0/4** (cross-language search needs multilingual embeddings) |
 
+| Live check on real data | Result |
+|---|---|
+| Flo answers with Gemini | 2 of 2 completed, **claims validated** |
+| Gemini semantic search | Paraphrase query returns 4 of 4 on-topic results (keywords: 2 of 4) |
+| Gemini labelling | 300 labelled with 374 verified quotes; 154 of 3,000 so far |
+| Label accuracy vs humans | Ready on the Human review page; awaiting reviews |
+
 The weak spots are shown on purpose. Reporting per language shows where work is still needed.
 
-**Automated tests:** 68 backend and 7 frontend, **75 in total, all passing**. They cover:
+**Automated tests:** 76 backend and 8 frontend, **84 in total, all passing**. They cover:
 - conversation reconstruction (branches, missing parents, loops), parsing, and reproducible sampling,
 - denominators and unknown outcomes, evidence validity, and chart, filter and table consistency,
 - follow-up filters, tool limits, approval resume without duplicates, and session isolation,
 - prompt injection, running without LangSmith, and failing models with no silent fallback,
-- Gemini schema handling, evidence enforcement, and name redaction.
+- Gemini schema handling, evidence enforcement, name and sign-off redaction, and the private-channel label,
+- the embedding cache and request cap, the blind review queue and accuracy scoring, the label cache, and grouped citations.
 
 ---
 
@@ -591,12 +723,24 @@ uv run python -m app.ingestion.cli file ~/Downloads/twcs/twcs.csv
 uv run python -m app.ingestion.cli list                # shows the actual counts
 
 # 4) Label with Gemini, free key from https://aistudio.google.com/apikey
-export MODEL_PROVIDER=gemini GOOGLE_API_KEY=your_key GEMINI_MODEL=gemini-3.5-flash-lite MODEL_REQUESTS_PER_MINUTE=8
-uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15
+export MODEL_PROVIDER=gemini GOOGLE_API_KEY=your_key GEMINI_MODEL=gemini-3.5-flash-lite MODEL_MAX_RETRIES=0
+uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15 --max-requests 12
+
+# 5) Optional: semantic search with Gemini embeddings (customer messages, paced and cached)
+uv run python -m app.ingestion.cli embed <dataset_id> --max-texts 700
+export EMBEDDING_PROVIDER=gemini                        # then restart the backend
 ```
 
+**Labelling all 3,000 on the free tier**, one capped day at a time:
+
+```bash
+DATASET_ID=<dataset_id> MAX_REQUESTS=12 scripts/daily_label.sh
+```
+
+It imports earlier progress, labels only what is new, stops at the cap, and exports progress to `data/labels/gemini_labels.jsonl`. Labels are activated automatically once all 3,000 have one.
+
 - **Claude:** set `MODEL_PROVIDER=anthropic` and `ANTHROPIC_API_KEY`, or use `bedrock` with `BEDROCK_MODEL_ID` and `AWS_REGION`.
-- **Tracing:** add `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY`.
+- **Tracing:** see [docs/LANGSMITH_SETUP.md](docs/LANGSMITH_SETUP.md).
 - **Docker:** `cd convolens && docker compose up --build`, then open http://127.0.0.1:8080.
 - **Large file:** tools in `convolens/tools/` make smaller files that keep complete conversations, e.g. for uploads under 20 MB.
 
@@ -605,7 +749,7 @@ uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15
 | | 🟧 Demonstration | 🟦 Connected analysis |
 |---|---|---|
 | Data | Synthetic conversations with fictional brands, clearly labelled | Your imported Kaggle data |
-| AI | Transparent keyword rules; **no model calls** | Gemini or Claude for labelling and Flo; SQL produces every number |
+| AI | Transparent keyword rules; **no model calls** | Gemini or Claude for labelling, search and Flo; SQL produces every number |
 | If the model fails | — | A clear error, **never** a silent switch to demo rules |
 
 ---
@@ -614,10 +758,11 @@ uv run python -m app.ingestion.cli analyze <dataset_id> --batch-size 15
 
 | | Status |
 |---|---|
-| ✅ **Built and verified** | Full app · demo mode · import of 3,000 real conversations · **Gemini labelling of 300 real conversations (21 free-tier requests)** · charts, maps, approvals · Docker · 75 passing tests |
-| ⏳ **Built, not yet run live** | Flo's live chat on real data with Gemini (skipped to save the free daily quota; tested with scripted models) · Gemini on all 3,000 (about 200 requests, roughly 10 days of free quota) · LangSmith traces · semantic search with downloaded embeddings |
-| ⚠️ **Known gaps** | No human-reviewed labels yet, so accuracy is not measured · some agent sign-offs (e.g. “~ Jess”) are not redacted · most public threads have no visible outcome |
+| ✅ **Built and verified** | Full app (11 pages) · import of 3,000 real Kaggle conversations · agentic Flo with approvals · **Flo live on real data with Gemini** · **Gemini labelling** of 300 real conversations · **Gemini semantic search** · sign-off redaction and private-channel label · blind human review with accuracy scoring · charts, maps, decisions, impact review · Docker · 84 passing tests |
+| ⏳ **In progress** | Gemini labels for all 3,000: **154 done**, about 180 more per day with `scripts/daily_label.sh` (about 2 weeks on the free tier). Until then, the 3,000 use rule-based labels |
+| 🔑 **Needs your input** | Accuracy numbers need about **100 human reviews** · LangSmith traces need a LangSmith key ([setup](docs/LANGSMITH_SETUP.md)) |
+| ⚠️ **Known gaps** | Most public threads have no visible outcome (36% move to private messages) · Gemini embeddings cover customer messages only · cross-language semantic search is untested on real data · the import used a 30 MB extract of the Kaggle file (the full file was tested only at synthetic scale) |
 
-📖 More detail: [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md)
+📖 More detail: [Architecture](docs/ARCHITECTURE.md) · [Data dictionary](docs/DATA_DICTIONARY.md) · [Evaluation](docs/EVALUATION.md) · [Security](docs/SECURITY.md) · [Known limitations](docs/KNOWN_LIMITATIONS.md) · [Test results](docs/TEST_RESULTS.md) · [LangSmith setup](docs/LANGSMITH_SETUP.md) · [5-minute leadership demo script](docs/DEMO_SCRIPT.md) · [The story behind it (Medium draft)](docs/MEDIUM_ARTICLE.md)
 
-<sub>Data: “Customer Support on Twitter” by Thought Vector on Kaggle, CC BY-NC-SA 4.0. The dataset is not included in this repository. Screenshots show redacted text, with customer handles replaced by <code>@[CUSTOMER]</code>. The chatbot, approval, decisions and evaluation screenshots use synthetic demonstration data with fictional brands. The overview, maps, data-quality, language and Gemini screenshots use real, redacted Kaggle conversations.</sub>
+<sub>Data: “Customer Support on Twitter” by Thought Vector on Kaggle, CC BY-NC-SA 4.0. The dataset is not included in this repository. Screenshots show redacted text, with customer handles replaced by <code>@[CUSTOMER]</code>. The chatbot, approval, decisions and evaluation screenshots use synthetic demonstration data with fictional brands. The overview, maps, data-quality, language, Gemini, live Flo, search and review screenshots use real, redacted Kaggle conversations.</sub>

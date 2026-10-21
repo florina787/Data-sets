@@ -1,13 +1,13 @@
 # Test results
 
-Every result below was produced in the development environment on 20 October 2026. Anything not executed is marked **not verified**.
+Every result below was produced in the development environment on 20–21 October 2026. Anything not executed is marked **not verified**.
 
 ## Automated tests
 
 | Suite | Command | Result |
 |---|---|---|
-| Backend (pytest) | `uv run pytest` | **68 passed** |
-| Frontend (vitest) | `npm test` | **7 passed** |
+| Backend (pytest) | `uv run pytest` | **76 passed** |
+| Frontend (vitest) | `npm test` | **8 passed** |
 | Frontend typecheck / build | `npm run build` | **passed** |
 
 The backend tests cover:
@@ -140,14 +140,22 @@ Weak spots stay visible by language:
 | 8 | Approve once and verify a single saved record | **Passed**: UI and API; a second approval returns 409 and creates no duplicate |
 | 9 | Ask for CSAT without ratings | **Passed**: explicit "not available" limitation |
 | 10 | Import Kaggle data and show real ingestion results | **Passed with partial data**: the 30 MB extract above. The full `twcs.csv` was not available in this environment. |
-| 11 | Configure a model and run actual analysis | **Passed for labelling:** Gemini free tier labelled 300 real conversations. Flo live chat with a model is **not verified** (not run, to save quota). |
+| 11 | Configure a model and run actual analysis | **Passed:** Gemini free tier labelled 300 real conversations (154 of the 3,000 so far, continuing daily), and Flo answered two live questions on real data with all claims validated (`flo-gemini-live-1.png`, `flo-gemini-live-2.png`). |
 | 12 | Configure LangSmith and inspect a real trace | **Not verified**: no LangSmith credentials. Disabled operation is tested. |
+
+## Added on 21 October 2026
+
+- **Gemini embeddings:** cache reuse (each text embedded once), the request cap refuses instead of draining quota, and the semantic index covers customer messages only.
+- **Human review:** blind queue in a deterministic order, label validation, duplicate-review rejection, reveal after submit, accuracy with Wilson intervals.
+- **Batch label cache:** a conversation that already holds an imported label is not copied twice. This was a real failure in the first daily run; it crashed before any model call, so no quota was spent.
+- **Grouped citations:** `[E1, E2]` renders as two buttons.
+- **Live run notes:** of 10 labelling requests on 21 October, 5 failed with an upstream gateway error (`upstream request failed`). Failed conversations are stored as failed, not cached, and are retried by the next run.
 
 ## Not verified
 
 - Live Claude calls (Anthropic API and Bedrock), real token usage and cost, and live LLM extraction quality.
 - LangSmith traces, deep links, feedback upload and experiments.
-- Semantic retrieval with sentence-transformers and FAISS. The model download is blocked here and the optional extra is not installed. The keyword path is verified.
+- Semantic retrieval with local sentence-transformers (the model download is blocked here). **Semantic retrieval with Gemini `gemini-embedding-001` + FAISS is verified** on the 300-conversation sample (663 customer messages embedded): *“my package never showed up”* returns four missing-parcel cases where keywords returned an unrelated Uber complaint.
 - A multilingual-embedding versus translated-query retrieval comparison. The evaluation command exists but needs both an embedding model and a configured LLM.
 - Original-text versus translated-text label comparison on real multilingual data (needs a model).
 - Full-file (2.8M-row) import of the real Kaggle file. A synthetic file of the same size was tested.

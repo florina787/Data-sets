@@ -16,6 +16,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    LargeBinary,
     String,
     Text,
     UniqueConstraint,
@@ -87,6 +88,8 @@ class Conversation(Base):
     sentiment_start: Mapped[str] = mapped_column(String(20), default="unknown")
     sentiment_end: Mapped[str] = mapped_column(String(20), default="unknown")
     escalation_requested: Mapped[str] = mapped_column(String(10), default="unknown")  # yes | no | unknown
+    channel_handoff: Mapped[str] = mapped_column(String(12), default="unknown")  # observable; independent of labelling method
+    handoff_evidence: Mapped[list] = mapped_column(JSON, default=list)
     analysis_id: Mapped[int | None] = mapped_column(Integer)
     corrected: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -161,6 +164,30 @@ class Correction(Base):
     corrected_value: Mapped[str] = mapped_column(Text)
     reviewer: Mapped[str] = mapped_column(String(80))
     note: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class ReviewLabel(Base):
+    """A blind human label set for one conversation: the gold standard that rules and model labels are scored against.
+    Separate from Correction, which changes what dashboards show; a review never alters labels."""
+    __tablename__ = "review_labels"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    dataset_id: Mapped[str] = mapped_column(String(40), index=True)
+    conversation_id: Mapped[int] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"), index=True)
+    reviewer: Mapped[str] = mapped_column(String(80))
+    labels: Mapped[dict] = mapped_column(JSON)
+    note: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    __table_args__ = (UniqueConstraint("conversation_id", "reviewer"),)
+
+
+class EmbeddingCache(Base):
+    """Remote embedding vectors keyed by (model, sha256 of the redacted text): paid for once, reused by every dataset."""
+    __tablename__ = "embedding_cache"
+    model: Mapped[str] = mapped_column(String(80), primary_key=True)
+    text_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    dims: Mapped[int] = mapped_column(Integer)
+    vector: Mapped[bytes] = mapped_column(LargeBinary)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

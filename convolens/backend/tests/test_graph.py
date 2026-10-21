@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from sqlalchemy import func, select
 
@@ -139,6 +141,7 @@ def test_failing_model_fails_without_demo_fallback(runner, imported_id):
 
 
 def _plan(qtype, steps):
+    steps = [{"tool": st["tool"], "purpose": st["purpose"], "args_json": json.dumps(st.get("args", {}))} for st in steps]
     return {"LLMPlan": {"question_type": qtype, "steps": steps}}
 
 

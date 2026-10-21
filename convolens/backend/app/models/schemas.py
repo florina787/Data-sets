@@ -6,12 +6,13 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.analytics.taxonomy import ESCALATION, INTENTS, RESOLUTION, SENTIMENT, TOPIC_KEYS
+from app.analytics.taxonomy import ESCALATION, HANDOFF, INTENTS, RESOLUTION, SENTIMENT, TOPIC_KEYS
 
 TopicKey = Literal[tuple(TOPIC_KEYS)]  # type: ignore[valid-type]
 ResolutionKey = Literal[tuple(RESOLUTION)]  # type: ignore[valid-type]
 SentimentKey = Literal[tuple(SENTIMENT)]  # type: ignore[valid-type]
 EscalationKey = Literal[tuple(ESCALATION)]  # type: ignore[valid-type]
+HandoffKey = Literal[tuple(HANDOFF)]  # type: ignore[valid-type]
 IntentKey = Literal[tuple(INTENTS)]  # type: ignore[valid-type]
 
 
@@ -51,6 +52,7 @@ class Filters(BaseModel):
     resolution: list[ResolutionKey] = Field(default_factory=list)
     sentiment_end: list[SentimentKey] = Field(default_factory=list)
     escalation: list[EscalationKey] = Field(default_factory=list)
+    handoff: list[HandoffKey] = Field(default_factory=list)
     brands: list[str] = Field(default_factory=list, max_length=20)
     languages: list[str] = Field(default_factory=list, max_length=20)
     date_from: date | None = None
@@ -82,6 +84,8 @@ class Filters(BaseModel):
             parts.append("ending sentiment = " + " or ".join(self.sentiment_end))
         if self.escalation:
             parts.append("escalation = " + " or ".join(self.escalation))
+        if self.handoff:
+            parts.append("private-channel handoff = " + " or ".join(self.handoff))
         if self.brands:
             parts.append("support account = " + ", ".join(self.brands))
         if self.languages:

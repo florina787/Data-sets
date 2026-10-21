@@ -17,7 +17,7 @@ from app.analytics import metrics, quality
 from app.analytics.labels import CORRECTABLE, reapply
 from app.analytics.opportunities import DEFAULT_WEIGHTS, candidates
 from app.analytics.rules import Msg, _sentiment
-from app.analytics.taxonomy import ESCALATION, JOURNEY_LABELS, RESOLUTION, SENTIMENT, TOPIC_KEYS, TOPICS, topic_label
+from app.analytics.taxonomy import ESCALATION, HANDOFF, JOURNEY_LABELS, RESOLUTION, SENTIMENT, TOPIC_KEYS, TOPICS, topic_label
 from app.api.common import dataset_info, parse_filters, ready_dataset
 from app.config import get_settings
 from app.db import get_db
@@ -57,7 +57,7 @@ def data_quality(ds: Dataset = Depends(ready_dataset), db: Session = Depends(get
 def taxonomy():
     return {"topics": [{"key": k, "label": topic_label(k), "definition": TOPICS.get(k, {}).get("definition"),
                         "department": TOPICS.get(k, {}).get("department")} for k in TOPIC_KEYS],
-            "resolution": RESOLUTION, "sentiment": SENTIMENT, "escalation": ESCALATION, "journey": JOURNEY_LABELS}
+            "resolution": RESOLUTION, "sentiment": SENTIMENT, "escalation": ESCALATION, "handoff": HANDOFF, "journey": JOURNEY_LABELS}
 
 
 # ------------------------------------------------------------------------------------------------ imports
@@ -229,6 +229,7 @@ def overview(ds: Dataset = Depends(ready_dataset), f: Filters = Depends(parse_fi
         "resolution": metrics.breakdown(db, ds.id, f, "resolution_status"),
         "sentiment": metrics.breakdown(db, ds.id, f, "sentiment_end"),
         "escalation": metrics.breakdown(db, ds.id, f, "escalation_requested"),
+        "handoff": metrics.breakdown(db, ds.id, f, "channel_handoff"),
         "limitations": {"unknown_labels": q["unknown_labels"], "exclusions": q["manifest"].get("exclusions", {}),
                         "sampling": q["sampling"], "partial": q["missing_messages"]["partial_conversations"]},
         "suggestions": _suggestions(db, ds.id, f),

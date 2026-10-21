@@ -6,7 +6,8 @@ type Props = { text: string; onCite?: (ref: string) => void };
 
 function inline(s: string, onCite?: (ref: string) => void, keyBase = ""): ReactNode[] {
   const out: ReactNode[] = [];
-  const re = /(\*\*[^*]+\*\*|\[(?:E|M)\d+\])/g;
+  // Citations may be single ([E1]) or grouped ([E1, E2, M3]) - models do both.
+  const re = /(\*\*[^*]+\*\*|\[(?:[EM]\d+)(?:\s*,\s*[EM]\d+)*\])/g;
   let last = 0;
   let m: RegExpExecArray | null;
   let i = 0;
@@ -15,10 +16,11 @@ function inline(s: string, onCite?: (ref: string) => void, keyBase = ""): ReactN
     const tok = m[0];
     if (tok.startsWith("**")) out.push(<strong key={`${keyBase}b${i}`} className="font-semibold">{tok.slice(2, -2)}</strong>);
     else {
-      const ref = tok.slice(1, -1);
-      out.push(onCite ? (
-        <button key={`${keyBase}c${i}`} type="button" onClick={() => onCite(ref)} className="mx-0.5 rounded bg-teal-light px-1 text-[11px] font-semibold text-teal hover:underline" aria-label={`Open ${ref.startsWith("E") ? "evidence" : "metric"} ${ref}`}>{ref}</button>
-      ) : <span key={`${keyBase}c${i}`} className="text-[11px] font-semibold text-teal">{tok}</span>);
+      tok.slice(1, -1).split(/\s*,\s*/).forEach((ref, j) => {
+        out.push(onCite ? (
+          <button key={`${keyBase}c${i}-${j}`} type="button" onClick={() => onCite(ref)} className="mx-0.5 rounded bg-teal-light px-1 text-[11px] font-semibold text-teal hover:underline" aria-label={`Open ${ref.startsWith("E") ? "evidence" : "metric"} ${ref}`}>{ref}</button>
+        ) : <span key={`${keyBase}c${i}-${j}`} className="mx-0.5 text-[11px] font-semibold text-teal">[{ref}]</span>);
+      });
     }
     last = m.index + tok.length;
     i++;

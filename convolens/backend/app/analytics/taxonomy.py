@@ -100,6 +100,9 @@ RESOLUTION = {
 }
 SENTIMENT = {"negative": "Negative", "neutral": "Neutral", "positive": "Positive", "unknown": "Unknown"}
 ESCALATION = {"yes": "Escalation requested", "no": "No escalation request", "unknown": "Unknown"}
+# Observable: did support move the conversation to a private channel (DM)? Explains many unknown outcomes.
+HANDOFF = {"confirmed": "Moved to private channel (customer confirmed)", "requested": "Support asked to move to private channel",
+           "none": "Stayed in public thread", "unknown": "Unknown"}
 INTENTS = ["request_refund", "report_problem", "ask_status", "cancel_service", "complain", "request_help", "unknown"]
 JOURNEY_STAGES = ["problem", "clarification", "support_action", "follow_up", "escalation", "outcome"]
 JOURNEY_LABELS = {

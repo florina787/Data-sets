@@ -121,9 +121,11 @@ def analyze_batch(conv_ids: list[int], model=None) -> dict:
         for cid in conv_ids:
             conv = db.get(Conversation, cid)
             # Cache key = content hash + model + prompt version (identical conversations in other datasets reuse it).
-            cached = db.scalar(select(Analysis).where(Analysis.method == "llm", Analysis.model_id == model_id,
-                                                      Analysis.prompt_version == EXTRACT_BATCH_VERSION, Analysis.content_hash == conv.content_hash,
-                                                      Analysis.source_text == "original", Analysis.status == "ok").order_by(Analysis.id))
+            same = (Analysis.method == "llm", Analysis.model_id == model_id, Analysis.prompt_version == EXTRACT_BATCH_VERSION,
+                    Analysis.content_hash == conv.content_hash, Analysis.source_text == "original", Analysis.status == "ok")
+            # Prefer this conversation's own row, so a label copied in earlier (or imported) is not copied again.
+            cached = db.scalar(select(Analysis).where(*same, Analysis.conversation_id == cid)) or \
+                db.scalar(select(Analysis).where(*same).order_by(Analysis.id))
             if cached:
                 if cached.conversation_id != cid:
                     db.add(Analysis(conversation_id=cid, method="llm", model_id=model_id, prompt_version=EXTRACT_BATCH_VERSION,

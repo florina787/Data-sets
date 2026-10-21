@@ -9,7 +9,7 @@ import hashlib
 import re
 from collections import Counter
 
-REDACTOR_VERSION = "redact-v2"
+REDACTOR_VERSION = "redact-v3"
 
 _EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b")
 _URL = re.compile(r"\b(?:https?://|www\.)\S+", re.IGNORECASE)
@@ -19,6 +19,16 @@ _PHONE = re.compile(r"(?<![\w@])(?:\+?\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?|\d{2
 _LONG_ID = re.compile(r"\b(?=[A-Z0-9-]*\d)[A-Z0-9][A-Z0-9-]{7,}\b")
 _MENTION = re.compile(r"@(\w{1,30})")
 _SIGNOFF = re.compile(r"(?:\s[\^*~]\s?[A-Z]{1,3}\b|\s-\s?[A-Z][a-z]{1,15}\s*$)")
+# Agent sign-offs seen in real support replies (applied to support messages only):
+#   ".^EM"  "(1/2)^SU"  "-RK"  "/LM"  "- SL"  "~ Jess"  "!-Jazz"  "--Sam"  "...this causes. Lewis"
+_AGENT_SIGNOFFS = [
+    re.compile(r"\s?[\^*]\s?[A-Z]{1,3}\b"),
+    re.compile(r"(?:^|(?<=[\s.!?)\]:;,]))[-–—~/]{1,2}\s?[A-Z]{2,3}\s*$"),
+    re.compile(r"[-–—~]{1,2}\s?[A-Z][a-z]{1,15}(?:\s[A-Z]\.?)?\s*$"),
+    re.compile(r"(?<=[.!?)])\s+[A-Z][a-z]{2,12}\s*$"),
+]
+_SIGNOFF_NOT_NAMES = {"Thanks", "Cheers", "Regards", "Thank", "Sorry", "Enjoy", "Again", "Soon", "Today", "Please", "Best",
+                      "Bye", "Ok", "Okay", "Yes", "No", "Sure", "Great", "Welcome", "Here", "There", "Now"}
 # Support agents often greet customers by first name ("Hi Debbie,"). Not a proper name detector; see docs.
 _GREETING_NAME = re.compile(r"\b((?i:hi|hello|hey|hiya|dear|thanks|thank you|sorry|welcome))\s+([A-Z][a-z]{2,15})\b(?=\s*[,!.:;)-]|\s+(?:we|i|we'd|we're|i'm|please|sorry|thanks|thank|what|can|could|that|this|let|you|it)\b)")
 _NOT_NAMES = {"There", "Again", "Team", "Everyone", "All", "Guys", "Folks", "Friend", "Sir", "Madam", "You", "For", "Much", "So", "From", "Again", "Back", "Our", "The", "Please", "Again", "Very", "Delta", "Apple", "Amazon"}
@@ -38,8 +48,9 @@ def _luhn_ok(digits: str) -> bool:
     return total % 10 == 0
 
 
-def redact(text: str, keep_handles: set[str] | None = None) -> tuple[str, dict[str, int]]:
-    """Return (redacted_text, counts_by_type). ``keep_handles`` are public brand support accounts."""
+def redact(text: str, keep_handles: set[str] | None = None, agent: bool = False) -> tuple[str, dict[str, int]]:
+    """Return (redacted_text, counts_by_type). ``keep_handles`` are public brand support accounts.
+    ``agent=True`` (support messages) also removes agent sign-offs such as "~ Jess" or "-RK"."""
     keep = {h.lower() for h in (keep_handles or set())}
     counts: Counter[str] = Counter()
 
@@ -87,6 +98,16 @@ def redact(text: str, keep_handles: set[str] | None = None) -> tuple[str, dict[s
         return " [AGENT]"
 
     out = _SIGNOFF.sub(signoff, out)
+    if agent:
+        def agent_signoff(m: re.Match) -> str:
+            word = re.sub(r"[^A-Za-z]", "", m.group(0))
+            if word in _SIGNOFF_NOT_NAMES or word.lower() in keep:
+                return m.group(0)
+            counts["AGENT_SIGNOFF"] += 1
+            return " [AGENT]"
+        for rx in _AGENT_SIGNOFFS:
+            out = rx.sub(agent_signoff, out)
+        out = re.sub(r"(\s*\[AGENT\])+", " [AGENT]", out)
     return out, dict(counts)
 
 

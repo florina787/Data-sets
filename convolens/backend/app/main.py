@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import routes_data, routes_flo
+from app.api import routes_data, routes_flo, routes_review
 from app.config import get_settings
 from app.db import init_db
 from app.ingestion.bootstrap import ensure_demo_datasets
@@ -56,3 +56,4 @@ def health():
 
 app.include_router(routes_data.router)
 app.include_router(routes_flo.router)
+app.include_router(routes_review.router)

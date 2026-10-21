@@ -12,7 +12,7 @@ from pathlib import Path
 from sqlalchemy import delete, insert, select
 
 from app.analytics.labels import apply_effective_labels
-from app.analytics.rules import RULES_VERSION, Msg, analyze, message_stages, validate_evidence
+from app.analytics.rules import RULES_VERSION, Msg, analyze, channel_handoff, message_stages, validate_evidence
 from app.config import get_settings
 from app.db import session_scope
 from app.ingestion import twcs
@@ -94,7 +94,7 @@ def run_import(
                         if raw is None:
                             missing_text += 1
                             raw = ""
-                        red, counts = redact(raw, support_handles)
+                        red, counts = redact(raw, support_handles, agent=not nd.inbound)
                         redaction_totals.update(counts)
                         lang = detect_language(red)
                         lang_counts[lang["language"]] += 1
@@ -123,6 +123,8 @@ def run_import(
                         content_hash=content_hash,
                         languages=sorted({r["language"] for r in rows}),
                     )
+                    conv.channel_handoff, hev = channel_handoff(msgs)
+                    conv.handoff_evidence, _ = validate_evidence([e for e in hev if e], {m.source_id: m.text for m in msgs})
                     s.add(conv)
                     s.flush()
                     for r, st in zip(rows, stages):
