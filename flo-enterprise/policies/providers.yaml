@@ -1,0 +1,22 @@
+# Model provider registry. The mock provider runs in-process (no data leaves the service).
+providers:
+  mock-deterministic:
+    region: in-process
+    allowed_classifications: [public, internal, confidential, restricted]
+    description: Local deterministic mock model (default). No external calls.
+  bedrock-ca-central-1:
+    region: ca-central-1
+    allowed_classifications: [public, internal, confidential]
+    description: AWS Bedrock adapter (requires credentials; disabled when unavailable). Restricted data must be masked first.
+  bedrock-us-east-1:
+    region: us-east-1
+    allowed_classifications: [public]
+    description: Example out-of-country region; allowed for public data only and blocked by CA residency for anything else.
+  gemini-global:
+    region: global
+    allowed_classifications: [public]
+    description: Google Gemini API via API key (FLO_MODEL_PROVIDER=gemini). No regional pinning is available with an API key, so it is approved
+      for PUBLIC data only; anything else is routed to the in-process model by ABAC-MODEL-RESIDENCY. Prompts are PII-masked before sending.
+tenant_residency:
+  # "global" is listed so public-only providers can be used; every provider's allowed_classifications still applies (both must hold).
+  CA: [in-process, ca-central-1, global]

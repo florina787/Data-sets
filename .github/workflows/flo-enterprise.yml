@@ -1,0 +1,33 @@
+name: flo-enterprise
+on:
+  push: { paths: ["flo-enterprise/**", ".github/workflows/flo-enterprise.yml"] }
+  pull_request: { paths: ["flo-enterprise/**"] }
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: flo-enterprise } }
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env: { POSTGRES_USER: flo, POSTGRES_PASSWORD: flo, POSTGRES_DB: flo }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 20
+      redis: { image: "redis:7-alpine", ports: ["6379:6379"] }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: open-policy-agent/setup-opa@v2
+        with: { version: 1.4.2 }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt -c requirements.lock
+      - run: cd frontend && npm ci
+      - name: Release gate (SQLite)
+        run: .venv/bin/python scripts/release_gate.py
+      - name: Test suite on PostgreSQL + pgvector + Redis
+        env: { FLO_DATABASE_URL: "postgresql+psycopg://flo:flo@localhost:5432/flo", FLO_REDIS_URL: "redis://localhost:6379/0" }
+        run: .venv/bin/python -m pytest -q
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: release-gate, path: flo-enterprise/var/*.json }
