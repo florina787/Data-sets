@@ -107,7 +107,7 @@ def _finish(state: dict, request_id: str, session_id: str, question: str, starte
     intent = state.get("resolved_intent") or {}
     tel.record_request(request_id=request_id, session_id=session_id, question=question, intent=intent,
                        operations=[s["op"] for s in state.get("analytical_plan", {}).get("steps", [])],
-                       status=(fr or {}).get("status", "failed") if not error else "failed", latency_ms=latency,
+                       status=(fr or {}).get("status", "failed") if not error else ("cancelled" if error == "cancelled" else "failed"), latency_ms=latency,
                        error_category=error, llm_mode=(fr or {}).get("model_metadata", {}).get("mode"),
                        quality_status=(fr or {}).get("quality_status", {}).get("status"), response=fr)
     if fr:

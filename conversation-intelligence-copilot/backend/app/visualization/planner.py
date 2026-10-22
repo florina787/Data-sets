@@ -158,7 +158,7 @@ def plan_charts(tool_results: dict, retrieval: list[dict], request_id: str) -> t
             chart_id="priority_scores", chart_type="stacked_bar", title="Priority score and what drives it", x_field="name",
             series=[Series(key=f"contrib_{k}", label=labels[k], color=palette[i % len(palette)]) for i, k in enumerate(weights)],
             data=[{"name": row["name"], "key": row["key"], "priority_score": row["priority_score"], **{f"contrib_{k}": row[f"contrib_{k}"] for k in weights}} for row in rows],
-            value_format="score", source_analysis_id=rid, drilldown=Drilldown(kind="topic", field="key"),
+            value_format="count", source_analysis_id=rid, drilldown=Drilldown(kind="topic", field="key"),
             accessibility_summary="; ".join(f"{row['name']}: {row['priority_score']}" for row in rows)))
         sens = r["series"]["sensitivity"]["rows"]
         charts.append(ChartSpec(chart_id="sensitivity", chart_type="table", title="Sensitivity of the ranking to weight changes",
@@ -205,7 +205,15 @@ def plan_charts(tool_results: dict, retrieval: list[dict], request_id: str) -> t
             drilldown=Drilldown(kind="conversation", field="conversation_id"),
             uncertainty_note="Similarity is a ranking signal between embeddings, not a probability or confidence.",
             accessibility_summary="; ".join(f"{x['conversation_id']}: {x['similarity']:.2f}" for x in retrieval)))
+    order = {cid: i for i, cid in enumerate(CHART_ORDER)}
+    charts.sort(key=lambda c: (0 if c.chart_type == "kpi" else 1, order.get(c.chart_id, len(order))))
     return charts, graphs
+
+
+# Primary findings first; context charts after, so related charts sit side by side.
+CHART_ORDER = ["negative_topics", "negative_rate_ci", "priority_matrix", "priority_scores", "sentiment_trajectory", "trajectory_timeline",
+               "coaching_heatmap", "empathy_distribution", "sample_size", "coaching_by_topic", "compare_topics", "topic_frequency",
+               "sentiment_by_group", "sentiment_distribution", "sentiment_trend", "resolution_misfit", "sensitivity", "retrieval_results"]
 
 
 def topic_label(key: str) -> str:

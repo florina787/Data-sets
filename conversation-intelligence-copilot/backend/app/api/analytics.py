@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+from typing import Literal
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from app.analytics.db import get_db
 from app.analytics.query_registry import OperationError, catalog, run_operation
@@ -65,3 +67,35 @@ def dataset_status() -> dict:
     return {"built_at": meta["built_at"], "pipeline_version": meta["pipeline_version"], "taxonomy_version": meta["taxonomy_version"],
             "label_coverage": meta["label_coverage"], "sources": counts, "dataset_mode_default": get_settings().dataset_mode,
             "synthetic_enabled": get_settings().enable_synthetic_demo}
+
+
+DASHBOARDS: dict[str, list[tuple[str, dict]]] = {
+    "leadership": [("leadership_priorities", {"top_n": 5}), ("sentiment_trend", {}), ("resolution_quality", {}), ("sentiment_distribution", {})],
+    "sentiment": [("rank_negative_topics", {"top_n": 8}), ("sentiment_distribution", {"group_by": "topic"}), ("sentiment_trend", {}),
+                  ("topic_frequency", {"dimension": "domain"})],
+    "coaching": [("agent_coaching_review", {"top_n": 12}), ("resolution_quality", {})],
+}
+
+
+class DashboardQuery(BaseModel):
+    window: dict | None = None
+    dataset_mode: Literal["original", "synthetic", "combined"] = "original"
+    topics: list[str] = []
+
+
+@router.post("/api/dashboards/{name}")
+def dashboard(name: str, q: DashboardQuery) -> dict:
+    """Run a fixed set of registered operations and return validated chart specs (same planner as chat)."""
+    from app.visualization.planner import plan_charts
+
+    if name not in DASHBOARDS:
+        raise HTTPException(404, f"Unknown dashboard {name}")
+    if q.dataset_mode != "original" and not get_settings().enable_synthetic_demo:
+        raise HTTPException(403, "Synthetic/combined dataset modes are disabled")
+    db = get_db()
+    window = resolve_window(db, q.dataset_mode, q.window)
+    scope = Scope(dataset_mode=q.dataset_mode, window=window, topics=q.topics)
+    results = {op: run_operation(db, op, scope, params).model_dump() for op, params in DASHBOARDS[name]}
+    charts, graphs = plan_charts(results, [], f"dash-{name}")
+    return {"name": name, "scope": scope.model_dump(), "results": results, "charts": [c.model_dump() for c in charts],
+            "graphs": [g.model_dump() for g in graphs]}
