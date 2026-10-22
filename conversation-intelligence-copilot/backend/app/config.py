@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     # --- Gemini -----------------------------------------------------------
     gemini_api_key: str | None = Field(default=None, repr=False)
     gemini_model: str = "gemini-2.5-flash"
+    # Route calls through Vertex AI (express mode, API key) instead of the Gemini Developer API.
+    # Needed for Google Cloud keys (e.g. "AQ." keys) whose project has the Vertex AI API enabled.
+    gemini_use_vertex: bool = False
     gemini_max_output_tokens: int = 2048
     gemini_temperature: float = 0.1
     gemini_requests_per_minute: int = 10
@@ -46,6 +49,11 @@ class Settings(BaseSettings):
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     chunk_turns: int = 4
     chunk_overlap: int = 2
+    # hybrid = Reciprocal Rank Fusion of the dense (MiniLM) and LSA rankings; dense / lsa use one index only.
+    retrieval_mode: Literal["hybrid", "dense", "lsa"] = "hybrid"
+    rrf_k: int = 60
+    # LSA's vote in hybrid fusion relative to MiniLM (1.0 = equal). See EVALUATION.md for how it was chosen.
+    hybrid_lsa_weight: float = 0.15
 
     # --- Paths ---------------------------------------------------------------
     raw_dataset_path: Path = PROJECT_ROOT / "data" / "raw" / "cs_conversations.csv.zip"

@@ -178,16 +178,13 @@ PARAPHRASES = {
 PRODUCTS = ["Wallet", "Order", "Insurance", "Broadband", "Flight"]
 
 
-def eval_retrieval() -> dict:
-    db = get_db()
-    conv = db.frame("SELECT conversation_id, topic, product FROM conversations WHERE dataset_source='original'").set_index("conversation_id")
-    ret = get_retriever()
+def _eval_mode(ret, conv, mode: str) -> dict:
     rows, lat = [], []
     for topic, tmpl in PARAPHRASES.items():
         for prod in (PRODUCTS if "{p}" in tmpl else [None]):
             q = tmpl.format(p=prod or "")
             t0 = time.perf_counter()
-            res = ret.search(q, Scope(), k=5)["results"]
+            res = ret.search(q, Scope(), k=5, mode=mode)["results"]
             lat.append((time.perf_counter() - t0) * 1000)
             ids = [r["conversation_id"] for r in res]
             topic_hits = [conv.loc[i, "topic"] == topic for i in ids]
@@ -196,13 +193,28 @@ def eval_retrieval() -> dict:
             rows.append({"query": q, "topic": topic, "product": prod, "topic_p@5": sum(topic_hits) / 5, "exact_p@5": sum(exact) / 5,
                          "hit@5": any(exact), "rr": 0 if first is None else 1 / (first + 1), "duplicates": len(ids) - len(set(ids))})
     df = pd.DataFrame(rows)
-    base_topic = conv["topic"].value_counts(normalize=True).mean()
     return {
-        "queries": len(df), "embedding_backend": ret.manifest["embedding_backend"],
+        "mode": mode, "queries": len(df),
         "topic_precision@5": round(df["topic_p@5"].mean(), 4), "exact_precision@5": round(df["exact_p@5"].mean(), 4),
         "hit_rate@5": round(df["hit@5"].mean(), 4), "mrr@5": round(df["rr"].mean(), 4), "duplicate_rate": round(df["duplicates"].sum() / (5 * len(df)), 4),
-        "random_baseline_topic_precision": round(float(base_topic), 4), "latency_p50_ms": pctl(lat, 0.5), "latency_p95_ms": pctl(lat, 0.95),
+        "latency_p50_ms": pctl(lat, 0.5), "latency_p95_ms": pctl(lat, 0.95),
         "by_topic": df.groupby("topic")[["topic_p@5", "exact_p@5"]].mean().round(3).reset_index().to_dict("records"),
+    }
+
+
+def eval_retrieval() -> dict:
+    """Score every available method (LSA, dense MiniLM, hybrid RRF) on the same queries; the headline is the app's default mode."""
+    db = get_db()
+    conv = db.frame("SELECT conversation_id, topic, product FROM conversations WHERE dataset_source='original'").set_index("conversation_id")
+    ret = get_retriever()
+    modes = ["lsa"] + (["dense", "hybrid"] if "dense" in ret.methods else [])
+    by_mode = {m: _eval_mode(ret, conv, m) for m in modes}
+    default = ret.default_mode if ret.default_mode in by_mode else "lsa"
+    base_topic = conv["topic"].value_counts(normalize=True).mean()
+    return {
+        **by_mode[default], "default_mode": default, "embedding_backend": ret.manifest["embedding_backend"],
+        "backends": {m: b["name"] for m, b in ret.manifest["backends"].items()}, "fusion": ret.manifest.get("fusion"),
+        "by_mode": by_mode, "random_baseline_topic_precision": round(float(base_topic), 4),
         "note": "Queries are paraphrases that avoid the template wording; relevance = same issue topic (and product where named).",
     }
 
@@ -324,7 +336,11 @@ def render_markdown(r: dict) -> str:
     lines += [f"| {c['label']} | {c['precision']} | {c['recall']} | {c['f1']} | {c['support']} |" for c in lf["per_class"]]
     lines += ["", f"Human review: `{lb['human_review'].get('status')}` — {lb['human_review'].get('note', '')}", "",
               f"Gemini labels: `{lb['gemini_labels']}`", ""]
-    lines += ["## 4. Retrieval", "", f"{rt['queries']} paraphrased queries, backend `{rt['embedding_backend']}`.", "",
+    lines += ["## 4. Retrieval", "", f"{rt['queries']} paraphrased queries. Default mode `{rt['default_mode']}` ({rt['embedding_backend']}; {rt.get('fusion') or 'single index'}).", "",
+              "| Method | topic P@5 | exact P@5 | hit-rate@5 | MRR@5 | p50 ms |", "|---|---|---|---|---|---|"]
+    lines += [f"| {m['mode']} | {m['topic_precision@5']:.1%} | {m['exact_precision@5']:.1%} | {m['hit_rate@5']:.1%} | {m['mrr@5']:.3f} | {m['latency_p50_ms']} |"
+              for m in rt["by_mode"].values()]
+    lines += ["", "Default mode details:", "",
               f"* Topic precision@5 **{rt['topic_precision@5']:.1%}** (random baseline {rt['random_baseline_topic_precision']:.1%})",
               f"* Exact (topic+product) precision@5 {rt['exact_precision@5']:.1%}; hit-rate@5 {rt['hit_rate@5']:.1%}; MRR@5 {rt['mrr@5']:.3f}",
               f"* Duplicate rate {rt['duplicate_rate']:.1%}; latency p50 {rt['latency_p50_ms']} ms, p95 {rt['latency_p95_ms']} ms", "",

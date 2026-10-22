@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/retrieval", tags=["retrieval"])
 def search(q: RetrievalQuery) -> dict:
     try:
         scope = Scope(dataset_mode=q.dataset_mode, window=resolve_window(get_db(), q.dataset_mode, q.window), topics=q.topics, sentiments=q.sentiments)
-        return get_retriever().search(q.query, scope, k=q.k)
+        return get_retriever().search(q.query, scope, k=q.k, mode=q.mode)
     except RetrievalUnavailable as e:
         raise HTTPException(503, str(e)) from e
 

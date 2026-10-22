@@ -92,3 +92,13 @@ def test_prompt_registry_loads_active_versions_and_validates_vars():
     assert p.status == "active" and p.output_schema == "IntentOutput"
     with pytest.raises(KeyError):
         p.render(question="x")
+
+
+def test_reciprocal_rank_fusion_rewards_agreement():
+    from app.retrieval.index import reciprocal_rank_fusion
+
+    fused = reciprocal_rank_fusion({"dense": ["A", "B", "C"], "lsa": ["B", "D", "A"]}, k=60)
+    order = [cid for cid, _ in fused]
+    assert order[:2] == ["B", "A"]  # in both lists, near the top
+    assert set(order) == {"A", "B", "C", "D"}
+    assert fused[0][1] == pytest.approx(1 / 62 + 1 / 61)

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T17:18:54+00:00",
+  "generated_at": "2026-10-22T17:45:03+00:00",
   "dataset": "cs_conversations.csv (Syncora sample, 3,000 conversations)",
   "model": {
     "provider": "gemini",
@@ -303,16 +303,15 @@
     }
   },
   "retrieval": {
+    "mode": "hybrid",
     "queries": 36,
-    "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2",
-    "topic_precision@5": 0.6167,
-    "exact_precision@5": 0.5833,
-    "hit_rate@5": 0.8056,
-    "mrr@5": 0.7176,
+    "topic_precision@5": 0.6222,
+    "exact_precision@5": 0.5778,
+    "hit_rate@5": 0.8611,
+    "mrr@5": 0.6977,
     "duplicate_rate": 0.0,
-    "random_baseline_topic_precision": 0.125,
-    "latency_p50_ms": 35.4,
-    "latency_p95_ms": 61.8,
+    "latency_p50_ms": 46.4,
+    "latency_p95_ms": 68.2,
     "by_topic": [
       {
         "topic": "account_locked",
@@ -321,13 +320,13 @@
       },
       {
         "topic": "app_crash",
-        "topic_p@5": 0.84,
-        "exact_p@5": 0.84
+        "topic_p@5": 0.8,
+        "exact_p@5": 0.8
       },
       {
         "topic": "coupon_not_applied",
-        "topic_p@5": 0.6,
-        "exact_p@5": 0.6
+        "topic_p@5": 0.72,
+        "exact_p@5": 0.68
       },
       {
         "topic": "duplicate_charge",
@@ -336,13 +335,13 @@
       },
       {
         "topic": "general_help",
-        "topic_p@5": 0.24,
-        "exact_p@5": 0.24
+        "topic_p@5": 0.4,
+        "exact_p@5": 0.36
       },
       {
         "topic": "not_received",
-        "topic_p@5": 0.6,
-        "exact_p@5": 0.6
+        "topic_p@5": 0.44,
+        "exact_p@5": 0.44
       },
       {
         "topic": "payment_not_reflected",
@@ -351,10 +350,179 @@
       },
       {
         "topic": "service_malfunction",
-        "topic_p@5": 0.96,
-        "exact_p@5": 0.96
+        "topic_p@5": 0.92,
+        "exact_p@5": 0.92
       }
     ],
+    "default_mode": "hybrid",
+    "embedding_backend": "lsa-tfidf-svd192 + sentence-transformers/all-MiniLM-L6-v2",
+    "backends": {
+      "lsa": "lsa-tfidf-svd192",
+      "dense": "sentence-transformers/all-MiniLM-L6-v2"
+    },
+    "fusion": "reciprocal rank fusion (k=60)",
+    "by_mode": {
+      "lsa": {
+        "mode": "lsa",
+        "queries": 36,
+        "topic_precision@5": 0.3222,
+        "exact_precision@5": 0.3056,
+        "hit_rate@5": 0.4722,
+        "mrr@5": 0.3528,
+        "duplicate_rate": 0.0,
+        "latency_p50_ms": 16.8,
+        "latency_p95_ms": 29.2,
+        "by_topic": [
+          {
+            "topic": "account_locked",
+            "topic_p@5": 0.0,
+            "exact_p@5": 0.0
+          },
+          {
+            "topic": "app_crash",
+            "topic_p@5": 0.04,
+            "exact_p@5": 0.04
+          },
+          {
+            "topic": "coupon_not_applied",
+            "topic_p@5": 0.12,
+            "exact_p@5": 0.12
+          },
+          {
+            "topic": "duplicate_charge",
+            "topic_p@5": 0.76,
+            "exact_p@5": 0.68
+          },
+          {
+            "topic": "general_help",
+            "topic_p@5": 0.32,
+            "exact_p@5": 0.28
+          },
+          {
+            "topic": "not_received",
+            "topic_p@5": 0.0,
+            "exact_p@5": 0.0
+          },
+          {
+            "topic": "payment_not_reflected",
+            "topic_p@5": 0.2,
+            "exact_p@5": 0.2
+          },
+          {
+            "topic": "service_malfunction",
+            "topic_p@5": 0.88,
+            "exact_p@5": 0.88
+          }
+        ]
+      },
+      "dense": {
+        "mode": "dense",
+        "queries": 36,
+        "topic_precision@5": 0.6222,
+        "exact_precision@5": 0.5611,
+        "hit_rate@5": 0.8333,
+        "mrr@5": 0.7106,
+        "duplicate_rate": 0.0,
+        "latency_p50_ms": 27.7,
+        "latency_p95_ms": 38.2,
+        "by_topic": [
+          {
+            "topic": "account_locked",
+            "topic_p@5": 1.0,
+            "exact_p@5": 1.0
+          },
+          {
+            "topic": "app_crash",
+            "topic_p@5": 0.84,
+            "exact_p@5": 0.84
+          },
+          {
+            "topic": "coupon_not_applied",
+            "topic_p@5": 0.6,
+            "exact_p@5": 0.56
+          },
+          {
+            "topic": "duplicate_charge",
+            "topic_p@5": 1.0,
+            "exact_p@5": 0.64
+          },
+          {
+            "topic": "general_help",
+            "topic_p@5": 0.32,
+            "exact_p@5": 0.28
+          },
+          {
+            "topic": "not_received",
+            "topic_p@5": 0.64,
+            "exact_p@5": 0.64
+          },
+          {
+            "topic": "payment_not_reflected",
+            "topic_p@5": 0.0,
+            "exact_p@5": 0.0
+          },
+          {
+            "topic": "service_malfunction",
+            "topic_p@5": 0.88,
+            "exact_p@5": 0.88
+          }
+        ]
+      },
+      "hybrid": {
+        "mode": "hybrid",
+        "queries": 36,
+        "topic_precision@5": 0.6222,
+        "exact_precision@5": 0.5778,
+        "hit_rate@5": 0.8611,
+        "mrr@5": 0.6977,
+        "duplicate_rate": 0.0,
+        "latency_p50_ms": 46.4,
+        "latency_p95_ms": 68.2,
+        "by_topic": [
+          {
+            "topic": "account_locked",
+            "topic_p@5": 1.0,
+            "exact_p@5": 1.0
+          },
+          {
+            "topic": "app_crash",
+            "topic_p@5": 0.8,
+            "exact_p@5": 0.8
+          },
+          {
+            "topic": "coupon_not_applied",
+            "topic_p@5": 0.72,
+            "exact_p@5": 0.68
+          },
+          {
+            "topic": "duplicate_charge",
+            "topic_p@5": 1.0,
+            "exact_p@5": 0.76
+          },
+          {
+            "topic": "general_help",
+            "topic_p@5": 0.4,
+            "exact_p@5": 0.36
+          },
+          {
+            "topic": "not_received",
+            "topic_p@5": 0.44,
+            "exact_p@5": 0.44
+          },
+          {
+            "topic": "payment_not_reflected",
+            "topic_p@5": 0.0,
+            "exact_p@5": 0.0
+          },
+          {
+            "topic": "service_malfunction",
+            "topic_p@5": 0.92,
+            "exact_p@5": 0.92
+          }
+        ]
+      }
+    },
+    "random_baseline_topic_precision": 0.125,
     "note": "Queries are paraphrases that avoid the template wording; relevance = same issue topic (and product where named)."
   },
   "end_to_end": {
@@ -379,8 +547,8 @@
     "follow_up_routing_accuracy": 1.0,
     "follow_up_errors": [],
     "evidence_items_total": 189,
-    "latency_p50_ms": 167.0,
-    "latency_p95_ms": 775.5,
+    "latency_p50_ms": 150.5,
+    "latency_p95_ms": 713.7,
     "llm_mode": {
       "deterministic": 51
     },
@@ -444,9 +612,9 @@
     },
     {
       "metric": "Latency p50 / p95",
-      "display": "167 / 776 ms",
+      "display": "150 / 714 ms",
       "note": "deterministic mode, local"
     }
   ],
-  "duration_seconds": 24.0
+  "duration_seconds": 23.0
 }

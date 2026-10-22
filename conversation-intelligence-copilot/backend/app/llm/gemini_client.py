@@ -86,7 +86,7 @@ class GeminiClient:
             from google import genai
             from google.genai import types
 
-            sdk_client = genai.Client(api_key=settings.gemini_api_key,
+            sdk_client = genai.Client(api_key=settings.gemini_api_key, vertexai=settings.gemini_use_vertex or None,
                                       http_options=types.HttpOptions(timeout=int(settings.gemini_timeout_seconds * 1000)))
         self._client = sdk_client
         self._sleep = sleep
@@ -102,7 +102,7 @@ class GeminiClient:
     def status(self) -> dict:
         state = self.breaker.state
         return {
-            "provider": "gemini", "model": self.model, "available": state != "open",
+            "provider": "vertex-ai" if self.settings.gemini_use_vertex else "gemini", "model": self.model, "available": state != "open",
             "mode": "llm" if state != "open" else "deterministic", "circuit": state,
             "reason": self.breaker.last_error, "last_success": self.last_success, "rpm_limit": self.settings.gemini_requests_per_minute,
         }

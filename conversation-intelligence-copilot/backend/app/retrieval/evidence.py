@@ -14,6 +14,14 @@ import pandas as pd
 
 from app.analytics.db import DATASET_SOURCES, AnalyticsDB
 
+def _match_reason(r: dict) -> str:
+    ms = r.get("method_scores") or {}
+    if r.get("retrieval_method") == "hybrid":
+        parts = [f"{'MiniLM' if m == 'dense' else 'LSA'} #{v['rank']}" for m, v in ms.items()]
+        return "Hybrid match (" + ", ".join(parts) + f"; fused by RRF; similarity {r['similarity']:.2f})"
+    return f"Semantic match (cosine similarity {r['similarity']:.2f})"
+
+
 MSG_ID = re.compile(r"^(C\d{7})-T(\d{2})$")
 MAX_ITEMS = 12
 
@@ -80,7 +88,8 @@ def assemble(db: AnalyticsDB, refs: list[tuple[str, str]], retrieval: list[dict]
                                                         for x in g.itertuples()],
             "topic": conv.loc[cid, "topic_label"], "product": conv.loc[cid, "product"], "sentiment": conv.loc[cid, "sentiment"],
             "agent_id": conv.loc[cid, "agent_id"], "date": str(conv.loc[cid, "date"])[:10], "similarity": r["similarity"],
-            "reason": f"Semantic match (cosine similarity {r['similarity']:.2f})",
+            "reason": _match_reason(r),
+            "retrieval_method": r.get("retrieval_method"), "method_scores": r.get("method_scores", {}),
         })
     for cid, focus in conv_focus.items():
         if any(e["conversation_id"] == cid for e in evidence):

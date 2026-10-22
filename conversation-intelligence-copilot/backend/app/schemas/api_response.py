@@ -57,6 +57,7 @@ class AnalyticsQuery(BaseModel):
 
 class RetrievalQuery(BaseModel):
     query: str = Field(min_length=2, max_length=500)
+    mode: Literal["hybrid", "dense", "lsa"] | None = None
     k: int = Field(5, ge=1, le=20)
     dataset_mode: Literal["original", "synthetic", "combined"] = "original"
     topics: list[str] = []

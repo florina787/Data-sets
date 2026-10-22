@@ -105,7 +105,7 @@ def test_corrupt_index_degrades_gracefully(env, tmp_path, monkeypatch):
     from app.retrieval import index
 
     bad = tmp_path / "broken.faiss"
-    for suffix in (".faiss", ".meta.parquet", ".embedder", ".manifest.json"):
+    for suffix in (".faiss", ".lsa.faiss", ".lsa.embedder", ".meta.parquet", ".embedder", ".manifest.json"):
         bad.with_suffix(suffix).write_text("garbage")
     monkeypatch.setenv("FAISS_INDEX_PATH", str(bad))
     get_settings.cache_clear()
