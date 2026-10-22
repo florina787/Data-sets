@@ -11,6 +11,7 @@ COPY backend backend
 COPY agents agents
 COPY analytics analytics
 COPY approvals approvals
+COPY conversation conversation
 COPY data data
 COPY governance governance
 COPY harness harness

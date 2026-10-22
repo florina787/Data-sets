@@ -29,4 +29,4 @@ down:
 opa-export:       ## regenerate OPA data from the YAML policy bundle (+ Helm copy)
 	$(PY) -m governance.opa export && cp policies/opa/data.json infrastructure/helm/flo/files/opa-data.json
 lint:
-	$(PY) -m ruff check backend agents harness governance privacy analytics integrations retrieval scenarios approvals observability data
+	$(PY) -m ruff check backend agents harness governance privacy analytics integrations retrieval scenarios approvals observability data conversation

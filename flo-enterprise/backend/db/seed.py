@@ -57,10 +57,19 @@ def load(s: Session) -> dict:
 
 
 def reset(s: Session) -> None:
-    for model in [m.DocChunk, m.Document, m.Outbox, m.Job, m.VaultEntry, m.Approval, m.AuditEvent, m.SeedManifest]:
+    for model in [m.ConversationMessage, m.Conversation, m.DocChunk, m.Document, m.Outbox, m.Job, m.VaultEntry, m.Approval, m.AuditEvent, m.SeedManifest]:
         s.execute(delete(model))
     for _, model in reversed(TABLES):
         s.execute(delete(model))
+
+
+def reconcile_users(s: Session) -> int:
+    """Add synthetic identities introduced after a database was seeded (e.g. the prospect persona); never modifies existing rows."""
+    have = set(s.scalars(select(m.User.id)))
+    new = [u for u in generate()["users"] if u["id"] not in have]
+    if new:
+        s.execute(insert(m.User), new)
+    return len(new)
 
 
 def seed(force_reset: bool = False, with_documents: bool = True) -> dict:
@@ -71,7 +80,8 @@ def seed(force_reset: bool = False, with_documents: bool = True) -> dict:
             reset(s)
         if is_seeded(s):
             man = s.get(m.SeedManifest, "dataset").value
-            log.info("dataset already seeded")
+            added = reconcile_users(s)
+            log.info("dataset already seeded%s", f"; added {added} new synthetic user(s)" if added else "")
         else:
             man = load(s)
     if with_documents:

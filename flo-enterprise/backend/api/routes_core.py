@@ -17,6 +17,7 @@ from data.products import catalog
 from governance import audit
 from governance.audit import audit_session, verify_chain
 from governance.policy import Resource
+from harness.models import model_status
 from observability.telemetry import get_telemetry
 from privacy.detect import detect, mask_value, presidio_available
 
@@ -96,6 +97,7 @@ def gov_status(ctx: Ctx = Depends(current)):
     eng = R.engine()
     return {"policy_version": eng.version, "pdp": "opa" if s.opa_url else "embedded (OPA-parity tested)", "deny_by_default": True,
             "observability": get_telemetry().mode, "model_provider": s.model_provider if s.model_provider != "mock" else "mock-deterministic (in-process)",
+            "model": model_status(),
             "identity_provider": "mock-idp (synthetic users)", "integrations": "mock-synthetic adapters (not connected to any production system)",
             "audit_chain": verify_chain() if "audit:read" in eng.permissions(ctx.principal) else "requires audit:read",
             "presidio": presidio_available(), "trading": "prohibited", "data": "synthetic"}

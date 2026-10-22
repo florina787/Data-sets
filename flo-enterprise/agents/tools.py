@@ -9,7 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from analytics import data_quality, decisions, service as fin, wealth
+from analytics import data_quality, decisions, firm_model, practice, service as fin, wealth
 from analytics.money import from_cents
 from governance import resources
 from governance.policy import Resource
@@ -47,6 +47,24 @@ class PortfolioArg(BaseModel):
 class ProductArg(BaseModel):
     model_config = {"extra": "forbid"}
     product_id: str = Field(pattern=r"^P-\d{3}$")
+
+
+class TrendArgs(BaseModel):
+    model_config = {"extra": "forbid"}
+    months: int = Field(24, ge=1, le=24)
+    group_by: Literal["asset_class", "vehicle", "region", "strategy"] = "asset_class"
+
+
+class FirmArgs(BaseModel):
+    """User-supplied figures about the user's own advisory business (CAD; fee in basis points)."""
+    model_config = {"extra": "forbid"}
+    aum: float | None = Field(None, ge=0, le=1e13)
+    fee_bps: float | None = Field(None, ge=0, le=500)
+    revenue: float | None = Field(None, ge=0, le=1e12)
+    expenses: float | None = Field(None, ge=0, le=1e12)
+    advisors: int | None = Field(None, ge=1, le=100000)
+    clients: int | None = Field(None, ge=1, le=10000000)
+    net_flows: float | None = Field(None, ge=-1e12, le=1e12)
 
 
 class ScenarioArgs(BaseModel):
@@ -122,6 +140,12 @@ reg("finance.revenue_expenses", "Revenue and expenses by month", "finance:read",
 reg("finance.net_flows", "Net flows by vehicle", "finance:read", Window, lambda c, a: fin.net_flows(c.adapters, a.months), _firm("finance"))
 reg("finance.product_profitability", "Product contribution", "finance:read", Window, lambda c, a: fin.product_profitability(c.adapters, a.months), _firm("finance"))
 reg("finance.actual_vs_budget", "Actual vs budget", "finance:read", Window, lambda c, a: fin.actual_vs_budget(c.adapters, a.months), _firm("finance"))
+reg("finance.aum_trend", "Month-end AUM grouped by a product dimension", "finance:read", TrendArgs,
+    lambda c, a: fin.aum_trend(c.adapters, a.months, group_by=a.group_by), _firm("finance"))
+reg("finance.net_flows_by", "Monthly gross and net flows grouped by a product dimension", "finance:read", TrendArgs,
+    lambda c, a: fin.net_flows(c.adapters, a.months, group_by=a.group_by), _firm("finance"))
+reg("finance.retention", "Enterprise client retention trend and by segment", "exec:read", NoArgs, lambda c, a: practice.retention_overview(c.adapters),
+    _firm("finance"), upstream="crm")
 reg("strategy.decisions", "Decision memory summary", "decisions:read", NoArgs,
     lambda c, a: _j(decisions.summary(c.adapters, c.adapters.market.months()[-1])), _firm("strategy"))
 reg("strategy.decision_list", "All decisions with outcomes", "decisions:read", NoArgs,
@@ -136,6 +160,8 @@ reg("investment.portfolio_detail", "Performance, risk, allocation and holdings f
     lambda c, a: fin.portfolio_detail(c.adapters, a.portfolio_id), _port_res)
 reg("investment.fund_list", "Fund range metrics", "product_research:read", NoArgs, lambda c, a: fin.fund_list(c.adapters), _firm("product", "public"))
 reg("investment.fund_detail", "One fund's history and holdings", "product_research:read", ProductArg, lambda c, a: fin.fund_detail(c.adapters, a.product_id), _firm("product", "public"))
+reg("investment.geographic_exposure", "Look-through geographic exposure across products and portfolios", "investment:read_aggregate", NoArgs,
+    lambda c, a: fin.geographic_exposure(c.adapters), _firm("investment"))
 reg("investment.correlation", "Sector correlation matrix", "risk:read", NoArgs, lambda c, a: fin.sector_correlation(c.adapters), _firm("risk"))
 reg("risk.heatmap", "Enterprise risk register heatmap", "risk:read_aggregate", NoArgs, lambda c, a: fin.risk_heatmap(c.adapters), _firm("risk"))
 reg("market.intelligence", "Benchmark and sector returns from the market data provider", "market:read", NoArgs,
@@ -210,6 +236,28 @@ reg("client.goals", "Goal progress", "client:read", ClientArg, _goals, _client_r
 reg("client.interactions", "Recent service interactions", "client:read", ClientArg, _interactions, _client_res, upstream="crm", cls="confidential")
 reg("client.suitability", "Rule-based suitability screen", "client:read", ClientArg, _suitability, _client_res, cls="confidential")
 reg("client.retirement", "Retirement projection and cash-flow forecast", "retirement:run", ClientArg, _retirement, _client_res, cls="confidential")
+
+
+def _book_health(c, a):
+    # Scoped to the requesting principal's own book; the caller cannot name another advisor.
+    return practice.book_health(c.adapters, c.principal.advisor_id, c.engine.bundle.suitability["kyc_max_age_days"])
+
+
+reg("wealth.advisor_productivity", "Per-advisor book, client and activity aggregates (no client identification)", "exec:read", NoArgs,
+    lambda c, a: practice.advisor_productivity(c.adapters), _firm("wealth"), upstream="crm")
+reg("wealth.book_health", "The requesting advisor's own book: retention, segments and review signals", "wealth:read", NoArgs, _book_health,
+    _firm("wealth"), upstream="crm", cls="confidential")
+
+
+def _firm_model(c, a):
+    from decimal import Decimal
+    vals = a.model_dump()
+    prof = firm_model.FirmProfile(**{k: (Decimal(str(v)) if isinstance(v, float) else v) for k, v in vals.items() if v is not None})
+    return firm_model.assess(prof)
+
+
+reg("advisory.firm_model", "Preliminary firm assessment from figures the user supplied about their own business", "ask:use", FirmArgs, _firm_model,
+    upstream="analytics")
 
 
 def _draft(c, a):

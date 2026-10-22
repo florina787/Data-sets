@@ -113,8 +113,11 @@ class Harness:
             if len(raw) > get_settings().max_input_chars * 4:
                 raise AdmissionRejected("input exceeds size limit", code="INPUT-TOO-LARGE")
             key = hashlib.sha256(f"{ctx.principal.tenant_id}|{ctx.principal.user_id}|{','.join(sorted(ctx.principal.roles))}|"
-                                 f"{spec.name}@{spec.version}|{ctx.language}|{raw}|{ctx.adapters.store.version}".encode()).hexdigest()
-            cached = self.cache.get(key) if not spec.approval_actions else None
+                                 f"{spec.name}@{spec.version}|{ctx.language}|{raw}|{ctx.adapters.store.version}|{ctx.engine.version}".encode()).hexdigest()
+            # Record-scoped (confidential/restricted) outputs are never served from cache: resource-level authorization such as
+            # client assignment can change at any time and must be re-evaluated by the gateway on every run.
+            cacheable = not spec.approval_actions and spec.data_classification not in ("confidential", "restricted")
+            cached = self.cache.get(key) if cacheable else None
             if cached is not None:
                 out, cache_hit, status = spec.output_model.model_validate(cached["out"]), True, "succeeded"
                 ctx.citations.extend(cached.get("citations", []))
@@ -140,7 +143,7 @@ class Harness:
                 if bad:
                     raise OutputValidationFailed(f"ungrounded numbers {bad[:5]}")
             status = "succeeded"
-            if not spec.approval_actions:
+            if cacheable:
                 self.cache.put(key, {"out": json.loads(out.model_dump_json()),
                                      "citations": [c for c in ctx.citations if c.get("agent") == spec.name]})
             return out

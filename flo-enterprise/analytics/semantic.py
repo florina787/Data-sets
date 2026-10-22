@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-SEMANTIC_LAYER_VERSION = "2026.10.1"
+SEMANTIC_LAYER_VERSION = "2026.10.2"
 
 
 @dataclass(frozen=True)
@@ -72,6 +72,15 @@ METRICS: dict[str, Metric] = {m.id: m for m in [
     Metric("budget.variance", "Actual vs budget", "Actual minus budget per ledger line for the period.", "sum(actual) - sum(budget)", "CAD", "period", ("erp",), "FP&A", "finance"),
     Metric("strategy.initiative_progress", "Initiative progress", "Reported % complete vs time-elapsed planned % complete.", "progress_pct - planned_progress_pct", "pp", "point-in-time",
            ("strategy",), "Strategy Office", "strategy"),
+    Metric("advisor.book_aum", "Advisor book AUM", "Market value of fund positions plus managed-portfolio value of an advisor's active clients at the latest month-end.",
+           "sum(position MV) + sum(portfolio MV_close) over active clients", "CAD", "point-in-time", ("crm", "portfolio_management"), "Private Wealth", "wealth"),
+    Metric("advisor.active_clients", "Active clients per advisor", "Clients with status active assigned to the advisor.", "count(clients where status = active)", "count",
+           "point-in-time", ("crm",), "Private Wealth", "wealth"),
+    Metric("advisor.interactions", "Client interactions", "Logged client interactions (meetings, calls, e-mails, service requests) in the trailing 12 months.",
+           "count(service_interactions in window)", "count", "period", ("crm",), "Private Wealth", "wealth"),
+    Metric("clients.at_risk_signals", "Client attrition signals", "Count of observable warning signals per active client: negative-sentiment interaction in the last 6 months, "
+           "an interaction flagged for follow-up in the last 90 days, KYC older than the approved maximum age. Signals are prompts for review, not predictions.",
+           "sum(signal_i)", "count", "point-in-time", ("crm",), "Private Wealth", "wealth"),
     Metric("risk.enterprise_score", "Enterprise risk score", "Likelihood x impact (1-25) from the risk register.", "likelihood * impact", "score", "point-in-time",
            ("risk_register",), "CRO", "risk"),
 ]}

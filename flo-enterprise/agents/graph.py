@@ -77,7 +77,8 @@ ROLE_DEFAULT = {"executive": ("executive", ["aum_agent"]), "finance": ("executiv
                 "cio": ("investment", ["portfolio_agent"]), "investment_analyst": ("investment", ["market_intelligence_agent"]),
                 "wealth_advisor": ("wealth", ["product_research_agent"]), "external_advisor": ("wealth", ["product_research_agent"]),
                 "compliance_officer": ("risk_compliance", ["compliance_research_agent"]), "privacy_officer": ("risk_compliance", ["compliance_research_agent"]),
-                "ai_admin": ("ai_operations", ["operational_intelligence_agent"])}
+                "ai_admin": ("ai_operations", ["operational_intelligence_agent"]), "risk_officer": ("risk_compliance", ["risk_agent"]),
+                "prospect": ("wealth", ["product_research_agent"])}
 SUPERVISORS = ["executive", "investment", "wealth", "risk_compliance", "ai_operations"]
 
 
@@ -117,8 +118,12 @@ def enterprise_supervisor(state: AskState) -> dict:
     ctx = _ctx(state)
     q = state["question"]
     chart = (state.get("context") or {}).get("chart_id")
+    hint = (state.get("context") or {}).get("route_hint") or {}
     domain, agents = None, []
-    if chart in CHART_AGENTS:
+    if hint.get("domain") in SUPERVISORS and hint.get("agents") and all(a in REGISTRY.agents for a in hint["agents"]):
+        # conversational intent planner chose the agents; the supervisor still filters by role and input below
+        domain, agents = hint["domain"], list(hint["agents"])
+    elif chart in CHART_AGENTS:
         agents = list(CHART_AGENTS[chart])
         domain = REGISTRY.get(agents[0]).spec.domain
     else:
@@ -134,7 +139,7 @@ def enterprise_supervisor(state: AskState) -> dict:
                 domain, agents = ROLE_DEFAULT[r]
                 break
     domain = {"aiops": "ai_operations", "risk": "risk_compliance"}.get(domain or "executive", domain or "executive")
-    return {"route": domain, "candidate_agents": agents[:4]}
+    return {"route": domain, "candidate_agents": agents[:5]}
 
 
 def _make_supervisor(name: str):
@@ -144,7 +149,9 @@ def _make_supervisor(name: str):
         cid = re.search(r"\bC-\d{5}\b", q)
         pid = re.search(r"\bPF-\d{4}\b", q)
         ctxd = state.get("context") or {}
-        months = 24 if re.search(r"24|two years|2 years", q) else 12
+        months = int(ctxd["months"]) if str(ctxd.get("months", "")).isdigit() and 1 <= int(ctxd["months"]) <= 24 else \
+            24 if re.search(r"24|two years|2 years", q) else 12
+        scen = ctxd.get("scenario") or {}
         plan, skipped = [], []
         for a in state.get("candidate_agents", []):
             spec = REGISTRY.get(a).spec
@@ -162,7 +169,12 @@ def _make_supervisor(name: str):
                     inp["draft_language"] = ctxd.get("draft_language") or state["language"]
             if spec.input_model.__name__ == "PortfolioQ":
                 inp["portfolio_id"] = (pid.group(0) if pid else None) or ctxd.get("portfolio_id")
-            if spec.input_model.__name__ == "ScenarioQ":
+            if spec.input_model.__name__ == "FirmQ":
+                prof = ctxd.get("business_profile") or {}
+                inp.update({k: prof[k] for k in ("aum", "fee_bps", "revenue", "expenses", "advisors", "clients", "net_flows") if prof.get(k) is not None})
+            if spec.input_model.__name__ == "ScenarioQ" and scen:
+                inp.update({k: scen[k] for k in ("preset", "equity_shock", "rate_shock_bps") if scen.get(k) is not None})
+            elif spec.input_model.__name__ == "ScenarioQ":
                 inp["preset"] = "severe_stress" if re.search(r"severe|crash|crisis", q, re.I) else "bear" if re.search(r"bear|shock|downturn|drop|fall|decline", q, re.I) \
                     else "bull" if re.search(r"bull|rally", q, re.I) else "base"
                 m = re.search(r"(-?\d{1,2})\s?%", q)
@@ -249,7 +261,8 @@ def build_ask_graph():
 _ask_graph = None
 
 
-def ask(ctx: RunContext, question: str, context: dict | None = None, language: str | None = None) -> dict:
+def ask(ctx: RunContext, question: str, context: dict | None = None, language: str | None = None, on_event=None) -> dict:
+    """Run the Ask graph. `on_event(node, update)` receives each node's update as it completes (real progress, used for streaming)."""
     global _ask_graph
     if _ask_graph is None:
         _ask_graph = build_ask_graph()
@@ -257,15 +270,20 @@ def ask(ctx: RunContext, question: str, context: dict | None = None, language: s
     harness.admit(ctx)
     with _runs_lock:
         RUNS[ctx.workflow_id] = ctx
+    ans = None
     try:
-        out = _ask_graph.invoke({"workflow_id": ctx.workflow_id, "question": question, "language": language or "", "context": context or {},
-                                 "results": [], "errors": []},
-                                config={"configurable": {"thread_id": ctx.workflow_id}, "recursion_limit": 25})
+        for chunk in _ask_graph.stream({"workflow_id": ctx.workflow_id, "question": question, "language": language or "", "context": context or {},
+                                        "results": [], "errors": []},
+                                       config={"configurable": {"thread_id": ctx.workflow_id}, "recursion_limit": 25}, stream_mode="updates"):
+            for node, update in chunk.items():
+                if node == "synthesize":
+                    ans = update["answer"]
+                if on_event is not None:
+                    on_event(node, update or {})
     finally:
         with _runs_lock:
             RUNS.pop(ctx.workflow_id, None)
         harness.release(ctx)
-    ans = out["answer"]
     ans.update(workflow_id=ctx.workflow_id, trace_ids=ctx.trace_ids, tool_calls=ctx.tool_log, policy_decisions=ctx.policy_log,
                model=ctx.model.name, model_mode="mock-deterministic (no external LLM calls)" if ctx.model.name.startswith("mock") else ctx.model.name)
     audit.record(tenant_id=ctx.principal.tenant_id, actor=ctx.principal.user_id, action="ask.completed", resource_type="workflow",

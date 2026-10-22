@@ -394,6 +394,8 @@ class _Gen:
             ("u-compliance", "t-flo", "Taylor Gagnon (synthetic)", "Chief Compliance Officer", ["compliance_officer"], None, "restricted", "compliance"),
             ("u-aiadmin", "t-flo", "Sam Iyer (synthetic)", "AI Platform Administrator", ["ai_admin"], None, "internal", "technology"),
             ("u-privacy", "t-flo", "Jamie Roy (synthetic)", "Privacy Officer", ["privacy_officer"], None, "restricted", "compliance"),
+            ("u-risk", "t-flo", "Alex Bouchard (synthetic)", "Chief Risk Officer", ["risk_officer"], None, "confidential", "risk"),
+            ("u-prospect", "t-flo", "Dana Okafor (synthetic)", "Business Owner (prospective client)", ["prospect"], None, "public", "prospect"),
             ("u-nw-advisor", "t-nw", f"{advisors[45]['name']} (synthetic)", "Wealth Advisor (Northwind)", ["wealth_advisor"], "A-046", "confidential", "private_wealth"),
         ]
         self.out["users"] = [dict(id=u[0], tenant_id=u[1], display_name=u[2], email=f"{u[0]}@flo-synthetic.example",

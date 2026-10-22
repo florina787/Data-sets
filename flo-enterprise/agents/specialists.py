@@ -1,4 +1,4 @@
-"""The 20 FLO specialist agents. Each registers a full contract (AgentSpec) with the harness registry.
+"""The FLO specialist agents. Each registers a full contract (AgentSpec) with the harness registry.
 
 Agents are deterministic orchestrations of governed tools; narratives are rendered by the model adapter from tool facts
 and must pass numeric grounding. Optional tools that the principal may not use are skipped with a visible warning
@@ -19,8 +19,9 @@ INV = frozenset({"cio", "investment_analyst"})
 ADV = frozenset({"wealth_advisor"})
 COMP = frozenset({"compliance_officer"})
 OPS = frozenset({"ai_admin"})
+RISK = frozenset({"risk_officer"})
 ALL = frozenset({"executive", "finance", "cio", "investment_analyst", "wealth_advisor", "external_advisor", "compliance_officer",
-                 "privacy_officer", "ai_admin"})
+                 "privacy_officer", "ai_admin", "risk_officer", "prospect"})
 
 
 # ------------------------------------------------------------------ schemas
@@ -57,7 +58,7 @@ class AgentOutput(BaseModel):
 
 
 def _out(ctx, name, template_id, facts, charts=(), warnings=(), approval=None, cite=True) -> AgentOutput:
-    gen = ctx_harness().narrate(ctx, template_id, facts)
+    gen = ctx_harness().narrate(ctx, template_id, facts, classification=getattr(ctx.agent, "data_classification", "confidential"))
     cites = [c for c in ctx.citations if c.get("agent") == name] if cite else []
     return AgentOutput(agent=name, narrative=gen.text, facts=facts, citations=cites, warnings=list(warnings), approval=approval,
                        charts=list(charts))
@@ -201,7 +202,7 @@ def _t_pe(f):
 
 
 @REGISTRY.register(spec("portfolio_agent", "investment", "investment_supervisor", "Portfolio and enterprise holdings analytics (performance, concentration, drift).",
-                        INV | ADV | EXEC, ["investment.portfolio_detail", "investment.enterprise_concentration"], PortfolioQ))
+                        INV | ADV | EXEC | RISK, ["investment.portfolio_detail", "investment.enterprise_concentration"], PortfolioQ))
 def portfolio_agent(ctx, q: PortfolioQ):
     if q.portfolio_id:
         d = ctx.tool("investment.portfolio_detail", portfolio_id=q.portfolio_id)["data"]
@@ -318,7 +319,7 @@ def _t_risk(f):
 
 
 @REGISTRY.register(spec("risk_agent", "risk", "risk_compliance_supervisor", "Enterprise, concentration and correlation risk.",
-                        INV | EXEC, ["risk.heatmap", "investment.enterprise_concentration", "investment.correlation"], Question))
+                        INV | EXEC | RISK, ["risk.heatmap", "investment.enterprise_concentration", "investment.correlation"], Question))
 def risk_agent(ctx, q: Question):
     w: list = []
     h = ctx.tool("risk.heatmap")["data"]["items"]
@@ -347,7 +348,7 @@ def _t_scn(f):
 
 
 @REGISTRY.register(spec("scenario_agent", "investment", "investment_supervisor", "Runs deterministic market and business scenarios.",
-                        INV | EXEC, ["scenario.run", "scenario.compare"], ScenarioQ))
+                        INV | EXEC | RISK, ["scenario.run", "scenario.compare"], ScenarioQ))
 def scenario_agent(ctx, q: ScenarioQ):
     r = ctx.tool("scenario.run", preset=q.preset, equity_shock=q.equity_shock, rate_shock_bps=q.rate_shock_bps)
     res, pi = r["results"], r["portfolio_impacts"]
@@ -504,7 +505,7 @@ def _t_comp(f):
 
 
 @REGISTRY.register(spec("compliance_research_agent", "risk", "risk_compliance_supervisor", "Policy and regulatory research with citations.",
-                        COMP | EXEC | ADV | INV, ["docs.search", "compliance.events"], Question, eval_requirements=("citations",)))
+                        COMP | EXEC | ADV | INV | RISK, ["docs.search", "compliance.events"], Question, eval_requirements=("citations",)))
 def compliance_research_agent(ctx, q: Question):
     w: list = []
     hits = _plan_and_search(ctx, "compliance_research_agent", q, ["policy", "procedure", "standard", "regulatory_reference"], w)
@@ -653,3 +654,130 @@ def evaluation_agent(ctx, q: Question):
              "mean_score": round(sum(sum(v) for v in scores.values()) / max(1, sum(len(v) for v in scores.values())), 3),
              "denials": sum(r[3] == "deny" for r in rows), "lowest_agent": low, "lowest_score": mean[low], "gate": gate, "by_agent": mean}
     return _out(ctx, "evaluation_agent", "evals", facts, ["eval_scores"])
+
+
+# ------------------------------------------------------------------ 21 Advisor productivity (enterprise aggregate)
+@template("advisor_productivity")
+def _t_ap(f):
+    s = (f"Across {f['advisors']} advisors, book AUM totals CAD {f['total_bn']}bn, with a median book of CAD {f['median_m']}m and a median of "
+         f"{f['median_clients']} active clients per advisor. The top quartile of advisors averages CAD {f['top_q_m']}m per book versus "
+         f"CAD {f['bottom_q_m']}m for the bottom quartile")
+    s += f" ({f['ratio']}x)." if f.get("ratio") is not None else "."
+    s += (f" The median advisor logged {f['median_ipc']} interactions per client over 12 months; {f['followups']} interactions were flagged for "
+          f"follow-up and {f['kyc_stale']} active clients have KYC older than the approved maximum. Activity counts describe workload, not advisor quality.")
+    return s
+
+
+@REGISTRY.register(spec("advisor_productivity_agent", "executive", "executive_supervisor", "Advisor productivity: book size, client load, activity and dispersion.",
+                        EXEC, ["wealth.advisor_productivity"], Question))
+def advisor_productivity_agent(ctx, q: Question):
+    d = ctx.tool("wealth.advisor_productivity")["data"]
+    s = d["summary"]
+    facts = {"advisors": s["advisors"], "total_bn": bn(s["total_book_aum"]), "median_m": mn(s["median_book_aum"]), "median_clients": s["median_active_clients"],
+             "top_q_m": mn(s["top_quartile_avg_aum"]), "bottom_q_m": mn(s["bottom_quartile_avg_aum"]), "ratio": s["top_to_bottom_quartile_ratio"],
+             "median_ipc": s["median_interactions_per_client"], "followups": s["follow_ups_flagged_total"], "kyc_stale": s["kyc_stale_total"],
+             "as_of": s["as_of"], "window": 12, "advisor_rows": d["advisors"]}
+    return _out(ctx, "advisor_productivity_agent", "advisor_productivity", facts, ["advisor_productivity_scatter", "advisor_book_distribution"])
+
+
+# ------------------------------------------------------------------ 22 Client retention (enterprise trend and/or the advisor's own book)
+@template("retention")
+def _t_retention(f):
+    parts = []
+    if f.get("ent_retention_pct") is not None:
+        parts.append(f"Enterprise client retention over the 12 months to {f['as_of']} was {f['ent_retention_pct']}%, versus {f['ent_prior_pct']}% in the "
+                     f"prior 12 months, with {f['ent_closed']} client closures. The lowest-retention segment was {f['low_seg']} at {f['low_seg_pct']}%.")
+    if f.get("book_clients") is not None:
+        s = f"Your book has {f['book_clients']} active clients"
+        s += f"; 12-month retention was {f['book_retention_pct']}% with {f['book_closed']} closure(s)." if f.get("book_retention_pct") is not None else "."
+        s += (f" {f['at_risk']} active clients show at least one review signal ({f['sig_neg']} negative sentiment in the last 6 months, {f['sig_fu']} "
+              f"follow-ups flagged in the last 90 days, {f['sig_kyc']} with stale KYC). Signals are prompts for review, not predictions.")
+        parts.append(s)
+    return " ".join(parts)
+
+
+@REGISTRY.register(spec("client_retention_agent", "wealth", "wealth_supervisor", "Client retention: enterprise trend and the advisor's own book signals.",
+                        EXEC | ADV, ["finance.retention", "wealth.book_health"], Question, data_classification="confidential"))
+def client_retention_agent(ctx, q: Question):
+    w: list = []
+    facts: dict = {"window": 12, "months_6": 6, "days_90": 90}
+    ent = try_tool(ctx, w, "finance.retention") if "exec:read" in _perms(ctx) else None
+    if ent:
+        d = ent["data"]
+        low = min((x for x in d["by_segment"] if x["retention_12m"] is not None), key=lambda x: x["retention_12m"])
+        facts.update(as_of=d["as_of"], ent_retention_pct=pct(d["retention_12m"]), ent_prior_pct=pct(d["retention_prior_12m"]),
+                     ent_closed=d["closed_12m"], low_seg=low["segment"], low_seg_pct=pct(low["retention_12m"]), by_segment=d["by_segment"])
+    if ctx.principal.advisor_id:
+        book = try_tool(ctx, w, "wealth.book_health")
+        if book:
+            b = book["data"]
+            facts.update(as_of=b["as_of"], book_clients=b["active_clients"], book_closed=b["closed_12m"],
+                         book_retention_pct=pct(b["retention_12m"]) if b["retention_12m"] is not None else None, at_risk=b["at_risk_total"],
+                         sig_neg=b["signal_counts"]["negative_sentiment_6m"], sig_fu=b["signal_counts"]["follow_up_flagged_90d"],
+                         sig_kyc=b["signal_counts"]["kyc_stale"], at_risk_clients=b["at_risk_clients"], kyc_max_age_days=b["kyc_max_age_days"])
+    if "ent_retention_pct" not in facts and "book_clients" not in facts:
+        raise PolicyDenied("no retention data is authorized for this identity", code="RETENTION-NOT-AUTHORIZED")
+    return _out(ctx, "client_retention_agent", "retention", facts, ["retention_trend", "retention_by_segment", "book_signals"], w)
+
+
+def _perms(ctx) -> set[str]:
+    """Permissions granted to the principal's roles (used only to skip calls that would certainly be denied; the gateway still decides)."""
+    rbac = ctx.engine.bundle.rbac["roles"]
+    return {p for r in ctx.principal.roles for p in rbac.get(r, [])}
+
+
+# ------------------------------------------------------------------ 23 Firm diagnostic for a prospective client (user-supplied figures only)
+class FirmQ(Question):
+    aum: float | None = Field(None, ge=0, le=1e13)
+    fee_bps: float | None = Field(None, ge=0, le=500)
+    revenue: float | None = Field(None, ge=0, le=1e12)
+    expenses: float | None = Field(None, ge=0, le=1e12)
+    advisors: int | None = Field(None, ge=1, le=100000)
+    clients: int | None = Field(None, ge=1, le=10000000)
+    net_flows: float | None = Field(None, ge=-1e12, le=1e12)
+
+
+_PROV = {"user_supplied": "you provided", "calculated_from_user_inputs": "calculated from your inputs",
+         "illustrative_assumption": "illustrative, based on a planning assumption"}
+
+
+def _fmt_metric(m: dict) -> str:
+    v, u = m["value"], m["unit"]
+    if u == "CAD":
+        return f"CAD {v:,.0f}"
+    if u == "ratio":
+        return f"{pct(v)}%"
+    if u == "bps":
+        return f"{v:.1f} bps"
+    return f"{v:,.1f}"
+
+
+@template("firm")
+def _t_firm(f):
+    if not f["known"]:
+        return ("Thank you for reaching out. To build a preliminary view of your business I need a few facts, starting with your assets under "
+                "management. " + " ".join(f["discovery_questions"][:3]))
+    s = "Preliminary assessment based only on the figures you provided"
+    s += " and clearly labelled planning assumptions: " if f["assumption_used"] else ": "
+    s += " ".join(f"{m['label']}: {m['display']} ({_PROV[m['provenance']]})." for m in f["metrics"])
+    if f.get("per_bp") is not None:
+        s += (f" Sensitivity: each {f['unit_bp']} bp of average fee is worth about CAD {f['per_bp']:,.0f} of annual revenue on your AUM, and each "
+              f"{f['unit_pct']}% of AUM added through net new assets adds about CAD {f['per_pct']:,.0f} at a {f['fee_used']} bps fee.")
+    s += f" Still needed for a fuller view: {', '.join(f['missing_labels'])}." if f["missing_labels"] else ""
+    return s
+
+
+@REGISTRY.register(spec("firm_diagnostic_agent", "executive", "executive_supervisor",
+                        "Preliminary business assessment for a prospective client from figures they supply (no platform data).",
+                        ALL, ["advisory.firm_model"], FirmQ, data_classification="confidential"))
+def firm_diagnostic_agent(ctx, q: FirmQ):
+    args = {k: getattr(q, k) for k in ("aum", "fee_bps", "revenue", "expenses", "advisors", "clients", "net_flows") if getattr(q, k) is not None}
+    a = ctx.tool("advisory.firm_model", **args)
+    from analytics.firm_model import FIELDS
+    metrics = [{**m, "display": _fmt_metric(m)} for m in a["metrics"]]
+    sens = a.get("sensitivities") or {}
+    facts = {"known": a["known"], "missing": a["missing"], "missing_labels": [FIELDS[k].lower() for k in a["missing"]][:4], "metrics": metrics,
+             "assumption_used": bool(a["assumptions"]), "assumptions": a["assumptions"], "discovery_questions": a["discovery_questions"],
+             "per_bp": sens.get("revenue_per_1bp_fee"), "per_pct": sens.get("revenue_per_1pct_net_new_assets"), "fee_used": sens.get("fee_bps_used"),
+             "unit_bp": 1, "unit_pct": 1, "assessment": a}
+    return _out(ctx, "firm_diagnostic_agent", "firm", facts, ["firm_kpis", "firm_fee_sensitivity", "firm_market_scenarios", "firm_data_readiness"])

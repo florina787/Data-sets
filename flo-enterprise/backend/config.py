@@ -29,6 +29,10 @@ class Settings:
     vault_key: str = field(default_factory=lambda: _env("FLO_VAULT_KEY", ""))
     model_provider: str = field(default_factory=lambda: _env("FLO_MODEL_PROVIDER", "mock"))
     bedrock_region: str = field(default_factory=lambda: _env("FLO_BEDROCK_REGION", "ca-central-1"))
+    # Google Gemini API (FLO_MODEL_PROVIDER=gemini). Supply the key via environment / secret manager only.
+    gemini_api_key: str = field(default_factory=lambda: _env("GEMINI_API_KEY", ""))
+    gemini_model: str = field(default_factory=lambda: _env("FLO_GEMINI_MODEL", "gemini-3.5-flash"))
+    gemini_timeout_s: float = field(default_factory=lambda: float(_env("FLO_GEMINI_TIMEOUT_S", "20")))
     langsmith_api_key: str = field(default_factory=lambda: _env("LANGSMITH_API_KEY", ""))
     langsmith_project: str = field(default_factory=lambda: _env("LANGSMITH_PROJECT", "flo-enterprise"))
     opa_url: str = field(default_factory=lambda: _env("FLO_OPA_URL", ""))

@@ -464,3 +464,35 @@ class SeedManifest(Base):
     __tablename__ = "seed_manifest"
     key: Mapped[str] = mapped_column(String(60), primary_key=True)
     value: Mapped[dict] = mapped_column(JSON)
+
+
+class Conversation(Base):
+    """A user's FLO conversation. `state` holds only analysis parameters and entity ids (never PII values or vault mappings)."""
+    __tablename__ = "conversations"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(32), index=True)
+    user_id: Mapped[str] = mapped_column(String(32), index=True)
+    persona: Mapped[str] = mapped_column(String(40))
+    title: Mapped[str] = mapped_column(String(200))
+    state: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    archived: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class ConversationMessage(Base):
+    __tablename__ = "conversation_messages"
+    __table_args__ = (UniqueConstraint("conversation_id", "client_message_id", name="uq_conversation_client_message"),)
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    conversation_id: Mapped[str] = mapped_column(String(40), ForeignKey("conversations.id", ondelete="CASCADE"), index=True)
+    tenant_id: Mapped[str] = mapped_column(String(32))
+    user_id: Mapped[str] = mapped_column(String(32))
+    role: Mapped[str] = mapped_column(String(16))
+    content: Mapped[str] = mapped_column(Text)
+    client_message_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    request_id: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    status: Mapped[str] = mapped_column(String(16))
+    intent: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    entity_refs: Mapped[dict] = mapped_column(JSON)
+    response: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, index=True)

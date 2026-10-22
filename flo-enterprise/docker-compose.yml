@@ -13,6 +13,8 @@ x-api-env: &api-env
   FLO_CORS_ORIGINS: http://localhost:8080
   LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
   FLO_MODEL_PROVIDER: ${FLO_MODEL_PROVIDER:-mock}
+  GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+  FLO_GEMINI_MODEL: ${FLO_GEMINI_MODEL:-gemini-3.5-flash}
 
 services:
   postgres:

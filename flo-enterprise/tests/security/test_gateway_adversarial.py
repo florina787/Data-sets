@@ -2,6 +2,7 @@
 import pytest
 
 import agents.specialists  # noqa: F401
+import conversation.dashboard  # noqa: F401  (registers the visualization agent)
 from harness.errors import (AdmissionRejected, ApprovalRequired, BudgetExceeded, CircuitOpen, InvalidToolArguments, PolicyDenied,
                             ToolNotAllowed, UpstreamUnavailable)
 from harness.models import ScriptedModel
@@ -142,7 +143,7 @@ def test_provider_failure_retries_then_circuit_opens(ctx_for):
 
 
 def test_every_agent_registers_full_contract():
-    assert len(REGISTRY.agents) == 20
+    assert len(REGISTRY.agents) == 24  # 23 specialists + the visualization agent
     for a in REGISTRY.agents.values():
         c = a.spec.contract()
         for k in ("name", "version", "owner", "allowed_roles", "allowed_tools", "input_schema", "output_schema", "budget",

@@ -9,6 +9,6 @@ config:
   env: production
   modelProvider: mock          # bedrock requires workload identity + region allowed by policy (ca-central-1)
   maxConcurrentWorkflows: 32
-existingSecret: flo-secrets    # FLO_DATABASE_URL, FLO_AUDIT_DATABASE_URL, FLO_REDIS_URL, FLO_JWT_SECRET, FLO_VAULT_KEY, LANGSMITH_API_KEY
+existingSecret: flo-secrets    # FLO_DATABASE_URL, FLO_AUDIT_DATABASE_URL, FLO_REDIS_URL, FLO_JWT_SECRET, FLO_VAULT_KEY, LANGSMITH_API_KEY, GEMINI_API_KEY (optional)
 opa: { image: openpolicyagent/opa:1.4.2-static }
 ingress: { enabled: false, host: flo.example.com, className: nginx }

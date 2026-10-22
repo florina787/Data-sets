@@ -1,5 +1,5 @@
 # FLO policy bundle manifest. Any change to files in this bundle changes the computed policy hash; bump `version`.
 name: flo-authz
-version: 1.3.2
+version: 1.4.0
 owner: AI Governance Office (synthetic)
 files: [rbac.yaml, abac.yaml, approvals.yaml, providers.yaml, suitability.yaml, retention.yaml]

@@ -300,6 +300,21 @@
      "ask:use",
      "docs:read"
     ],
+    "prospect": [
+     "ask:use",
+     "product_research:read",
+     "market:read"
+    ],
+    "risk_officer": [
+     "risk:read",
+     "risk:read_aggregate",
+     "investment:read_aggregate",
+     "scenarios:run",
+     "compliance:read",
+     "research:read",
+     "ask:use",
+     "docs:read"
+    ],
     "wealth_advisor": [
      "wealth:read",
      "client:read",
@@ -318,6 +333,6 @@
     ]
    }
   },
-  "version": "1.3.2+ebcb6d5534"
+  "version": "1.4.0+86b3901f65"
  }
 }
