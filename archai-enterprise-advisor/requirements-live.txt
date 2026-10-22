@@ -1,0 +1,3 @@
+# Optional: LIVE AI MODE narration (DEMO_MODE=false + your own ANTHROPIC_API_KEY).
+-r requirements.txt
+langchain-anthropic>=1.0,<2

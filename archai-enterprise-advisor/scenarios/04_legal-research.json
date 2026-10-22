@@ -1,0 +1,159 @@
+{
+  "id": "legal-research",
+  "name": "Sterling Legal LLP \u2014 Secure case research assistant",
+  "company": "Sterling Legal LLP",
+  "industry": "legal",
+  "summary": "Lawyers search thousands of case documents and prepare research summaries.",
+  "expected": {
+    "primary_architecture": "rag_genai",
+    "agentic_verdict": "not_recommended",
+    "ai_recommended": true,
+    "citations_mandatory": true,
+    "human_review_mandatory": true
+  },
+  "request": {
+    "organization": {
+      "name": "Sterling Legal LLP (fictional)",
+      "industry": "legal",
+      "size": "mid",
+      "ai_maturity": 1,
+      "gpu_available": false,
+      "data_residency_regions": [
+        "Domestic"
+      ]
+    },
+    "current_architecture": {
+      "deployment": [
+        "on_premises"
+      ],
+      "compute": [
+        "virtual_machines"
+      ],
+      "styles": [
+        "soa"
+      ],
+      "integration": [
+        "rest",
+        "file_transfer",
+        "database"
+      ],
+      "identity_security": [
+        "active_directory",
+        "rbac",
+        "private_networking"
+      ],
+      "data_stores": [
+        "sql_server",
+        "document_repository",
+        "search_engine",
+        "object_storage"
+      ],
+      "devops": [
+        "azure_devops",
+        "splunk"
+      ],
+      "existing_systems": [
+        "Document Management System",
+        "Matter Management System"
+      ]
+    },
+    "data_profile": {
+      "availability": 4,
+      "quality": 4,
+      "freshness": 3,
+      "ownership": 4,
+      "lineage": 3,
+      "metadata": 3,
+      "permissions": 4,
+      "document_quality": 4,
+      "structured_share_pct": 10,
+      "knowledge_fragmentation": 3,
+      "contains_pii": true,
+      "contains_financial_data": false,
+      "confidential": true,
+      "privileged": true,
+      "data_residency_required": true,
+      "data_sources": [
+        "Case files",
+        "Pleadings",
+        "Precedent memos",
+        "Court opinions"
+      ]
+    },
+    "use_case": {
+      "title": "Case document research and summary preparation",
+      "description": "Lawyers search thousands of case documents and prepare research summaries with citations.",
+      "users": "Associates, partners, paralegals",
+      "workflow": "Research question -> DMS search -> read documents -> extract relevant passages -> draft memo with citations -> partner review.",
+      "pain_points": [
+        "Hours spent locating relevant passages",
+        "Inconsistent research depth",
+        "Citation checking is manual"
+      ],
+      "desired_outcome": "Cited research summaries drafted in minutes, reviewed by a lawyer.",
+      "current_solution": "Document Management System keyword search + manual reading",
+      "constraints": [
+        "Attorney-client privilege",
+        "Ethical walls / matter-level access",
+        "Every claim must cite a source document",
+        "Data must stay in jurisdiction"
+      ],
+      "primary_tasks": [
+        "knowledge_search",
+        "summarization",
+        "extraction",
+        "generation"
+      ],
+      "action_types": [
+        "read_only",
+        "draft_content"
+      ],
+      "deterministic_requirement": 1,
+      "prediction_requirement": 0,
+      "generation_requirement": 5,
+      "workflow_variability": 2,
+      "multi_step_reasoning": 2,
+      "cross_system_interaction": 2,
+      "tool_requirements": 1,
+      "proprietary_knowledge_need": 5,
+      "citation_requirement": 5,
+      "knowledge_change_frequency": 3,
+      "autonomy_benefit": 1,
+      "hallucination_tolerance": 0,
+      "transaction_criticality": 1,
+      "explainability_requirement": 5,
+      "latency_sensitivity": 1,
+      "availability_requirement": 3,
+      "human_oversight_available": 5
+    },
+    "cost_inputs": {
+      "requests_per_month": 15000,
+      "avg_input_tokens": 2500,
+      "avg_output_tokens": 900,
+      "rag_top_k": 8,
+      "tokens_per_chunk": 500,
+      "cache_hit_rate": 0.2,
+      "small_model_routing_pct": 0.2,
+      "human_review_pct": 1.0,
+      "human_review_minutes": 4,
+      "reviewer_hourly_cost": 180,
+      "infrastructure_cost_month": 5000,
+      "current_monthly_cost": 0,
+      "max_output_tokens": 1500
+    },
+    "roi_inputs": {
+      "people_involved": 120,
+      "tasks_per_month": 3000,
+      "minutes_per_task": 90,
+      "hourly_cost": 180,
+      "error_rate_pct": 2,
+      "rework_cost_per_error": 500,
+      "existing_technology_cost_annual": 0,
+      "implementation_cost": 450000,
+      "expected_time_reduction_pct": 35,
+      "expected_error_reduction_pct": 20
+    }
+  },
+  "order": 4,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}

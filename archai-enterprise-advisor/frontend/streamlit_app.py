@@ -1,0 +1,530 @@
+"""ArchAI — Streamlit executive UI.
+
+Run:  streamlit run frontend/streamlit_app.py
+
+The UI calls the same service layer as the FastAPI app (no duplicated logic).
+All bundled companies and data are fictional.
+"""
+
+from __future__ import annotations
+
+import copy
+import html
+import sys
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
+import streamlit as st
+import streamlit.components.v1 as components
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app.architecture.matrix import pretty  # noqa: E402
+from app.config.settings import get_settings  # noqa: E402
+from app.governance.assessment import INDUSTRY_CONSIDERATIONS  # noqa: E402
+from app.models.enums import (  # noqa: E402
+    ActionType,
+    AgenticVerdict,
+    ArchitectureStyle,
+    Compute,
+    DataStore,
+    Deployment,
+    DevOpsTool,
+    IdentitySecurity,
+    Industry,
+    Integration,
+    TaskType,
+)
+from app.models.inputs import AssessmentRequest, CostInputs  # noqa: E402
+from app.models.outputs import AssessmentResult  # noqa: E402
+from app.scenarios import get_scenario, list_scenarios  # noqa: E402
+from app.services import AssessmentError, run_assessment, simulate_cost  # noqa: E402
+
+st.set_page_config(page_title="ArchAI — Enterprise AI Architecture Advisor", page_icon="🏛️", layout="wide")
+
+CSS = """
+<style>
+.block-container {padding-top: 3.2rem;}
+.archai-title {font-size: 2.3rem; font-weight: 800; margin-bottom: 0; letter-spacing: -0.5px;}
+.archai-sub {font-size: 1.1rem; color: #475569; margin-top: 0;}
+.archai-tag {font-style: italic; color: #0f766e; font-size: 1.05rem;}
+.card {border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; background: #ffffff; height: 100%;}
+.card .k {font-size: 0.78rem; text-transform: uppercase; color: #64748b; letter-spacing: .06em;}
+.card .v {font-size: 1.9rem; font-weight: 800; color: #0f172a;}
+.card .b {font-size: 0.8rem; color: #475569;}
+.verdict {border-radius: 14px; padding: 16px 20px; margin: 10px 0 4px 0; border: 1px solid;}
+.verdict .lbl {font-size: 0.78rem; text-transform: uppercase; letter-spacing: .08em; opacity: .8;}
+.verdict .big {font-size: 1.5rem; font-weight: 800;}
+.v-green {background:#f0fdf4; border-color:#86efac; color:#14532d;}
+.v-amber {background:#fffbeb; border-color:#fcd34d; color:#78350f;}
+.v-red {background:#fef2f2; border-color:#fca5a5; color:#7f1d1d;}
+.v-blue {background:#eff6ff; border-color:#93c5fd; color:#1e3a8a;}
+.badge {display:inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;}
+.badge-demo {background:#dcfce7; color:#14532d;}
+.badge-live {background:#fef3c7; color:#78350f;}
+@media (prefers-color-scheme: dark) {
+  .card {background:#0f172a; border-color:#334155;}
+  .card .v {color:#f8fafc;} .card .k, .card .b {color:#94a3b8;}
+  .archai-sub {color:#94a3b8;}
+}
+</style>
+"""
+st.markdown(CSS, unsafe_allow_html=True)
+
+ss = st.session_state
+SCENARIOS = list_scenarios()
+SCENARIO_IDS = [s["id"] for s in SCENARIOS]
+SCENARIO_NAMES = {s["id"]: s["name"] for s in SCENARIOS}
+
+
+# ----------------------------------------------------------------- state helpers
+def load_scenario(scenario_id: str) -> None:
+    ss.req = copy.deepcopy(get_scenario(scenario_id)["request"])
+    ss.scenario_id = scenario_id
+    ss.version = ss.get("version", 0) + 1
+
+
+def apply_use_case_preset(scenario_id: str) -> None:
+    """Swap the use case (and its data/cost/ROI profile) while keeping org + current architecture."""
+    src = get_scenario(scenario_id)["request"]
+    for key in ("use_case", "data_profile", "cost_inputs", "roi_inputs"):
+        ss.req[key] = copy.deepcopy(src[key])
+    ss.version = ss.get("version", 0) + 1
+
+
+if "req" not in ss:
+    requested = st.query_params.get("scenario")  # deep link, e.g. ?scenario=legal-research
+    load_scenario(requested if requested in SCENARIO_IDS else SCENARIO_IDS[0])
+
+
+def k(path: str) -> str:
+    return f"{ss.version}:{path}"
+
+
+def enum_multiselect(label: str, enum_cls: Any, current: list[str], key: str) -> list[str]:
+    options = [e.value for e in enum_cls]
+    return st.multiselect(label, options, default=[c for c in current if c in options], format_func=lambda v: pretty(enum_cls(v)), key=k(key))
+
+
+def lines(text: str) -> list[str]:
+    return [line.strip() for line in text.splitlines() if line.strip()]
+
+
+def mermaid(code: str, height: int = 520) -> None:
+    """Render Mermaid in the browser (loads mermaid from jsDelivr); source shown below as fallback."""
+    page = f"""
+        <div class="mermaid">{html.escape(code)}</div>
+        <script type="module">
+          import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+          mermaid.initialize({{ startOnLoad: true, securityLevel: 'strict', theme: 'neutral' }});
+        </script>
+        """
+    # Diagram source is generated by ArchAI (labels escaped), never by users or an LLM.
+    if hasattr(st, "iframe"):
+        st.iframe(page, height=height)
+    else:  # older Streamlit
+        components.html(page, height=height, scrolling=True)
+    with st.expander("Mermaid source"):
+        st.code(code, language="mermaid")
+
+
+# ----------------------------------------------------------------- header
+settings = get_settings()
+badge = (
+    '<span class="badge badge-demo">DEMO MODE · deterministic · $0 API cost · no API key needed</span>'
+    if not settings.live_ai_enabled
+    else '<span class="badge badge-live">LIVE AI MODE · LLM narrates only — decisions stay deterministic</span>'
+)
+st.markdown(
+    f"""<div class="archai-title">🏛️ ArchAI</div>
+    <div class="archai-sub">Enterprise AI Architecture Advisor</div>
+    <div class="archai-tag">"Modernize intelligently. Agentify selectively."</div>
+    <div style="margin-top:6px">{badge}</div>""",
+    unsafe_allow_html=True,
+)
+
+with st.sidebar:
+    st.header("Scenario")
+    chosen = st.selectbox(
+        "Load a fictional demo scenario",
+        SCENARIO_IDS,
+        index=SCENARIO_IDS.index(ss.scenario_id) if ss.get("scenario_id") in SCENARIO_IDS else 0,
+        format_func=lambda i: SCENARIO_NAMES[i],
+        key="scenario_select",
+    )
+    if chosen != ss.scenario_id:
+        load_scenario(chosen)
+        st.rerun()
+    st.caption(get_scenario(ss.scenario_id)["summary"])
+    st.divider()
+    st.subheader("Switch use case")
+    st.caption("Keeps the organization and current architecture; swaps the business use case.")
+    preset = st.selectbox("Use-case preset", SCENARIO_IDS, format_func=lambda i: get_scenario(i)["request"]["use_case"]["title"], key="preset_select")
+    if st.button("Apply use case", width="stretch"):
+        apply_use_case_preset(preset)
+        st.rerun()
+    if st.button("Reset scenario", width="stretch"):
+        load_scenario(ss.scenario_id)
+        st.rerun()
+    st.divider()
+    st.caption("All companies, architectures and data are fictional/synthetic. Prices are illustrative sample values.")
+
+dashboard = st.container()
+
+TAB_NAMES = [
+    "1 · Organization", "2 · Industry", "3 · Current Architecture", "4 · Infrastructure", "5 · Data Readiness",
+    "6 · Business Use Case", "7 · AI Assessment", "8 · Architecture Recommendation", "9 · Security & Governance",
+    "10 · Cost & ROI", "11 · Migration Roadmap", "12 · ADR",
+]
+tabs = st.tabs(TAB_NAMES)
+R = ss.req
+
+# ----------------------------------------------------------------- input tabs
+with tabs[0]:
+    o = R["organization"]
+    c1, c2 = st.columns(2)
+    name = c1.text_input("Organization name", o.get("name", ""), key=k("org.name"))
+    sizes = ["small", "mid", "large", "enterprise"]
+    size = c2.selectbox("Size", sizes, index=sizes.index(o.get("size", "large")), key=k("org.size"))
+    ai_maturity = c1.slider("AI / ML delivery maturity (0–5)", 0, 5, o.get("ai_maturity", 2), key=k("org.ai_maturity"))
+    gpu = c2.checkbox("GPU capacity available for self-hosted inference", o.get("gpu_available", False), key=k("org.gpu"))
+    override = c1.checkbox("Override industry regulatory baseline", o.get("regulatory_intensity") is not None, key=k("org.ri_override"))
+    ri = c2.slider("Regulatory intensity (0–5)", 0, 5, o.get("regulatory_intensity") or 3, key=k("org.ri"), disabled=not override)
+    regions = c1.text_input("Data residency regions (comma-separated)", ", ".join(o.get("data_residency_regions", [])), key=k("org.regions"))
+
+with tabs[1]:
+    industries = [i.value for i in Industry]
+    industry = st.radio("Industry", industries, index=industries.index(o.get("industry", "general_enterprise")), format_func=lambda v: pretty(Industry(v)), horizontal=True, key=k("org.industry"))
+    st.markdown("**Industry-specific evaluation criteria** (materially affect risk scoring, autonomy and governance):")
+    for item in INDUSTRY_CONSIDERATIONS[Industry(industry)]:
+        st.markdown(f"- {item}")
+
+with tabs[2]:
+    a = R["current_architecture"]
+    st.caption("Describe what the enterprise ALREADY has. ArchAI fits AI around it rather than replacing it.")
+    c1, c2 = st.columns(2)
+    with c1:
+        deployment = enum_multiselect("Deployment", Deployment, a.get("deployment", []), "arch.deployment")
+        compute = enum_multiselect("Compute", Compute, a.get("compute", []), "arch.compute")
+        styles = enum_multiselect("Architecture", ArchitectureStyle, a.get("styles", []), "arch.styles")
+        integration = enum_multiselect("Integration", Integration, a.get("integration", []), "arch.integration")
+    with c2:
+        identity = enum_multiselect("Identity & security", IdentitySecurity, a.get("identity_security", []), "arch.identity")
+        data_stores = enum_multiselect("Data", DataStore, a.get("data_stores", []), "arch.data")
+        devops = enum_multiselect("DevOps / operations", DevOpsTool, a.get("devops", []), "arch.devops")
+    existing = st.text_area("Existing business systems (one per line)", "\n".join(a.get("existing_systems", [])), key=k("arch.existing"))
+    eol = st.text_area("Components already flagged END-OF-LIFE by the organization (only these may be REPLACED)", "\n".join(a.get("end_of_life_components", [])), key=k("arch.eol"), height=68)
+
+with tabs[4]:
+    d = R["data_profile"]
+    st.markdown("#### Data profile")
+    cols = st.columns(4)
+    data_vals: dict[str, Any] = {}
+    for i, (field, label) in enumerate([
+        ("availability", "Availability"), ("quality", "Quality"), ("freshness", "Freshness"), ("ownership", "Ownership"),
+        ("lineage", "Lineage"), ("metadata", "Metadata"), ("permissions", "Permissions model"), ("document_quality", "Document quality"),
+        ("knowledge_fragmentation", "Knowledge fragmentation"),
+    ]):
+        data_vals[field] = cols[i % 4].slider(label, 0, 5, d.get(field, 3), key=k(f"data.{field}"))
+    data_vals["structured_share_pct"] = cols[1].slider("Structured data share (%)", 0, 100, d.get("structured_share_pct", 50), key=k("data.structured"))
+    flags = st.columns(5)
+    for i, (field, label) in enumerate([("contains_pii", "PII"), ("contains_financial_data", "Financial data"), ("confidential", "Confidential"), ("privileged", "Privileged (legal)"), ("data_residency_required", "Residency required")]):
+        data_vals[field] = flags[i].checkbox(label, d.get(field, False), key=k(f"data.{field}"))
+    data_vals["data_sources"] = lines(st.text_area("Data sources (one per line)", "\n".join(d.get("data_sources", [])), key=k("data.sources"), height=80))
+
+with tabs[5]:
+    u = R["use_case"]
+    c1, c2 = st.columns(2)
+    uc_vals: dict[str, Any] = {}
+    uc_vals["title"] = c1.text_input("Use case title", u.get("title", ""), key=k("uc.title"))
+    uc_vals["users"] = c2.text_input("Users", u.get("users", ""), key=k("uc.users"))
+    uc_vals["description"] = st.text_area("Business problem", u.get("description", ""), key=k("uc.description"), height=80)
+    uc_vals["workflow"] = c1.text_area("Current workflow", u.get("workflow", ""), key=k("uc.workflow"), height=80)
+    uc_vals["desired_outcome"] = c2.text_area("Desired outcome", u.get("desired_outcome", ""), key=k("uc.outcome"), height=80)
+    uc_vals["current_solution"] = c1.text_input("Current solution", u.get("current_solution", ""), key=k("uc.current"))
+    uc_vals["replaces_existing_component"] = c2.text_input("Component proposed for replacement (if any)", u.get("replaces_existing_component") or "", key=k("uc.replaces")) or None
+    uc_vals["pain_points"] = lines(c1.text_area("Pain points (one per line)", "\n".join(u.get("pain_points", [])), key=k("uc.pain"), height=90))
+    uc_vals["constraints"] = lines(c2.text_area("Constraints (one per line)", "\n".join(u.get("constraints", [])), key=k("uc.constraints"), height=90))
+    uc_vals["primary_tasks"] = enum_multiselect("Primary tasks", TaskType, u.get("primary_tasks", []), "uc.tasks")
+    uc_vals["action_types"] = enum_multiselect("Actions the solution would take", ActionType, u.get("action_types", ["read_only"]), "uc.actions")
+    uc_vals["customer_facing"] = st.checkbox("Customer-facing", u.get("customer_facing", False), key=k("uc.customer"))
+    st.markdown("#### Workload dimensions (0 = none, 5 = critical)")
+    rating_fields = [
+        ("deterministic_requirement", "Deterministic requirement"), ("prediction_requirement", "Prediction requirement"),
+        ("generation_requirement", "Generation requirement"), ("workflow_variability", "Workflow variability"),
+        ("multi_step_reasoning", "Multi-step reasoning"), ("cross_system_interaction", "Cross-system interaction"),
+        ("tool_requirements", "Tool requirements"), ("proprietary_knowledge_need", "Proprietary knowledge need"),
+        ("citation_requirement", "Citation requirement"), ("knowledge_change_frequency", "Knowledge change frequency"),
+        ("autonomy_benefit", "Autonomy benefit"), ("hallucination_tolerance", "Hallucination tolerance"),
+        ("transaction_criticality", "Transaction criticality"), ("explainability_requirement", "Explainability"),
+        ("latency_sensitivity", "Latency sensitivity"), ("availability_requirement", "Availability requirement"),
+        ("human_oversight_available", "Human oversight capacity"),
+    ]
+    rc = st.columns(3)
+    for i, (field, label) in enumerate(rating_fields):
+        uc_vals[field] = rc[i % 3].slider(label, 0, 5, u.get(field, 2), key=k(f"uc.{field}"))
+
+with tabs[9]:
+    ci, ri_in = R["cost_inputs"], R["roi_inputs"]
+    with st.expander("Business-case inputs (feed the decision engine and challenger)", expanded=False):
+        c1, c2, c3 = st.columns(3)
+        cost_vals = dict(ci)
+        cost_vals["requests_per_month"] = c1.number_input("Requests / month", 0, 1_000_000_000, int(ci.get("requests_per_month", 20000)), step=1000, key=k("cost.req"))
+        cost_vals["avg_input_tokens"] = c2.number_input("Avg input tokens", 0, 2_000_000, int(ci.get("avg_input_tokens", 1500)), key=k("cost.in"))
+        cost_vals["avg_output_tokens"] = c3.number_input("Avg output tokens", 0, 200_000, int(ci.get("avg_output_tokens", 400)), key=k("cost.out"))
+        cost_vals["infrastructure_cost_month"] = c1.number_input("AI infrastructure $/month", 0.0, 10_000_000.0, float(ci.get("infrastructure_cost_month", 2500)), key=k("cost.infra"))
+        cost_vals["current_monthly_cost"] = c2.number_input("Current process run-cost $/month", 0.0, 100_000_000.0, float(ci.get("current_monthly_cost", 0)), key=k("cost.current"))
+        cost_vals["human_review_pct"] = c3.slider("Human review %", 0.0, 1.0, float(ci.get("human_review_pct", 0.2)), key=k("cost.review"))
+        roi_vals = dict(ri_in)
+        roi_vals["people_involved"] = c1.number_input("People involved", 0, 1_000_000, int(ri_in.get("people_involved", 10)), key=k("roi.people"))
+        roi_vals["tasks_per_month"] = c2.number_input("Tasks / month", 0, 100_000_000, int(ri_in.get("tasks_per_month", 2000)), key=k("roi.tasks"))
+        roi_vals["minutes_per_task"] = c3.number_input("Minutes per task", 0.0, 10_000.0, float(ri_in.get("minutes_per_task", 20)), key=k("roi.minutes"))
+        roi_vals["hourly_cost"] = c1.number_input("Loaded hourly cost $", 0.0, 10_000.0, float(ri_in.get("hourly_cost", 60)), key=k("roi.hourly"))
+        roi_vals["error_rate_pct"] = c2.number_input("Error rate %", 0.0, 100.0, float(ri_in.get("error_rate_pct", 2)), key=k("roi.err"))
+        roi_vals["rework_cost_per_error"] = c3.number_input("Rework cost per error $", 0.0, 1_000_000.0, float(ri_in.get("rework_cost_per_error", 50)), key=k("roi.rework"))
+        roi_vals["existing_technology_cost_annual"] = c1.number_input("Existing technology $/year", 0.0, 1e9, float(ri_in.get("existing_technology_cost_annual", 0)), key=k("roi.tech"))
+        roi_vals["implementation_cost"] = c2.number_input("Implementation cost $", 0.0, 1e9, float(ri_in.get("implementation_cost", 250000)), key=k("roi.impl"))
+        roi_vals["expected_time_reduction_pct"] = c3.slider("Expected time reduction %", 0.0, 100.0, float(ri_in.get("expected_time_reduction_pct", 30)), key=k("roi.time"))
+        roi_vals["expected_error_reduction_pct"] = c1.slider("Expected error reduction %", 0.0, 100.0, float(ri_in.get("expected_error_reduction_pct", 20)), key=k("roi.errred"))
+
+# ----------------------------------------------------------------- build request & assess
+raw = {
+    "organization": {
+        "name": name, "industry": industry, "size": size, "ai_maturity": ai_maturity, "gpu_available": gpu,
+        "regulatory_intensity": ri if override else None, "data_residency_regions": [r.strip() for r in regions.split(",") if r.strip()],
+    },
+    "current_architecture": {
+        "deployment": deployment, "compute": compute, "styles": styles, "integration": integration, "identity_security": identity,
+        "data_stores": data_stores, "devops": devops, "existing_systems": lines(existing), "end_of_life_components": lines(eol),
+    },
+    "data_profile": {**R["data_profile"], **data_vals},
+    "use_case": {**R["use_case"], **uc_vals},
+    "cost_inputs": cost_vals,
+    "roi_inputs": roi_vals,
+}
+try:
+    request = AssessmentRequest.model_validate(raw)
+    result: AssessmentResult = run_assessment(request)
+except (AssessmentError, ValueError) as exc:
+    st.error(f"Assessment could not be completed: {exc}")
+    st.stop()
+
+dec, sc = result.decision, result.scores
+
+# ----------------------------------------------------------------- dashboard
+with dashboard:
+    cards = [
+        ("AI Suitability", sc.ai_suitability), ("Agentic Readiness", sc.agentic_readiness), ("Infrastructure Readiness", sc.infrastructure_readiness),
+        ("Data Readiness", sc.data_readiness), ("Overall Risk", sc.overall_risk), ("ROI / Business Value", sc.roi_business_value),
+    ]
+    cols = st.columns(6)
+    for col, (label, s) in zip(cols, cards, strict=True):
+        col.markdown(f'<div class="card"><div class="k">{label}</div><div class="v">{s.value:.0f}</div><div class="b">{s.band}</div></div>', unsafe_allow_html=True)
+
+    arch_cls = "v-red" if not dec.ai_recommended else ("v-blue" if dec.primary_architecture.value == "hybrid" else "v-green")
+    ag_cls = {AgenticVerdict.NOT_RECOMMENDED: "v-red", AgenticVerdict.CONSTRAINED: "v-amber", AgenticVerdict.RECOMMENDED: "v-green"}[dec.agentic_verdict]
+    au_cls = "v-amber" if dec.requires_human_approval or dec.human_review_mandatory else "v-blue"
+    c1, c2, c3 = st.columns([1.4, 1.2, 1])
+    c1.markdown(f'<div class="verdict {arch_cls}"><div class="lbl">Recommended architecture</div><div class="big">{html.escape(dec.primary_architecture_label.upper())}</div><div>{html.escape(dec.architecture_label)}</div><div style="margin-top:4px;font-weight:700">{dec.ai_verdict_label}</div></div>', unsafe_allow_html=True)
+    c2.markdown(f'<div class="verdict {ag_cls}"><div class="lbl">Agentic AI</div><div class="big">{html.escape(dec.agentic_verdict_label.split(" (")[0])}</div><div>{html.escape(dec.agentic_answer)}</div></div>', unsafe_allow_html=True)
+    c3.markdown(f'<div class="verdict {au_cls}"><div class="lbl">Autonomy</div><div class="big">{html.escape(dec.autonomy_label.split(" — ")[1] if " — " in dec.autonomy_label else dec.autonomy_label)}</div><div>Level {int(dec.autonomy_level)} · Human approval: {"YES" if dec.requires_human_approval else "no"} · Citations: {"MANDATORY" if dec.citations_mandatory else "n/a"}</div></div>', unsafe_allow_html=True)
+    with st.expander("Executive summary", expanded=False):
+        st.markdown(result.executive_summary.replace("\n", "  \n"))
+        st.caption(f"Explanation source: {result.explanation_source} · Request {result.trace.request_id} · Paid LLM calls: {result.trace.paid_model_calls}")
+
+# ----------------------------------------------------------------- output tabs
+with tabs[3]:
+    inf = result.infrastructure
+    st.metric("Infrastructure readiness", f"{inf.score:.0f}/100", inf.maturity_label)
+    st.caption(inf.platform_summary)
+    c1, c2 = st.columns(2)
+    c1.markdown("**Strengths**\n" + "\n".join(f"- {s}" for s in inf.strengths or ["—"]))
+    c2.markdown("**Gaps**\n" + "\n".join(f"- {g}" for g in inf.gaps or ["—"]))
+    st.markdown("**Reusable platform capabilities for AI**\n" + "\n".join(f"- {r}" for r in inf.reusable_platform_capabilities or ["—"]))
+    st.dataframe(pd.DataFrame([f.model_dump() for f in sc.infrastructure_readiness.factors]), hide_index=True, width="stretch")
+
+with tabs[4]:
+    dr = result.data_readiness
+    st.divider()
+    st.metric("Data readiness", f"{dr.score:.0f}/100", dr.maturity_label)
+    c1, c2 = st.columns(2)
+    c1.markdown("**Strengths**\n" + "\n".join(f"- {s}" for s in dr.strengths or ["—"]))
+    c2.markdown("**Gaps**\n" + "\n".join(f"- {g}" for g in dr.gaps or ["—"]))
+    st.markdown(f"**RAG prerequisites met:** {'✅ yes' if dr.rag_prerequisites_met else '❌ no'}")
+    for n in dr.rag_prerequisite_notes:
+        st.markdown(f"- {n}")
+    st.info(dr.vector_database_note)
+
+with tabs[6]:
+    st.markdown("#### Deterministic scorecard")
+    st.caption("Every score is computed by explicit weights and thresholds in Python. LLMs never set scores.")
+    df = pd.DataFrame([{"Score": getattr(sc, key).label, "Value": getattr(sc, key).value, "Band": getattr(sc, key).band, "Question": getattr(sc, key).interpretation} for key in type(sc).model_fields])
+    st.dataframe(df, hide_index=True, width="stretch", column_config={"Value": st.column_config.ProgressColumn("Value", min_value=0, max_value=100, format="%.0f")})
+    for key in type(sc).model_fields:
+        s = getattr(sc, key)
+        with st.expander(f"{s.label}: {s.value:.0f} — factor breakdown"):
+            if s.factors:
+                st.dataframe(pd.DataFrame([f.model_dump() for f in s.factors]), hide_index=True, width="stretch")
+            for adj in s.adjustments:
+                st.markdown(f"- {adj}")
+    uca = result.use_case_assessment
+    st.markdown(f"#### Use-case character: {uca.workload_character}")
+    st.markdown(f"**Does this workload actually require agents?** {dec.agentic_answer}")
+    st.dataframe(pd.DataFrame([f.model_dump() for f in uca.findings]), hide_index=True, width="stretch")
+    with st.expander("Discovery: business problem framing"):
+        disc = result.discovery
+        st.markdown(f"**Problem:** {disc.business_problem}\n\n**Users:** {disc.users}\n\n**Workflow:** {disc.workflow}\n\n**Desired outcome:** {disc.desired_outcome}\n\n**Current solution:** {disc.current_solution}")
+        if disc.information_gaps:
+            st.warning("Information gaps: " + "; ".join(disc.information_gaps))
+        st.markdown("**Assumptions**\n" + "\n".join(f"- {x}" for x in disc.assumptions))
+
+with tabs[7]:
+    st.markdown(f"### {dec.primary_architecture_label}: {dec.architecture_label}")
+    st.markdown("**Why**\n" + "\n".join(f"- {r}" for r in dec.rationale))
+    st.markdown(f"**{dec.agentic_verdict_label}**\n" + "\n".join(f"- {r}" for r in dec.agentic_rationale))
+    with st.expander("Rules triggered & candidate scores"):
+        st.markdown("\n".join(f"- `{r}`" for r in dec.triggered_rules))
+        st.json(dec.candidate_scores)
+    st.markdown("#### Rejected alternatives")
+    st.dataframe(pd.DataFrame([{"Option": r.option.value, "Why rejected": r.reason} for r in dec.rejected_alternatives]), hide_index=True, width="stretch")
+    st.markdown("#### KEEP / ENHANCE / ADD / REPLACE")
+    st.dataframe(pd.DataFrame([{"Component": m.component, "Decision": m.decision.value, "Reason": m.reason} for m in result.matrix]), hide_index=True, width="stretch")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown("#### Current state")
+        mermaid(result.target_architecture.current_state_mermaid)
+    with c2:
+        st.markdown("#### Target state")
+        mermaid(result.target_architecture.target_state_mermaid)
+    st.caption(result.target_architecture.summary)
+    if dec.pattern_design:
+        with st.expander(f"Pattern design: {dec.pattern_design.pattern}", expanded=True):
+            st.markdown(dec.pattern_design.summary)
+            st.markdown("**Components**\n" + "\n".join(f"- {x}" for x in dec.pattern_design.components))
+            st.markdown("**Design notes**\n" + "\n".join(f"- {x}" for x in dec.pattern_design.design_notes))
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(f"#### Build vs Buy: **{result.build_vs_buy.decision.value}**")
+        st.caption(result.build_vs_buy.summary)
+        st.dataframe(pd.DataFrame([o.model_dump() for o in result.build_vs_buy.options]), hide_index=True, width="stretch")
+        st.markdown("\n".join(f"- {x}" for x in result.build_vs_buy.reasoning))
+    with c2:
+        st.markdown("#### Model deployment strategy")
+        st.markdown(f"**{result.model_deployment.recommended}**")
+        st.markdown("\n".join(f"- {x}" for x in result.model_deployment.rationale))
+        if result.model_deployment.options:
+            st.dataframe(pd.DataFrame([o.model_dump() for o in result.model_deployment.options]), hide_index=True, width="stretch")
+    st.markdown(f"#### Challenger / validation — {result.challenger.final_verdict}")
+    st.dataframe(pd.DataFrame([{"Verdict": q.verdict.value, "Question": q.question, "Finding": q.finding} for q in result.challenger.questions]), hide_index=True, width="stretch")
+
+with tabs[8]:
+    sec = result.security
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Security risk", f"{sec.security_risk_score:.0f}/100", sc.security_risk.band, delta_color="off")
+    c2.metric("Data classification", sec.data_classification.split(" — ")[0])
+    c3.metric("Autonomy", f"Level {int(dec.autonomy_level)}")
+    st.markdown(f"**{dec.autonomy_label}**\n" + "\n".join(f"- {r}" for r in dec.autonomy_rationale))
+    st.markdown("#### Per-action execution policy")
+    st.dataframe(pd.DataFrame([{"Action": p.action.value, "Max AI autonomy": f"L{int(p.max_ai_autonomy)}", "Executor": p.executor, "Reason": p.reason} for p in dec.action_policies]), hide_index=True, width="stretch")
+    st.markdown("#### Controls")
+    st.dataframe(pd.DataFrame([c.model_dump() for c in sec.controls]), hide_index=True, width="stretch")
+    if sec.agent_threats:
+        st.markdown("#### AI / agent failure modes")
+        st.dataframe(pd.DataFrame([{"Threat": t.name, "Applies": t.applies, "Likelihood": t.likelihood, "Impact": t.impact, "Mitigations": "; ".join(t.mitigations)} for t in sec.agent_threats]), hide_index=True, width="stretch")
+    if sec.agent_guardrail_config:
+        with st.expander("Recommended guardrail configuration"):
+            st.json(sec.agent_guardrail_config)
+    c1, c2 = st.columns(2)
+    c1.markdown("#### Governance\n" + "\n".join(f"- {g}" for g in sec.governance_requirements))
+    c2.markdown("#### Industry considerations\n" + "\n".join(f"- {g}" for g in sec.industry_considerations))
+    res = result.resilience
+    st.markdown(f"#### Resilience — *{res.principle}*")
+    st.markdown(" → ".join(res.degradation_chain))
+    if res.failure_scenarios:
+        st.dataframe(pd.DataFrame([f.model_dump() for f in res.failure_scenarios]), hide_index=True, width="stretch")
+    st.markdown("\n".join(f"- {r}" for r in res.recommendations))
+
+with tabs[9]:
+    cost, roi = result.cost, result.roi
+    st.markdown("#### Cost (deterministic, sample pricing)")
+    st.caption(cost.pricing_disclaimer)
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Current $/month", f"${cost.current_cost_month:,.0f}")
+    c2.metric("Proposed $/month", f"${cost.proposed_cost_month:,.0f}")
+    c3.metric("Model cost $/month", f"${cost.model_cost_month:,.0f}", f"-${cost.optimization_savings_month:,.0f} optimized", delta_color="inverse")
+    c4.metric("Cost / request", f"${cost.cost_per_request:.4f}")
+    st.caption(cost.latency_note + f" · Risk impact: {cost.risk_impact}")
+    with st.expander("Proposed monthly cost if each option were chosen (same inputs)"):
+        st.dataframe(pd.DataFrame([{"Option": k_, "Proposed $/month": v} for k_, v in cost.comparison_by_architecture.items()]), hide_index=True, width="stretch",
+                     column_config={"Proposed $/month": st.column_config.NumberColumn(format="$%.0f")})
+    if cost.recommendations:
+        st.markdown("**Optimization recommendations**\n" + "\n".join(f"- {r}" for r in cost.recommendations))
+
+    st.markdown("#### ROI / business case")
+    verdict_cls = {"NOT_JUSTIFIED": "v-red", "MARGINAL": "v-amber", "JUSTIFIED": "v-green"}.get(roi.verdict.name, "v-blue")
+    st.markdown(f'<div class="verdict {verdict_cls}"><div class="lbl">Business case</div><div class="big">{roi.verdict.value}</div></div>', unsafe_allow_html=True)
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Annual current operating cost", f"${roi.annual_current_operating_cost:,.0f}")
+    c2.metric("Estimated annual benefit", f"${roi.estimated_annual_benefit:,.0f}")
+    c3.metric("Net annual benefit", f"${roi.net_annual_benefit:,.0f}")
+    c4.metric("Payback", f"{roi.payback_months:.1f} months" if roi.payback_months is not None else "n/a")
+    c1.metric("AI operating cost / year", f"${roi.estimated_ai_operating_cost:,.0f}")
+    c2.metric("Implementation cost", f"${roi.estimated_implementation_cost:,.0f}")
+    c3.metric("3-year ROI", f"{roi.three_year_roi_pct:.0f}%" if roi.three_year_roi_pct is not None else "n/a")
+    for n in roi.notes:
+        st.caption(n)
+
+    st.markdown("#### What-if simulator")
+    st.caption("Explore cost, latency and risk trade-offs. The simulator does not change the recommendation.")
+    sim_patterns = dec.ai_patterns or [dec.primary_architecture]
+    w1, w2, w3, w4 = st.columns(4)
+    sim = CostInputs.model_validate(cost_vals)
+    sim_req = w1.number_input("Requests / month", 0, 1_000_000_000, sim.requests_per_month, step=1000, key=k("sim.req"))
+    sim_in = w2.number_input("Input tokens / request", 0, 2_000_000, sim.avg_input_tokens, step=100, key=k("sim.in"))
+    sim_out = w3.number_input("Output tokens / request", 0, 200_000, sim.avg_output_tokens, step=50, key=k("sim.out"))
+    sim_infra = w4.number_input("Infrastructure $/month", 0.0, 10_000_000.0, sim.infrastructure_cost_month, step=500.0, key=k("sim.infra"))
+    sim_topk = w1.slider("RAG top-k", 0, 30, sim.rag_top_k, key=k("sim.topk"))
+    sim_cache = w2.slider("Cache hit rate", 0.0, 1.0, sim.cache_hit_rate, key=k("sim.cache"))
+    sim_route = w3.slider("% routed to smaller model", 0.0, 1.0, sim.small_model_routing_pct, key=k("sim.route"))
+    sim_review = w4.slider("Human review %", 0.0, 1.0, sim.human_review_pct, key=k("sim.review"))
+    simulated = simulate_cost(
+        sim.model_copy(update={"requests_per_month": sim_req, "avg_input_tokens": sim_in, "avg_output_tokens": sim_out, "infrastructure_cost_month": sim_infra,
+                               "rag_top_k": sim_topk, "cache_hit_rate": sim_cache, "small_model_routing_pct": sim_route, "human_review_pct": sim_review}),
+        dec.primary_architecture, sim_patterns, Industry(industry), dec.human_review_mandatory,
+    )
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("Current cost", f"${simulated.current_cost_month:,.0f}")
+    s2.metric("Proposed cost", f"${simulated.proposed_cost_month:,.0f}", f"{simulated.proposed_cost_month - cost.proposed_cost_month:+,.0f} vs baseline", delta_color="inverse")
+    s3.metric("Potential savings vs unoptimized", f"${simulated.optimization_savings_month:,.0f}")
+    s4.metric("Latency (indicative)", f"{simulated.estimated_latency_ms / 1000:.1f}s")
+    st.markdown(f"**Risk impact:** {simulated.risk_impact}")
+    for n in simulated.risk_notes:
+        st.markdown(f"- {n}")
+
+with tabs[10]:
+    st.markdown(f"### {result.roadmap.summary}")
+    for p in result.roadmap.phases:
+        status = "" if p.included else " — *not planned*"
+        with st.expander(f"Phase {p.phase} — {p.name}{status} · autonomy ceiling L{int(p.autonomy_ceiling)}", expanded=p.included and p.phase <= 1):
+            st.markdown(f"**Objective:** {p.objective}")
+            if p.activities:
+                st.markdown("**Activities**\n" + "\n".join(f"- {a_}" for a_ in p.activities))
+            if p.exit_criteria:
+                st.markdown("**Exit criteria**\n" + "\n".join(f"- {e}" for e in p.exit_criteria))
+            if p.note:
+                st.info(p.note)
+    st.markdown("#### Evaluation framework (acceptance criteria)")
+    st.dataframe(pd.DataFrame([m.model_dump() for m in result.evaluation.metrics]), hide_index=True, width="stretch")
+    st.caption(result.evaluation.disclaimer)
+
+with tabs[11]:
+    st.download_button("⬇️ Export ADR (Markdown)", result.adr.markdown, file_name="archai-adr.md", mime="text/markdown")
+    st.markdown(result.adr.markdown)
+    with st.expander("Observability trace"):
+        t = result.trace
+        st.markdown(f"Request `{t.request_id}` · {t.timestamp} · mode **{t.mode}** · model calls {t.model_calls} · **paid model calls {t.paid_model_calls}** · {t.total_latency_ms:.0f} ms")
+        st.markdown("**Workflow path:** " + " → ".join(t.workflow_path))
+        st.dataframe(pd.DataFrame([s.model_dump() for s in t.spans]), hide_index=True, width="stretch")

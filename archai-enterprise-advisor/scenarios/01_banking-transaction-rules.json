@@ -1,0 +1,157 @@
+{
+  "id": "banking-transaction-rules",
+  "name": "NorthStar Bank \u2014 Replace transaction rules with autonomous agents",
+  "company": "NorthStar Bank",
+  "industry": "banking",
+  "summary": "A proposal to replace deterministic transaction threshold validation with an autonomous LLM agent.",
+  "expected": {
+    "primary_architecture": "keep_existing",
+    "agentic_verdict": "not_recommended",
+    "ai_recommended": false
+  },
+  "request": {
+    "organization": {
+      "name": "NorthStar Bank (fictional)",
+      "industry": "banking",
+      "size": "enterprise",
+      "ai_maturity": 2,
+      "gpu_available": false,
+      "data_residency_regions": [
+        "Domestic"
+      ]
+    },
+    "current_architecture": {
+      "deployment": [
+        "on_premises"
+      ],
+      "compute": [
+        "kubernetes"
+      ],
+      "styles": [
+        "microservices",
+        "api_based"
+      ],
+      "integration": [
+        "rest",
+        "kafka",
+        "message_queue"
+      ],
+      "identity_security": [
+        "active_directory",
+        "oidc",
+        "rbac",
+        "api_gateway",
+        "secrets_management",
+        "private_networking",
+        "service_accounts"
+      ],
+      "data_stores": [
+        "oracle",
+        "postgresql",
+        "data_warehouse"
+      ],
+      "devops": [
+        "jenkins",
+        "argocd",
+        "prometheus",
+        "grafana",
+        "splunk"
+      ],
+      "existing_systems": [
+        "Transaction Rules Engine",
+        "Core Banking Microservices",
+        "Payments Gateway"
+      ]
+    },
+    "data_profile": {
+      "availability": 4,
+      "quality": 4,
+      "freshness": 5,
+      "ownership": 4,
+      "lineage": 4,
+      "metadata": 3,
+      "permissions": 4,
+      "document_quality": 2,
+      "structured_share_pct": 95,
+      "knowledge_fragmentation": 1,
+      "contains_pii": true,
+      "contains_financial_data": true,
+      "confidential": true,
+      "privileged": false,
+      "data_residency_required": true,
+      "data_sources": [
+        "Transactions (Oracle)",
+        "Customer accounts",
+        "Threshold rule tables"
+      ]
+    },
+    "use_case": {
+      "title": "Replace transaction threshold validation rules with an autonomous LLM agent",
+      "description": "A business sponsor proposes replacing the deterministic transaction threshold rules engine with an autonomous LLM agent that decides whether transactions pass threshold validation.",
+      "users": "Payments operations, compliance",
+      "workflow": "Every transaction is validated against threshold rules in real time before authorization.",
+      "pain_points": [
+        "Rule changes require a release cycle",
+        "Perception that AI could be 'smarter'"
+      ],
+      "desired_outcome": "Faster rule changes and 'intelligent' validation.",
+      "current_solution": "Transaction Rules Engine (deterministic, audited)",
+      "constraints": [
+        "Real-time (<100 ms)",
+        "Fully auditable decisions",
+        "Regulatory reporting",
+        "Segregation of duties"
+      ],
+      "primary_tasks": [
+        "rules_validation"
+      ],
+      "action_types": [
+        "transaction_validation",
+        "payment_authorization"
+      ],
+      "replaces_existing_component": "Transaction Rules Engine",
+      "deterministic_requirement": 5,
+      "prediction_requirement": 1,
+      "generation_requirement": 0,
+      "workflow_variability": 0,
+      "multi_step_reasoning": 1,
+      "cross_system_interaction": 1,
+      "tool_requirements": 1,
+      "proprietary_knowledge_need": 0,
+      "citation_requirement": 0,
+      "knowledge_change_frequency": 1,
+      "autonomy_benefit": 3,
+      "hallucination_tolerance": 0,
+      "transaction_criticality": 5,
+      "explainability_requirement": 5,
+      "latency_sensitivity": 5,
+      "availability_requirement": 5,
+      "human_oversight_available": 2
+    },
+    "cost_inputs": {
+      "requests_per_month": 30000000,
+      "avg_input_tokens": 800,
+      "avg_output_tokens": 150,
+      "rag_top_k": 0,
+      "cache_hit_rate": 0.2,
+      "small_model_routing_pct": 0.5,
+      "human_review_pct": 0.0,
+      "infrastructure_cost_month": 25000,
+      "current_monthly_cost": 18000
+    },
+    "roi_inputs": {
+      "people_involved": 4,
+      "tasks_per_month": 40,
+      "minutes_per_task": 240,
+      "hourly_cost": 85,
+      "error_rate_pct": 1,
+      "rework_cost_per_error": 500,
+      "existing_technology_cost_annual": 216000,
+      "implementation_cost": 900000,
+      "expected_time_reduction_pct": 30,
+      "expected_error_reduction_pct": 0
+    }
+  },
+  "order": 1,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}
