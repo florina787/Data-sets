@@ -1,0 +1,39 @@
+[project]
+name = "cic-backend"
+version = "0.1.0"
+description = "Conversation Intelligence Copilot backend: agentic contact-centre analytics"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=2.0.0",
+    "faiss-cpu>=1.15.1",
+    "fastapi>=0.159.1",
+    "google-genai>=2.32.0",
+    "httpx>=0.28.1",
+    "langgraph>=1.2.16",
+    "langgraph-checkpoint-sqlite>=3.1.2",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pandas>=3.1.0",
+    "pyarrow>=26.0.0",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "python-docx>=1.2.0",
+    "reportlab>=5.1.0",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.18.1",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
+
+[project.optional-dependencies]
+# Optional: local transformer embeddings. Requires downloading weights from Hugging Face.
+transformers = ["sentence-transformers>=3.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,0 +1,45 @@
+{
+  "pipeline_version": "pipeline-1.0",
+  "taxonomy_version": "tax-1.0",
+  "labeler_version": "rules-1.0",
+  "built_at": "2026-10-22T15:28:39.353518+00:00",
+  "sources": [
+    {
+      "dataset_source": "original",
+      "file": "cs_conversations.csv.zip",
+      "member": "cs_conversations.csv",
+      "sha256": "53ff06457c3f4e6d8ed978b2a8fde19c850c28a65f60435c6fd52dbf09c51628",
+      "encoding": "utf-8-sig",
+      "delimiter": ",",
+      "column_mapping": {
+        "conversation_id": "conv_id",
+        "turn_index": "turn_index",
+        "timestamp": "timestamp",
+        "speaker_role": "role",
+        "text": "text",
+        "customer_name": "customer_name",
+        "agent_name": "agent_name"
+      },
+      "archive_members": [
+        "cs_conversations.csv",
+        "__MACOSX/._cs_conversations.csv"
+      ],
+      "rows": 41965,
+      "citation": "Customer Support Conversation Dataset (Syncora.ai), Kaggle. Supplied sample of 3,000 synthetic conversations."
+    }
+  ],
+  "label_coverage": {
+    "label_source": "rules",
+    "messages": 41965,
+    "by_method": {
+      "template": 41965
+    },
+    "gemini_labels_used": 0
+  },
+  "duration_seconds": 27.21,
+  "tables": {
+    "messages": 41965,
+    "message_labels": 41965,
+    "conversations": 3000
+  }
+}

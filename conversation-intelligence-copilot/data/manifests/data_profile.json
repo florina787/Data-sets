@@ -1,0 +1,33 @@
+{
+  "rows": 41965,
+  "conversations": 3000,
+  "agents": 2987,
+  "customers": 3000,
+  "roles": {
+    "customer": 21639,
+    "agent": 20326
+  },
+  "timestamp_min": "2025-08-01 10:00:00",
+  "timestamp_max": "2025-12-02 10:49:00",
+  "messages_per_conversation": {
+    "count": 3000.0,
+    "mean": 13.99,
+    "std": 2.57,
+    "min": 10.0,
+    "25%": 12.0,
+    "50%": 14.0,
+    "75%": 16.0,
+    "max": 18.0
+  },
+  "unique_clean_texts": 426,
+  "conversations_per_agent": {
+    "count": 2987.0,
+    "mean": 1.0,
+    "std": 0.07,
+    "min": 1.0,
+    "25%": 1.0,
+    "50%": 1.0,
+    "75%": 1.0,
+    "max": 2.0
+  }
+}
