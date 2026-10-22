@@ -1,0 +1,17 @@
+[project]
+name = "claimforge-copilot"
+version = "1.0.0"
+description = "ClaimForge Copilot — Agentic SDLC & Production Intelligence for Health Insurance (synthetic demo)"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 130
+target-version = "py311"

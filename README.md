@@ -26,3 +26,8 @@ Cross-disciplinary data repositories, data collections and data search engines:
 10. http://reddit.com/r/datasets
 
 Most Important all the datasets are in CSV ( Comma separated values) format.  
+
+## ClaimForge Copilot (portfolio project)
+
+[`claimforge/`](claimforge/README.md) holds an agentic SDLC and production-intelligence platform for health
+insurance (LangGraph, FastAPI and Streamlit). It uses synthetic data only and makes $0 in API calls in demo mode.

@@ -1,0 +1,508 @@
+{
+ "_notice": "SYNTHETIC DEMO DATA \u2014 fictional NorthStar Health Benefits architecture. No real systems.",
+ "organization": "NorthStar Health Benefits (fictional)",
+ "platform": {
+  "runtime": "Kubernetes (synthetic)",
+  "messaging": "Kafka (synthetic)",
+  "databases": [
+   "PostgreSQL",
+   "Oracle (legacy)"
+  ],
+  "monitoring": "Prometheus/Grafana-style (synthetic)"
+ },
+ "components": [
+  {
+   "component_id": "GW-API",
+   "name": "API Gateway",
+   "type": "gateway",
+   "criticality": "high",
+   "owner_team": "Platform",
+   "tech": "Kong (synthetic)",
+   "depends_on": [
+    "API-CLAIMS",
+    "API-BENEFITS",
+    "API-AUTH"
+   ],
+   "repo_paths": [
+    "platform/gateway/routes.yaml"
+   ],
+   "facet_actions": {}
+  },
+  {
+   "component_id": "SVC-CLAIMS",
+   "name": "Claims Service",
+   "type": "service",
+   "criticality": "critical",
+   "owner_team": "Claims Platform",
+   "tech": "Java 21 / Spring Boot",
+   "deterministic_engine": true,
+   "depends_on": [
+    "SVC-BENEFITS",
+    "SVC-AUTH",
+    "SVC-MEMBER",
+    "DB-CLAIMS"
+   ],
+   "repo_paths": [
+    "claims-service/src/main/java/com/northstar/claims/adjudication/AdjudicationPipeline.java",
+    "claims-service/src/main/resources/rules/physio.yaml"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Adjudication pipeline must read the new physiotherapy annual maximum from Benefits Service (no code-level constants)."
+    },
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Pipeline must invoke the authorization-threshold check before payment calculation and emit AUTH_REQUIRED."
+    },
+    "VISIT_COUNTING": {
+     "action": "ENHANCE",
+     "reason": "Pipeline must pass the completed-visit count (COMPLETED status only) to the authorization rule."
+    }
+   }
+  },
+  {
+   "component_id": "SVC-BENEFITS",
+   "name": "Benefits Service",
+   "type": "service",
+   "criticality": "critical",
+   "owner_team": "Benefits Configuration",
+   "tech": "Python / FastAPI",
+   "deterministic_engine": true,
+   "depends_on": [
+    "DB-BENEFIT-LIMITS"
+   ],
+   "repo_paths": [
+    "benefits-service/app/limits/annual_max.py",
+    "benefits-service/app/api/benefits.py"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Serve versioned annual maximum ($750 -> $1,000) with effective-dating per benefit year."
+    },
+    "REIMBURSEMENT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Serve versioned reimbursement percentage."
+    }
+   }
+  },
+  {
+   "component_id": "SVC-AUTH",
+   "name": "Authorization Service",
+   "type": "service",
+   "criticality": "critical",
+   "owner_team": "Utilization Management",
+   "tech": "Java 21 / Spring Boot",
+   "deterministic_engine": true,
+   "depends_on": [
+    "DB-AUTH-RULES",
+    "DB-VISITS"
+   ],
+   "repo_paths": [
+    "authorization-service/src/main/java/com/northstar/auth/rules/VisitThresholdRule.java",
+    "authorization-service/src/main/java/com/northstar/auth/visits/VisitCounter.java"
+   ],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Add physiotherapy threshold rule AUTH_RULE_184: authorization required once 10 completed visits exist in the benefit year."
+    },
+    "VISIT_COUNTING": {
+     "action": "ENHANCE",
+     "reason": "Visit counter must count COMPLETED visits only; CANCELLED and NO_SHOW excluded (policy P-01.3)."
+    }
+   }
+  },
+  {
+   "component_id": "SVC-MEMBER",
+   "name": "Member Service",
+   "type": "service",
+   "criticality": "high",
+   "owner_team": "Member Platform",
+   "tech": "Node.js",
+   "depends_on": [
+    "DB-MEMBERS"
+   ],
+   "repo_paths": [
+    "member-service/src/eligibility.ts"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "KEEP",
+     "reason": "Eligibility and benefit-year context unchanged; regression only."
+    }
+   }
+  },
+  {
+   "component_id": "SVC-PROVIDER",
+   "name": "Provider Registry Service",
+   "type": "service",
+   "criticality": "high",
+   "owner_team": "Provider Network",
+   "tech": "Java",
+   "depends_on": [],
+   "repo_paths": [
+    "provider-service/src/registry"
+   ],
+   "facet_actions": {}
+  },
+  {
+   "component_id": "API-CLAIMS",
+   "name": "Claims API (/v3/claims)",
+   "type": "api",
+   "criticality": "critical",
+   "owner_team": "Claims Platform",
+   "tech": "OpenAPI 3.1",
+   "depends_on": [
+    "SVC-CLAIMS"
+   ],
+   "repo_paths": [
+    "claims-service/api/openapi.yaml"
+   ],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "KEEP",
+     "reason": "Contract unchanged \u2014 existing reason code AUTH_REQUIRED is reused; add contract regression test only."
+    }
+   }
+  },
+  {
+   "component_id": "API-BENEFITS",
+   "name": "Benefits API (/v2/benefits/limits)",
+   "type": "api",
+   "criticality": "high",
+   "owner_team": "Benefits Configuration",
+   "tech": "OpenAPI 3.1",
+   "depends_on": [
+    "SVC-BENEFITS"
+   ],
+   "repo_paths": [
+    "benefits-service/api/openapi.yaml"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Expose effective-dated annual maximum and remaining balance for physiotherapy."
+    }
+   }
+  },
+  {
+   "component_id": "API-AUTH",
+   "name": "Authorization API (/v1/authorizations)",
+   "type": "api",
+   "criticality": "high",
+   "owner_team": "Utilization Management",
+   "tech": "OpenAPI 3.1",
+   "depends_on": [
+    "SVC-AUTH"
+   ],
+   "repo_paths": [
+    "authorization-service/api/openapi.yaml"
+   ],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Add GET /v1/authorizations/requirement?member=&benefit= returning required flag and counted completed visits."
+    }
+   }
+  },
+  {
+   "component_id": "DB-BENEFIT-LIMITS",
+   "name": "benefit_limits table",
+   "type": "database_table",
+   "criticality": "critical",
+   "owner_team": "Benefits Configuration",
+   "tech": "PostgreSQL",
+   "depends_on": [],
+   "repo_paths": [
+    "benefits-service/migrations/"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Insert effective-dated row: PHYSIOTHERAPY annual_max=1000 (ruleset v2); retain v1 row for audit."
+    },
+    "REIMBURSEMENT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Insert effective-dated reimbursement row."
+    }
+   }
+  },
+  {
+   "component_id": "DB-AUTH-RULES",
+   "name": "authorization_rules table",
+   "type": "database_table",
+   "criticality": "high",
+   "owner_team": "Utilization Management",
+   "tech": "PostgreSQL",
+   "depends_on": [],
+   "repo_paths": [
+    "authorization-service/migrations/"
+   ],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Add rule row AUTH_RULE_184 (benefit=PHYSIOTHERAPY, threshold=10, count_status=COMPLETED)."
+    }
+   }
+  },
+  {
+   "component_id": "DB-VISITS",
+   "name": "visit_history table",
+   "type": "database_table",
+   "criticality": "high",
+   "owner_team": "Utilization Management",
+   "tech": "Oracle (legacy)",
+   "depends_on": [],
+   "repo_paths": [
+    "authorization-service/db/visit_history.sql"
+   ],
+   "facet_actions": {
+    "VISIT_COUNTING": {
+     "action": "KEEP",
+     "reason": "Schema already stores visit_status; no change. Read path must filter visit_status='COMPLETED'."
+    }
+   }
+  },
+  {
+   "component_id": "DB-CLAIMS",
+   "name": "claims table",
+   "type": "database_table",
+   "criticality": "critical",
+   "owner_team": "Claims Platform",
+   "tech": "Oracle (legacy)",
+   "depends_on": [],
+   "repo_paths": [],
+   "facet_actions": {}
+  },
+  {
+   "component_id": "DB-MEMBERS",
+   "name": "members table",
+   "type": "database_table",
+   "criticality": "high",
+   "owner_team": "Member Platform",
+   "tech": "PostgreSQL",
+   "depends_on": [],
+   "repo_paths": [],
+   "facet_actions": {}
+  },
+  {
+   "component_id": "EVT-CLAIM-ADJ",
+   "name": "claim.adjudicated event schema",
+   "type": "event",
+   "criticality": "high",
+   "owner_team": "Claims Platform",
+   "tech": "Avro",
+   "depends_on": [
+    "SVC-CLAIMS"
+   ],
+   "repo_paths": [
+    "schemas/claim_adjudicated.avsc"
+   ],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Add optional fields counted_visits and auth_rule_id (backward-compatible Avro change) for monitoring and traceability."
+    }
+   }
+  },
+  {
+   "component_id": "Q-CLAIMS",
+   "name": "Kafka topic claims.adjudicated",
+   "type": "queue",
+   "criticality": "high",
+   "owner_team": "Platform",
+   "tech": "Kafka",
+   "depends_on": [
+    "EVT-CLAIM-ADJ"
+   ],
+   "repo_paths": [],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "KEEP",
+     "reason": "Topic unchanged; consumers tolerate new optional fields."
+    }
+   }
+  },
+  {
+   "component_id": "RULE-BEN-090",
+   "name": "BEN_RULE_090 annual maximum rule",
+   "type": "rule",
+   "criticality": "critical",
+   "owner_team": "Benefits Configuration",
+   "tech": "Rules config",
+   "deterministic_engine": true,
+   "depends_on": [
+    "DB-BENEFIT-LIMITS"
+   ],
+   "repo_paths": [
+    "claims-service/src/main/resources/rules/physio.yaml"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Parameter change 750 -> 1000; logic unchanged."
+    }
+   }
+  },
+  {
+   "component_id": "RULE-PHYSIO-CONST",
+   "name": "Hardcoded PHYSIO_ANNUAL_MAX constant (legacy)",
+   "type": "rule",
+   "criticality": "high",
+   "owner_team": "Claims Platform",
+   "tech": "Java constant",
+   "depends_on": [],
+   "repo_paths": [
+    "claims-service/src/main/java/com/northstar/claims/legacy/PhysioLimits.java"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "REPLACE",
+     "reason": "Legacy hardcoded 750 constant used by EOB preview must be replaced by a Benefits API lookup to avoid divergence."
+    }
+   }
+  },
+  {
+   "component_id": "TEST-REGRESSION",
+   "name": "Adjudication regression suite",
+   "type": "test_suite",
+   "criticality": "high",
+   "owner_team": "QA",
+   "tech": "pytest / JUnit",
+   "depends_on": [
+    "SVC-CLAIMS"
+   ],
+   "repo_paths": [
+    "qa/regression/physio/"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Update annual-maximum boundary tests ($750 -> $1,000)."
+    },
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Add visit-10 / visit-11 boundary tests with and without authorization."
+    },
+    "VISIT_COUNTING": {
+     "action": "ENHANCE",
+     "reason": "Add cancelled/no-show visit exclusion tests."
+    }
+   }
+  },
+  {
+   "component_id": "MON-CLAIMIQ",
+   "name": "Claims monitoring dashboards & alerts",
+   "type": "monitoring",
+   "criticality": "high",
+   "owner_team": "SRE / Claims Ops",
+   "tech": "Grafana-style (synthetic)",
+   "depends_on": [
+    "Q-CLAIMS"
+   ],
+   "repo_paths": [
+    "monitoring/dashboards/claims_denials.json"
+   ],
+   "facet_actions": {
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Add physiotherapy AUTH_REQUIRED denial-rate panel and alert vs approved simulation projection."
+    },
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Track BENEFIT_MAX_REACHED rate and average physiotherapy reimbursement."
+    }
+   }
+  },
+  {
+   "component_id": "DOC-BENEFIT-BOOKLET",
+   "name": "Member benefit booklet & provider manual",
+   "type": "documentation",
+   "criticality": "medium",
+   "owner_team": "Product",
+   "tech": "CMS",
+   "depends_on": [],
+   "repo_paths": [
+    "docs/benefits/physiotherapy.md"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Update physiotherapy maximum and policy section P-14.2."
+    },
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Document authorization requirement and policy section P-14.3."
+    }
+   }
+  },
+  {
+   "component_id": "COMM-MEMBER",
+   "name": "Member & provider communications",
+   "type": "communication",
+   "criticality": "medium",
+   "owner_team": "Member Experience",
+   "tech": "Notification platform",
+   "depends_on": [
+    "SVC-MEMBER"
+   ],
+   "repo_paths": [],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "30-day advance notice of benefit change (policy P-40.1)."
+    },
+    "AUTH_THRESHOLD_ADD": {
+     "action": "ENHANCE",
+     "reason": "Notify providers of new authorization requirement (policy P-40.1)."
+    }
+   }
+  },
+  {
+   "component_id": "ANL-UTILIZATION",
+   "name": "Benefit utilization analytics",
+   "type": "analytics",
+   "criticality": "low",
+   "owner_team": "Analytics",
+   "tech": "dbt / warehouse",
+   "depends_on": [
+    "Q-CLAIMS"
+   ],
+   "repo_paths": [
+    "analytics/models/physio_utilization.sql"
+   ],
+   "facet_actions": {
+    "BENEFIT_LIMIT_CHANGE": {
+     "action": "ENHANCE",
+     "reason": "Recalculate utilization vs maximum with new $1,000 limit."
+    }
+   }
+  }
+ ],
+ "additions": {
+  "VISIT_COUNTING": [
+   {
+    "component_id": "NEW-VISIT-VIEW",
+    "name": "completed_visit_counts view",
+    "type": "database_table",
+    "criticality": "high",
+    "owner_team": "Utilization Management",
+    "tech": "PostgreSQL view",
+    "reason": "Single source of truth for completed-visit counts per member/benefit/benefit-year (WHERE visit_status = 'COMPLETED')."
+   }
+  ],
+  "AUTH_THRESHOLD_ADD": [
+   {
+    "component_id": "NEW-AUTH-RULE-184",
+    "name": "AUTH_RULE_184 physiotherapy authorization threshold",
+    "type": "rule",
+    "criticality": "critical",
+    "owner_team": "Utilization Management",
+    "tech": "Rules config",
+    "reason": "New deterministic rule: authorization required when completed physiotherapy visits in benefit year >= 10."
+   }
+  ]
+ }
+}

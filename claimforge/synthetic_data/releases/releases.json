@@ -1,0 +1,11 @@
+{
+  "_notice": "SYNTHETIC DEMO DATA — fictional release history.",
+  "releases": [
+    {"release_id": "REL-2.3", "version": "2.3", "deployed_on": "2026-04-06", "requirements": ["BR-377"], "changed_rules": ["BEN_RULE_090"], "change_ids": ["CHG-2.3-004"], "ruleset_id": "RULESET_V1", "status": "DEPLOYED", "approved_by": "Synthetic Release Manager A", "notes": "Chiropractic maximum $450 -> $500."},
+    {"release_id": "REL-2.4", "version": "2.4", "deployed_on": "2026-07-06", "requirements": ["BR-391"], "changed_rules": ["BEN_RULE_090", "AUTH_RULE_184"], "change_ids": ["CHG-2.4-011", "CHG-2.4-017"], "ruleset_id": "RULESET_V2", "status": "PLANNED", "approved_by": null, "notes": "Physiotherapy maximum $750 -> $1,000; prior authorization after 10 completed visits."}
+  ],
+  "change_sets": [
+    {"change_id": "CHG-2.4-011", "rule_id": "BEN_RULE_090", "component_id": "SVC-BENEFITS", "summary": "Effective-dated physiotherapy annual maximum 1000."},
+    {"change_id": "CHG-2.4-017", "rule_id": "AUTH_RULE_184", "component_id": "SVC-AUTH", "summary": "Physiotherapy authorization threshold (10 completed visits)."}
+  ]
+}
