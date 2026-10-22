@@ -1,0 +1,82 @@
+{
+  "version": "intent-benchmark-v2",
+  "n": 288,
+  "families": 95,
+  "splits": {
+    "train": {
+      "n": 142,
+      "families": 47,
+      "sha256": "f5b192f9f5c278ba1d1d9d77c43c0ea790c6cb765595c2456093a22d09b7ff48",
+      "by_intent": {
+        "agent_coaching": 9,
+        "agent_profile": 3,
+        "clarify": 6,
+        "compare_topics": 6,
+        "conversation_detail": 6,
+        "conversation_list": 3,
+        "conversation_xray": 6,
+        "dataset_overview": 9,
+        "leadership_priorities": 9,
+        "negative_topics": 15,
+        "resolution_quality": 3,
+        "root_cause": 9,
+        "sentiment_distribution": 9,
+        "sentiment_trajectory": 7,
+        "sentiment_trend": 9,
+        "similar_conversations": 9,
+        "topic_frequency": 9,
+        "unsupported": 15
+      }
+    },
+    "validation": {
+      "n": 73,
+      "families": 24,
+      "sha256": "1c753519658434c9cbc15471fbfc850a88f3b21539ac622066c54597ff5055b9",
+      "by_intent": {
+        "agent_coaching": 6,
+        "agent_profile": 3,
+        "clarify": 3,
+        "compare_topics": 3,
+        "conversation_detail": 3,
+        "conversation_list": 3,
+        "conversation_xray": 3,
+        "dataset_overview": 3,
+        "leadership_priorities": 3,
+        "negative_topics": 7,
+        "resolution_quality": 3,
+        "root_cause": 3,
+        "sentiment_distribution": 3,
+        "sentiment_trajectory": 6,
+        "sentiment_trend": 6,
+        "similar_conversations": 3,
+        "topic_frequency": 3,
+        "unsupported": 9
+      }
+    },
+    "test": {
+      "n": 73,
+      "families": 24,
+      "sha256": "69a749e29f7dd79012e4e1e263118004a6594eafb12c27e18c287d79427f01fb",
+      "by_intent": {
+        "agent_coaching": 6,
+        "agent_profile": 3,
+        "clarify": 3,
+        "compare_topics": 3,
+        "conversation_detail": 3,
+        "conversation_list": 3,
+        "conversation_xray": 3,
+        "dataset_overview": 3,
+        "leadership_priorities": 3,
+        "negative_topics": 7,
+        "resolution_quality": 3,
+        "root_cause": 3,
+        "sentiment_distribution": 3,
+        "sentiment_trajectory": 6,
+        "sentiment_trend": 6,
+        "similar_conversations": 3,
+        "topic_frequency": 3,
+        "unsupported": 9
+      }
+    }
+  }
+}
