@@ -1,0 +1,523 @@
+[
+  {
+    "version": "1.0",
+    "request_id": "R-77a630ff4137",
+    "session_id": "S-e0c9c9e1b823",
+    "status": "completed",
+    "question": "Find conversations where the customer asked to escalate an app crash.",
+    "resolved_intent": {
+      "category": "similar_conversations",
+      "time_window": {
+        "type": "inherit",
+        "month": null,
+        "n": null
+      },
+      "dimension": "topic",
+      "rank_by": "count",
+      "top_n": null,
+      "topics": [
+        "app_crash"
+      ],
+      "products": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": [],
+      "search_query": "Find conversations where the customer asked to escalate an app crash.",
+      "group_by": null,
+      "is_follow_up": false,
+      "reference_ranks": [],
+      "audience": "analyst",
+      "needs_evidence": true,
+      "reasoning": "Rule-based interpretation."
+    },
+    "dataset_scope": {
+      "dataset_mode": "original",
+      "window": {
+        "start": null,
+        "end": null,
+        "label": "All dates",
+        "rule": "all",
+        "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+      },
+      "topics": [
+        "app_crash"
+      ],
+      "products": [],
+      "domains": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": []
+    },
+    "plan": {
+      "category": "similar_conversations",
+      "specialist": null,
+      "steps": [],
+      "retrieval": {
+        "mode": "only",
+        "query": "Find conversations where the customer asked to escalate an app crash.",
+        "k": 5,
+        "scope": {
+          "dataset_mode": "original",
+          "window": {
+            "start": null,
+            "end": null,
+            "label": "All dates",
+            "rule": "all",
+            "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+          },
+          "topics": [
+            "app_crash"
+          ],
+          "products": [],
+          "domains": [],
+          "agents": [],
+          "sentiments": [],
+          "conversation_ids": []
+        }
+      },
+      "notes": [],
+      "resolved_references": {},
+      "audience": "analyst"
+    },
+    "headline": "Found 5 relevant conversations (App crash: 5).",
+    "answer": "Passages are ranked by cosine similarity between embeddings (a ranking signal, not a probability). C0001134 (turns 10\u201313, similarity 0.69). C0006054 (turns 10\u201312, similarity 0.68). C0014722 (turns 8\u201311, similarity 0.68). C0013754 (turns 12\u201314, similarity 0.67). C0005829 (turns 8\u201310, similarity 0.67).",
+    "key_points": [
+      "C0001134 \u00b7 App crash \u00b7 Billing \u00b7 negative",
+      "C0006054 \u00b7 App crash \u00b7 Billing \u00b7 negative",
+      "C0014722 \u00b7 App crash \u00b7 Cab \u00b7 negative",
+      "C0013754 \u00b7 App crash \u00b7 Wallet \u00b7 mixed",
+      "C0005829 \u00b7 App crash \u00b7 International Pack \u00b7 mixed"
+    ],
+    "metrics": [],
+    "rankings": [],
+    "evidence": [
+      {
+        "evidence_id": "C0001134#10-13",
+        "kind": "retrieval",
+        "conversation_id": "C0001134",
+        "message_ids": [
+          "C0001134-T10",
+          "C0001134-T11",
+          "C0001134-T12",
+          "C0001134-T13"
+        ],
+        "turn_range": [
+          10,
+          13
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0001134-T10",
+            "turn_index": 10,
+            "role": "customer",
+            "text": "Okay, waiting for an update.",
+            "sentiment": "neutral",
+            "act": "waiting",
+            "source_reference": "cs_conversations.csv:line 3096"
+          },
+          {
+            "message_id": "C0001134-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "sentiment": "neutral",
+            "act": "courtesy_greeting",
+            "source_reference": "cs_conversations.csv:line 3097"
+          },
+          {
+            "message_id": "C0001134-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 3098"
+          },
+          {
+            "message_id": "C0001134-T13",
+            "turn_index": 13,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 3099"
+          }
+        ],
+        "topic": "App crash",
+        "product": "Billing",
+        "sentiment": "negative",
+        "agent_id": "AgentQMRG",
+        "date": "2025-09-24",
+        "similarity": 0.6907,
+        "reason": "Semantic match (cosine similarity 0.69)"
+      },
+      {
+        "evidence_id": "C0006054#10-12",
+        "kind": "retrieval",
+        "conversation_id": "C0006054",
+        "message_ids": [
+          "C0006054-T10",
+          "C0006054-T11",
+          "C0006054-T12"
+        ],
+        "turn_range": [
+          10,
+          12
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0006054-T10",
+            "turn_index": 10,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 17045"
+          },
+          {
+            "message_id": "C0006054-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 17046"
+          },
+          {
+            "message_id": "C0006054-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Thanks, that helps.",
+            "sentiment": "positive",
+            "act": "gratitude",
+            "source_reference": "cs_conversations.csv:line 17047"
+          }
+        ],
+        "topic": "App crash",
+        "product": "Billing",
+        "sentiment": "negative",
+        "agent_id": "AgentABMO",
+        "date": "2025-09-24",
+        "similarity": 0.6831,
+        "reason": "Semantic match (cosine similarity 0.68)"
+      },
+      {
+        "evidence_id": "C0014722#8-11",
+        "kind": "retrieval",
+        "conversation_id": "C0014722",
+        "message_ids": [
+          "C0014722-T08",
+          "C0014722-T09",
+          "C0014722-T10",
+          "C0014722-T11"
+        ],
+        "turn_range": [
+          8,
+          11
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0014722-T08",
+            "turn_index": 8,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 41180"
+          },
+          {
+            "message_id": "C0014722-T09",
+            "turn_index": 9,
+            "role": "agent",
+            "text": "Please allow me a moment while I run some checks.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 41181"
+          },
+          {
+            "message_id": "C0014722-T10",
+            "turn_index": 10,
+            "role": "customer",
+            "text": "Okay, waiting for an update.",
+            "sentiment": "neutral",
+            "act": "waiting",
+            "source_reference": "cs_conversations.csv:line 41182"
+          },
+          {
+            "message_id": "C0014722-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 41183"
+          }
+        ],
+        "topic": "App crash",
+        "product": "Cab",
+        "sentiment": "negative",
+        "agent_id": "AgentKFCA",
+        "date": "2025-10-22",
+        "similarity": 0.6809,
+        "reason": "Semantic match (cosine similarity 0.68)"
+      },
+      {
+        "evidence_id": "C0013754#12-14",
+        "kind": "retrieval",
+        "conversation_id": "C0013754",
+        "message_ids": [
+          "C0013754-T12",
+          "C0013754-T13",
+          "C0013754-T14"
+        ],
+        "turn_range": [
+          12,
+          14
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0013754-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 38440"
+          },
+          {
+            "message_id": "C0013754-T13",
+            "turn_index": 13,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 38441"
+          },
+          {
+            "message_id": "C0013754-T14",
+            "turn_index": 14,
+            "role": "customer",
+            "text": "Got it. I\u2019ve retried, and it works now.",
+            "sentiment": "positive",
+            "act": "confirms_fixed",
+            "source_reference": "cs_conversations.csv:line 38442"
+          }
+        ],
+        "topic": "App crash",
+        "product": "Wallet",
+        "sentiment": "mixed",
+        "agent_id": "AgentPPOX",
+        "date": "2025-10-14",
+        "similarity": 0.6694,
+        "reason": "Semantic match (cosine similarity 0.67)"
+      },
+      {
+        "evidence_id": "C0005829#8-10",
+        "kind": "retrieval",
+        "conversation_id": "C0005829",
+        "message_ids": [
+          "C0005829-T08",
+          "C0005829-T09",
+          "C0005829-T10"
+        ],
+        "turn_range": [
+          8,
+          10
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0005829-T08",
+            "turn_index": 8,
+            "role": "customer",
+            "text": "Thanks, that helps.",
+            "sentiment": "positive",
+            "act": "gratitude",
+            "source_reference": "cs_conversations.csv:line 16354"
+          },
+          {
+            "message_id": "C0005829-T09",
+            "turn_index": 9,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 16355"
+          },
+          {
+            "message_id": "C0005829-T10",
+            "turn_index": 10,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 16356"
+          }
+        ],
+        "topic": "App crash",
+        "product": "International Pack",
+        "sentiment": "mixed",
+        "agent_id": "AgentHEHY",
+        "date": "2025-10-09",
+        "similarity": 0.6679,
+        "reason": "Semantic match (cosine similarity 0.67)"
+      }
+    ],
+    "recommendations": [],
+    "uncertainty_notes": [],
+    "method_notes": [],
+    "follow_up_questions": [
+      "How did sentiment change in C0001134?"
+    ],
+    "execution_trace_id": "R-77a630ff4137",
+    "model_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "deterministic",
+      "available": false,
+      "reason": "GEMINI_API_KEY is not set",
+      "intent_source": "rules",
+      "explanation_source": "deterministic",
+      "label_source": "rules",
+      "embedding_backend": "lsa-tfidf-svd192"
+    },
+    "quality_status": {
+      "status": "pass",
+      "checks": [
+        {
+          "check": "registered_operations",
+          "passed": true,
+          "critical": true,
+          "detail": "Operations: none"
+        },
+        {
+          "check": "filters_applied",
+          "passed": true,
+          "critical": false,
+          "detail": "All results use the planned scope"
+        },
+        {
+          "check": "proportions_valid",
+          "passed": true,
+          "critical": true,
+          "detail": "All proportions within [0, 1]"
+        },
+        {
+          "check": "chart_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "1 charts match their source tables"
+        },
+        {
+          "check": "evidence_valid",
+          "passed": true,
+          "critical": false,
+          "detail": "0 evidence items resolved to source messages"
+        },
+        {
+          "check": "explanation_grounded",
+          "passed": true,
+          "critical": true,
+          "detail": "All numbers in the answer trace to verified results"
+        },
+        {
+          "check": "uncertainty_disclosed",
+          "passed": true,
+          "critical": false,
+          "detail": "0 uncertainty notes attached to the response"
+        }
+      ],
+      "passed": 7,
+      "total": 7
+    },
+    "governance": [
+      {
+        "policy": "pii_masking",
+        "outcome": "pass",
+        "detail": "Evidence excerpts are PII-masked at ingestion"
+      },
+      {
+        "policy": "prompt_injection",
+        "outcome": "pass",
+        "detail": "No injection patterns in the question"
+      },
+      {
+        "policy": "tool_safety",
+        "outcome": "pass",
+        "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+      },
+      {
+        "policy": "dataset_authorisation",
+        "outcome": "pass",
+        "detail": "Dataset mode: original"
+      }
+    ],
+    "human_review_required": false,
+    "errors": [],
+    "latency_ms": 112.1,
+    "charts": [
+      {
+        "chart_id": "retrieval_results",
+        "chart_type": "horizontal_bar",
+        "title": "Retrieved passages by similarity",
+        "description": "",
+        "x_field": "conversation_id",
+        "y_field": null,
+        "series": [
+          {
+            "key": "similarity",
+            "label": "Cosine similarity",
+            "color": "cyan"
+          }
+        ],
+        "value_format": "number",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-77a630ff4137",
+        "evidence_ids": [
+          "C0001134#10-13",
+          "C0006054#10-12",
+          "C0014722#8-11",
+          "C0013754#12-14",
+          "C0005829#8-10"
+        ],
+        "uncertainty_note": "Similarity is a ranking signal between embeddings, not a probability or confidence.",
+        "drilldown": {
+          "kind": "conversation",
+          "field": "conversation_id"
+        },
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "C0001134: 0.69; C0006054: 0.68; C0014722: 0.68; C0013754: 0.67; C0005829: 0.67",
+        "data_preview": [
+          {
+            "conversation_id": "C0001134",
+            "similarity": 0.6907,
+            "topic": "App crash"
+          },
+          {
+            "conversation_id": "C0006054",
+            "similarity": 0.6831,
+            "topic": "App crash"
+          },
+          {
+            "conversation_id": "C0014722",
+            "similarity": 0.6809,
+            "topic": "App crash"
+          },
+          {
+            "conversation_id": "C0013754",
+            "similarity": 0.6694,
+            "topic": "App crash"
+          },
+          {
+            "conversation_id": "C0005829",
+            "similarity": 0.6679,
+            "topic": "App crash"
+          }
+        ],
+        "rows": 5
+      }
+    ],
+    "graphs": []
+  }
+]

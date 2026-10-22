@@ -37,9 +37,10 @@ def _conversation_signals(db: AnalyticsDB, scope: Scope) -> pd.DataFrame:
             FROM conversations c WHERE {w} AND agent_id IS NOT NULL""", p)
     if df.empty:
         return df
-    missed = 1 - df["empathy_response_rate"]
-    irrelevant = df["resolution_relevant"].map(lambda v: None if v is None or pd.isna(v) else float(not v))
-    comps = pd.concat([missed, irrelevant.astype(float)], axis=1)
+    missed = 1 - pd.to_numeric(df["empathy_response_rate"], errors="coerce").astype("float64")
+    # Float with NaN for "not assessable", even when no conversation in scope is assessable.
+    irrelevant = df["resolution_relevant"].map(lambda v: float("nan") if v is None or pd.isna(v) else float(not v)).astype("float64")
+    comps = pd.concat([missed, irrelevant], axis=1)
     df["missed_empathy_rate"] = missed
     df["irrelevant_resolution"] = irrelevant
     df["review_score"] = (comps.mean(axis=1, skipna=True) * 100).round(1)

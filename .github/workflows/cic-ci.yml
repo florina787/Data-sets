@@ -1,0 +1,36 @@
+name: Conversation Intelligence Copilot CI
+
+on:
+  pull_request:
+    paths: ["conversation-intelligence-copilot/**", ".github/workflows/cic-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["conversation-intelligence-copilot/**", ".github/workflows/cic-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: conversation-intelligence-copilot/backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.13" }
+      - run: uv sync --frozen
+      # Fixture data only; no network, no API keys.
+      - run: uv run pytest
+        env: { LLM_ENABLED: "false" }
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: conversation-intelligence-copilot/frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: conversation-intelligence-copilot/frontend/package-lock.json }
+      - run: npm ci
+      - run: npx tsc -b --noEmit
+      - run: npx vitest run
+      - run: npx vite build

@@ -110,7 +110,11 @@ def leadership_priorities(db: AnalyticsDB, scope: Scope, top_n: int = 5, weights
     df["priority_score"] = _score(df, weights)
     norm = {k: pd.Series(minmax(df[k].astype(float).tolist()), index=df.index) for k in weights}
     contrib = pd.DataFrame({k: norm[k] * weights[k] / sum(weights.values()) * 100 for k in weights})
-    df["main_driver"] = contrib.idxmax(axis=1)
+    # Driver = the signal on which this concern stands out most relative to the other concerns
+    # (highest normalised value; ties broken by weight). Signals with zero weight are ignored.
+    active = [k for k in weights if weights[k] > 0]
+    normdf = pd.DataFrame({k: norm[k] + weights[k] * 1e-6 for k in active})
+    df["main_driver"] = normdf.idxmax(axis=1)
     for k in weights:
         df[f"contrib_{k}"] = contrib[k].round(1)
     df = df.sort_values(["priority_score", "conversations"], ascending=[False, False]).reset_index(drop=True)
@@ -139,8 +143,8 @@ def leadership_priorities(db: AnalyticsDB, scope: Scope, top_n: int = 5, weights
                        f"{r['negative_rate']:.0%} negative, {r['unresolved_rate']:.0%} end unresolved, "
                        f"{r['resolution_misfit_rate']:.0%} closing actions misfit the issue.",
             "supporting_metric": {"label": SIGNAL_LABELS[driver], "value": round(float(r[driver]), 4), "signal": driver},
-            "rationale": f"Largest contribution to the priority score comes from {SIGNAL_LABELS[driver].lower()} "
-                         f"({float(r[f'contrib_{driver}']):.1f} of {float(r['priority_score']):.1f} points).",
+            "rationale": f"Stands out most on {SIGNAL_LABELS[driver].lower()} relative to the other concerns; "
+                         f"that signal contributes {float(r[f'contrib_{driver}']):.1f} of its {float(r['priority_score']):.1f} priority points.",
             "suggested_action": ACTIONS[driver],
             "decision_owner": OWNERS[driver],
             "evidence": ev,

@@ -115,3 +115,9 @@ def test_registry_rejects_unknown_ops_and_bad_args(db):
 def test_sql_injection_in_filter_values_is_inert(db):
     s = Scope(topics=["duplicate_charge' OR '1'='1"])
     assert run_operation(db, "list_conversations", s, {}).metric("conversations_in_scope").value == 0
+
+
+def test_coaching_when_no_resolution_is_assessable(db):
+    """Regression: an all-NULL resolution_relevant column (e.g. only general-help or unknown topics) must not crash."""
+    r = run_operation(db, "agent_coaching_review", Scope(topics=["general_help"]), {"min_conversations": 1})
+    assert r.status == "ok" and r.metric("irrelevant_resolution_rate").value is None

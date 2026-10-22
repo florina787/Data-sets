@@ -107,6 +107,15 @@ def eval_intent() -> dict:
            "macro_f1": round(float(f1.mean()), 4),
            "per_class": [{"label": lab, "precision": round(float(a), 3), "recall": round(float(b), 3), "f1": round(float(c), 3), "support": int(d)}
                          for lab, a, b, c, d in zip(labels, p, r, f1, sup)], "errors": errors}
+    held = [json.loads(line) for line in (DATASETS / "intent_questions_heldout.jsonl").read_text().splitlines()]
+    h_pred = [parse_intent(i["question"]).category for i in held]
+    misses = [(i, p) for i, p in zip(held, h_pred) if p != i["expected"]]
+    out["heldout"] = {
+        "n": len(held), "accuracy": round(1 - len(misses) / len(held), 4),
+        "safe_failures": sum(p == "unsupported" for _, p in misses), "misrouted": sum(p != "unsupported" for _, p in misses),
+        "errors": [{"question": i["question"], "expected": i["expected"], "predicted": p} for i, p in misses],
+        "note": "Written after the parser was tuned on the main set and scored once without further changes.",
+    }
     llm = get_llm()
     if llm.available():
         from app.agents.intent_agent import resolve_intent
@@ -268,7 +277,9 @@ def main() -> None:
     e, rt, it, q1 = res["end_to_end"], res["retrieval"], res["intent"], res["q1_oracle"]
     res["summary"] = [
         {"metric": "Q1 numbers vs independent oracle", "display": "match" if q1["top5_counts_match"] and q1["totals_match"] else "MISMATCH", "note": q1["month"]},
-        {"metric": "Intent accuracy (rules)", "display": f"{it['accuracy']:.0%}", "note": f"{it['n']} labelled questions"},
+        {"metric": "Intent accuracy (rules, tuning set)", "display": f"{it['accuracy']:.0%}", "note": f"{it['n']} questions; parser was tuned on this set"},
+        {"metric": "Intent accuracy (rules, held-out)", "display": f"{it['heldout']['accuracy']:.0%}",
+         "note": f"{it['heldout']['n']} unseen paraphrases; {it['heldout']['safe_failures']} of {it['heldout']['n'] - round(it['heldout']['accuracy'] * it['heldout']['n'])} misses refused safely"},
         {"metric": "QA pass rate (end to end)", "display": f"{e['qa_pass_rate']:.0%}", "note": f"{e['requests']} requests"},
         {"metric": "Follow-up routing", "display": f"{e['follow_up_routing_accuracy']:.0%}", "note": f"{e['follow_up_requests']} follow-ups"},
         {"metric": "Unsupported refused", "display": e["unsupported_correctly_refused"], "note": "no fabricated answers"},
@@ -300,7 +311,11 @@ def render_markdown(r: dict) -> str:
     lines += ["## 2. Intent classification (rules parser)", "", f"Accuracy **{it['accuracy']:.1%}**, macro-F1 {it['macro_f1']:.3f} on {it['n']} questions.", "",
               "| Intent | P | R | F1 | n |", "|---|---|---|---|---|"]
     lines += [f"| {c['label']} | {c['precision']} | {c['recall']} | {c['f1']} | {c['support']} |" for c in it["per_class"]]
-    lines += ["", "Errors:", ""] + [f"* “{x['question']}” → expected `{x['expected']}`, got `{x['predicted']}`" for x in it["errors"]] + [""]
+    lines += ["", "Errors (tuning set):", ""] + [f"* “{x['question']}” → expected `{x['expected']}`, got `{x['predicted']}`" for x in it["errors"]] + [""]
+    h = it["heldout"]
+    lines += [f"### Held-out set: accuracy **{h['accuracy']:.0%}** on {h['n']} unseen paraphrases", "", h["note"],
+              f"Misses: {h['safe_failures']} refused as unsupported (safe), {h['misrouted']} routed to a different analysis.", ""]
+    lines += [f"* “{x['question']}” → expected `{x['expected']}`, got `{x['predicted']}`" for x in h["errors"]] + [""]
     lines += [f"Gemini intent evaluation: `{it['gemini']}`", ""]
     lf = lb["lexicon_fallback_vs_templates"]
     lines += ["## 3. Labelling", "", f"Template coverage of customer messages: `{lb['template_coverage']}`.", "",

@@ -1,0 +1,665 @@
+[
+  {
+    "version": "1.0",
+    "request_id": "R-5921e9db51f2",
+    "session_id": "S-3bc4a15b6ab4",
+    "status": "completed",
+    "question": "How did customer sentiment change over the course of a selected conversation?",
+    "resolved_intent": {
+      "category": "sentiment_trajectory",
+      "time_window": {
+        "type": "inherit",
+        "month": null,
+        "n": null
+      },
+      "dimension": "topic",
+      "rank_by": "count",
+      "top_n": null,
+      "topics": [],
+      "products": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": [],
+      "search_query": null,
+      "group_by": null,
+      "is_follow_up": false,
+      "reference_ranks": [],
+      "audience": "analyst",
+      "needs_evidence": false,
+      "reasoning": "Rule-based interpretation."
+    },
+    "dataset_scope": {
+      "dataset_mode": "original",
+      "window": {
+        "start": null,
+        "end": null,
+        "label": "All dates",
+        "rule": "all",
+        "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+      },
+      "topics": [],
+      "products": [],
+      "domains": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": []
+    },
+    "plan": {
+      "category": "sentiment_trajectory",
+      "specialist": "sentiment_agent",
+      "steps": [
+        {
+          "op": "sentiment_trajectory",
+          "params": {
+            "conversation_id": "C0000479"
+          },
+          "purpose": "Turn-by-turn customer sentiment"
+        }
+      ],
+      "retrieval": {
+        "mode": "none",
+        "query": null,
+        "k": 5,
+        "scope": null
+      },
+      "notes": [
+        "Using the conversation selected in the workspace (C0000479)."
+      ],
+      "resolved_references": {},
+      "audience": "analyst"
+    },
+    "headline": "In C0000479 (Coupon not applying \u00b7 Voucher), customer sentiment worsened: +1.0 at the first follow-up to -1.0 at the end.",
+    "answer": "The customer opened with a negative issue report and sent 7 messages in total. At turn 2 sentiment improved (+1.60): the customer wrote \"Got it. I\u2019ve retried, and it works now.\" after the agent said \"I'm sorry about the trouble. Let me check your account.\". At turn 4 sentiment worsened (-1.60): the customer wrote \"Thoda jaldi please, flight in 2 hours.\" after the agent said \"Thanks for reaching out! I\u2019m pulling up the details.\". At turn 8 sentiment improved (+1.40): the customer wrote \"Thanks, that helps.\" after the agent said \"Please allow me a moment while I run some checks.\". Overall label: mixed.",
+    "key_points": [
+      "Turn 2: improved by 1.60",
+      "Turn 4: worsened by 1.60",
+      "Turn 8: improved by 1.40",
+      "Turn 10: worsened by 0.80",
+      "Turn 12: worsened by 1.00"
+    ],
+    "metrics": [
+      {
+        "id": "customer_turns",
+        "label": "Customer messages",
+        "value": 7,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "opening_score",
+        "label": "Opening sentiment",
+        "value": -0.6,
+        "unit": "sentiment",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "first_followup_score",
+        "label": "First follow-up sentiment",
+        "value": 1.0,
+        "unit": "sentiment",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "final_score",
+        "label": "Final customer sentiment",
+        "value": -1.0,
+        "unit": "sentiment",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "net_change",
+        "label": "Net change (first follow-up \u2192 final)",
+        "value": -2.0,
+        "unit": "sentiment",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "turning_points",
+        "label": "Turning points",
+        "value": 5,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "conversation_sentiment",
+        "label": "Overall label",
+        "value": "mixed",
+        "unit": null,
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "topic",
+        "label": "Topic",
+        "value": "Coupon not applying \u00b7 Voucher",
+        "unit": null,
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      }
+    ],
+    "rankings": [],
+    "evidence": [
+      {
+        "evidence_id": "C0000479#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0000479",
+        "message_ids": [
+          "C0000479-T00",
+          "C0000479-T01",
+          "C0000479-T02",
+          "C0000479-T03",
+          "C0000479-T04",
+          "C0000479-T07",
+          "C0000479-T08",
+          "C0000479-T09",
+          "C0000479-T10",
+          "C0000479-T11",
+          "C0000479-T12"
+        ],
+        "turn_range": [
+          0,
+          12
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0000479-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Coupon isn\u2019t applying on checkout for the Voucher.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 1160"
+          },
+          {
+            "message_id": "C0000479-T01",
+            "turn_index": 1,
+            "role": "agent",
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "sentiment": "neutral",
+            "act": "apology",
+            "source_reference": "cs_conversations.csv:line 1161"
+          },
+          {
+            "message_id": "C0000479-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Got it. I\u2019ve retried, and it works now.",
+            "sentiment": "positive",
+            "act": "confirms_fixed",
+            "source_reference": "cs_conversations.csv:line 1162"
+          },
+          {
+            "message_id": "C0000479-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "sentiment": "neutral",
+            "act": "courtesy_greeting",
+            "source_reference": "cs_conversations.csv:line 1163"
+          },
+          {
+            "message_id": "C0000479-T04",
+            "turn_index": 4,
+            "role": "customer",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "sentiment": "negative",
+            "act": "urgency",
+            "source_reference": "cs_conversations.csv:line 1164"
+          },
+          {
+            "message_id": "C0000479-T07",
+            "turn_index": 7,
+            "role": "agent",
+            "text": "Please allow me a moment while I run some checks.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 1167"
+          },
+          {
+            "message_id": "C0000479-T08",
+            "turn_index": 8,
+            "role": "customer",
+            "text": "Thanks, that helps.",
+            "sentiment": "positive",
+            "act": "gratitude",
+            "source_reference": "cs_conversations.csv:line 1168"
+          },
+          {
+            "message_id": "C0000479-T09",
+            "turn_index": 9,
+            "role": "agent",
+            "text": "I understand this is frustrating. I'm investigating now.",
+            "sentiment": "neutral",
+            "act": "empathy_acknowledgement",
+            "source_reference": "cs_conversations.csv:line 1169"
+          },
+          {
+            "message_id": "C0000479-T10",
+            "turn_index": 10,
+            "role": "customer",
+            "text": "Okay, waiting for an update.",
+            "sentiment": "neutral",
+            "act": "waiting",
+            "source_reference": "cs_conversations.csv:line 1170"
+          },
+          {
+            "message_id": "C0000479-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "I\u2019ve reset your account. Please try logging in again.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 1171"
+          },
+          {
+            "message_id": "C0000479-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 1172"
+          }
+        ],
+        "topic": "Coupon not applying",
+        "product": "Voucher",
+        "sentiment": "mixed",
+        "agent_id": "AgentCEYF",
+        "date": "2025-11-28",
+        "similarity": null,
+        "reason": "Turning point in the customer's sentiment"
+      }
+    ],
+    "recommendations": [],
+    "uncertainty_notes": [
+      "Turn order follows turn_index; timestamps in this dataset are not in turn order and are not used for sequencing.",
+      "Scores come from a fixed mapping of message templates to sentiment (-1 to 1); they are ordinal, not calibrated probabilities."
+    ],
+    "method_notes": [
+      "A turning point is a change of at least 0.8 in sentiment score between consecutive customer messages."
+    ],
+    "follow_up_questions": [
+      "Show similar conversations.",
+      "Did the agent's closing action fit the issue?",
+      "Which agents may need coaching on empathy?"
+    ],
+    "execution_trace_id": "R-5921e9db51f2",
+    "model_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "deterministic",
+      "available": false,
+      "reason": "GEMINI_API_KEY is not set",
+      "intent_source": "rules",
+      "explanation_source": "deterministic",
+      "label_source": "rules",
+      "embedding_backend": null
+    },
+    "quality_status": {
+      "status": "pass",
+      "checks": [
+        {
+          "check": "registered_operations",
+          "passed": true,
+          "critical": true,
+          "detail": "Operations: ['sentiment_trajectory']"
+        },
+        {
+          "check": "filters_applied",
+          "passed": true,
+          "critical": false,
+          "detail": "All results use the planned scope"
+        },
+        {
+          "check": "proportions_valid",
+          "passed": true,
+          "critical": true,
+          "detail": "All proportions within [0, 1]"
+        },
+        {
+          "check": "chart_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "3 charts match their source tables"
+        },
+        {
+          "check": "evidence_valid",
+          "passed": true,
+          "critical": false,
+          "detail": "0 evidence items resolved to source messages"
+        },
+        {
+          "check": "evidence_present",
+          "passed": true,
+          "critical": false,
+          "detail": "1 evidence items attached"
+        },
+        {
+          "check": "explanation_grounded",
+          "passed": true,
+          "critical": true,
+          "detail": "All numbers in the answer trace to verified results"
+        },
+        {
+          "check": "uncertainty_disclosed",
+          "passed": true,
+          "critical": false,
+          "detail": "2 uncertainty notes attached to the response"
+        }
+      ],
+      "passed": 8,
+      "total": 8
+    },
+    "governance": [
+      {
+        "policy": "pii_masking",
+        "outcome": "pass",
+        "detail": "Evidence excerpts are PII-masked at ingestion"
+      },
+      {
+        "policy": "prompt_injection",
+        "outcome": "pass",
+        "detail": "No injection patterns in the question"
+      },
+      {
+        "policy": "tool_safety",
+        "outcome": "pass",
+        "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+      },
+      {
+        "policy": "dataset_authorisation",
+        "outcome": "pass",
+        "detail": "Dataset mode: original"
+      }
+    ],
+    "human_review_required": false,
+    "errors": [],
+    "latency_ms": 119.0,
+    "charts": [
+      {
+        "chart_id": "R-5921e9db51f2_traj_kpis",
+        "chart_type": "kpi",
+        "title": "Key figures",
+        "description": "",
+        "x_field": null,
+        "y_field": null,
+        "series": [],
+        "value_format": "count",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-5921e9db51f2_traj",
+        "evidence_ids": [],
+        "uncertainty_note": null,
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "Customer messages: 7; First follow-up sentiment: 1.0; Final customer sentiment: -1.0; Net change (first follow-up \u2192 final): -2.0; Turning points: 5",
+        "data_preview": [
+          {
+            "id": "customer_turns",
+            "label": "Customer messages",
+            "value": 7,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "first_followup_score",
+            "label": "First follow-up sentiment",
+            "value": 1.0,
+            "unit": "sentiment",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "final_score",
+            "label": "Final customer sentiment",
+            "value": -1.0,
+            "unit": "sentiment",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "net_change",
+            "label": "Net change (first follow-up \u2192 final)",
+            "value": -2.0,
+            "unit": "sentiment",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "turning_points",
+            "label": "Turning points",
+            "value": 5,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          }
+        ],
+        "rows": 5
+      },
+      {
+        "chart_id": "sentiment_trajectory",
+        "chart_type": "line",
+        "title": "Customer sentiment \u00b7 C0000479",
+        "description": "Each point is a customer message in turn order; markers are turning points.",
+        "x_field": "turn_index",
+        "y_field": null,
+        "series": [
+          {
+            "key": "sentiment_score",
+            "label": "Message sentiment",
+            "color": "cyan"
+          },
+          {
+            "key": "rolling_mean",
+            "label": "Running mean",
+            "color": "violet"
+          }
+        ],
+        "value_format": "score",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-5921e9db51f2",
+        "evidence_ids": [
+          "C0000479-T02",
+          "C0000479-T04",
+          "C0000479-T08",
+          "C0000479-T10",
+          "C0000479-T12"
+        ],
+        "uncertainty_note": null,
+        "drilldown": {
+          "kind": "message",
+          "field": "message_id"
+        },
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "turn 0: -0.6; turn 2: +1.0; turn 4: -0.6; turn 6: -0.6; turn 8: +0.8; turn 10: +0.0; turn 12: -1.0",
+        "data_preview": [
+          {
+            "turn_index": 0,
+            "sentiment_score": -0.6,
+            "rolling_mean": -0.6,
+            "label": "issue_report",
+            "text": "Coupon isn\u2019t applying on checkout for the Voucher.",
+            "message_id": "C0000479-T00",
+            "turning_point": null
+          },
+          {
+            "turn_index": 2,
+            "sentiment_score": 1.0,
+            "rolling_mean": 0.2,
+            "label": "confirms_fixed",
+            "text": "Got it. I\u2019ve retried, and it works now.",
+            "message_id": "C0000479-T02",
+            "turning_point": "improved"
+          },
+          {
+            "turn_index": 4,
+            "sentiment_score": -0.6,
+            "rolling_mean": -0.067,
+            "label": "urgency",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "message_id": "C0000479-T04",
+            "turning_point": "worsened"
+          },
+          {
+            "turn_index": 6,
+            "sentiment_score": -0.6,
+            "rolling_mean": -0.2,
+            "label": "urgency",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "message_id": "C0000479-T06",
+            "turning_point": null
+          },
+          {
+            "turn_index": 8,
+            "sentiment_score": 0.8,
+            "rolling_mean": 0.0,
+            "label": "gratitude",
+            "text": "Thanks, that helps.",
+            "message_id": "C0000479-T08",
+            "turning_point": "improved"
+          },
+          {
+            "turn_index": 10,
+            "sentiment_score": 0.0,
+            "rolling_mean": 0.0,
+            "label": "waiting",
+            "text": "Okay, waiting for an update.",
+            "message_id": "C0000479-T10",
+            "turning_point": "worsened"
+          }
+        ],
+        "rows": 7
+      },
+      {
+        "chart_id": "trajectory_timeline",
+        "chart_type": "timeline",
+        "title": "Annotated transcript timeline",
+        "description": "",
+        "x_field": null,
+        "y_field": null,
+        "series": [],
+        "value_format": "count",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-5921e9db51f2",
+        "evidence_ids": [
+          "C0000479-T02",
+          "C0000479-T04",
+          "C0000479-T08",
+          "C0000479-T10",
+          "C0000479-T12"
+        ],
+        "uncertainty_note": null,
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "13 messages in turn order.",
+        "data_preview": [
+          {
+            "message_id": "C0000479-T00",
+            "turn_index": 0,
+            "speaker_role": "customer",
+            "text": "Coupon isn\u2019t applying on checkout for the Voucher.",
+            "act": "issue_report",
+            "sentiment": "negative",
+            "sentiment_score": -0.6,
+            "empathy": false,
+            "resolution": null,
+            "timestamp": "2025-11-29 16:04:00",
+            "source_reference": "cs_conversations.csv:line 1160"
+          },
+          {
+            "message_id": "C0000479-T01",
+            "turn_index": 1,
+            "speaker_role": "agent",
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "act": "apology",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": true,
+            "resolution": null,
+            "timestamp": "2025-12-01 18:49:00",
+            "source_reference": "cs_conversations.csv:line 1161"
+          },
+          {
+            "message_id": "C0000479-T02",
+            "turn_index": 2,
+            "speaker_role": "customer",
+            "text": "Got it. I\u2019ve retried, and it works now.",
+            "act": "confirms_fixed",
+            "sentiment": "positive",
+            "sentiment_score": 1.0,
+            "empathy": false,
+            "resolution": null,
+            "timestamp": "2025-11-29 00:35:00",
+            "source_reference": "cs_conversations.csv:line 1162"
+          },
+          {
+            "message_id": "C0000479-T03",
+            "turn_index": 3,
+            "speaker_role": "agent",
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "act": "courtesy_greeting",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": false,
+            "resolution": null,
+            "timestamp": "2025-12-01 23:45:00",
+            "source_reference": "cs_conversations.csv:line 1163"
+          },
+          {
+            "message_id": "C0000479-T04",
+            "turn_index": 4,
+            "speaker_role": "customer",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "act": "urgency",
+            "sentiment": "negative",
+            "sentiment_score": -0.6,
+            "empathy": false,
+            "resolution": null,
+            "timestamp": "2025-11-30 21:59:00",
+            "source_reference": "cs_conversations.csv:line 1164"
+          },
+          {
+            "message_id": "C0000479-T05",
+            "turn_index": 5,
+            "speaker_role": "agent",
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "act": "apology",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": true,
+            "resolution": null,
+            "timestamp": "2025-12-02 02:10:00",
+            "source_reference": "cs_conversations.csv:line 1165"
+          }
+        ],
+        "rows": 13
+      }
+    ],
+    "graphs": []
+  }
+]

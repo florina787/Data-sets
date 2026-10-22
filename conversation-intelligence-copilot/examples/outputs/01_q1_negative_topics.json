@@ -1,0 +1,2193 @@
+[
+  {
+    "version": "1.0",
+    "request_id": "R-1aae3ea227a1",
+    "session_id": "S-4ae51c1144ab",
+    "status": "completed",
+    "question": "What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?",
+    "resolved_intent": {
+      "category": "negative_topics",
+      "time_window": {
+        "type": "last_month",
+        "month": null,
+        "n": null
+      },
+      "dimension": "topic",
+      "rank_by": "count",
+      "top_n": 5,
+      "topics": [],
+      "products": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": [],
+      "search_query": null,
+      "group_by": null,
+      "is_follow_up": false,
+      "reference_ranks": [],
+      "audience": "analyst",
+      "needs_evidence": false,
+      "reasoning": "Rule-based interpretation."
+    },
+    "dataset_scope": {
+      "dataset_mode": "original",
+      "window": {
+        "start": "2025-11-01",
+        "end": "2025-12-01",
+        "label": "November 2025",
+        "rule": "latest_month",
+        "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025. The latest calendar month in which conversations start is November 2025 (682 conversations); conversations are dated by their earliest message."
+      },
+      "topics": [],
+      "products": [],
+      "domains": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": []
+    },
+    "plan": {
+      "category": "negative_topics",
+      "specialist": "topic_agent",
+      "steps": [
+        {
+          "op": "rank_negative_topics",
+          "params": {
+            "top_n": 5,
+            "dimension": "topic",
+            "rank_by": "count"
+          },
+          "purpose": "Rank groups by negative conversations"
+        },
+        {
+          "op": "sentiment_distribution",
+          "params": {
+            "group_by": "topic"
+          },
+          "purpose": "Sentiment mix by group for context"
+        },
+        {
+          "op": "sentiment_trend",
+          "params": {},
+          "purpose": "Monthly trend for context"
+        }
+      ],
+      "retrieval": {
+        "mode": "none",
+        "query": null,
+        "k": 5,
+        "scope": null
+      },
+      "notes": [],
+      "resolved_references": {},
+      "audience": "analyst"
+    },
+    "headline": "Top negative topics in November 2025: General help request, Duplicate charge, Paid but service not delivered, Feature not working, Login / account locked.",
+    "answer": "239 of 682 conversations in November 2025 were negative (35.0%). Ranked by number of negative conversations, the top 5 topics are General help request (49), Duplicate charge (42), Paid but service not delivered (30), Feature not working (28), Login / account locked (24). General help request accounts for 20.5% of negative conversations. By negative rate rather than count, Duplicate charge is highest at 48.3% (95% CI 38.1%\u201358.6%).",
+    "key_points": [
+      "#1 General help request: 49 negative of 156 (31.4%, 95% CI 24.6%\u201339.1%)",
+      "#2 Duplicate charge: 42 negative of 87 (48.3%, 95% CI 38.1%\u201358.6%)",
+      "#3 Paid but service not delivered: 30 negative of 75 (40.0%, 95% CI 29.7%\u201351.3%)",
+      "#4 Feature not working: 28 negative of 76 (36.8%, 95% CI 26.9%\u201348.1%)",
+      "#5 Login / account locked: 24 negative of 58 (41.4%, 95% CI 29.6%\u201354.2%)"
+    ],
+    "metrics": [
+      {
+        "id": "conversations_in_scope",
+        "label": "Conversations in scope",
+        "value": 682,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "negative_conversations",
+        "label": "Negative conversations",
+        "value": 239,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "negative_rate_overall",
+        "label": "Overall negative rate",
+        "value": 0.3504,
+        "unit": "percent",
+        "numerator": 239,
+        "denominator": 682,
+        "description": ""
+      },
+      {
+        "id": "top_topic",
+        "label": "Top topic",
+        "value": "General help request",
+        "unit": null,
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "top_topic_negative",
+        "label": "Negative conversations in top topic",
+        "value": 49,
+        "unit": "count",
+        "numerator": 49,
+        "denominator": 239,
+        "description": ""
+      },
+      {
+        "id": "conversations_in_scope",
+        "label": "Conversations",
+        "value": 682,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "negative_rate_overall",
+        "label": "Negative conversations",
+        "value": 0.3504,
+        "unit": "percent",
+        "numerator": 239,
+        "denominator": 682,
+        "description": ""
+      },
+      {
+        "id": "customer_messages",
+        "label": "Customer messages",
+        "value": 4973,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "months",
+        "label": "Months",
+        "value": 4,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "latest_negative_rate",
+        "label": "Negative rate 2025-11",
+        "value": 0.3504,
+        "unit": "percent",
+        "numerator": 239,
+        "denominator": 682,
+        "description": ""
+      }
+    ],
+    "rankings": [
+      {
+        "rank": 1,
+        "name": "General help request",
+        "key": "general_help",
+        "negative": 49.0,
+        "conversations": 156,
+        "negative_rate": 0.3141,
+        "rate_ci_low": 0.2465,
+        "rate_ci_high": 0.3907,
+        "share_of_negative": 0.205,
+        "escalation_requests": 179.0,
+        "rank_by_rate": 5
+      },
+      {
+        "rank": 2,
+        "name": "Duplicate charge",
+        "key": "duplicate_charge",
+        "negative": 42.0,
+        "conversations": 87,
+        "negative_rate": 0.4828,
+        "rate_ci_low": 0.3807,
+        "rate_ci_high": 0.5863,
+        "share_of_negative": 0.1757,
+        "escalation_requests": 110.0,
+        "rank_by_rate": 1
+      },
+      {
+        "rank": 3,
+        "name": "Paid but service not delivered",
+        "key": "payment_not_reflected",
+        "negative": 30.0,
+        "conversations": 75,
+        "negative_rate": 0.4,
+        "rate_ci_low": 0.2966,
+        "rate_ci_high": 0.5131,
+        "share_of_negative": 0.1255,
+        "escalation_requests": 99.0,
+        "rank_by_rate": 3
+      },
+      {
+        "rank": 4,
+        "name": "Feature not working",
+        "key": "service_malfunction",
+        "negative": 28.0,
+        "conversations": 76,
+        "negative_rate": 0.3684,
+        "rate_ci_low": 0.2688,
+        "rate_ci_high": 0.4808,
+        "share_of_negative": 0.1172,
+        "escalation_requests": 81.0,
+        "rank_by_rate": 4
+      },
+      {
+        "rank": 5,
+        "name": "Login / account locked",
+        "key": "account_locked",
+        "negative": 24.0,
+        "conversations": 58,
+        "negative_rate": 0.4138,
+        "rate_ci_low": 0.2963,
+        "rate_ci_high": 0.542,
+        "share_of_negative": 0.1004,
+        "escalation_requests": 69.0,
+        "rank_by_rate": 2
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "C0011749#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0011749",
+        "message_ids": [
+          "C0011749-T00",
+          "C0011749-T02",
+          "C0011749-T03",
+          "C0011749-T11"
+        ],
+        "turn_range": [
+          0,
+          11
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0011749-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Hi, I need help with my Membership.",
+            "sentiment": "neutral",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 33409"
+          },
+          {
+            "message_id": "C0011749-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 33411"
+          },
+          {
+            "message_id": "C0011749-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "sentiment": "neutral",
+            "act": "courtesy_greeting",
+            "source_reference": "cs_conversations.csv:line 33412"
+          },
+          {
+            "message_id": "C0011749-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 33420"
+          }
+        ],
+        "topic": "General help request",
+        "product": "Membership",
+        "sentiment": "negative",
+        "agent_id": "AgentDAUZ",
+        "date": "2025-11-19",
+        "similarity": null,
+        "reason": "Among the most negative conversations in a top-ranked group"
+      },
+      {
+        "evidence_id": "C0007786#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0007786",
+        "message_ids": [
+          "C0007786-T00",
+          "C0007786-T06",
+          "C0007786-T07",
+          "C0007786-T17"
+        ],
+        "turn_range": [
+          0,
+          17
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0007786-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Mujhe FASTag ke baare mein help chahiye.",
+            "sentiment": "neutral",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 21938"
+          },
+          {
+            "message_id": "C0007786-T06",
+            "turn_index": 6,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 21944"
+          },
+          {
+            "message_id": "C0007786-T07",
+            "turn_index": 7,
+            "role": "agent",
+            "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 21945"
+          },
+          {
+            "message_id": "C0007786-T17",
+            "turn_index": 17,
+            "role": "agent",
+            "text": "I\u2019ve reset your account. Please try logging in again.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 21955"
+          }
+        ],
+        "topic": "General help request",
+        "product": "FASTag",
+        "sentiment": "negative",
+        "agent_id": "AgentWYYP",
+        "date": "2025-11-16",
+        "similarity": null,
+        "reason": "Among the most negative conversations in a top-ranked group"
+      },
+      {
+        "evidence_id": "C0014263#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0014263",
+        "message_ids": [
+          "C0014263-T00",
+          "C0014263-T04",
+          "C0014263-T05",
+          "C0014263-T15"
+        ],
+        "turn_range": [
+          0,
+          15
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0014263-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "I was charged twice for my Bus.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 39935"
+          },
+          {
+            "message_id": "C0014263-T04",
+            "turn_index": 4,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 39939"
+          },
+          {
+            "message_id": "C0014263-T05",
+            "turn_index": 5,
+            "role": "agent",
+            "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 39940"
+          },
+          {
+            "message_id": "C0014263-T15",
+            "turn_index": 15,
+            "role": "agent",
+            "text": "I have applied the coupon manually and adjusted your invoice.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 39950"
+          }
+        ],
+        "topic": "Duplicate charge",
+        "product": "Bus",
+        "sentiment": "negative",
+        "agent_id": "AgentDKUJ",
+        "date": "2025-11-12",
+        "similarity": null,
+        "reason": "Among the most negative conversations in a top-ranked group"
+      },
+      {
+        "evidence_id": "C0002874#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0002874",
+        "message_ids": [
+          "C0002874-T00",
+          "C0002874-T02",
+          "C0002874-T03",
+          "C0002874-T11"
+        ],
+        "turn_range": [
+          0,
+          11
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0002874-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "I was charged twice for my Mutual Fund.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 7764"
+          },
+          {
+            "message_id": "C0002874-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 7766"
+          },
+          {
+            "message_id": "C0002874-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "I understand this is frustrating. I'm investigating now.",
+            "sentiment": "neutral",
+            "act": "empathy_acknowledgement",
+            "source_reference": "cs_conversations.csv:line 7767"
+          },
+          {
+            "message_id": "C0002874-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "Service activated. Please restart the app and confirm.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 7775"
+          }
+        ],
+        "topic": "Duplicate charge",
+        "product": "Mutual Fund",
+        "sentiment": "negative",
+        "agent_id": "AgentBHNP",
+        "date": "2025-11-23",
+        "similarity": null,
+        "reason": "Among the most negative conversations in a top-ranked group"
+      },
+      {
+        "evidence_id": "C0010437#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0010437",
+        "message_ids": [
+          "C0010437-T00",
+          "C0010437-T02",
+          "C0010437-T03",
+          "C0010437-T15"
+        ],
+        "turn_range": [
+          0,
+          15
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0010437-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "UPI shows successful but I didn't get the service for Lab Test.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 29722"
+          },
+          {
+            "message_id": "C0010437-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 29724"
+          },
+          {
+            "message_id": "C0010437-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 29725"
+          },
+          {
+            "message_id": "C0010437-T15",
+            "turn_index": 15,
+            "role": "agent",
+            "text": "I\u2019ve reset your account. Please try logging in again.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 29737"
+          }
+        ],
+        "topic": "Paid but service not delivered",
+        "product": "Lab Test",
+        "sentiment": "negative",
+        "agent_id": "AgentYIMV",
+        "date": "2025-11-26",
+        "similarity": null,
+        "reason": "Among the most negative conversations in a top-ranked group"
+      },
+      {
+        "evidence_id": "C0001427#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0001427",
+        "message_ids": [
+          "C0001427-T00",
+          "C0001427-T02",
+          "C0001427-T03",
+          "C0001427-T10"
+        ],
+        "turn_range": [
+          0,
+          10
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0001427-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "UPI shows successful but I didn't get the service for Insurance Claim.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 3998"
+          },
+          {
+            "message_id": "C0001427-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 4000"
+          },
+          {
+            "message_id": "C0001427-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "sentiment": "neutral",
+            "act": "apology",
+            "source_reference": "cs_conversations.csv:line 4001"
+          },
+          {
+            "message_id": "C0001427-T10",
+            "turn_index": 10,
+            "role": "customer",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "sentiment": "negative",
+            "act": "urgency",
+            "source_reference": "cs_conversations.csv:line 4008"
+          }
+        ],
+        "topic": "Paid but service not delivered",
+        "product": "Insurance Claim",
+        "sentiment": "negative",
+        "agent_id": "AgentFQGJ",
+        "date": "2025-11-16",
+        "similarity": null,
+        "reason": "Among the most negative conversations in a top-ranked group"
+      }
+    ],
+    "recommendations": [],
+    "uncertainty_notes": [
+      "The negative rate does not differ significantly across topics (chi-square p = 0.0566). Rankings mostly reflect how many conversations each group has, so treat small gaps between ranks as noise.",
+      "Sentiment and topic labels are derived from message templates by a deterministic rule set (see EVALUATION.md for agreement checks).",
+      "Sentiment mix does not differ significantly by topic (chi-square p = 0.1722).",
+      "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend."
+    ],
+    "method_notes": [
+      "Each conversation is counted once, under the primary topic of the customer's opening message.",
+      "A conversation is negative when the mean sentiment score of its customer turns is -0.25 or lower.",
+      "Ranked by number of negative conversations.",
+      "'General help request' merges the English and Hinglish help-request templates, so it has roughly twice the volume of other topics; its opening message is neutral, which lowers its negative rate.",
+      "'Mixed' means the customer expressed both positive and negative sentiment and the mean score is between -0.25 and 0.25.",
+      "Months are assigned by each conversation's earliest timestamp."
+    ],
+    "follow_up_questions": [
+      "Compare the top two topics.",
+      "What about the previous month?",
+      "Show three supporting examples.",
+      "Which agents handled those concerns?"
+    ],
+    "execution_trace_id": "R-1aae3ea227a1",
+    "model_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "deterministic",
+      "available": false,
+      "reason": "GEMINI_API_KEY is not set",
+      "intent_source": "rules",
+      "explanation_source": "deterministic",
+      "label_source": "rules",
+      "embedding_backend": null
+    },
+    "quality_status": {
+      "status": "pass",
+      "checks": [
+        {
+          "check": "registered_operations",
+          "passed": true,
+          "critical": true,
+          "detail": "Operations: ['rank_negative_topics', 'sentiment_distribution', 'sentiment_trend']"
+        },
+        {
+          "check": "filters_applied",
+          "passed": true,
+          "critical": false,
+          "detail": "All results use the planned scope"
+        },
+        {
+          "check": "denominators",
+          "passed": true,
+          "critical": true,
+          "detail": "Group totals 682/239 vs scope 682/239 conversations/negative"
+        },
+        {
+          "check": "ranking_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "Ranks 1..5 ordered by negative"
+        },
+        {
+          "check": "proportions_valid",
+          "passed": true,
+          "critical": true,
+          "detail": "All proportions within [0, 1]"
+        },
+        {
+          "check": "chart_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "6 charts match their source tables"
+        },
+        {
+          "check": "evidence_valid",
+          "passed": true,
+          "critical": false,
+          "detail": "0 evidence items resolved to source messages"
+        },
+        {
+          "check": "evidence_present",
+          "passed": true,
+          "critical": false,
+          "detail": "6 evidence items attached"
+        },
+        {
+          "check": "explanation_grounded",
+          "passed": true,
+          "critical": true,
+          "detail": "All numbers in the answer trace to verified results"
+        },
+        {
+          "check": "uncertainty_disclosed",
+          "passed": true,
+          "critical": false,
+          "detail": "4 uncertainty notes attached to the response"
+        }
+      ],
+      "passed": 10,
+      "total": 10
+    },
+    "governance": [
+      {
+        "policy": "pii_masking",
+        "outcome": "pass",
+        "detail": "Evidence excerpts are PII-masked at ingestion"
+      },
+      {
+        "policy": "prompt_injection",
+        "outcome": "pass",
+        "detail": "No injection patterns in the question"
+      },
+      {
+        "policy": "tool_safety",
+        "outcome": "pass",
+        "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+      },
+      {
+        "policy": "dataset_authorisation",
+        "outcome": "pass",
+        "detail": "Dataset mode: original"
+      }
+    ],
+    "human_review_required": false,
+    "errors": [],
+    "latency_ms": 316.6,
+    "charts": [
+      {
+        "chart_id": "R-1aae3ea227a1_neg_kpis",
+        "chart_type": "kpi",
+        "title": "Key figures",
+        "description": "",
+        "x_field": null,
+        "y_field": null,
+        "series": [],
+        "value_format": "count",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-1aae3ea227a1_neg",
+        "evidence_ids": [],
+        "uncertainty_note": null,
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "Conversations in scope: 682; Negative conversations: 239; Overall negative rate: 0.3504; Top topic: General help request",
+        "data_preview": [
+          {
+            "id": "conversations_in_scope",
+            "label": "Conversations in scope",
+            "value": 682,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "negative_conversations",
+            "label": "Negative conversations",
+            "value": 239,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "negative_rate_overall",
+            "label": "Overall negative rate",
+            "value": 0.3504,
+            "unit": "percent",
+            "numerator": 239,
+            "denominator": 682,
+            "description": ""
+          },
+          {
+            "id": "top_topic",
+            "label": "Top topic",
+            "value": "General help request",
+            "unit": null,
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          }
+        ],
+        "rows": 4
+      },
+      {
+        "chart_id": "negative_topics",
+        "chart_type": "horizontal_bar",
+        "title": "Top negative topics \u00b7 November 2025",
+        "description": "Ranked by number of negative conversations",
+        "x_field": "name",
+        "y_field": null,
+        "series": [
+          {
+            "key": "negative",
+            "label": "Negative conversations",
+            "color": "negative"
+          },
+          {
+            "key": "conversations",
+            "label": "All conversations",
+            "color": "muted"
+          }
+        ],
+        "value_format": "count",
+        "filters": {
+          "dataset_mode": "original",
+          "window": {
+            "start": "2025-11-01",
+            "end": "2025-12-01",
+            "label": "November 2025",
+            "rule": "latest_month",
+            "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025. The latest calendar month in which conversations start is November 2025 (682 conversations); conversations are dated by their earliest message."
+          },
+          "topics": [],
+          "products": [],
+          "domains": [],
+          "agents": [],
+          "sentiments": [],
+          "conversation_ids": []
+        },
+        "dataset_scope": "original",
+        "source_analysis_id": "R-1aae3ea227a1",
+        "evidence_ids": [
+          "C0011749",
+          "C0007786",
+          "C0014263",
+          "C0002874",
+          "C0010437",
+          "C0001427"
+        ],
+        "uncertainty_note": "The negative rate does not differ significantly across topics (chi-square p = 0.0566). Rankings mostly reflect how many conversations each group has, so treat small gaps between ranks as noise.",
+        "drilldown": {
+          "kind": "topic",
+          "field": "key"
+        },
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "General help request: 49 negative of 156; Duplicate charge: 42 negative of 87; Paid but service not delivered: 30 negative of 75; Feature not working: 28 negative of 76; Login / account locked: 24 negative of 58",
+        "data_preview": [
+          {
+            "name": "General help request",
+            "key": "general_help",
+            "negative": 49.0,
+            "conversations": 156,
+            "negative_rate": 0.3141
+          },
+          {
+            "name": "Duplicate charge",
+            "key": "duplicate_charge",
+            "negative": 42.0,
+            "conversations": 87,
+            "negative_rate": 0.4828
+          },
+          {
+            "name": "Paid but service not delivered",
+            "key": "payment_not_reflected",
+            "negative": 30.0,
+            "conversations": 75,
+            "negative_rate": 0.4
+          },
+          {
+            "name": "Feature not working",
+            "key": "service_malfunction",
+            "negative": 28.0,
+            "conversations": 76,
+            "negative_rate": 0.3684
+          },
+          {
+            "name": "Login / account locked",
+            "key": "account_locked",
+            "negative": 24.0,
+            "conversations": 58,
+            "negative_rate": 0.4138
+          }
+        ],
+        "rows": 5
+      },
+      {
+        "chart_id": "negative_rate_ci",
+        "chart_type": "error_bar",
+        "title": "Negative rate with 95% confidence interval",
+        "description": "Highest count is not the same as highest rate; overlapping intervals mean the difference may be noise.",
+        "x_field": "name",
+        "y_field": "negative_rate",
+        "series": [
+          {
+            "key": "negative_rate",
+            "label": "Negative rate",
+            "color": "violet"
+          }
+        ],
+        "value_format": "percent",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-1aae3ea227a1",
+        "evidence_ids": [],
+        "uncertainty_note": null,
+        "drilldown": {
+          "kind": "topic",
+          "field": "key"
+        },
+        "error_low_field": "rate_ci_low",
+        "error_high_field": "rate_ci_high",
+        "accessibility_summary": "General help request: 31.4%; Duplicate charge: 48.3%; Paid but service not delivered: 40.0%; Feature not working: 36.8%; Login / account locked: 41.4%; Item or service not received: 29.5%; Coupon not applying: 27.4%; App crash: 29.4%",
+        "data_preview": [
+          {
+            "name": "Duplicate charge",
+            "key": "duplicate_charge",
+            "negative_rate": 0.4828,
+            "rate_ci_low": 0.3807,
+            "rate_ci_high": 0.5863,
+            "conversations": 87
+          },
+          {
+            "name": "Login / account locked",
+            "key": "account_locked",
+            "negative_rate": 0.4138,
+            "rate_ci_low": 0.2963,
+            "rate_ci_high": 0.542,
+            "conversations": 58
+          },
+          {
+            "name": "Paid but service not delivered",
+            "key": "payment_not_reflected",
+            "negative_rate": 0.4,
+            "rate_ci_low": 0.2966,
+            "rate_ci_high": 0.5131,
+            "conversations": 75
+          },
+          {
+            "name": "Feature not working",
+            "key": "service_malfunction",
+            "negative_rate": 0.3684,
+            "rate_ci_low": 0.2688,
+            "rate_ci_high": 0.4808,
+            "conversations": 76
+          },
+          {
+            "name": "General help request",
+            "key": "general_help",
+            "negative_rate": 0.3141,
+            "rate_ci_low": 0.2465,
+            "rate_ci_high": 0.3907,
+            "conversations": 156
+          },
+          {
+            "name": "Item or service not received",
+            "key": "not_received",
+            "negative_rate": 0.2949,
+            "rate_ci_low": 0.2052,
+            "rate_ci_high": 0.4038,
+            "conversations": 78
+          }
+        ],
+        "rows": 8
+      },
+      {
+        "chart_id": "sentiment_by_group",
+        "chart_type": "stacked_bar",
+        "title": "Sentiment mix by topic",
+        "description": "",
+        "x_field": "name",
+        "y_field": null,
+        "series": [
+          {
+            "key": "negative",
+            "label": "Negative",
+            "color": "negative"
+          },
+          {
+            "key": "mixed",
+            "label": "Mixed",
+            "color": "mixed"
+          },
+          {
+            "key": "neutral",
+            "label": "Neutral",
+            "color": "neutral"
+          },
+          {
+            "key": "positive",
+            "label": "Positive",
+            "color": "positive"
+          }
+        ],
+        "value_format": "count",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-1aae3ea227a1",
+        "evidence_ids": [],
+        "uncertainty_note": "Sentiment mix does not differ significantly by topic (chi-square p = 0.1722).",
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "App crash: 20 negative of 68; Coupon not applying: 23 negative of 84; Duplicate charge: 42 negative of 87; Feature not working: 28 negative of 76; General help request: 49 negative of 156; Item or service not received: 23 negative of 78; Login / account locked: 24 negative of 58; Paid but service not delivered: 30 negative of 75",
+        "data_preview": [
+          {
+            "name": "App crash",
+            "negative": 20.0,
+            "mixed": 41.0,
+            "neutral": 0.0,
+            "positive": 7.0,
+            "total": 68.0
+          },
+          {
+            "name": "Coupon not applying",
+            "negative": 23.0,
+            "mixed": 52.0,
+            "neutral": 1.0,
+            "positive": 8.0,
+            "total": 84.0
+          },
+          {
+            "name": "Duplicate charge",
+            "negative": 42.0,
+            "mixed": 36.0,
+            "neutral": 0.0,
+            "positive": 9.0,
+            "total": 87.0
+          },
+          {
+            "name": "Feature not working",
+            "negative": 28.0,
+            "mixed": 43.0,
+            "neutral": 0.0,
+            "positive": 5.0,
+            "total": 76.0
+          },
+          {
+            "name": "General help request",
+            "negative": 49.0,
+            "mixed": 89.0,
+            "neutral": 0.0,
+            "positive": 18.0,
+            "total": 156.0
+          },
+          {
+            "name": "Item or service not received",
+            "negative": 23.0,
+            "mixed": 52.0,
+            "neutral": 0.0,
+            "positive": 3.0,
+            "total": 78.0
+          }
+        ],
+        "rows": 8
+      },
+      {
+        "chart_id": "sentiment_distribution",
+        "chart_type": "donut",
+        "title": "Conversation sentiment",
+        "description": "",
+        "x_field": "sentiment",
+        "y_field": null,
+        "series": [
+          {
+            "key": "conversations",
+            "label": "Conversations",
+            "color": "indigo"
+          }
+        ],
+        "value_format": "count",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-1aae3ea227a1",
+        "evidence_ids": [],
+        "uncertainty_note": null,
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "negative: 35.0%; mixed: 56.0%; neutral: 0.1%; positive: 8.8%",
+        "data_preview": [
+          {
+            "sentiment": "negative",
+            "conversations": 239,
+            "share": 0.3504,
+            "color": "negative"
+          },
+          {
+            "sentiment": "mixed",
+            "conversations": 382,
+            "share": 0.5601,
+            "color": "mixed"
+          },
+          {
+            "sentiment": "neutral",
+            "conversations": 1,
+            "share": 0.0015,
+            "color": "neutral"
+          },
+          {
+            "sentiment": "positive",
+            "conversations": 60,
+            "share": 0.088,
+            "color": "positive"
+          }
+        ],
+        "rows": 4
+      },
+      {
+        "chart_id": "sentiment_trend",
+        "chart_type": "line",
+        "title": "Negative rate by month",
+        "description": "",
+        "x_field": "month",
+        "y_field": "negative_rate",
+        "series": [
+          {
+            "key": "negative_rate",
+            "label": "Negative rate",
+            "color": "cyan"
+          }
+        ],
+        "value_format": "percent",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-1aae3ea227a1",
+        "evidence_ids": [],
+        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+        "drilldown": {
+          "kind": "month",
+          "field": "month"
+        },
+        "error_low_field": "rate_ci_low",
+        "error_high_field": "rate_ci_high",
+        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.5%; 2025-11: 35.0%",
+        "data_preview": [
+          {
+            "month": "2025-08",
+            "negative_rate": 0.3325,
+            "rate_ci_low": 0.3005,
+            "rate_ci_high": 0.3661,
+            "conversations": 788,
+            "negative": 262.0
+          },
+          {
+            "month": "2025-09",
+            "negative_rate": 0.32,
+            "rate_ci_low": 0.2876,
+            "rate_ci_high": 0.3542,
+            "conversations": 750,
+            "negative": 240.0
+          },
+          {
+            "month": "2025-10",
+            "negative_rate": 0.3346,
+            "rate_ci_low": 0.3024,
+            "rate_ci_high": 0.3685,
+            "conversations": 780,
+            "negative": 261.0
+          },
+          {
+            "month": "2025-11",
+            "negative_rate": 0.3504,
+            "rate_ci_low": 0.3156,
+            "rate_ci_high": 0.387,
+            "conversations": 682,
+            "negative": 239.0
+          }
+        ],
+        "rows": 4
+      }
+    ],
+    "graphs": []
+  },
+  {
+    "version": "1.0",
+    "request_id": "R-ebc3b06e3f00",
+    "session_id": "S-4ae51c1144ab",
+    "status": "completed",
+    "question": "Compare the top two topics.",
+    "resolved_intent": {
+      "category": "compare_topics",
+      "time_window": {
+        "type": "inherit",
+        "month": null,
+        "n": null
+      },
+      "dimension": "topic",
+      "rank_by": "count",
+      "top_n": 2,
+      "topics": [],
+      "products": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": [],
+      "search_query": null,
+      "group_by": null,
+      "is_follow_up": true,
+      "reference_ranks": [
+        1,
+        2
+      ],
+      "audience": "analyst",
+      "needs_evidence": false,
+      "reasoning": "Rule-based interpretation."
+    },
+    "dataset_scope": {
+      "dataset_mode": "original",
+      "window": {
+        "start": "2025-11-01",
+        "end": "2025-12-01",
+        "label": "November 2025",
+        "rule": "latest_month",
+        "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025. The latest calendar month in which conversations start is November 2025 (682 conversations); conversations are dated by their earliest message."
+      },
+      "topics": [
+        "general_help",
+        "duplicate_charge"
+      ],
+      "products": [],
+      "domains": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": []
+    },
+    "plan": {
+      "category": "compare_topics",
+      "specialist": "topic_agent",
+      "steps": [
+        {
+          "op": "compare_topics",
+          "params": {
+            "topics": [
+              "general_help",
+              "duplicate_charge"
+            ]
+          },
+          "purpose": "Compare the selected topics"
+        }
+      ],
+      "retrieval": {
+        "mode": "none",
+        "query": null,
+        "k": 5,
+        "scope": null
+      },
+      "notes": [
+        "Kept the previous date window (November 2025).",
+        "Resolved '#1, #2' from the previous answer: General help request, Duplicate charge."
+      ],
+      "resolved_references": {
+        "references": [
+          {
+            "rank": 1,
+            "name": "General help request"
+          },
+          {
+            "rank": 2,
+            "name": "Duplicate charge"
+          }
+        ]
+      },
+      "audience": "analyst"
+    },
+    "headline": "Duplicate charge is more often negative than General help request (48.3% vs 31.4%), a statistically significant difference (p = 0.0092).",
+    "answer": "In November 2025, Duplicate charge had 42 negative of 87 conversations and General help request had 49 of 156. Conversations ending unresolved: 51.7% vs 50.6%. Negative turns answered with empathy: 27.0% vs 27.1%.",
+    "key_points": [
+      "Duplicate charge: negative 48.3%, escalation requests 110, closing action fits issue 28.7%",
+      "General help request: negative 31.4%, escalation requests 179, closing action fits issue n/a"
+    ],
+    "metrics": [
+      {
+        "id": "rate_gap",
+        "label": "Negative-rate gap",
+        "value": 0.1687,
+        "unit": "percent",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      }
+    ],
+    "rankings": [],
+    "evidence": [
+      {
+        "evidence_id": "C0014263#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0014263",
+        "message_ids": [
+          "C0014263-T00",
+          "C0014263-T04",
+          "C0014263-T05",
+          "C0014263-T15"
+        ],
+        "turn_range": [
+          0,
+          15
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0014263-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "I was charged twice for my Bus.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 39935"
+          },
+          {
+            "message_id": "C0014263-T04",
+            "turn_index": 4,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 39939"
+          },
+          {
+            "message_id": "C0014263-T05",
+            "turn_index": 5,
+            "role": "agent",
+            "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 39940"
+          },
+          {
+            "message_id": "C0014263-T15",
+            "turn_index": 15,
+            "role": "agent",
+            "text": "I have applied the coupon manually and adjusted your invoice.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 39950"
+          }
+        ],
+        "topic": "Duplicate charge",
+        "product": "Bus",
+        "sentiment": "negative",
+        "agent_id": "AgentDKUJ",
+        "date": "2025-11-12",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      },
+      {
+        "evidence_id": "C0002874#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0002874",
+        "message_ids": [
+          "C0002874-T00",
+          "C0002874-T02",
+          "C0002874-T03",
+          "C0002874-T11"
+        ],
+        "turn_range": [
+          0,
+          11
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0002874-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "I was charged twice for my Mutual Fund.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 7764"
+          },
+          {
+            "message_id": "C0002874-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 7766"
+          },
+          {
+            "message_id": "C0002874-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "I understand this is frustrating. I'm investigating now.",
+            "sentiment": "neutral",
+            "act": "empathy_acknowledgement",
+            "source_reference": "cs_conversations.csv:line 7767"
+          },
+          {
+            "message_id": "C0002874-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "Service activated. Please restart the app and confirm.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 7775"
+          }
+        ],
+        "topic": "Duplicate charge",
+        "product": "Mutual Fund",
+        "sentiment": "negative",
+        "agent_id": "AgentBHNP",
+        "date": "2025-11-23",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      },
+      {
+        "evidence_id": "C0011749#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0011749",
+        "message_ids": [
+          "C0011749-T00",
+          "C0011749-T02",
+          "C0011749-T03",
+          "C0011749-T11"
+        ],
+        "turn_range": [
+          0,
+          11
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0011749-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Hi, I need help with my Membership.",
+            "sentiment": "neutral",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 33409"
+          },
+          {
+            "message_id": "C0011749-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 33411"
+          },
+          {
+            "message_id": "C0011749-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "sentiment": "neutral",
+            "act": "courtesy_greeting",
+            "source_reference": "cs_conversations.csv:line 33412"
+          },
+          {
+            "message_id": "C0011749-T11",
+            "turn_index": 11,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 33420"
+          }
+        ],
+        "topic": "General help request",
+        "product": "Membership",
+        "sentiment": "negative",
+        "agent_id": "AgentDAUZ",
+        "date": "2025-11-19",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      },
+      {
+        "evidence_id": "C0007786#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0007786",
+        "message_ids": [
+          "C0007786-T00",
+          "C0007786-T06",
+          "C0007786-T07",
+          "C0007786-T17"
+        ],
+        "turn_range": [
+          0,
+          17
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0007786-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Mujhe FASTag ke baare mein help chahiye.",
+            "sentiment": "neutral",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 21938"
+          },
+          {
+            "message_id": "C0007786-T06",
+            "turn_index": 6,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 21944"
+          },
+          {
+            "message_id": "C0007786-T07",
+            "turn_index": 7,
+            "role": "agent",
+            "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 21945"
+          },
+          {
+            "message_id": "C0007786-T17",
+            "turn_index": 17,
+            "role": "agent",
+            "text": "I\u2019ve reset your account. Please try logging in again.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 21955"
+          }
+        ],
+        "topic": "General help request",
+        "product": "FASTag",
+        "sentiment": "negative",
+        "agent_id": "AgentWYYP",
+        "date": "2025-11-16",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      }
+    ],
+    "recommendations": [],
+    "uncertainty_notes": [
+      "The difference in negative rate between Duplicate charge and General help request is statistically significant (two-proportion z-test p = 0.0092)."
+    ],
+    "method_notes": [
+      "Each conversation is counted once, under the primary topic of the customer's opening message.",
+      "A conversation is negative when the mean sentiment score of its customer turns is -0.25 or lower."
+    ],
+    "follow_up_questions": [
+      "Show similar conversations for Duplicate charge.",
+      "Which recurring concerns should leadership review first?"
+    ],
+    "execution_trace_id": "R-ebc3b06e3f00",
+    "model_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "deterministic",
+      "available": false,
+      "reason": "GEMINI_API_KEY is not set",
+      "intent_source": "rules",
+      "explanation_source": "deterministic",
+      "label_source": "rules",
+      "embedding_backend": null
+    },
+    "quality_status": {
+      "status": "pass",
+      "checks": [
+        {
+          "check": "registered_operations",
+          "passed": true,
+          "critical": true,
+          "detail": "Operations: ['compare_topics']"
+        },
+        {
+          "check": "filters_applied",
+          "passed": true,
+          "critical": false,
+          "detail": "All results use the planned scope"
+        },
+        {
+          "check": "proportions_valid",
+          "passed": true,
+          "critical": true,
+          "detail": "All proportions within [0, 1]"
+        },
+        {
+          "check": "chart_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "1 charts match their source tables"
+        },
+        {
+          "check": "evidence_valid",
+          "passed": true,
+          "critical": false,
+          "detail": "0 evidence items resolved to source messages"
+        },
+        {
+          "check": "evidence_present",
+          "passed": true,
+          "critical": false,
+          "detail": "4 evidence items attached"
+        },
+        {
+          "check": "explanation_grounded",
+          "passed": true,
+          "critical": true,
+          "detail": "All numbers in the answer trace to verified results"
+        },
+        {
+          "check": "uncertainty_disclosed",
+          "passed": true,
+          "critical": false,
+          "detail": "1 uncertainty notes attached to the response"
+        }
+      ],
+      "passed": 8,
+      "total": 8
+    },
+    "governance": [
+      {
+        "policy": "pii_masking",
+        "outcome": "pass",
+        "detail": "Evidence excerpts are PII-masked at ingestion"
+      },
+      {
+        "policy": "prompt_injection",
+        "outcome": "pass",
+        "detail": "No injection patterns in the question"
+      },
+      {
+        "policy": "tool_safety",
+        "outcome": "pass",
+        "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+      },
+      {
+        "policy": "dataset_authorisation",
+        "outcome": "pass",
+        "detail": "Dataset mode: original"
+      }
+    ],
+    "human_review_required": false,
+    "errors": [],
+    "latency_ms": 141.3,
+    "charts": [
+      {
+        "chart_id": "compare_topics",
+        "chart_type": "bar",
+        "title": "Topic comparison",
+        "description": "",
+        "x_field": "metric",
+        "y_field": null,
+        "series": [
+          {
+            "key": "Duplicate charge",
+            "label": "Duplicate charge",
+            "color": "indigo"
+          },
+          {
+            "key": "General help request",
+            "label": "General help request",
+            "color": "cyan"
+          }
+        ],
+        "value_format": "percent",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-ebc3b06e3f00",
+        "evidence_ids": [
+          "C0014263",
+          "C0002874",
+          "C0011749",
+          "C0007786"
+        ],
+        "uncertainty_note": "The difference in negative rate between Duplicate charge and General help request is statistically significant (two-proportion z-test p = 0.0092).",
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "Duplicate charge: negative 48.3%; General help request: negative 31.4%",
+        "data_preview": [
+          {
+            "metric": "Negative rate",
+            "Duplicate charge": 0.4828,
+            "General help request": 0.3141
+          },
+          {
+            "metric": "Ends unresolved",
+            "Duplicate charge": 0.5172,
+            "General help request": 0.5064
+          },
+          {
+            "metric": "Empathic replies",
+            "Duplicate charge": 0.2704,
+            "General help request": 0.2714
+          },
+          {
+            "metric": "Closing action fits",
+            "Duplicate charge": 0.2874,
+            "General help request": 0
+          }
+        ],
+        "rows": 4
+      }
+    ],
+    "graphs": []
+  },
+  {
+    "version": "1.0",
+    "request_id": "R-19b31fe3e3dd",
+    "session_id": "S-4ae51c1144ab",
+    "status": "completed",
+    "question": "What about the previous month?",
+    "resolved_intent": {
+      "category": "compare_topics",
+      "time_window": {
+        "type": "previous_month",
+        "month": null,
+        "n": null
+      },
+      "dimension": "topic",
+      "rank_by": "count",
+      "top_n": null,
+      "topics": [],
+      "products": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": [],
+      "search_query": null,
+      "group_by": null,
+      "is_follow_up": true,
+      "reference_ranks": [],
+      "audience": "analyst",
+      "needs_evidence": false,
+      "reasoning": "Follow-up that changes filters on the previous analysis."
+    },
+    "dataset_scope": {
+      "dataset_mode": "original",
+      "window": {
+        "start": "2025-10-01",
+        "end": "2025-11-01",
+        "label": "October 2025",
+        "rule": "previous_month",
+        "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025. 780 conversations start in this month."
+      },
+      "topics": [
+        "general_help",
+        "duplicate_charge"
+      ],
+      "products": [],
+      "domains": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": []
+    },
+    "plan": {
+      "category": "compare_topics",
+      "specialist": "topic_agent",
+      "steps": [
+        {
+          "op": "compare_topics",
+          "params": {
+            "topics": [
+              "general_help",
+              "duplicate_charge"
+            ]
+          },
+          "purpose": "Compare the selected topics"
+        }
+      ],
+      "retrieval": {
+        "mode": "none",
+        "query": null,
+        "k": 5,
+        "scope": null
+      },
+      "notes": [],
+      "resolved_references": {},
+      "audience": "analyst"
+    },
+    "headline": "Duplicate charge is more often negative than General help request (38.5% vs 21.9%), a statistically significant difference (p = 0.0035).",
+    "answer": "In October 2025, Duplicate charge had 40 negative of 104 conversations and General help request had 35 of 160. Conversations ending unresolved: 54.8% vs 48.1%. Negative turns answered with empathy: 26.5% vs 33.0%.",
+    "key_points": [
+      "Duplicate charge: negative 38.5%, escalation requests 101, closing action fits issue 38.5%",
+      "General help request: negative 21.9%, escalation requests 171, closing action fits issue n/a"
+    ],
+    "metrics": [
+      {
+        "id": "rate_gap",
+        "label": "Negative-rate gap",
+        "value": 0.1659,
+        "unit": "percent",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      }
+    ],
+    "rankings": [],
+    "evidence": [
+      {
+        "evidence_id": "C0000808#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0000808",
+        "message_ids": [
+          "C0000808-T00",
+          "C0000808-T08",
+          "C0000808-T09",
+          "C0000808-T12"
+        ],
+        "turn_range": [
+          0,
+          12
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0000808-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "I was charged twice for my Broadband.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 2041"
+          },
+          {
+            "message_id": "C0000808-T08",
+            "turn_index": 8,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 2049"
+          },
+          {
+            "message_id": "C0000808-T09",
+            "turn_index": 9,
+            "role": "agent",
+            "text": "Please allow me a moment while I run some checks.",
+            "sentiment": "neutral",
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 2050"
+          },
+          {
+            "message_id": "C0000808-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 2053"
+          }
+        ],
+        "topic": "Duplicate charge",
+        "product": "Broadband",
+        "sentiment": "negative",
+        "agent_id": "AgentIFJY",
+        "date": "2025-10-28",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      },
+      {
+        "evidence_id": "C0001045#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0001045",
+        "message_ids": [
+          "C0001045-T00",
+          "C0001045-T08",
+          "C0001045-T09",
+          "C0001045-T12"
+        ],
+        "turn_range": [
+          0,
+          12
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0001045-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "I was charged twice for my Exam.",
+            "sentiment": "negative",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 2866"
+          },
+          {
+            "message_id": "C0001045-T08",
+            "turn_index": 8,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 2874"
+          },
+          {
+            "message_id": "C0001045-T09",
+            "turn_index": 9,
+            "role": "agent",
+            "text": "I understand this is frustrating. I'm investigating now.",
+            "sentiment": "neutral",
+            "act": "empathy_acknowledgement",
+            "source_reference": "cs_conversations.csv:line 2875"
+          },
+          {
+            "message_id": "C0001045-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "sentiment": "negative",
+            "act": "urgency",
+            "source_reference": "cs_conversations.csv:line 2878"
+          }
+        ],
+        "topic": "Duplicate charge",
+        "product": "Exam",
+        "sentiment": "negative",
+        "agent_id": "AgentUCRX",
+        "date": "2025-10-25",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      },
+      {
+        "evidence_id": "C0010028#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0010028",
+        "message_ids": [
+          "C0010028-T00",
+          "C0010028-T02",
+          "C0010028-T03",
+          "C0010028-T12"
+        ],
+        "turn_range": [
+          0,
+          12
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0010028-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Hi, I need help with my Career Track.",
+            "sentiment": "neutral",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 28421"
+          },
+          {
+            "message_id": "C0010028-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 28423"
+          },
+          {
+            "message_id": "C0010028-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "sentiment": "neutral",
+            "act": "courtesy_greeting",
+            "source_reference": "cs_conversations.csv:line 28424"
+          },
+          {
+            "message_id": "C0010028-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 28433"
+          }
+        ],
+        "topic": "General help request",
+        "product": "Career Track",
+        "sentiment": "negative",
+        "agent_id": "AgentJEZQ",
+        "date": "2025-10-08",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      },
+      {
+        "evidence_id": "C0004986#analysis",
+        "kind": "analysis",
+        "conversation_id": "C0004986",
+        "message_ids": [
+          "C0004986-T00",
+          "C0004986-T02",
+          "C0004986-T03",
+          "C0004986-T09"
+        ],
+        "turn_range": [
+          0,
+          9
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0004986-T00",
+            "turn_index": 0,
+            "role": "customer",
+            "text": "Mujhe Mock Test ke baare mein help chahiye.",
+            "sentiment": "neutral",
+            "act": "issue_report",
+            "source_reference": "cs_conversations.csv:line 13907"
+          },
+          {
+            "message_id": "C0004986-T02",
+            "turn_index": 2,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 13909"
+          },
+          {
+            "message_id": "C0004986-T03",
+            "turn_index": 3,
+            "role": "agent",
+            "text": "I understand this is frustrating. I'm investigating now.",
+            "sentiment": "neutral",
+            "act": "empathy_acknowledgement",
+            "source_reference": "cs_conversations.csv:line 13910"
+          },
+          {
+            "message_id": "C0004986-T09",
+            "turn_index": 9,
+            "role": "agent",
+            "text": "The order is out for delivery. Expected by tomorrow evening.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 13916"
+          }
+        ],
+        "topic": "General help request",
+        "product": "Mock Test",
+        "sentiment": "negative",
+        "agent_id": "AgentWEEB",
+        "date": "2025-10-06",
+        "similarity": null,
+        "reason": "Representative negative conversation for a compared topic"
+      }
+    ],
+    "recommendations": [],
+    "uncertainty_notes": [
+      "The difference in negative rate between Duplicate charge and General help request is statistically significant (two-proportion z-test p = 0.0035)."
+    ],
+    "method_notes": [
+      "Each conversation is counted once, under the primary topic of the customer's opening message.",
+      "A conversation is negative when the mean sentiment score of its customer turns is -0.25 or lower."
+    ],
+    "follow_up_questions": [
+      "Show similar conversations for Duplicate charge.",
+      "Which recurring concerns should leadership review first?"
+    ],
+    "execution_trace_id": "R-19b31fe3e3dd",
+    "model_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "deterministic",
+      "available": false,
+      "reason": "GEMINI_API_KEY is not set",
+      "intent_source": "rules",
+      "explanation_source": "deterministic",
+      "label_source": "rules",
+      "embedding_backend": null
+    },
+    "quality_status": {
+      "status": "pass",
+      "checks": [
+        {
+          "check": "registered_operations",
+          "passed": true,
+          "critical": true,
+          "detail": "Operations: ['compare_topics']"
+        },
+        {
+          "check": "filters_applied",
+          "passed": true,
+          "critical": false,
+          "detail": "All results use the planned scope"
+        },
+        {
+          "check": "proportions_valid",
+          "passed": true,
+          "critical": true,
+          "detail": "All proportions within [0, 1]"
+        },
+        {
+          "check": "chart_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "1 charts match their source tables"
+        },
+        {
+          "check": "evidence_valid",
+          "passed": true,
+          "critical": false,
+          "detail": "0 evidence items resolved to source messages"
+        },
+        {
+          "check": "evidence_present",
+          "passed": true,
+          "critical": false,
+          "detail": "4 evidence items attached"
+        },
+        {
+          "check": "explanation_grounded",
+          "passed": true,
+          "critical": true,
+          "detail": "All numbers in the answer trace to verified results"
+        },
+        {
+          "check": "uncertainty_disclosed",
+          "passed": true,
+          "critical": false,
+          "detail": "1 uncertainty notes attached to the response"
+        }
+      ],
+      "passed": 8,
+      "total": 8
+    },
+    "governance": [
+      {
+        "policy": "pii_masking",
+        "outcome": "pass",
+        "detail": "Evidence excerpts are PII-masked at ingestion"
+      },
+      {
+        "policy": "prompt_injection",
+        "outcome": "pass",
+        "detail": "No injection patterns in the question"
+      },
+      {
+        "policy": "tool_safety",
+        "outcome": "pass",
+        "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+      },
+      {
+        "policy": "dataset_authorisation",
+        "outcome": "pass",
+        "detail": "Dataset mode: original"
+      }
+    ],
+    "human_review_required": false,
+    "errors": [],
+    "latency_ms": 142.7,
+    "charts": [
+      {
+        "chart_id": "compare_topics",
+        "chart_type": "bar",
+        "title": "Topic comparison",
+        "description": "",
+        "x_field": "metric",
+        "y_field": null,
+        "series": [
+          {
+            "key": "Duplicate charge",
+            "label": "Duplicate charge",
+            "color": "indigo"
+          },
+          {
+            "key": "General help request",
+            "label": "General help request",
+            "color": "cyan"
+          }
+        ],
+        "value_format": "percent",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-19b31fe3e3dd",
+        "evidence_ids": [
+          "C0000808",
+          "C0001045",
+          "C0010028",
+          "C0004986"
+        ],
+        "uncertainty_note": "The difference in negative rate between Duplicate charge and General help request is statistically significant (two-proportion z-test p = 0.0035).",
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "Duplicate charge: negative 38.5%; General help request: negative 21.9%",
+        "data_preview": [
+          {
+            "metric": "Negative rate",
+            "Duplicate charge": 0.3846,
+            "General help request": 0.2188
+          },
+          {
+            "metric": "Ends unresolved",
+            "Duplicate charge": 0.5481,
+            "General help request": 0.4812
+          },
+          {
+            "metric": "Empathic replies",
+            "Duplicate charge": 0.2652,
+            "General help request": 0.33
+          },
+          {
+            "metric": "Closing action fits",
+            "Duplicate charge": 0.3846,
+            "General help request": 0
+          }
+        ],
+        "rows": 4
+      }
+    ],
+    "graphs": []
+  }
+]

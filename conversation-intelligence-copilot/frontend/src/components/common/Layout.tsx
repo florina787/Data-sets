@@ -2,9 +2,10 @@ import { motion } from "framer-motion";
 import {
   Activity, BookText, BrainCircuit, Gauge, HeartHandshake, LayoutDashboard, MessagesSquare, Network, Plus, ShieldCheck, Sparkles, Waves,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useApp } from "@/app/AppState";
+import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 import { Button, Tip } from "./ui";
 
@@ -38,16 +39,24 @@ function ModelIndicator() {
   );
 }
 
-function DatasetIndicator() {
-  const { health, datasetMode } = useApp();
+function DatasetSelector() {
+  const { health, datasetMode, setDatasetMode } = useApp();
+  const [syntheticEnabled, setSyntheticEnabled] = useState(false);
+  useEffect(() => { api.get<{ synthetic_enabled: boolean }>("/api/dataset/status").then((d) => setSyntheticEnabled(d.synthetic_enabled)).catch(() => {}); }, []);
   const db = health?.checks?.find((c: any) => c.check === "analytics_database");
   const idx = health?.checks?.find((c: any) => c.check === "retrieval_index");
   return (
-    <Tip content={<span>Analytics DB: {db?.detail ?? "…"}<br />Retrieval: {idx?.detail ?? "…"}</span>}>
-      <div className="hidden items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted md:flex" tabIndex={0}>
+    <Tip content={<span>Analytics DB: {db?.detail ?? "…"}<br />Retrieval: {idx?.detail ?? "…"}<br />
+      {syntheticEnabled ? "Synthetic demo records are tagged and never mixed into the original view." : "Synthetic and combined modes are disabled (ENABLE_SYNTHETIC_DEMO=false)."}</span>}>
+      <label className="hidden items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted md:flex">
         <Activity className={cn("h-3.5 w-3.5", db?.status === "ok" ? "text-cyan" : "text-neg")} aria-hidden />
-        <span>Syncora sample · {datasetMode}</span>
-      </div>
+        <span className="sr-only">Dataset mode</span>
+        <select value={datasetMode} onChange={(e) => setDatasetMode(e.target.value as any)} className="focus-ring cursor-pointer bg-transparent text-muted outline-none hover:text-ink">
+          <option value="original" className="bg-surface">Syncora sample · original</option>
+          <option value="synthetic" disabled={!syntheticEnabled} className="bg-surface">Synthetic demo only</option>
+          <option value="combined" disabled={!syntheticEnabled} className="bg-surface">Combined (original + synthetic)</option>
+        </select>
+      </label>
     </Tip>
   );
 }
@@ -67,7 +76,7 @@ export function Layout({ children }: { children: ReactNode }) {
             </div>
           </NavLink>
           <div className="ml-auto flex items-center gap-2">
-            <DatasetIndicator />
+            <DatasetSelector />
             <ModelIndicator />
             {loc.pathname === "/" && sessionId && (
               <Button size="sm" variant="ghost" onClick={newSession} aria-label="Start a new session"><Plus className="h-3.5 w-3.5" />New</Button>

@@ -1,0 +1,163 @@
+[
+  {
+    "version": "1.0",
+    "request_id": "R-8bfd0f3d473f",
+    "session_id": "S-0ef840e14693",
+    "status": "unsupported",
+    "question": "What is the revenue impact of these complaints?",
+    "resolved_intent": {
+      "category": "unsupported",
+      "time_window": {
+        "type": "inherit",
+        "month": null,
+        "n": null
+      },
+      "dimension": "topic",
+      "rank_by": "count",
+      "top_n": null,
+      "topics": [],
+      "products": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": [],
+      "search_query": null,
+      "group_by": null,
+      "is_follow_up": false,
+      "reference_ranks": [],
+      "audience": "analyst",
+      "needs_evidence": false,
+      "reasoning": "The question needs data the dataset does not contain or asks for a personnel decision."
+    },
+    "dataset_scope": {
+      "dataset_mode": "original",
+      "window": {
+        "start": null,
+        "end": null,
+        "label": "All dates",
+        "rule": "all",
+        "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+      },
+      "topics": [],
+      "products": [],
+      "domains": [],
+      "agents": [],
+      "sentiments": [],
+      "conversation_ids": []
+    },
+    "plan": {
+      "category": "unsupported",
+      "specialist": null,
+      "steps": [],
+      "retrieval": {
+        "mode": "none",
+        "query": null,
+        "k": 5,
+        "scope": null
+      },
+      "notes": [],
+      "resolved_references": {},
+      "audience": "analyst"
+    },
+    "headline": "I can't answer that reliably from this dataset.",
+    "answer": "The question needs data the dataset does not contain or asks for a personnel decision.",
+    "key_points": [],
+    "metrics": [],
+    "rankings": [],
+    "evidence": [],
+    "recommendations": [],
+    "uncertainty_notes": [],
+    "method_notes": [],
+    "follow_up_questions": [
+      "What were the top 5 topics most associated with negative sentiment last month?",
+      "Which recurring customer concerns should leadership review first?"
+    ],
+    "execution_trace_id": "R-8bfd0f3d473f",
+    "model_metadata": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "mode": "deterministic",
+      "available": false,
+      "reason": "GEMINI_API_KEY is not set",
+      "intent_source": "rules",
+      "explanation_source": "deterministic",
+      "label_source": "rules",
+      "embedding_backend": null
+    },
+    "quality_status": {
+      "status": "pass",
+      "checks": [
+        {
+          "check": "registered_operations",
+          "passed": true,
+          "critical": true,
+          "detail": "Operations: none"
+        },
+        {
+          "check": "filters_applied",
+          "passed": true,
+          "critical": false,
+          "detail": "All results use the planned scope"
+        },
+        {
+          "check": "proportions_valid",
+          "passed": true,
+          "critical": true,
+          "detail": "All proportions within [0, 1]"
+        },
+        {
+          "check": "chart_consistency",
+          "passed": true,
+          "critical": true,
+          "detail": "0 charts match their source tables"
+        },
+        {
+          "check": "evidence_valid",
+          "passed": true,
+          "critical": false,
+          "detail": "0 evidence items resolved to source messages"
+        },
+        {
+          "check": "explanation_grounded",
+          "passed": true,
+          "critical": true,
+          "detail": "All numbers in the answer trace to verified results"
+        },
+        {
+          "check": "uncertainty_disclosed",
+          "passed": true,
+          "critical": false,
+          "detail": "0 uncertainty notes attached to the response"
+        }
+      ],
+      "passed": 7,
+      "total": 7
+    },
+    "governance": [
+      {
+        "policy": "pii_masking",
+        "outcome": "pass",
+        "detail": "Evidence excerpts are PII-masked at ingestion"
+      },
+      {
+        "policy": "prompt_injection",
+        "outcome": "pass",
+        "detail": "No injection patterns in the question"
+      },
+      {
+        "policy": "tool_safety",
+        "outcome": "pass",
+        "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+      },
+      {
+        "policy": "dataset_authorisation",
+        "outcome": "pass",
+        "detail": "Dataset mode: original"
+      }
+    ],
+    "human_review_required": false,
+    "errors": [],
+    "latency_ms": 214.2,
+    "charts": [],
+    "graphs": []
+  }
+]
