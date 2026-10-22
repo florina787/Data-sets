@@ -13,6 +13,8 @@ class AnalysisState(TypedDict, total=False):
     dataset_mode: str
     selected_conversation_id: str | None
     started_at: float
+    analysis_mode: str
+    routing: dict
     conversation_history: list
     previous_turn: dict | None
     resolved_intent: dict
@@ -28,6 +30,8 @@ class AnalysisState(TypedDict, total=False):
     explanation_source: str
     visualizations: list
     graphs: list
+    dashboard: dict | None
+    evidence_review: dict | None
     recommendations: list
     uncertainty_notes: list
     governance_findings: list

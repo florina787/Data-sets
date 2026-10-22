@@ -127,6 +127,9 @@ def parse_intent(question: str, has_previous: bool = False, previous_category: s
     if re.search(r"similar|like (this|that|these)|find (conversations|cases|examples)|search (for|conversations)|look for conversations|(show|give|find).*\bexamples?\b|supporting examples|more examples", ql):
         return out("similar_conversations", search_query=q, needs_evidence=True,
                    is_follow_up=is_follow or (has_previous and not (topics or products or conv_ids)))
+    if re.search(r"x-?ray|what went wrong|diagnos|break ?down (this|the|that) conversation|communication gaps?|escalation signals?|repeated concerns?", ql) \
+            and (conv_ids or re.search(r"conversation|this one|that one|selected", ql)):
+        return out("conversation_xray")
     if conv_ids and re.search(r"sentiment|trajectory|journey|change|evolve|turn", ql):
         return out("sentiment_trajectory")
     if re.search(r"trajectory|over the course of|sentiment journey|turn[- ]by[- ]turn|selected conversation|a conversation", ql) and "sentiment" in ql:
@@ -140,6 +143,8 @@ def parse_intent(question: str, has_previous: bool = False, previous_category: s
         return out("uncertainty_review", is_follow_up=has_previous)
     if re.search(r"why (was|is|did) .*(rank|first|top|priorit)|explain (the|this|that) (ranking|result|answer)|how (was|did you) .*(rank|calculat|scor)", ql):
         return out("explain_previous", is_follow_up=has_previous)
+    if re.search(r"root cause|underlying cause|what is (causing|driving)|what('s| is) behind|drivers? (of|behind)|why (are|is|do|does) .*(negative|unhappy|frustrat|complain|angry|upset)|investigate", ql):
+        return out("root_cause", top_n=None, is_follow_up=is_follow or (has_previous and bool(refs)))
     if re.search(r"summari[sz]e .*(leadership|executive|senior|board)|for (senior )?leadership|executive summary", ql) and has_previous \
             and not re.search(r"concern|priorit|review first", ql):
         return out("leadership_summary", is_follow_up=True, audience="leadership")

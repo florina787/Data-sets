@@ -12,6 +12,7 @@ class ChatRequest(BaseModel):
     session_id: str | None = Field(None, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
     dataset_mode: Literal["original", "synthetic", "combined"] = "original"
     selected_conversation_id: str | None = Field(None, max_length=32, pattern=r"^[A-Za-z0-9_-]+$")
+    analysis_mode: Literal["auto", "analytics_only", "hybrid_ai"] = "auto"
 
 
 class ChatResponse(BaseModel):
@@ -37,6 +38,12 @@ class ChatResponse(BaseModel):
     follow_up_questions: list[str] = []
     execution_trace_id: str
     model_metadata: dict[str, Any] = {}
+    routing: dict[str, Any] = {}
+    token_usage: dict[str, Any] = {}
+    xray: dict[str, Any] | None = None
+    root_cause: dict[str, Any] | None = None
+    dashboard: dict[str, Any] | None = None
+    evidence_review: dict[str, Any] | None = None
     quality_status: dict[str, Any] = {}
     governance: list[dict[str, Any]] = []
     human_review_required: bool = False

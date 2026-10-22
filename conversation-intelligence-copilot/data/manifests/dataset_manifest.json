@@ -2,7 +2,7 @@
   "pipeline_version": "pipeline-1.0",
   "taxonomy_version": "tax-1.0",
   "labeler_version": "rules-1.0",
-  "built_at": "2026-10-22T16:20:31.870364+00:00",
+  "built_at": "2026-10-22T23:32:38.966506+00:00",
   "sources": [
     {
       "dataset_source": "original",
@@ -44,7 +44,7 @@
     },
     "gemini_labels_used": 0
   },
-  "duration_seconds": 22.59,
+  "duration_seconds": 16.75,
   "tables": {
     "messages": 43057,
     "message_labels": 43057,

@@ -168,7 +168,8 @@ class GeminiClient:
     def _record(self, prompt: PromptVersion, request_id, purpose, usage: Usage, latency, retries, cache_hit, status, error=None, rate_limited=False):
         get_telemetry().record_llm_call(
             request_id=request_id, purpose=purpose, prompt_id=prompt.id, prompt_version=prompt.version, model=self.model,
-            input_tokens=usage.input_tokens, output_tokens=usage.output_tokens, total_tokens=usage.total_tokens, latency_ms=round(latency, 1),
+            input_tokens=usage.input_tokens if usage.reported else None, output_tokens=usage.output_tokens if usage.reported else None,
+            total_tokens=usage.total_tokens if usage.reported else None, latency_ms=round(latency, 1),
             retries=retries, cache_hit=cache_hit, status=status, error=error, rate_limited=rate_limited,
             estimated_cost_usd=estimate_cost(usage, *self.costs),
         )
@@ -193,7 +194,7 @@ class GeminiClient:
             except LLMUnavailable:
                 raise
             except Exception as e:  # noqa: BLE001
-                self._record(prompt, request_id, purpose, total, (time.perf_counter() - start) * 1000, getattr(e, "retries", retries),
+                self._record(prompt, request_id, purpose, total.add(Usage(reported=False)), (time.perf_counter() - start) * 1000, getattr(e, "retries", retries),
                              False, "error", str(e)[:300], getattr(e, "rate_limited", False))
                 raise LLMUnavailable(f"{self.label} call failed: {str(e)[:200]}") from e
             total = total.add(usage)
@@ -219,7 +220,7 @@ class GeminiClient:
         except LLMUnavailable:
             raise
         except Exception as e:  # noqa: BLE001
-            self._record(prompt, request_id, purpose, Usage(), (time.perf_counter() - start) * 1000, getattr(e, "retries", 0),
+            self._record(prompt, request_id, purpose, Usage(reported=False), (time.perf_counter() - start) * 1000, getattr(e, "retries", 0),
                          False, "error", str(e)[:300], getattr(e, "rate_limited", False))
             raise LLMUnavailable(f"{self.label} call failed: {str(e)[:200]}") from e
         latency = (time.perf_counter() - start) * 1000

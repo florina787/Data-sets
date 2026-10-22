@@ -5,14 +5,16 @@ from __future__ import annotations
 from app.agents.grounding import allowed_numbers, ungrounded_numbers
 from app.analytics.query_registry import OPERATIONS
 
-CRITICAL = {"registered_operations", "denominators", "ranking_consistency", "chart_consistency", "explanation_grounded", "proportions_valid"}
+CRITICAL = {"registered_operations", "denominators", "ranking_consistency", "chart_consistency", "explanation_grounded", "proportions_valid",
+            "excerpt_fidelity"}
 
 
 def _check(name: str, passed: bool, detail: str) -> dict:
     return {"check": name, "passed": bool(passed), "critical": name in CRITICAL, "detail": detail}
 
 
-def run_qa(plan: dict, tool_results: dict, charts: list[dict], evidence: list[dict], evidence_report: dict, explanation: dict, facts: dict) -> dict:
+def run_qa(plan: dict, tool_results: dict, charts: list[dict], evidence: list[dict], evidence_report: dict, explanation: dict, facts: dict,
+           evidence_review: dict | None = None) -> dict:
     checks: list[dict] = []
     ops = [s["op"] for s in plan.get("steps", [])]
     checks.append(_check("registered_operations", all(o in OPERATIONS for o in ops), f"Operations: {ops or 'none'}"))
@@ -89,6 +91,11 @@ def run_qa(plan: dict, tool_results: dict, charts: list[dict], evidence: list[di
         r = tool_results["agent_coaching_review"]
         checks.append(_check("coaching_sample_size_gate", r["params"]["min_conversations"] >= 1 and any("Decision support" in n for n in r["uncertainty_notes"]),
                              f"Minimum {r['params']['min_conversations']} conversations per agent enforced; safeguard attached"))
+    # Evidence Challenger results count as QA checks (a qualified causal claim is a warning, a mismatched quote is critical).
+    for c in (evidence_review or {}).get("checks", []):
+        if c["check"] == "counter_evidence":
+            continue
+        checks.append(_check(c["check"], c["status"] == "pass", c["detail"]))
     failed_critical = [c for c in checks if not c["passed"] and c["critical"]]
     failed = [c for c in checks if not c["passed"]]
     status = "fail" if failed_critical else "warn" if failed else "pass"

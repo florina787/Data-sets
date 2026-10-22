@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 @router.post("")
 def chat(req: ChatRequest) -> dict:
-    return run_chat(req.question, req.session_id, req.dataset_mode, req.selected_conversation_id)
+    return run_chat(req.question, req.session_id, req.dataset_mode, req.selected_conversation_id, req.analysis_mode)
 
 
 @router.post("/stream")
@@ -26,7 +26,7 @@ def chat_stream(req: ChatRequest) -> StreamingResponse:
     """
 
     def gen():
-        for event in stream_chat(req.question, req.session_id, req.dataset_mode, req.selected_conversation_id):
+        for event in stream_chat(req.question, req.session_id, req.dataset_mode, req.selected_conversation_id, req.analysis_mode):
             yield f"event: {event['type']}\ndata: {json.dumps(event, default=str)}\n\n"
 
     return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})

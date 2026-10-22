@@ -23,7 +23,8 @@ log = logging.getLogger(__name__)
 NODE_INFO: dict[str, dict] = {
     "input_validation": {"label": "Input validation", "role": "Sanitise the question, enforce limits, flag injection attempts."},
     "session_context": {"label": "Session memory", "role": "Load prior turns and references for follow-up resolution."},
-    "intent": {"label": "Intent agent", "role": "Interpret the question into a typed intent (Gemini, or rules fallback)."},
+    "router": {"label": "Intelligence router", "role": "Zero-LLM routing: decide whether a model is needed at all, and record why."},
+    "intent": {"label": "Intent agent", "role": "Interpret the question into a typed intent (LLM, or rules)."},
     "supervisor": {"label": "Supervisor / planner", "role": "Resolve references and date window; choose registered operations and agents."},
     "topic_agent": {"label": "Topic agent", "role": "Topic frequency, negative-topic ranking and topic comparisons."},
     "sentiment_agent": {"label": "Sentiment agent", "role": "Sentiment distribution, trends and conversation trajectories."},
@@ -32,7 +33,7 @@ NODE_INFO: dict[str, dict] = {
     "analytics_agent": {"label": "Analytics agent", "role": "Dataset coverage, conversation detail and re-running prior analyses."},
     "retrieval": {"label": "Retrieval agent", "role": "Semantic search over the FAISS index with metadata filters."},
     "evidence": {"label": "Evidence assembly", "role": "Resolve cited IDs to source messages and validate them."},
-    "explanation": {"label": "Explanation agent", "role": "Grounded narrative (Gemini with numeric check, or deterministic)."},
+    "explanation": {"label": "Explanation agent", "role": "Grounded narrative (LLM with numeric check, or deterministic)."},
     "visualization": {"label": "Visualization planner", "role": "Choose charts and build validated specs from results."},
     "qa": {"label": "QA agent", "role": "Check filters, denominators, rankings, charts, citations and grounding."},
     "governance": {"label": "Governance agent", "role": "PII, coaching safeguards, dataset authorisation, audit."},

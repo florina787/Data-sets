@@ -133,9 +133,10 @@ def aggregate_conversation(turns: list[dict]) -> dict:
                 neg_with_reply += 1
                 empathic_replies += int(bool(nxt["empathy"]))
 
-    agent_texts = [t["clean_text"] for t in agent if not t.get("resolution")]
+    # Missing labels arrive from pandas as NaN (truthy), so test for a real string.
+    agent_texts = [t["clean_text"] for t in agent if not isinstance(t.get("resolution"), str)]
     repeats = sum(c - 1 for c in Counter(agent_texts).values() if c > 1)
-    resolutions = [t["resolution"] for t in agent if t.get("resolution")]
+    resolutions = [t["resolution"] for t in agent if isinstance(t.get("resolution"), str)]
     final_resolution = resolutions[-1] if resolutions else None
     relevant_set = tx.RELEVANT_RESOLUTIONS.get(topic)
     resolution_relevant = None if (final_resolution is None or relevant_set is None) else final_resolution in relevant_set

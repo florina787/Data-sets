@@ -21,6 +21,10 @@ def _kpis(result: dict, ids: list[str], rid: str) -> ChartSpec:
                      accessibility_summary="; ".join(f"{m['label']}: {m['value']}" for m in rows))
 
 
+def _m(result: dict, metric_id: str):
+    return next((m["value"] for m in result["metrics"] if m["id"] == metric_id), None)
+
+
 def _note(result: dict) -> str | None:
     return result["uncertainty_notes"][0] if result.get("uncertainty_notes") else None
 
@@ -184,6 +188,33 @@ def plan_charts(tool_results: dict, retrieval: list[dict], request_id: str) -> t
         graphs.append(GraphSpec(graph_id="issue_resolution_graph", title="Issue → agent closing action",
                                 description="Edges are observed counts of conversations with that issue ending in that action.",
                                 nodes=list(nodes.values()), edges=edges, source_analysis_id=rid))
+    if (r := tool_results.get("root_cause_investigation")) and r["status"] == "ok":
+        charts.append(_kpis(r, ["conversations", "negative_rate", "factors_tested", "supported_drivers"], f"{rid}_rc"))
+        rows = [h for h in r["series"]["all_factors"]["rows"] if h["negative_rate_with"] is not None]
+        short = {h["factor"]: h["factor"].replace("_", " ").capitalize() for h in rows}
+        charts.append(ChartSpec(
+            chart_id="root_cause_factors", chart_type="bar", title=f"Negative rate with vs without each factor · {_m(r, 'topic')}",
+            description="Each pair compares conversations with the factor to those without it. Customer reactions are symptoms, not drivers.",
+            x_field="factor_label", series=[Series(key="negative_rate_with", label="With factor", color="negative"),
+                                            Series(key="negative_rate_without", label="Without factor", color="muted")],
+            data=[{"factor_label": short[h["factor"]], "factor": h["factor"], "negative_rate_with": h["negative_rate_with"],
+                   "negative_rate_without": h["negative_rate_without"], "with_factor": h["with_factor"], "role": h["role_label"],
+                   "strength": h["strength"]} for h in rows],
+            value_format="percent", source_analysis_id=rid, evidence_ids=r["evidence_refs"], uncertainty_note=_note(r),
+            accessibility_summary="; ".join(f"{short[h['factor']]}: {h['negative_rate_with']:.0%} vs {h['negative_rate_without']:.0%}" for h in rows)))
+        charts.append(ChartSpec(
+            chart_id="root_cause_ci", chart_type="error_bar", title="Negative rate when the factor is present (95% CI)",
+            description="Compare with the topic's overall negative rate; intervals that overlap it are weak evidence.",
+            x_field="factor_label", y_field="negative_rate_with", series=[Series(key="negative_rate_with", label="Negative rate with factor", color="violet")],
+            data=[{"factor_label": short[h["factor"]], "negative_rate_with": h["negative_rate_with"], "ci_low": h["ci_with_low"],
+                   "ci_high": h["ci_with_high"], "with_factor": h["with_factor"]} for h in rows],
+            value_format="percent", error_low_field="ci_low", error_high_field="ci_high", source_analysis_id=rid,
+            accessibility_summary="; ".join(f"{short[h['factor']]}: {h['negative_rate_with']:.0%} ({h['ci_with_low']:.0%}–{h['ci_with_high']:.0%})" for h in rows)))
+        charts.append(ChartSpec(chart_id="root_cause_alternatives", chart_type="table", title="Alternative explanations checked",
+                                data=r["series"]["alternatives"]["rows"], source_analysis_id=rid,
+                                accessibility_summary=f"{len(r['series']['alternatives']['rows'])} alternative explanations tested."))
+    if (r := tool_results.get("conversation_xray")) and r["status"] == "ok":
+        charts.append(_kpis(r, ["messages", "escalation_signals", "repeated_concerns", "communication_gaps", "high_severity"], f"{rid}_xr"))
     if (r := tool_results.get("dataset_overview")) and r["status"] == "ok":
         charts.append(_kpis(r, ["conversations_in_scope", "messages", "agents", "topics", "products", "label_coverage"], f"{rid}_ds"))
         charts.append(ChartSpec(chart_id="conversations_by_month", chart_type="bar", title="Conversations by start month", x_field="month",
@@ -211,7 +242,7 @@ def plan_charts(tool_results: dict, retrieval: list[dict], request_id: str) -> t
 
 
 # Primary findings first; context charts after, so related charts sit side by side.
-CHART_ORDER = ["negative_topics", "negative_rate_ci", "priority_matrix", "priority_scores", "sentiment_trajectory", "trajectory_timeline",
+CHART_ORDER = ["root_cause_factors", "root_cause_ci", "root_cause_alternatives", "negative_topics", "negative_rate_ci", "priority_matrix", "priority_scores", "sentiment_trajectory", "trajectory_timeline",
                "coaching_heatmap", "empathy_distribution", "sample_size", "coaching_by_topic", "compare_topics", "topic_frequency",
                "sentiment_by_group", "sentiment_distribution", "sentiment_trend", "resolution_misfit", "sensitivity", "retrieval_results"]
 

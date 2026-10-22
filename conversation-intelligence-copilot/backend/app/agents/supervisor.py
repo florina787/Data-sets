@@ -28,7 +28,7 @@ SPECIALIST = {
     "agent_coaching": "coaching_agent", "agent_profile": "coaching_agent",
     "leadership_priorities": "leadership_agent", "resolution_quality": "leadership_agent",
     "dataset_overview": "analytics_agent", "conversation_detail": "analytics_agent", "conversation_list": "analytics_agent",
-    "explain_previous": "analytics_agent", "uncertainty_review": "analytics_agent", "leadership_summary": "analytics_agent",
+    "explain_previous": "analytics_agent", "conversation_xray": "sentiment_agent", "root_cause": "leadership_agent", "uncertainty_review": "analytics_agent", "leadership_summary": "analytics_agent",
 }
 UNSUPPORTED_HELP = ("I can analyse sentiment, topics, products, agents' observable communication, conversation trajectories, "
                     "resolution fit and recurring concerns in the supplied conversations. The dataset has no revenue, cost, churn, "
@@ -117,7 +117,7 @@ def build_plan(intent: IntentOutput, previous: dict | None, dataset_mode: str, s
     if unknown_convs:
         notes.append(f"Conversation ID(s) not found: {', '.join(unknown_convs)}.")
     conversation_id = conv_ids[0] if conv_ids else None
-    if not conversation_id and category in ("sentiment_trajectory", "conversation_detail"):
+    if not conversation_id and category in ("sentiment_trajectory", "conversation_detail", "conversation_xray"):
         if selected_conversation_id:
             ok, _ = _validate_ids([selected_conversation_id], "conversation_id")
             conversation_id = ok[0] if ok else None
@@ -156,6 +156,17 @@ def build_plan(intent: IntentOutput, previous: dict | None, dataset_mode: str, s
         step("sentiment_trend", "Monthly negative-sentiment trend")
     elif category == "sentiment_trajectory":
         step("sentiment_trajectory", "Turn-by-turn customer sentiment", conversation_id=conversation_id)
+        if conversation_id:
+            step("conversation_xray", "X-Ray of the same conversation (signals linked to messages)", conversation_id=conversation_id)
+    elif category == "conversation_xray":
+        if conversation_id:
+            step("conversation_xray", "Message-level X-Ray: escalation, repeated concerns, communication gaps", conversation_id=conversation_id)
+            step("sentiment_trajectory", "Turn-by-turn customer sentiment", conversation_id=conversation_id)
+        else:
+            step("sentiment_trajectory", "Suggest conversations to X-Ray", conversation_id=None)
+    elif category == "root_cause":
+        step("root_cause_investigation", "Test candidate drivers of negative sentiment", topic=topics[0] if topics else None)
+        retrieval = {"mode": "after_analysis", "query": None, "k": 3, "scope": None}
     elif category == "agent_coaching":
         step("agent_coaching_review", "Communication review signals", min_conversations=settings.min_agent_conversations)
         retrieval = {"mode": "parallel", "query": "customer still not fixed asks to escalate urgent; agent asks for details without acknowledging frustration",

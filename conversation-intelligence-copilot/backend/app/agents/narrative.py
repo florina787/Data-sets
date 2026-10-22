@@ -1,7 +1,7 @@
 """Deterministic, evidence-grounded narratives built only from verified results.
 
-This is the explanation of record when Gemini is unavailable, and the baseline the
-Gemini explanation is checked against. Every number here comes from an
+This is the explanation of record when no model is used, and the baseline a
+model explanation is checked against. Every number here comes from an
 AnalysisResult produced by a registered operation.
 """
 
@@ -119,8 +119,66 @@ def sentiment_trajectory(r: dict, extra: dict) -> dict:
         "headline": f"In {cid} ({_m(r, 'topic')}), customer sentiment {direction}: {first:+.1f} at the first follow-up to {final:+.1f} at the end.",
         "answer": f"The customer opened with a {('negative' if _m(r, 'opening_score') < 0 else 'neutral')} issue report and sent "
                   f"{_m(r, 'customer_turns')} messages in total. {tp_text} Overall label: {_m(r, 'conversation_sentiment')}.",
-        "key_points": [f"Turn {t['turn_index']}: {t['direction']} by {abs(t['delta']):.2f}" for t in tps],
+        "key_points": [f"Turn {t['turn_index']}: {t['direction']} by {abs(t['delta']):.2f}" for t in tps] + [
+            f"X-Ray [{x['severity']}]: {x['title']} — turns {', '.join(str(t) for t in x['turns'][:6])}"
+            for x in (extra.get("conversation_xray") or {}).get("series", {}).get("signals", {}).get("rows", [])[:4]],
         "follow_up_questions": ["Show similar conversations.", "Did the agent's closing action fit the issue?", "Which agents may need coaching on empathy?"],
+    }
+
+
+def conversation_xray(r: dict, extra: dict) -> dict:
+    cid = r["params"]["conversation_id"]
+    sig = r["series"]["signals"]["rows"]
+    high = [x for x in sig if x["severity"] == "high"]
+    phases = {p["phase"]: p for p in r["series"]["phases"]["rows"]}
+    arc = " → ".join(f"{p} {phases[p]['mean_sentiment']:+.2f}" for p in ("opening", "middle", "closing") if p in phases)
+    lead = high[0] if high else (sig[0] if sig else None)
+    answer = (f"{cid} ({_m(r, 'topic')}) has {_m(r, 'messages')} messages. The X-Ray found {_m(r, 'escalation_signals')} escalation signal(s), "
+              f"{_m(r, 'repeated_concerns')} repeated concern(s) and {_m(r, 'communication_gaps')} communication gap(s); "
+              f"{len(high)} are high severity. Mean customer sentiment by phase: {arc}.")
+    if lead:
+        answer += f" Most important: {lead['title'].lower()} (turn {', '.join(str(t) for t in lead['turns'][:4])}) — {lead['detail']}"
+    return {
+        "headline": f"X-Ray of {cid}: " + (f"{len(high)} high-severity finding(s), led by {lead['title'].lower()}." if high and lead
+                                          else "no high-severity findings." if not high else ""),
+        "answer": answer,
+        "key_points": [f"[{x['severity']}] {x['title']} — turns {', '.join(str(t) for t in x['turns'][:6])}" for x in sig[:6]],
+        "follow_up_questions": [f"How did customer sentiment change in {cid}?", "Show similar conversations.",
+                                "Which agents may benefit from coaching on empathy?"],
+    }
+
+
+def root_cause(r: dict, extra: dict) -> dict:
+    rows = r["table"]["rows"]
+    topic = _m(r, "topic")
+    drivers = [h for h in rows if h["role"] != "customer_reaction" and h["strength"] in ("strong association", "moderate association")]
+    symptoms = [h for h in rows if h["role"] == "customer_reaction" and h["strength"] in ("strong association", "moderate association")]
+    alts = r["series"]["alternatives"]["rows"]
+
+    def line(h: dict) -> str:
+        return (f"{h['description']}: {pct(h['negative_rate_with'], 0)} negative with it vs {pct(h['negative_rate_without'], 0)} without "
+                f"(n={h['with_factor']} vs {h['without_factor']}, p={h['p_value']})")
+
+    if drivers:
+        top = drivers[0]
+        headline = f"In {topic}, negative sentiment is most strongly associated with: {top['description'].split(' (')[0].lower()}."
+        body = "Candidate drivers (association, not proof of cause): " + "; ".join(line(h) for h in drivers[:3]) + "."
+        if top.get("precedes_negative_share") is not None:
+            body += (f" In {pct(top['precedes_negative_share'], 0)} of the negative conversations with this behaviour it occurs before the "
+                     "customer's last negative message, which is consistent with (but does not prove) it contributing.")
+    else:
+        headline = f"No agent or context factor is clearly associated with negative sentiment in {topic}."
+        body = "None of the tested agent behaviours or context factors shows a reliable difference in negative rate."
+    if symptoms:
+        body += " Symptoms that accompany negativity rather than explain it: " + "; ".join(line(h) for h in symptoms[:2]) + "."
+    return {
+        "headline": headline,
+        "answer": f"{_m(r, 'negative_conversations')} of {_m(r, 'conversations')} {topic} conversations in {_window(r)} were negative "
+                  f"({pct(_m(r, 'negative_rate'))}). " + body,
+        "key_points": [f"{a['alternative']}: {a['finding']}" for a in alts] + [
+            f"{h['factor'].replace('_', ' ')} — {h['strength']}" for h in rows if h["role"] != "customer_reaction"][:4],
+        "follow_up_questions": ["Which agents may benefit from coaching on empathy?", "Show supporting examples.",
+                                "Does the agent's closing action fit the customer's issue, by topic?"],
     }
 
 
@@ -239,7 +297,7 @@ BY_OPERATION = {
     "sentiment_distribution": sentiment_distribution, "sentiment_trend": sentiment_trend, "sentiment_trajectory": sentiment_trajectory,
     "agent_coaching_review": agent_coaching, "agent_profile": agent_profile, "leadership_priorities": leadership,
     "resolution_quality": resolution_quality, "dataset_overview": dataset_overview, "conversation_detail": conversation_detail,
-    "list_conversations": conversation_list,
+    "list_conversations": conversation_list, "conversation_xray": conversation_xray, "root_cause_investigation": root_cause,
 }
 
 

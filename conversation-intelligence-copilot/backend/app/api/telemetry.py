@@ -35,6 +35,16 @@ def summary() -> dict:
     }
 
 
+@router.get("/api/telemetry/tokens")
+def tokens() -> dict:
+    s = get_settings()
+    acc = get_telemetry().token_accounting()
+    acc["preprocessing"]["label_source"] = s.label_source
+    acc["preprocessing"]["note"] = ("Analytics use deterministic template labels (LABEL_SOURCE=rules): building the dataset used no LLM tokens."
+                                    if s.label_source == "rules" else "Analytics use LLM labels; the totals above are the labelling run's tokens.")
+    return acc
+
+
 @router.get("/api/traces")
 def recent_traces(limit: int = 30) -> list[dict]:
     return get_telemetry().recent_requests(min(limit, 200))
@@ -79,3 +89,13 @@ def evaluation_results() -> dict:
     if not f.exists():
         return {"status": "not_run", "note": "Run `make evaluate` to produce evaluation results."}
     return json.loads(f.read_text())
+
+
+@router.get("/api/replay/{request_id}")
+def replay(request_id: str) -> dict:
+    from app.observability.replay import build_replay
+
+    r = build_replay(get_telemetry(), request_id)
+    if not r:
+        raise HTTPException(404, "No recorded run for this request")
+    return r

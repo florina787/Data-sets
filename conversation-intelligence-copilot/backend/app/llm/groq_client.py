@@ -19,7 +19,7 @@ from app.config import Settings
 from app.llm.gemini_client import GeminiClient
 from app.llm.cache import ResponseCache
 from app.llm.resilience import CircuitBreaker, RateLimiter
-from app.llm.usage import Usage
+from app.llm.usage import Usage, usage_from_openai
 from app.prompts.registry import PromptVersion
 
 
@@ -77,6 +77,5 @@ class GroqClient(GeminiClient):
                 detail = resp.text
             raise GroqAPIError(resp.status_code, str(detail)[:300], resp)
         data = resp.json()
-        u = data.get("usage") or {}
-        usage = Usage(int(u.get("prompt_tokens", 0)), int(u.get("completion_tokens", 0)), int(u.get("total_tokens", 0)))
+        usage = usage_from_openai(data.get("usage"))
         return data["choices"][0]["message"].get("content") or "", usage

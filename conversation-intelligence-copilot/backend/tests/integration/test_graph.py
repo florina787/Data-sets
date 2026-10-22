@@ -85,7 +85,7 @@ def test_stream_emits_real_node_events_in_order(env):
     assert events[0]["type"] == "accepted" and events[-1]["type"] == "final"
     starts = [e["node"] for e in events if e["type"] == "node_start"]
     ends = [e["node"] for e in events if e["type"] == "node_end"]
-    assert starts[:4] == ["input_validation", "session_context", "intent", "supervisor"]
+    assert starts[:5] == ["input_validation", "session_context", "router", "intent", "supervisor"]
     assert "sentiment_agent" in starts and "topic_agent" not in starts
     assert starts == ends
     trace = get_telemetry().trace(events[-1]["response"]["request_id"])
@@ -103,16 +103,35 @@ def test_with_gemini_grounded_explanation_is_used(env):
                    "answer": "4 of 7 conversations were negative; Duplicate charge had 2 of them.", "key_points": [], "follow_up_questions": []}
     client, models = fake_gemini([router({"category": "negative_topics", "time_window": {"type": "last_month"}, "top_n": 5}, explanation)] * 2)
     gemini_client.set_llm(client)
-    r = run_chat(Q1 + " (gemini run)")
+    r = run_chat(Q1 + " (gemini run)", analysis_mode="hybrid_ai")
     assert r["model_metadata"]["intent_source"] == "llm" and r["model_metadata"]["explanation_source"] == "llm"
     assert r["headline"] == explanation["headline"] and not qa_failures(r)
+    assert r["routing"]["route"] == "hybrid_ai" and r["token_usage"]["model_calls"] == 2
+
+
+def test_auto_router_answers_fact_questions_without_any_model_call(env):
+    """A recognised fact question never reaches the model in AUTO, even with an LLM configured."""
+    client, models = fake_gemini([router({"category": "negative_topics"}, {"headline": "x", "answer": "y", "key_points": [], "follow_up_questions": []})])
+    gemini_client.set_llm(client)
+    r = run_chat(Q1 + " (auto run)")
+    assert r["routing"]["route"] == "analytics_only" and "Rules recognised" in r["routing"]["reason"]
+    assert r["model_metadata"]["intent_source"] == "rules" and r["model_metadata"]["explanation_source"] == "deterministic"
+    assert r["token_usage"]["model_calls"] == 0 and r["token_usage"]["total_tokens"] == 0
+    assert models.calls == []
+
+
+def test_analytics_only_mode_never_calls_the_model_even_for_why_questions(env):
+    client, models = fake_gemini([router({"category": "leadership_priorities"}, {"headline": "x", "answer": "y", "key_points": [], "follow_up_questions": []})])
+    gemini_client.set_llm(client)
+    r = run_chat("Why should leadership review these recurring concerns first?", analysis_mode="analytics_only")
+    assert r["routing"]["route"] == "analytics_only" and models.calls == [] and r["status"] == "completed"
 
 
 def test_with_gemini_ungrounded_numbers_are_rejected(env):
     explanation = {"headline": "Negative sentiment rose 37% to 912 complaints.", "answer": "Costs rose by $40,000.", "key_points": [], "follow_up_questions": []}
     client, _ = fake_gemini([router({"category": "negative_topics", "time_window": {"type": "last_month"}, "top_n": 5}, explanation)] * 2)
     gemini_client.set_llm(client)
-    r = run_chat(Q1 + " (ungrounded run)")
+    r = run_chat(Q1 + " (ungrounded run)", analysis_mode="hybrid_ai")
     assert r["model_metadata"]["explanation_source"] == "deterministic"
     assert any(g["policy"] == "numeric_grounding" for g in r["governance"])
     assert "912" not in r["headline"]

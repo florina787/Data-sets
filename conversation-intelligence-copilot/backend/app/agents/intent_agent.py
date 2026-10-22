@@ -1,4 +1,4 @@
-"""Intent agent: Gemini structured intent with a deterministic fallback and cross-checks."""
+"""Intent agent: LLM structured intent with a deterministic fallback and cross-checks."""
 
 from __future__ import annotations
 
@@ -25,11 +25,18 @@ def compact_context(previous: dict | None, history: list[dict]) -> dict:
     return ctx
 
 
-def resolve_intent(question: str, previous: dict | None, history: list[dict], request_id: str) -> tuple[IntentOutput, str, dict]:
-    """Return (intent, source, meta)."""
+def rules_intent_for(question: str, previous: dict | None) -> IntentOutput:
     prev_cat = previous.get("intent", {}).get("category") if previous else None
     prev_n = len(previous.get("refs", {}).get("ranking", [])[:10]) if previous else None
-    rules_intent = parse_intent(question, has_previous=previous is not None, previous_category=prev_cat, previous_top_n=prev_n)
+    return parse_intent(question, has_previous=previous is not None, previous_category=prev_cat, previous_top_n=prev_n)
+
+
+def resolve_intent(question: str, previous: dict | None, history: list[dict], request_id: str,
+                   allow_llm: bool = True) -> tuple[IntentOutput, str, dict]:
+    """Return (intent, source, meta). allow_llm=False is the router's zero-LLM path."""
+    rules_intent = rules_intent_for(question, previous)
+    if not allow_llm:
+        return rules_intent, "rules", {"llm_skipped": "router: analytics only"}
     llm = get_llm()
     if not llm.available():
         return rules_intent, "rules", {"llm_status": llm.status().get("reason")}

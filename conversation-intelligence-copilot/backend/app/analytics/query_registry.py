@@ -12,7 +12,7 @@ from typing import Callable, Literal
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app.analytics import coaching, metrics, prioritization, sentiment, topics, trajectories
+from app.analytics import coaching, metrics, prioritization, sentiment, topics, root_cause, trajectories, xray
 from app.analytics.db import AnalyticsDB
 from app.schemas.analysis import AnalysisResult, Scope
 
@@ -67,6 +67,11 @@ class LeadershipPriorities(BaseModel):
     weights: dict[str, float] | None = None
 
 
+class RootCause(BaseModel):
+    topic: str | None = Field(None, max_length=40, pattern=r"^[a-z_]+$")
+    top_n: int = Field(6, ge=1, le=10)
+
+
 @dataclass(frozen=True)
 class Operation:
     name: str
@@ -90,6 +95,10 @@ OPERATIONS: dict[str, Operation] = {
         Operation("dataset_overview", "Dataset coverage, date range and labelling status.", NoParams, metrics.dataset_overview),
         Operation("resolution_quality", "Whether agents' closing actions fit the issue raised.", NoParams, metrics.resolution_quality),
         Operation("list_conversations", "List conversations matching filters, most negative first.", ListConversations, metrics.list_conversations),
+        Operation("root_cause_investigation", "Candidate drivers of negative sentiment in a topic: tested associations, precedence, alternatives (never causal).",
+                  RootCause, root_cause.root_cause_investigation),
+        Operation("conversation_xray", "Message-level X-Ray: escalation signals, repeated concerns and communication gaps, each citing message IDs.",
+                  ConversationRequired, xray.conversation_xray),
         Operation("conversation_detail", "Full transcript and labels for one conversation.", ConversationRequired, metrics.conversation_detail),
     ]
 }

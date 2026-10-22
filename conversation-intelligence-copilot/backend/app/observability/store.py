@@ -87,9 +87,9 @@ class TelemetryStore:
         self._exec(
             "INSERT INTO llm_calls (request_id,created_at,purpose,prompt_id,prompt_version,model,input_tokens,output_tokens,total_tokens,"
             "latency_ms,retries,cache_hit,status,error,estimated_cost_usd,rate_limited) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-            (c.get("request_id"), now(), c.get("purpose"), c.get("prompt_id"), c.get("prompt_version"), c.get("model"), c.get("input_tokens", 0),
-             c.get("output_tokens", 0), c.get("total_tokens", 0), c.get("latency_ms"), c.get("retries", 0), int(bool(c.get("cache_hit"))),
-             c.get("status"), c.get("error"), c.get("estimated_cost_usd", 0.0), int(bool(c.get("rate_limited")))),
+            (c.get("request_id"), now(), c.get("purpose"), c.get("prompt_id"), c.get("prompt_version"), c.get("model"), c.get("input_tokens"),
+             c.get("output_tokens"), c.get("total_tokens"), c.get("latency_ms"), c.get("retries", 0), int(bool(c.get("cache_hit"))),
+             c.get("status"), c.get("error"), c.get("estimated_cost_usd"), int(bool(c.get("rate_limited")))),
         )
 
     def audit(self, category: str, action: str, detail: dict | None = None, request_id: str | None = None, session_id: str | None = None) -> None:
@@ -114,6 +114,36 @@ class TelemetryStore:
         r["operations"] = json.loads(r["operations"]) if r["operations"] else None
         r.pop("response_json", None)
         return {"request": r, "nodes": nodes, "llm_calls": calls}
+
+    def request_usage(self, request_id: str) -> dict:
+        """Per-request LLM accounting. Tokens are null when calls were made but no provider reported usage;
+        0 only when no model call was made (or every call was a cache hit)."""
+        rows = self._all("SELECT purpose,model,input_tokens,output_tokens,total_tokens,cache_hit,status,latency_ms,estimated_cost_usd "
+                         "FROM llm_calls WHERE request_id=? ORDER BY id", (request_id,))
+        return usage_summary(rows)
+
+    def token_accounting(self) -> dict:
+        """Dataset-preprocessing tokens (LLM labelling) kept apart from per-query tokens, plus routing outcomes.
+        Calls whose provider reported no usage are counted as unreported, never as zero."""
+        def agg(where: str) -> dict:
+            r = self._all(f"""SELECT COUNT(*) calls, SUM(cache_hit) cache_hits, SUM(cache_hit=0 AND total_tokens IS NULL) unreported,
+                                     SUM(input_tokens) input_tokens, SUM(output_tokens) output_tokens, SUM(total_tokens) total_tokens,
+                                     SUM(estimated_cost_usd) estimated_cost_usd FROM llm_calls WHERE {where}""")[0]
+            r["cache_hits"] = r["cache_hits"] or 0
+            live = r["calls"] - r["cache_hits"]
+            if live == 0:
+                r["estimated_cost_usd"] = 0.0
+            for k in ("input_tokens", "output_tokens", "total_tokens"):
+                r[k] = r[k] if r[k] is not None else (0 if live == 0 else None)
+            r["unreported"] = r["unreported"] or 0
+            r["complete"] = r["unreported"] == 0
+            return r
+        routes = self._all("""SELECT json_extract(response_json,'$.routing.route') route, COUNT(*) n,
+                                     SUM(json_extract(response_json,'$.token_usage.model_calls')) model_calls
+                              FROM requests WHERE response_json IS NOT NULL GROUP BY 1 ORDER BY 2 DESC""")
+        by_purpose = self._all("SELECT purpose, COUNT(*) calls, SUM(total_tokens) total_tokens, SUM(total_tokens IS NULL AND cache_hit=0) unreported "
+                               "FROM llm_calls GROUP BY 1 ORDER BY 2 DESC")
+        return {"preprocessing": agg("purpose='labelling'"), "per_query": agg("purpose<>'labelling'"), "by_purpose": by_purpose, "routes": routes}
 
     def response(self, request_id: str) -> dict | None:
         rows = self._all("SELECT response_json FROM requests WHERE request_id=?", (request_id,))
@@ -154,6 +184,24 @@ class TelemetryStore:
         for r in rows:
             r["detail"] = json.loads(r.pop("detail_json") or "{}")
         return rows
+
+
+def usage_summary(rows: list[dict]) -> dict:
+    live = [r for r in rows if not r["cache_hit"]]
+    reported = [r for r in live if r["total_tokens"] is not None]
+    unreported = len(live) - len(reported)
+
+    def total(k: str):
+        if not live:
+            return 0
+        return sum(r[k] or 0 for r in reported) if reported else None
+
+    costs = [r["estimated_cost_usd"] for r in reported if r["estimated_cost_usd"] is not None]
+    return {"calls": len(rows), "model_calls": len(live), "cache_hits": len(rows) - len(live), "reported_calls": len(reported),
+            "unreported_calls": unreported, "complete": unreported == 0,
+            "input_tokens": total("input_tokens"), "output_tokens": total("output_tokens"), "total_tokens": total("total_tokens"),
+            "estimated_cost_usd": round(sum(costs), 6) if costs else (0.0 if not live else None),
+            "by_purpose": [{k: r[k] for k in ("purpose", "model", "total_tokens", "cache_hit", "status", "latency_ms")} for r in rows]}
 
 
 @lru_cache

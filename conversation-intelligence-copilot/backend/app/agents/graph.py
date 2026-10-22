@@ -1,6 +1,6 @@
 """LangGraph workflow definition and runner.
 
-START → input_validation → session_context → intent → supervisor
+START → input_validation → session_context → router → intent → supervisor
       → {specialist | retrieval | both in parallel}      (conditional)
       → [retrieval after analysis, when the query depends on the result]
       → evidence → explanation → visualization → qa → governance → response → memory_telemetry → END
@@ -47,12 +47,13 @@ def route_after_specialist(state: dict) -> str:
 
 def build_graph(checkpointer=None):
     g = StateGraph(AnalysisState)
-    for name in ["input_validation", "session_context", "intent", "supervisor", *SPECIALISTS, "retrieval", "evidence", "explanation",
+    for name in ["input_validation", "session_context", "router", "intent", "supervisor", *SPECIALISTS, "retrieval", "evidence", "explanation",
                  "visualization", "qa", "governance", "response", "memory_telemetry"]:
         g.add_node(name, getattr(nodes, name))
     g.add_edge(START, "input_validation")
     g.add_edge("input_validation", "session_context")
-    g.add_edge("session_context", "intent")
+    g.add_edge("session_context", "router")
+    g.add_edge("router", "intent")
     g.add_edge("intent", "supervisor")
     g.add_conditional_edges("supervisor", route_after_supervisor, [*SPECIALISTS, "retrieval", "evidence"])
     for s in SPECIALISTS:
@@ -74,7 +75,7 @@ def get_graph():
 
 def graph_definition() -> dict:
     """Static topology for the Agent Harness view."""
-    edges = [("START", "input_validation"), ("input_validation", "session_context"), ("session_context", "intent"), ("intent", "supervisor")]
+    edges = [("START", "input_validation"), ("input_validation", "session_context"), ("session_context", "router"), ("router", "intent"), ("intent", "supervisor")]
     edges += [("supervisor", s) for s in SPECIALISTS] + [("supervisor", "retrieval"), ("supervisor", "evidence")]
     edges += [(s, "retrieval") for s in SPECIALISTS] + [(s, "evidence") for s in SPECIALISTS] + [("retrieval", "evidence")]
     edges += [("evidence", "explanation"), ("explanation", "visualization"), ("visualization", "qa"), ("qa", "governance"),
@@ -88,8 +89,8 @@ def graph_definition() -> dict:
     }
 
 
-def _initial_state(question: str, session_id: str, request_id: str, dataset_mode: str, selected: str | None) -> dict:
-    return {"request_id": request_id, "session_id": session_id, "user_question": question, "dataset_mode": dataset_mode,
+def _initial_state(question: str, session_id: str, request_id: str, dataset_mode: str, selected: str | None, analysis_mode: str = "auto") -> dict:
+    return {"request_id": request_id, "session_id": session_id, "user_question": question, "dataset_mode": dataset_mode, "analysis_mode": analysis_mode,
             "selected_conversation_id": selected, "started_at": time.time(), "execution_trace": [], "errors": [],
             "tool_results": {}, "retrieved_evidence": [], "retrieval_meta": {}, "governance_findings": []}
 
@@ -115,15 +116,16 @@ def _finish(state: dict, request_id: str, session_id: str, question: str, starte
     return fr or {}
 
 
-def run_chat(question: str, session_id: str | None = None, dataset_mode: str = "original", selected_conversation_id: str | None = None) -> dict:
+def run_chat(question: str, session_id: str | None = None, dataset_mode: str = "original", selected_conversation_id: str | None = None,
+             analysis_mode: str = "auto") -> dict:
     """Synchronous run; returns the final response."""
-    events = list(stream_chat(question, session_id, dataset_mode, selected_conversation_id))
+    events = list(stream_chat(question, session_id, dataset_mode, selected_conversation_id, analysis_mode))
     final = [e for e in events if e["type"] in ("final", "error")]
     return final[-1]["response"] if final and final[-1]["type"] == "final" else {"status": "failed", "error": final[-1] if final else None}
 
 
 def stream_chat(question: str, session_id: str | None = None, dataset_mode: str = "original",
-                selected_conversation_id: str | None = None) -> Iterator[dict]:
+                selected_conversation_id: str | None = None, analysis_mode: str = "auto") -> Iterator[dict]:
     """Yield real execution events: node_start / node_end (from the nodes themselves), then final."""
     from app.memory.store import get_memory
 
@@ -135,7 +137,7 @@ def stream_chat(question: str, session_id: str | None = None, dataset_mode: str 
     yield {"type": "accepted", "request_id": request_id, "session_id": sid}
     error = None
     try:
-        for mode, chunk in graph.stream(_initial_state(question, sid, request_id, dataset_mode, selected_conversation_id), config,
+        for mode, chunk in graph.stream(_initial_state(question, sid, request_id, dataset_mode, selected_conversation_id, analysis_mode), config,
                                         stream_mode=["custom", "updates"]):
             if mode == "custom":
                 yield chunk

@@ -8,7 +8,7 @@ import type { GraphDefinition, NodeStatus } from "@/types/api";
 
 export interface NodeState { status: NodeStatus; duration_ms?: number | null; retries?: number }
 
-const COL_A = ["START", "input_validation", "session_context", "intent", "supervisor"];
+const COL_A = ["START", "input_validation", "session_context", "router", "intent", "supervisor"];
 const COL_B = ["topic_agent", "sentiment_agent", "coaching_agent", "leadership_agent", "analytics_agent", "retrieval"];
 const COL_C = ["evidence", "explanation", "visualization", "qa", "governance", "response", "memory_telemetry", "END"];
 

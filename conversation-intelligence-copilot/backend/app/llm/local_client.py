@@ -19,7 +19,7 @@ from app.config import Settings
 from app.llm.cache import ResponseCache
 from app.llm.gemini_client import GeminiClient
 from app.llm.resilience import CircuitBreaker, RateLimiter
-from app.llm.usage import Usage
+from app.llm.usage import Usage, usage_from_openai
 from app.prompts.registry import PromptVersion
 
 _load_lock = threading.Lock()
@@ -84,8 +84,7 @@ class LocalLlamaClient(GeminiClient):
         if schema is not None:
             kwargs["response_format"] = {"type": "json_object", "schema": schema.model_json_schema()}
         r = self.llama.create_chat_completion(**kwargs)
-        u = r.get("usage") or {}
-        usage = Usage(int(u.get("prompt_tokens", 0)), int(u.get("completion_tokens", 0)), int(u.get("total_tokens", 0)))
+        usage = usage_from_openai(r.get("usage"))
         return r["choices"][0]["message"].get("content") or "", usage
 
     def status(self) -> dict:

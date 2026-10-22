@@ -9,7 +9,8 @@ from pydantic import BaseModel, Field
 IntentCategory = Literal[
     "negative_topics", "agent_coaching", "sentiment_trajectory", "leadership_priorities", "sentiment_distribution",
     "sentiment_trend", "topic_frequency", "compare_topics", "agent_profile", "conversation_detail", "similar_conversations",
-    "dataset_overview", "resolution_quality", "conversation_list", "explain_previous", "uncertainty_review", "leadership_summary", "unsupported",
+    "dataset_overview", "resolution_quality", "conversation_list", "explain_previous", "uncertainty_review", "leadership_summary",
+    "conversation_xray", "root_cause", "unsupported",
 ]
 TopicId = Literal["duplicate_charge", "payment_not_reflected", "coupon_not_applied", "not_received", "app_crash",
                   "account_locked", "service_malfunction", "general_help", "other"]

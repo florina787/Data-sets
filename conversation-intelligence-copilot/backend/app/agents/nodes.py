@@ -6,9 +6,11 @@ import json
 import time
 
 from app.agents import narrative
+from app.agents.evidence_challenger import challenge
 from app.agents.governance_agent import review as governance_review
 from app.agents.grounding import allowed_numbers, ungrounded_numbers
-from app.agents.intent_agent import resolve_intent
+from app.agents.intent_agent import resolve_intent, rules_intent_for
+from app.agents.router import decide as route_decision
 from app.agents.qa_agent import run_qa
 from app.agents.supervisor import build_plan, ranking_refs
 from app.agents.tracing import traced
@@ -20,10 +22,12 @@ from app.labeling.taxonomy import TOPICS
 from app.llm.gemini_client import LLMUnavailable, get_llm
 from app.llm.structured_output import ExplanationOutput
 from app.memory.store import get_memory
+from app.observability.store import get_telemetry
 from app.prompts.registry import get_prompt
 from app.retrieval.evidence import assemble
 from app.retrieval.index import RetrievalUnavailable, get_retriever
 from app.schemas.analysis import Scope
+from app.visualization.dashboard import build_dashboard
 from app.visualization.planner import plan_charts
 
 REQUEST_BUDGET_SECONDS = 90.0
@@ -60,12 +64,22 @@ def session_context(state: dict) -> dict:
             "previous_turn": previous}
 
 
+@traced("router", summarize_output=lambda u: {"route": u["routing"]["route"], "requested": u["routing"]["requested_mode"],
+                                                "reason": u["routing"]["reason"], "llm_steps": u["routing"]["llm_steps"]})
+def router(state: dict) -> dict:
+    llm = get_llm()
+    rules = rules_intent_for(state["user_question"], state.get("previous_turn"))
+    routing = route_decision(state["user_question"], state.get("analysis_mode") or "auto", rules, llm.available(), llm.status().get("reason"))
+    return {"routing": routing}
+
+
 @traced("intent", summarize_input=lambda s: {"question": s.get("user_question", "")[:200]},
         summarize_output=lambda u: {"category": u["resolved_intent"]["category"], "source": u["intent_source"],
                                     "window": u["resolved_intent"]["time_window"], "follow_up": u["resolved_intent"]["is_follow_up"]})
 def intent(state: dict) -> dict:
     hist = get_memory().history(state["session_id"], get_settings().max_history_turns)
-    out, source, meta = resolve_intent(state["user_question"], state.get("previous_turn"), hist, state["request_id"])
+    allow = "intent" in (state.get("routing") or {}).get("llm_steps", ["intent"])
+    out, source, meta = resolve_intent(state["user_question"], state.get("previous_turn"), hist, state["request_id"], allow_llm=allow)
     return {"resolved_intent": out.model_dump(), "intent_source": source, "_meta": meta}
 
 
@@ -90,19 +104,26 @@ def _run_steps(state: dict, post=None) -> dict:
     db = get_db()
     results: dict = {}
     errors: list[dict] = []
+    ops: list[dict] = []
     for s in plan["steps"]:
         params = dict(s["params"])
+        t0 = time.perf_counter()
         if s["op"] == "compare_topics" and len(params.get("topics", [])) < 2:
             # Dependency: compare the two most negative topics in scope.
             rank = results.get("rank_negative_topics") or run_operation(db, "rank_negative_topics", scope, {"top_n": 2}).model_dump()
             params["topics"] = [r["key"] for r in rank["table"]["rows"][:2]] if rank.get("table") else []
         try:
             results[s["op"]] = run_operation(db, s["op"], scope, params).model_dump()
+            r = results[s["op"]]
+            ops.append({"op": s["op"], "engine": "duckdb", "params": params, "status": r["status"], "duration_ms": round((time.perf_counter() - t0) * 1000, 1),
+                        "rows": len((r.get("table") or {}).get("rows") or []), "metrics": len(r["metrics"])})
         except OperationError as e:
             errors.append({"node": "specialist", "error": str(e)[:300]})
+            ops.append({"op": s["op"], "engine": "duckdb", "params": params, "status": "rejected", "duration_ms": round((time.perf_counter() - t0) * 1000, 1),
+                        "error": str(e)[:200]})
     if post:
         post(results)
-    out = {"tool_results": results, "_meta": {"operations": list(results)}}
+    out = {"tool_results": results, "_meta": {"operations": ops}}
     if errors:
         out["errors"] = errors
     return out
@@ -128,8 +149,14 @@ def _retrieval_request(state: dict) -> tuple[str | None, Scope, int]:
     query = r.get("query")
     if r["mode"] == "after_analysis":
         tr = state.get("tool_results", {})
+        rc = tr.get("root_cause_investigation")
         src = tr.get("leadership_priorities") or tr.get("rank_negative_topics")
-        if src and src.get("table") and src["table"]["rows"]:
+        if rc and rc.get("status") == "ok" and rc["params"].get("topic") in TOPICS:
+            key = rc["params"]["topic"]
+            top = next((h for h in rc["table"]["rows"] if h["role"] != "customer_reaction"), None)
+            scope = scope.model_copy(update={"topics": [key], "sentiments": ["negative"]})
+            query = f"{TOPICS[key].description} {top['description'] if top else ''} Customer is frustrated and it is still not fixed."
+        elif src and src.get("table") and src["table"]["rows"]:
             top = src["table"]["rows"][0]
             key = top.get("key")
             if key in TOPICS:
@@ -149,9 +176,11 @@ def retrieval(state: dict) -> dict:
         out = get_retriever().search(query, scope, k=k)
     except RetrievalUnavailable as e:
         return {"retrieved_evidence": [], "retrieval_meta": {"note": str(e), "available": False}, "errors": [{"node": "retrieval", "error": str(e)}]}
-    return {"retrieved_evidence": out["results"], "retrieval_meta": {**{k_: v for k_, v in out.items() if k_ != "results"}, "query": query[:200],
-                                                                     "filters": {"topics": scope.topics, "sentiments": scope.sentiments,
-                                                                                 "window": scope.window.label}}}
+    filters = {"topics": scope.topics, "sentiments": scope.sentiments, "window": scope.window.label}
+    meta = {k_: v for k_, v in out.items() if k_ != "results"}
+    return {"retrieved_evidence": out["results"], "retrieval_meta": {**meta, "query": query[:200], "filters": filters},
+            "_meta": {"engine": "faiss", "k": k, "mode": meta.get("mode"), "methods": meta.get("methods"), "fusion": meta.get("fusion"),
+                      "filters": filters, "returned": len(out["results"]), "latency_ms": meta.get("latency_ms")}}
 
 
 # --- evidence, explanation, visualisation -------------------------------------------------------
@@ -165,6 +194,8 @@ REASONS = {
     "list_conversations": "Matches the requested filters",
     "agent_profile": "Conversation handled by this agent",
     "conversation_detail": "Selected conversation",
+    "conversation_xray": "High-severity X-Ray finding",
+    "root_cause_investigation": "Negative conversation showing the strongest associated factor",
 }
 
 
@@ -200,9 +231,11 @@ def explanation(state: dict) -> dict:
     facts["retrieval"] = [{k: x[k] for k in ("conversation_id", "similarity", "topic", "product", "turn_range")} for x in state.get("retrieved_evidence", [])]
     llm = get_llm()
     elapsed = time.time() - state.get("started_at", time.time())
-    if plan.get("unsupported_reason") or not llm.available() or elapsed > REQUEST_BUDGET_SECONDS * 0.6:
-        reason = "unsupported question" if plan.get("unsupported_reason") else "model unavailable" if not llm.available() else "time budget"
-        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {"facts": facts}, "_meta": {"reason": reason}}
+    routed_out = "explanation" not in (state.get("routing") or {}).get("llm_steps", ["explanation"])
+    if plan.get("unsupported_reason") or routed_out or not llm.available() or elapsed > REQUEST_BUDGET_SECONDS * 0.6:
+        reason = ("unsupported question" if plan.get("unsupported_reason") else "router: analytics only" if routed_out
+                  else "model unavailable" if not llm.available() else "time budget")
+        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts}, "_meta": {"reason": reason}}
     prompt = get_prompt("grounded_explanation")
     unc = [n for r in tool_results.values() for n in r.get("uncertainty_notes", [])][:6]
     ev = [{"conversation_id": e["conversation_id"], "excerpts": [x["text"] for x in e["excerpts"][:3]]} for e in state.get("evidence", [])[:4]]
@@ -212,45 +245,58 @@ def explanation(state: dict) -> dict:
                                                       evidence=json.dumps(ev, ensure_ascii=False)[:3000]),
                                 ExplanationOutput, request_id=state["request_id"], purpose="explanation")
     except LLMUnavailable as e:
-        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {"facts": facts}, "_meta": {"reason": str(e)[:200]}}
+        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts}, "_meta": {"reason": str(e)[:200]}}
     out = res.parsed.model_dump()  # type: ignore[union-attr]
     text = " ".join([out["headline"], out["answer"], *out["key_points"]])
     bad = ungrounded_numbers(text, allowed_numbers(facts))
     if bad:
-        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {"facts": facts},
+        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts},
                 "governance_findings": state.get("governance_findings", []) + [{"policy": "numeric_grounding", "outcome": "rejected_model_output",
-                                                                                "detail": f"Gemini explanation contained ungrounded numbers {bad[:5]}; deterministic narrative used."}],
+                                                                                "detail": f"Model explanation contained ungrounded numbers {bad[:5]}; deterministic narrative used."}],
                 "_meta": {"reason": "grounding check failed", "ungrounded": bad[:5], "tokens": res.usage.total_tokens}}
     out["key_points"] = out["key_points"] or det["key_points"]
     out["follow_up_questions"] = out["follow_up_questions"] or det["follow_up_questions"]
-    return {"explanation": out, "explanation_source": "llm", "verified_metrics": {"facts": facts},
+    return {"explanation": out, "explanation_source": "llm", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts, "baseline": det},
             "_meta": {"tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "retries": res.retries}}
 
 
-@traced("visualization", summarize_output=lambda u: {"charts": [c["chart_id"] for c in u.get("visualizations", [])], "graphs": len(u.get("graphs", []))})
+@traced("visualization", summarize_output=lambda u: {"charts": [c["chart_id"] for c in u.get("visualizations", [])], "graphs": len(u.get("graphs", [])),
+                                                      "dashboard_sections": [x["title"] for x in (u.get("dashboard") or {}).get("sections", [])]})
 def visualization(state: dict) -> dict:
     charts, graphs = plan_charts(state.get("tool_results", {}), state.get("retrieved_evidence", []), state["request_id"])
-    return {"visualizations": [c.model_dump() for c in charts], "graphs": [g.model_dump() for g in graphs]}
+    specs = [c.model_dump() for c in charts]
+    plan = state["analytical_plan"]
+    dash = build_dashboard(plan["category"], plan, state.get("tool_results", {}), specs, state["user_question"]) if not plan.get("unsupported_reason") else None
+    return {"visualizations": specs, "graphs": [g.model_dump() for g in graphs], "dashboard": dash}
 
 
 # --- verification & governance ---------------------------------------------------------------
 
-@traced("qa", summarize_output=lambda u: {"status": u["qa_results"]["status"], "passed": f"{u['qa_results']['passed']}/{u['qa_results']['total']}"})
+@traced("qa", summarize_output=lambda u: {"status": u["qa_results"]["status"], "passed": f"{u['qa_results']['passed']}/{u['qa_results']['total']}",
+                                          "evidence_verdict": u["evidence_review"]["verdict"], "challenges": len(u["evidence_review"]["challenges"])})
 def qa(state: dict) -> dict:
     facts = state.get("verified_metrics", {}).get("facts", {})
     report = state.get("verified_metrics", {}).get("evidence_report", {})
-    res = run_qa(state["analytical_plan"], state.get("tool_results", {}), state.get("visualizations", []), state.get("evidence", []),
-                 report, state.get("explanation", {}), facts)
-    return {"qa_results": res}
+    plan, tool_results = state["analytical_plan"], state.get("tool_results", {})
+    review, expl = challenge(get_db(), plan, tool_results, state.get("evidence", []), state.get("explanation", {}), state.get("explanation_source", ""))
+    out: dict = {}
+    if review["replaced_explanation"]:
+        expl = state.get("verified_metrics", {}).get("baseline") or expl
+        out["explanation_source"] = "deterministic"
+        out["governance_findings"] = state.get("governance_findings", []) + [{
+            "policy": "evidence_challenger", "outcome": "rejected_model_output",
+            "detail": "Model explanation named factors the analysis does not support; deterministic narrative used."}]
+    res = run_qa(plan, tool_results, state.get("visualizations", []), state.get("evidence", []), report, expl, facts, review)
+    return {**out, "qa_results": res, "evidence_review": review, "explanation": expl}
 
 
 @traced("governance", summarize_output=lambda u: {"findings": [f"{f['policy']}:{f['outcome']}" for f in u.get("governance_findings", [])]})
 def governance(state: dict) -> dict:
     flags = [p for f in state.get("governance_findings", []) for p in f.get("patterns", [])]
     unc = [n for r in state.get("tool_results", {}).values() for n in r.get("uncertainty_notes", [])]
-    unc = list(dict.fromkeys(unc))
+    unc = list(dict.fromkeys(unc + (state.get("evidence_review") or {}).get("added_notes", [])))
     expl, ev, unc, findings = governance_review(state["analytical_plan"], dict(state.get("explanation", {})), state.get("evidence", []), flags, unc)
-    prior = [f for f in state.get("governance_findings", []) if f["policy"] in ("input_length", "numeric_grounding")]
+    prior = [f for f in state.get("governance_findings", []) if f["policy"] in ("input_length", "numeric_grounding", "evidence_challenger")]
     return {"explanation": expl, "evidence": ev, "uncertainty_notes": unc, "governance_findings": prior + findings}
 
 
@@ -262,7 +308,15 @@ def _model_metadata(state: dict) -> dict:
     return {"provider": st.get("provider"), "model": st.get("model"), "mode": "llm" if state.get("intent_source") == "llm" or state.get("explanation_source") == "llm" else "deterministic",
             "available": st.get("available"), "reason": st.get("reason"), "intent_source": state.get("intent_source"),
             "explanation_source": state.get("explanation_source"), "label_source": get_settings().label_source,
-            "embedding_backend": state.get("retrieval_meta", {}).get("embedding_backend")}
+            "embedding_backend": state.get("retrieval_meta", {}).get("embedding_backend"),
+            "routing": state.get("routing"), "token_usage": get_telemetry().request_usage(state["request_id"])}
+
+
+def _panel(r: dict | None) -> dict | None:
+    """Pass a structured result through to the UI (X-Ray, root cause) when it was computed."""
+    if not r or r.get("status") != "ok":
+        return None
+    return {k: r.get(k) for k in ("operation", "params", "metrics", "table", "series", "method_notes", "uncertainty_notes", "coverage")}
 
 
 @traced("response", summarize_output=lambda u: {"status": u["final_response"]["status"], "charts": len(u["final_response"]["charts"])})
@@ -296,8 +350,9 @@ def response(state: dict) -> dict:
         evidence=state.get("evidence", []), recommendations=recs, uncertainty_notes=state.get("uncertainty_notes", []),
         method_notes=list(dict.fromkeys(n for r in tool_results.values() for n in r.get("method_notes", []))),
         follow_up_questions=expl.get("follow_up_questions", []), execution_trace_id=state["request_id"],
-        model_metadata=_model_metadata(state), quality_status=state.get("qa_results", {}),
+        model_metadata=(mm := _model_metadata(state)), routing=mm["routing"] or {}, token_usage=mm["token_usage"], quality_status=state.get("qa_results", {}),
         governance=state.get("governance_findings", []),
+        dashboard=state.get("dashboard"), evidence_review=state.get("evidence_review"), xray=_panel(tool_results.get("conversation_xray")), root_cause=_panel(tool_results.get("root_cause_investigation")),
         human_review_required=any(f["policy"] == "human_review" for f in state.get("governance_findings", [])),
         errors=state.get("errors", []),
     )
