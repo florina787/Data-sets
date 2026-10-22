@@ -78,8 +78,18 @@ class MemoryStore:
         return out
 
     def last_successful(self, session_id: str) -> dict | None:
+        """Latest completed analytical turn. If it produced no ranking, the most recent earlier ranking is
+        attached (with its request id) so references like "the first one" still resolve."""
         hist = [h for h in self.history(session_id, 20) if h["status"] == "completed" and h["plan"].get("steps")]
-        return hist[-1] if hist else None
+        if not hist:
+            return None
+        last = hist[-1]
+        if not last["refs"].get("ranking"):
+            earlier = next((h for h in reversed(hist[:-1]) if h["refs"].get("ranking")), None)
+            if earlier:
+                last["refs"] = {**last["refs"], "ranking": earlier["refs"]["ranking"], "dimension": earlier["refs"].get("dimension", "topic"),
+                                "ranking_from": earlier["request_id"]}
+        return last
 
     def sessions(self, limit: int = 20) -> list[dict]:
         with self._conn() as c:

@@ -37,7 +37,7 @@ PRODUCT_RE = re.compile(r"\b(" + "|".join(re.escape(p) for p in sorted(PRODUCT_D
 UNSUPPORTED = re.compile(
     r"revenue|profit|churn|lifetime value|\bltv\b|\bcsat\b|\bnps\b|survey score|handle time|\baht\b|salary|salaries|cost per|"
     r"\bgender\b|\bage\b|ethnic|\brace\b|religio|nationality|weather|stock price|forecast (next|the) (year|quarter)|"
-    r"\bfire\b|terminate|dismiss|disciplin", re.I)
+    r"\bfir(e|ed|ing)\b|terminat|dismiss|disciplin|\bsack(ed)?\b|let (them |him |her )?go\b|punish|demot", re.I)
 
 
 def _top_n(q: str) -> int | None:
@@ -154,7 +154,7 @@ def parse_intent(question: str, has_previous: bool = False, previous_category: s
         return out("sentiment_trend")
     if re.search(r"resolution|closing action|resolved|fix rate|right (fix|action)", ql):
         return out("resolution_quality")
-    if re.search(r"negative", ql) and re.search(r"topic|issue|driver|reason|cause|concern|product|domain|categor|associated|what (makes|made)", ql):
+    if re.search(r"negative|unhappy|dissatisf|frustrat|angry|upset|complain", ql) and re.search(r"topic|issue|driver|reason|cause|concern|product|domain|categor|associated|what (makes|made)", ql):
         return out("negative_topics", top_n=top_n or 5)
     if re.search(r"distribution|breakdown|split|mix|how many .*(positive|negative|neutral)|sentiment (overall|across)|overall sentiment|how (do|did|are) customers feel", ql):
         return out("sentiment_distribution")

@@ -96,6 +96,8 @@ def build_plan(intent: IntentOutput, previous: dict | None, dataset_mode: str, s
         else:
             domains = keys
         resolved["references"] = [{"rank": r["rank"], "name": r["name"]} for r in chosen]
+        if prev_refs.get("ranking_from"):
+            notes.append("The previous answer had no ranking, so references use the most recent ranking in this session.")
         notes.append("Resolved '" + ", ".join(f"#{r['rank']}" for r in chosen) + "' from the previous answer: " + ", ".join(r["name"] for r in chosen) + ".")
     elif intent.reference_ranks and not ranking:
         notes.append("The question refers to an earlier ranking, but this session has no ranking to refer to.")

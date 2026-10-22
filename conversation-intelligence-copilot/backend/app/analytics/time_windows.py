@@ -53,12 +53,17 @@ def resolve_window(db: AnalyticsDB, dataset_mode: str, spec: dict | None) -> Dat
         latest = months.iloc[-1]
         month = latest["month"]
         start, end = _month_bounds(month)
-        complete = hi is not None and hi.date() >= date.fromisoformat(end) - pd.Timedelta(days=1)
+        # A month is treated as partial only if the data stops before its last day AND its volume is
+        # under half the median of the other months (e.g. 48 vs ~800). Ending a day early alone is not enough.
+        others = months.iloc[:-1]["conversations"]
+        low_volume = len(others) > 0 and int(latest["conversations"]) < 0.5 * float(others.median())
+        covered = hi is not None and hi.date() >= date.fromisoformat(end) - pd.Timedelta(days=1)
+        complete = covered or not low_volume
         if not complete and len(months) > 1:
             prev = months.iloc[-2]["month"]
             p_start, p_end = _month_bounds(prev)
             return DateWindow(start=p_start, end=p_end, label=pd.Period(prev).strftime("%B %Y"), rule="latest_complete_month",
-                              explanation=f"{span}. {pd.Period(month).strftime('%B %Y')} is only partly covered, so the latest complete month, "
+                              explanation=f"{span}. {pd.Period(month).strftime('%B %Y')} is only partly covered ({int(latest['conversations'])} conversations, under half a typical month), so the latest complete month, "
                                           f"{pd.Period(prev).strftime('%B %Y')}, is used. Conversations are dated by their earliest message.")
         return DateWindow(start=start, end=end, label=pd.Period(month).strftime("%B %Y"), rule="latest_month",
                           explanation=f"{span}. The latest calendar month in which conversations start is {pd.Period(month).strftime('%B %Y')} "

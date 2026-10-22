@@ -1,0 +1,399 @@
+{
+  "generated_at": "2026-10-22T16:17:05+00:00",
+  "dataset": "cs_conversations.csv (Syncora sample, 3,000 conversations)",
+  "model": {
+    "provider": "gemini",
+    "mode": "deterministic",
+    "available": false,
+    "model": "gemini-2.5-flash",
+    "reason": "GEMINI_API_KEY is not set",
+    "circuit": "n/a"
+  },
+  "q1_oracle": {
+    "month": "2025-11",
+    "system_top5": {
+      "General help request": 49,
+      "Duplicate charge": 42,
+      "Paid but service not delivered": 30,
+      "Feature not working": 28,
+      "Login / account locked": 24
+    },
+    "oracle_negative_by_topic": {
+      "Coupon not applying": 23,
+      "Paid but service not delivered": 30,
+      "General help request": 49,
+      "Feature not working": 28,
+      "Login / account locked": 24,
+      "Item or service not received": 23,
+      "App crash": 20,
+      "Duplicate charge": 42
+    },
+    "totals_match": true,
+    "top5_counts_match": true,
+    "mismatches": {},
+    "system_totals": [
+      682,
+      239
+    ],
+    "oracle_totals": [
+      682,
+      239
+    ]
+  },
+  "intent": {
+    "classifier": "rules",
+    "n": 40,
+    "accuracy": 0.95,
+    "macro_f1": 0.972,
+    "per_class": [
+      {
+        "label": "agent_coaching",
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1": 0.857,
+        "support": 3
+      },
+      {
+        "label": "agent_profile",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      {
+        "label": "compare_topics",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      {
+        "label": "conversation_detail",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      {
+        "label": "conversation_list",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      {
+        "label": "dataset_overview",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      {
+        "label": "leadership_priorities",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 4
+      },
+      {
+        "label": "negative_topics",
+        "precision": 1.0,
+        "recall": 0.8,
+        "f1": 0.889,
+        "support": 5
+      },
+      {
+        "label": "resolution_quality",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      {
+        "label": "sentiment_distribution",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      },
+      {
+        "label": "sentiment_trajectory",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      },
+      {
+        "label": "sentiment_trend",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      {
+        "label": "similar_conversations",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 3
+      },
+      {
+        "label": "topic_frequency",
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      {
+        "label": "unsupported",
+        "precision": 0.833,
+        "recall": 0.833,
+        "f1": 0.833,
+        "support": 6
+      }
+    ],
+    "errors": [
+      {
+        "question": "What are the main reasons customers are unhappy last month?",
+        "expected": "negative_topics",
+        "predicted": "unsupported"
+      },
+      {
+        "question": "Which agents should be fired?",
+        "expected": "unsupported",
+        "predicted": "agent_coaching"
+      }
+    ],
+    "gemini": {
+      "status": "not_run",
+      "reason": "GEMINI_API_KEY is not set"
+    }
+  },
+  "labels": {
+    "template_coverage": {
+      "template": 1.0
+    },
+    "unique_customer_texts": 414,
+    "lexicon_fallback_vs_templates": {
+      "n_messages": 21639,
+      "accuracy": 0.7807,
+      "cohen_kappa": 0.6692,
+      "per_class": [
+        {
+          "label": "positive",
+          "precision": 0.906,
+          "recall": 1.0,
+          "f1": 0.951,
+          "support": 6185
+        },
+        {
+          "label": "neutral",
+          "precision": 0.435,
+          "recall": 0.826,
+          "f1": 0.57,
+          "support": 3805
+        },
+        {
+          "label": "negative",
+          "precision": 1.0,
+          "recall": 0.649,
+          "f1": 0.788,
+          "support": 11649
+        },
+        {
+          "label": "mixed",
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0
+        }
+      ],
+      "confusion_matrix": {
+        "labels": [
+          "positive",
+          "neutral",
+          "negative",
+          "mixed"
+        ],
+        "rows_template_cols_lexicon": [
+          [
+            6185,
+            0,
+            0,
+            0
+          ],
+          [
+            638,
+            3143,
+            0,
+            24
+          ],
+          [
+            0,
+            4083,
+            7566,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "note": "Measures how the low-confidence fallback would label unseen phrasing, using the template labels as reference."
+    },
+    "human_review": {
+      "reviews": 0,
+      "status": "no_reviews",
+      "note": "No human labels submitted yet. Use the Governance \u2192 Human review panel."
+    },
+    "gemini_labels": {
+      "status": "not_run",
+      "reason": "GEMINI_API_KEY is not set"
+    }
+  },
+  "retrieval": {
+    "queries": 36,
+    "embedding_backend": "lsa-tfidf-svd192",
+    "topic_precision@5": 0.3056,
+    "exact_precision@5": 0.3,
+    "hit_rate@5": 0.4722,
+    "mrr@5": 0.3495,
+    "duplicate_rate": 0.0,
+    "random_baseline_topic_precision": 0.125,
+    "latency_p50_ms": 36.9,
+    "latency_p95_ms": 42.4,
+    "by_topic": [
+      {
+        "topic": "account_locked",
+        "topic_p@5": 0.0,
+        "exact_p@5": 0.0
+      },
+      {
+        "topic": "app_crash",
+        "topic_p@5": 0.0,
+        "exact_p@5": 0.0
+      },
+      {
+        "topic": "coupon_not_applied",
+        "topic_p@5": 0.16,
+        "exact_p@5": 0.16
+      },
+      {
+        "topic": "duplicate_charge",
+        "topic_p@5": 0.72,
+        "exact_p@5": 0.68
+      },
+      {
+        "topic": "general_help",
+        "topic_p@5": 0.16,
+        "exact_p@5": 0.16
+      },
+      {
+        "topic": "not_received",
+        "topic_p@5": 0.0,
+        "exact_p@5": 0.0
+      },
+      {
+        "topic": "payment_not_reflected",
+        "topic_p@5": 0.24,
+        "exact_p@5": 0.24
+      },
+      {
+        "topic": "service_malfunction",
+        "topic_p@5": 0.92,
+        "exact_p@5": 0.92
+      }
+    ],
+    "note": "Queries are paraphrases that avoid the template wording; relevance = same issue topic (and product where named)."
+  },
+  "end_to_end": {
+    "requests": 51,
+    "follow_up_requests": 11,
+    "qa_pass_rate": 1.0,
+    "check_pass_rates": {
+      "chart_consistency": 1.0,
+      "coaching_sample_size_gate": 1.0,
+      "denominators": 1.0,
+      "evidence_present": 1.0,
+      "evidence_valid": 1.0,
+      "explanation_grounded": 1.0,
+      "filters_applied": 1.0,
+      "proportions_valid": 1.0,
+      "ranking_consistency": 1.0,
+      "registered_operations": 1.0,
+      "uncertainty_disclosed": 1.0
+    },
+    "unsupported_correctly_refused": "5/6",
+    "supported_answered": "44/45",
+    "follow_up_routing_accuracy": 1.0,
+    "follow_up_errors": [],
+    "evidence_items_total": 192,
+    "latency_p50_ms": 163.6,
+    "latency_p95_ms": 724.6,
+    "llm_mode": {
+      "deterministic": 51
+    },
+    "qa_failures": []
+  },
+  "prompt_evaluations": {
+    "intent_understanding": {
+      "status": "not_run",
+      "reason": "GEMINI_API_KEY is not set",
+      "rules_baseline_accuracy": 0.95
+    },
+    "message_classification": {
+      "status": "not_run",
+      "reason": "GEMINI_API_KEY is not set"
+    },
+    "grounded_explanation": {
+      "status": "not_run",
+      "numeric_grounding_check": "enforced on every model explanation (tests/integration/test_graph.py)"
+    }
+  },
+  "summary": [
+    {
+      "metric": "Q1 numbers vs independent oracle",
+      "display": "match",
+      "note": "2025-11"
+    },
+    {
+      "metric": "Intent accuracy (rules)",
+      "display": "95%",
+      "note": "40 labelled questions"
+    },
+    {
+      "metric": "QA pass rate (end to end)",
+      "display": "100%",
+      "note": "51 requests"
+    },
+    {
+      "metric": "Follow-up routing",
+      "display": "100%",
+      "note": "11 follow-ups"
+    },
+    {
+      "metric": "Unsupported refused",
+      "display": "5/6",
+      "note": "no fabricated answers"
+    },
+    {
+      "metric": "Retrieval topic P@5",
+      "display": "31%",
+      "note": "random baseline 12%"
+    },
+    {
+      "metric": "Retrieval exact P@5",
+      "display": "30%",
+      "note": "topic + product"
+    },
+    {
+      "metric": "Latency p50 / p95",
+      "display": "164 / 725 ms",
+      "note": "deterministic mode, local"
+    }
+  ],
+  "duration_seconds": 16.4
+}
