@@ -40,6 +40,10 @@ UNSUPPORTED = re.compile(
     r"\bfir(e|ed|ing)\b|terminat|dismiss|disciplin|\bsack(ed)?\b|let (them |him |her )?go\b|punish|demot", re.I)
 
 
+POLICY_REFUSAL = "The question needs data the dataset does not contain or asks for a personnel decision."
+NO_MATCH = "The question did not match a supported analysis."
+
+
 def _top_n(q: str) -> int | None:
     m = re.search(r"\btop\s+(\d+|" + "|".join(NUM_WORDS) + r")\b", q, re.I)
     if not m:
@@ -119,7 +123,7 @@ def parse_intent(question: str, has_previous: bool = False, previous_category: s
         return IntentOutput(**base)
 
     if UNSUPPORTED.search(q):
-        return out("unsupported", reasoning="The question needs data the dataset does not contain or asks for a personnel decision.")
+        return out("unsupported", reasoning=POLICY_REFUSAL)
     if re.search(r"similar|like (this|that|these)|find (conversations|cases|examples)|search (for|conversations)|look for conversations|(show|give|find).*\bexamples?\b|supporting examples|more examples", ql):
         return out("similar_conversations", search_query=q, needs_evidence=True,
                    is_follow_up=is_follow or (has_previous and not (topics or products or conv_ids)))
@@ -166,4 +170,4 @@ def parse_intent(question: str, has_previous: bool = False, previous_category: s
         return out("topic_frequency")
     if is_follow or (has_previous and (sentiments or topics or products or window.type != "inherit")):
         return out(previous_category or "dataset_overview", is_follow_up=True, reasoning="Follow-up that changes filters on the previous analysis.")
-    return out("unsupported", reasoning="The question did not match a supported analysis.")
+    return out("unsupported", reasoning=NO_MATCH)

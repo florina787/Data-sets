@@ -21,12 +21,14 @@ export const NAV = [
   { to: "/governance", label: "Governance", icon: ShieldCheck },
 ];
 
+const PROVIDER: Record<string, string> = { gemini: "Gemini", "vertex-ai": "Vertex AI", groq: "Groq", local: "Local LLM" };
+
 function ModelIndicator() {
   const { model, refreshModel } = useApp();
   const ok = model?.available;
-  const label = !model ? "Checking model…" : ok ? `Gemini · ${model.model}` : "Deterministic mode";
-  const detail = !model ? "" : ok ? "Gemini is reachable; explanations and intent use the model with deterministic checks."
-    : `Gemini unavailable${model.reason ? `: ${model.reason.slice(0, 160)}` : ""}. Analytics, retrieval and memory work; answers use the deterministic explainer.`;
+  const label = !model ? "Checking model…" : ok ? `${PROVIDER[model.provider ?? ""] ?? "LLM"} · ${model.model}` : "Deterministic mode";
+  const detail = !model ? "" : ok ? `${PROVIDER[model.provider ?? ""] ?? "The model"} is available; intent and explanations use it, with deterministic checks.`
+    : `Model unavailable${model.reason ? `: ${model.reason.slice(0, 160)}` : ""}. Analytics, retrieval and memory work; answers use the deterministic explainer.`;
   return (
     <Tip content={<span>{detail} <br /><span className="text-muted">Click to re-check.</span></span>}>
       <button onClick={refreshModel} className="focus-ring flex items-center gap-2 rounded-full border border-line bg-white/[0.03] px-3 py-1.5 text-xs text-muted hover:text-ink"

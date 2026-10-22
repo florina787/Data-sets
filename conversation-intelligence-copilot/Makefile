@@ -1,4 +1,4 @@
-.PHONY: install prepare label synthetic index dev backend frontend test test-backend test-frontend e2e evaluate screenshots report docker-up clean
+.PHONY: install prepare llm-download label synthetic index dev backend frontend test test-backend test-frontend e2e evaluate screenshots report docker-up clean
 
 install:            ## Install backend (uv) and frontend (npm) dependencies
 	cd backend && uv sync
@@ -50,3 +50,6 @@ docker-up:
 
 clean:
 	rm -rf data/processed/* data/indexes/*
+
+llm-download:       ## Download the free local LLM (Qwen2.5-1.5B-Instruct GGUF, ~1.1 GB) into data/models/
+	cd backend && uv run python -c "from app.config import get_settings; from app.llm.local_client import download_model; print(download_model(get_settings()))"

@@ -35,7 +35,7 @@ def startup_report(refresh: bool = False) -> dict:
     from app.llm.gemini_client import get_llm
 
     m = get_llm().status()
-    checks.append(_check("gemini", bool(m.get("available")), f"{m.get('model')}: {m.get('reason') or m.get('mode')}", required=False))
+    checks.append(_check("llm", bool(m.get("available")), f"{m.get('provider', 'none')} · {m.get('model')}: {m.get('reason') or m.get('mode')}", required=False))
     for mod in ("duckdb", "faiss", "langgraph", "google.genai"):
         try:
             importlib.import_module(mod)

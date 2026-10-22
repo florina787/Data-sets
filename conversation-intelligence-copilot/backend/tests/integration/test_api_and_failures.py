@@ -14,7 +14,7 @@ def client(env):
 
 def test_health_and_dataset_endpoints(client):
     h = client.get("/health").json()
-    assert {c["check"] for c in h["checks"]} >= {"analytics_database", "retrieval_index", "gemini"}
+    assert {c["check"] for c in h["checks"]} >= {"analytics_database", "retrieval_index", "llm"}
     assert client.get("/api/dataset/status").json()["sources"][0]["conversations"] == 11
     assert client.get("/api/analytics/taxonomy").json()["months"] == ["2025-01", "2025-02"]
 

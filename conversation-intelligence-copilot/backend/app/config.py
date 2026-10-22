@@ -23,6 +23,32 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # --- LLM provider ---------------------------------------------------------
+    # auto = Groq if GROQ_API_KEY is set, else Gemini if GEMINI_API_KEY is set, else the local model if it
+    # has been downloaded, else deterministic mode. "none" forces deterministic mode.
+    llm_provider: Literal["auto", "groq", "gemini", "local", "none"] = "auto"
+
+    # How model and rules intent are combined. llm_first: the model decides (rules on failure).
+    # rules_first: rules decide when they recognise the question; the model handles only what the rules
+    # cannot parse; policy refusals always stand. auto = rules_first for the small local model, else llm_first.
+    intent_strategy: Literal["auto", "llm_first", "rules_first"] = "auto"
+
+    # --- Local LLM (llama.cpp, no key) -----------------------------------------
+    local_model_repo: str = "Qwen/Qwen2.5-1.5B-Instruct-GGUF"
+    local_model_file: str = "qwen2.5-1.5b-instruct-q4_k_m.gguf"
+    local_model_dir: Path = PROJECT_ROOT / "data" / "models"
+    local_n_ctx: int = 8192
+    local_threads: int = 4
+    local_max_output_tokens: int = 600
+
+    # --- Groq (OpenAI-compatible) ---------------------------------------------
+    groq_api_key: str | None = Field(default=None, repr=False)
+    groq_model: str = "llama-3.3-70b-versatile"
+    groq_base_url: str = "https://api.groq.com/openai/v1"
+    # USD per 1M tokens for cost *estimates* (paid-tier list price; free tier costs nothing).
+    groq_input_cost_per_mtok: float = 0.59
+    groq_output_cost_per_mtok: float = 0.79
+
     # --- Gemini -----------------------------------------------------------
     gemini_api_key: str | None = Field(default=None, repr=False)
     gemini_model: str = "gemini-2.5-flash"
@@ -81,6 +107,16 @@ class Settings(BaseSettings):
     @property
     def gemini_configured(self) -> bool:
         return bool(self.llm_enabled and self.gemini_api_key)
+
+    @property
+    def resolved_llm_provider(self) -> str | None:
+        if self.llm_provider == "groq" or (self.llm_provider == "auto" and self.groq_api_key):
+            return "groq"
+        if self.llm_provider == "gemini" or (self.llm_provider == "auto" and self.gemini_api_key):
+            return "gemini"
+        if self.llm_provider == "local" or (self.llm_provider == "auto" and (self.local_model_dir / self.local_model_file).exists()):
+            return "local"
+        return None
 
 
 @lru_cache

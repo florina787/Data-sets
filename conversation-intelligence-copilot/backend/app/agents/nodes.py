@@ -223,7 +223,7 @@ def explanation(state: dict) -> dict:
                 "_meta": {"reason": "grounding check failed", "ungrounded": bad[:5], "tokens": res.usage.total_tokens}}
     out["key_points"] = out["key_points"] or det["key_points"]
     out["follow_up_questions"] = out["follow_up_questions"] or det["follow_up_questions"]
-    return {"explanation": out, "explanation_source": "gemini", "verified_metrics": {"facts": facts},
+    return {"explanation": out, "explanation_source": "llm", "verified_metrics": {"facts": facts},
             "_meta": {"tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "retries": res.retries}}
 
 
@@ -259,7 +259,7 @@ def governance(state: dict) -> dict:
 def _model_metadata(state: dict) -> dict:
     llm = get_llm()
     st = llm.status()
-    return {"provider": "gemini", "model": st.get("model"), "mode": "llm" if state.get("intent_source") == "gemini" or state.get("explanation_source") == "gemini" else "deterministic",
+    return {"provider": st.get("provider"), "model": st.get("model"), "mode": "llm" if state.get("intent_source") == "llm" or state.get("explanation_source") == "llm" else "deterministic",
             "available": st.get("available"), "reason": st.get("reason"), "intent_source": state.get("intent_source"),
             "explanation_source": state.get("explanation_source"), "label_source": get_settings().label_source,
             "embedding_backend": state.get("retrieval_meta", {}).get("embedding_backend")}

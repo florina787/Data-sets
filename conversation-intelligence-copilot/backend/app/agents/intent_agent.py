@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 
-from app.agents.intent_rules import CONV_ID, parse_intent
+from app.agents.intent_rules import CONV_ID, NO_MATCH, POLICY_REFUSAL, parse_intent
+from app.config import get_settings
 from app.labeling.taxonomy import TOPICS
 from app.llm.gemini_client import LLMUnavailable, get_llm
 from app.llm.structured_output import IntentOutput
@@ -32,6 +33,13 @@ def resolve_intent(question: str, previous: dict | None, history: list[dict], re
     llm = get_llm()
     if not llm.available():
         return rules_intent, "rules", {"llm_status": llm.status().get("reason")}
+    strategy = get_settings().intent_strategy
+    if strategy == "auto":
+        strategy = "rules_first" if llm.status().get("provider") == "local" else "llm_first"
+    if rules_intent.reasoning == POLICY_REFUSAL:
+        return rules_intent, "rules", {"strategy": strategy, "policy_refusal": True}
+    if strategy == "rules_first" and rules_intent.reasoning != NO_MATCH:
+        return rules_intent, "rules", {"strategy": strategy, "llm_skipped": "rules recognised the question"}
     prompt = get_prompt("intent_understanding")
     try:
         res = llm.generate_json(
@@ -50,6 +58,6 @@ def resolve_intent(question: str, previous: dict | None, history: list[dict], re
     if previous is None:
         intent.is_follow_up = False
         intent.reference_ranks = []
-    meta = {"model": res.model, "tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "repaired": res.repaired,
+    meta = {"strategy": strategy, "model": res.model, "tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "repaired": res.repaired,
             "rules_category": rules_intent.category, "agrees_with_rules": rules_intent.category == intent.category, "retries": res.retries}
-    return intent, "gemini", meta
+    return intent, "llm", meta

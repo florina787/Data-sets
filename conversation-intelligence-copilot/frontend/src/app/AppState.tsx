@@ -17,7 +17,7 @@ export interface Turn {
   startedAt: number;
 }
 
-interface ModelStatus { available?: boolean; mode?: string; model?: string; reason?: string | null; circuit?: string }
+interface ModelStatus { available?: boolean; mode?: string; model?: string; provider?: string; reason?: string | null; circuit?: string }
 
 interface AppState {
   sessionId: string | null;

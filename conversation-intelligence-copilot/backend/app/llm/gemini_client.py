@@ -94,6 +94,9 @@ class GeminiClient:
         self.breaker = CircuitBreaker(settings.gemini_circuit_threshold, settings.gemini_circuit_cooldown_seconds)
         self.cache = ResponseCache(settings.llm_cache_path)
         self.last_success: str | None = None
+        self.provider = "vertex-ai" if settings.gemini_use_vertex else "gemini"
+        self.label = "Gemini"
+        self.costs = (settings.gemini_input_cost_per_mtok, settings.gemini_output_cost_per_mtok)
 
     # -- status -----------------------------------------------------------
     def available(self) -> bool:
@@ -102,7 +105,7 @@ class GeminiClient:
     def status(self) -> dict:
         state = self.breaker.state
         return {
-            "provider": "vertex-ai" if self.settings.gemini_use_vertex else "gemini", "model": self.model, "available": state != "open",
+            "provider": self.provider, "model": self.model, "available": state != "open",
             "mode": "llm" if state != "open" else "deterministic", "circuit": state,
             "reason": self.breaker.last_error, "last_success": self.last_success, "rpm_limit": self.settings.gemini_requests_per_minute,
         }
@@ -123,23 +126,24 @@ class GeminiClient:
             kwargs["thinking_config"] = types.ThinkingConfig(thinking_budget=mc["thinking_budget"])
         return types.GenerateContentConfig(**kwargs)
 
+    def _invoke(self, prompt: PromptVersion, user: str, schema: type[BaseModel] | None, stream: bool) -> tuple[str, Usage]:
+        """One provider request (no retries). Subclasses for other providers override only this."""
+        config = self._config(prompt, schema)
+        if stream:
+            chunks = list(self._client.models.generate_content_stream(model=self.model, contents=user, config=config))
+            return "".join(c.text or "" for c in chunks), aggregate_stream_usage([c.usage_metadata for c in chunks])
+        resp = self._client.models.generate_content(model=self.model, contents=user, config=config)
+        return resp.text or "", usage_from_metadata(resp.usage_metadata)
+
     def _call(self, prompt: PromptVersion, user: str, schema: type[BaseModel] | None, stream: bool = False) -> tuple[str, Usage, int]:
         if not self.breaker.allow():
-            raise LLMUnavailable(f"Gemini circuit open: {self.breaker.last_error}")
+            raise LLMUnavailable(f"{self.label} circuit open: {self.breaker.last_error}")
         retries = 0
         max_retries = self.settings.gemini_max_retries
         while True:
             self.limiter.acquire(timeout=self.settings.gemini_timeout_seconds)
             try:
-                config = self._config(prompt, schema)
-                if stream:
-                    chunks = list(self._client.models.generate_content_stream(model=self.model, contents=user, config=config))
-                    text = "".join(c.text or "" for c in chunks)
-                    usage = aggregate_stream_usage([c.usage_metadata for c in chunks])
-                else:
-                    resp = self._client.models.generate_content(model=self.model, contents=user, config=config)
-                    text = resp.text or ""
-                    usage = usage_from_metadata(resp.usage_metadata)
+                text, usage = self._invoke(prompt, user, schema, stream)
                 self.breaker.success()
                 self.last_success = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
                 return text, usage, retries
@@ -156,7 +160,7 @@ class GeminiClient:
                     raise
                 delay = retry_after_seconds(e) or backoff_delay(retries)
                 retries += 1
-                log.warning("Gemini retry %s after %.1fs: %s", retries, delay, msg)
+                log.warning("%s retry %s after %.1fs: %s", self.label, retries, delay, msg)
                 self._sleep(min(delay, self.settings.gemini_timeout_seconds))
             finally:
                 self.limiter.release()
@@ -166,7 +170,7 @@ class GeminiClient:
             request_id=request_id, purpose=purpose, prompt_id=prompt.id, prompt_version=prompt.version, model=self.model,
             input_tokens=usage.input_tokens, output_tokens=usage.output_tokens, total_tokens=usage.total_tokens, latency_ms=round(latency, 1),
             retries=retries, cache_hit=cache_hit, status=status, error=error, rate_limited=rate_limited,
-            estimated_cost_usd=estimate_cost(usage, self.settings.gemini_input_cost_per_mtok, self.settings.gemini_output_cost_per_mtok),
+            estimated_cost_usd=estimate_cost(usage, *self.costs),
         )
 
     def generate_json(self, prompt: PromptVersion, user: str, schema: type[T], request_id: str | None = None, purpose: str = "") -> LLMResult:
@@ -191,7 +195,7 @@ class GeminiClient:
             except Exception as e:  # noqa: BLE001
                 self._record(prompt, request_id, purpose, total, (time.perf_counter() - start) * 1000, getattr(e, "retries", retries),
                              False, "error", str(e)[:300], getattr(e, "rate_limited", False))
-                raise LLMUnavailable(f"Gemini call failed: {str(e)[:200]}") from e
+                raise LLMUnavailable(f"{self.label} call failed: {str(e)[:200]}") from e
             total = total.add(usage)
             retries += r
             try:
@@ -206,7 +210,7 @@ class GeminiClient:
             return LLMResult(text, parsed, self.model, total, latency, retries, False, repaired=repair > 0)
         latency = (time.perf_counter() - start) * 1000
         self._record(prompt, request_id, purpose, total, latency, retries, False, "invalid_output", "schema validation failed after repair")
-        raise LLMUnavailable("Gemini output failed schema validation after one repair attempt")
+        raise LLMUnavailable(f"{self.label} output failed schema validation after one repair attempt")
 
     def generate_text(self, prompt: PromptVersion, user: str, request_id: str | None = None, purpose: str = "") -> LLMResult:
         start = time.perf_counter()
@@ -217,7 +221,7 @@ class GeminiClient:
         except Exception as e:  # noqa: BLE001
             self._record(prompt, request_id, purpose, Usage(), (time.perf_counter() - start) * 1000, getattr(e, "retries", 0),
                          False, "error", str(e)[:300], getattr(e, "rate_limited", False))
-            raise LLMUnavailable(f"Gemini call failed: {str(e)[:200]}") from e
+            raise LLMUnavailable(f"{self.label} call failed: {str(e)[:200]}") from e
         latency = (time.perf_counter() - start) * 1000
         self._record(prompt, request_id, purpose, usage, latency, retries, False, "ok")
         return LLMResult(text, None, self.model, usage, latency, retries)
@@ -239,10 +243,24 @@ def get_llm() -> LLMClient:
         return _override
     s = get_settings()
     if not s.llm_enabled:
-        return DisabledLLM("Model calls disabled (LLM_ENABLED=false)", s.gemini_model)
-    if not s.gemini_api_key:
-        return DisabledLLM("GEMINI_API_KEY is not set", s.gemini_model)
+        return DisabledLLM("Model calls disabled (LLM_ENABLED=false)", s.groq_model)
+    provider = s.resolved_llm_provider
+    if provider is None:
+        reason = "LLM_PROVIDER=none" if s.llm_provider == "none" else "No LLM configured (GROQ_API_KEY, GEMINI_API_KEY, or `make llm-download` for the local model)"
+        return DisabledLLM(reason, s.groq_model)
     try:
+        if provider == "local":
+            from app.llm.local_client import LocalLlamaClient
+
+            return LocalLlamaClient(s)
+        if provider == "groq":
+            from app.llm.groq_client import GroqClient
+
+            if not s.groq_api_key:
+                return DisabledLLM("GROQ_API_KEY is not set", s.groq_model)
+            return GroqClient(s)
+        if not s.gemini_api_key:
+            return DisabledLLM("GEMINI_API_KEY is not set", s.gemini_model)
         return GeminiClient(s)
     except Exception as e:  # noqa: BLE001
-        return DisabledLLM(f"Gemini client could not be created: {e}", s.gemini_model)
+        return DisabledLLM(f"{provider} client could not be created: {e}", s.groq_model)

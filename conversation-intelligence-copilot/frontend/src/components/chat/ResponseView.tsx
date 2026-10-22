@@ -82,7 +82,7 @@ export function ResponseView({ r }: { r: ChatResponse }) {
         <Badge tone="indigo"><Sparkles className="h-3 w-3" />{humanize(r.plan.category)}</Badge>
         <Badge tone={statusTone}>{humanize(r.status)}</Badge>
         <Tip content={`Intent: ${mm.intent_source}; explanation: ${mm.explanation_source}. ${mm.reason ? `Model note: ${String(mm.reason).slice(0, 140)}` : ""}`}>
-          <span><Badge tone={mm.mode === "llm" ? "violet" : "default"}><BrainCircuit className="h-3 w-3" />{mm.mode === "llm" ? `Gemini (${mm.model})` : "Deterministic explainer"}</Badge></span>
+          <span><Badge tone={mm.mode === "llm" ? "violet" : "default"}><BrainCircuit className="h-3 w-3" />{mm.mode === "llm" ? `${({ gemini: "Gemini", "vertex-ai": "Vertex AI", groq: "Groq", local: "Local LLM" } as Record<string, string>)[mm.provider] ?? "LLM"} (${mm.model})` : "Deterministic explainer"}</Badge></span>
         </Tip>
         <button onClick={() => setShowChecks((s) => !s)} className="focus-ring rounded-full" aria-expanded={showChecks}>
           <Badge tone={qa.status === "pass" ? "positive" : qa.status === "warn" ? "warning" : "negative"}><ShieldCheck className="h-3 w-3" />QA {qa.passed}/{qa.total}</Badge>

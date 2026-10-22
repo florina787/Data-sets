@@ -104,7 +104,7 @@ def test_with_gemini_grounded_explanation_is_used(env):
     client, models = fake_gemini([router({"category": "negative_topics", "time_window": {"type": "last_month"}, "top_n": 5}, explanation)] * 2)
     gemini_client.set_llm(client)
     r = run_chat(Q1 + " (gemini run)")
-    assert r["model_metadata"]["intent_source"] == "gemini" and r["model_metadata"]["explanation_source"] == "gemini"
+    assert r["model_metadata"]["intent_source"] == "llm" and r["model_metadata"]["explanation_source"] == "llm"
     assert r["headline"] == explanation["headline"] and not qa_failures(r)
 
 
