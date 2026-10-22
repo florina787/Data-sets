@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T16:25:07+00:00",
+  "generated_at": "2026-10-22T17:18:54+00:00",
   "dataset": "cs_conversations.csv (Syncora sample, 3,000 conversations)",
   "model": {
     "provider": "gemini",
@@ -304,55 +304,55 @@
   },
   "retrieval": {
     "queries": 36,
-    "embedding_backend": "lsa-tfidf-svd192",
-    "topic_precision@5": 0.3667,
-    "exact_precision@5": 0.3278,
-    "hit_rate@5": 0.5,
-    "mrr@5": 0.3736,
+    "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2",
+    "topic_precision@5": 0.6167,
+    "exact_precision@5": 0.5833,
+    "hit_rate@5": 0.8056,
+    "mrr@5": 0.7176,
     "duplicate_rate": 0.0,
     "random_baseline_topic_precision": 0.125,
-    "latency_p50_ms": 18.5,
-    "latency_p95_ms": 20.7,
+    "latency_p50_ms": 35.4,
+    "latency_p95_ms": 61.8,
     "by_topic": [
       {
         "topic": "account_locked",
-        "topic_p@5": 0.0,
-        "exact_p@5": 0.0
+        "topic_p@5": 1.0,
+        "exact_p@5": 1.0
       },
       {
         "topic": "app_crash",
-        "topic_p@5": 0.04,
-        "exact_p@5": 0.04
+        "topic_p@5": 0.84,
+        "exact_p@5": 0.84
       },
       {
         "topic": "coupon_not_applied",
-        "topic_p@5": 0.12,
-        "exact_p@5": 0.12
+        "topic_p@5": 0.6,
+        "exact_p@5": 0.6
       },
       {
         "topic": "duplicate_charge",
         "topic_p@5": 1.0,
-        "exact_p@5": 0.8
+        "exact_p@5": 0.76
       },
       {
         "topic": "general_help",
-        "topic_p@5": 0.4,
-        "exact_p@5": 0.32
+        "topic_p@5": 0.24,
+        "exact_p@5": 0.24
       },
       {
         "topic": "not_received",
+        "topic_p@5": 0.6,
+        "exact_p@5": 0.6
+      },
+      {
+        "topic": "payment_not_reflected",
         "topic_p@5": 0.0,
         "exact_p@5": 0.0
       },
       {
-        "topic": "payment_not_reflected",
-        "topic_p@5": 0.2,
-        "exact_p@5": 0.2
-      },
-      {
         "topic": "service_malfunction",
-        "topic_p@5": 0.88,
-        "exact_p@5": 0.88
+        "topic_p@5": 0.96,
+        "exact_p@5": 0.96
       }
     ],
     "note": "Queries are paraphrases that avoid the template wording; relevance = same issue topic (and product where named)."
@@ -379,8 +379,8 @@
     "follow_up_routing_accuracy": 1.0,
     "follow_up_errors": [],
     "evidence_items_total": 189,
-    "latency_p50_ms": 159.1,
-    "latency_p95_ms": 602.4,
+    "latency_p50_ms": 167.0,
+    "latency_p95_ms": 775.5,
     "llm_mode": {
       "deterministic": 51
     },
@@ -434,19 +434,19 @@
     },
     {
       "metric": "Retrieval topic P@5",
-      "display": "37%",
+      "display": "62%",
       "note": "random baseline 12%"
     },
     {
       "metric": "Retrieval exact P@5",
-      "display": "33%",
+      "display": "58%",
       "note": "topic + product"
     },
     {
       "metric": "Latency p50 / p95",
-      "display": "159 / 602 ms",
+      "display": "167 / 776 ms",
       "note": "deterministic mode, local"
     }
   ],
-  "duration_seconds": 13.5
+  "duration_seconds": 24.0
 }

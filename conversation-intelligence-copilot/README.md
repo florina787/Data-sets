@@ -112,8 +112,8 @@ Syncora.ai Customer Support Conversation sample (Kaggle), 3,000 synthetic conver
 | End-to-end QA pass rate | 100% of 51 requests (11 checks each) |
 | Unsupported questions refused | 6/6 |
 | Intent (rules fallback) | 100% tuning set · **50% held-out paraphrases** (7/10 misses refused safely) |
-| Retrieval (LSA) topic P@5 | 36.7% vs 12.5% random |
-| Latency (deterministic, local) | p50 159 ms · p95 602 ms |
+| Retrieval topic P@5 | 61.7% with MiniLM (36.7% with the LSA fallback; 12.5% random) |
+| Latency (deterministic, local) | p50 167 ms · p95 776 ms |
 
 Details and limitations: [EVALUATION.md](EVALUATION.md).
 
@@ -129,7 +129,7 @@ curl -s localhost:8000/api/chat -H 'Content-Type: application/json' \
 ## Status and limitations
 
 * **Gemini was not reachable during development** (the provided credential returned `401 API_KEY_SERVICE_BLOCKED`). The adapter, prompts, labelling pipeline and grounding checks are implemented and tested against a scripted SDK, but live behaviour is unverified. Everything shown in the screenshots ran in deterministic mode.
-* Sentence-Transformers weights could not be downloaded (Hugging Face blocked by network policy); retrieval used the LSA fallback.
+* Retrieval uses `all-MiniLM-L6-v2` (install with `uv sync --extra transformers`; needs Hugging Face access on first run). Without it the app falls back to local LSA embeddings and records why in the index manifest.
 * Sentiment/empathy mappings are developer judgements; human-agreement metrics need labels from the in-app review panel.
 * No authentication/RBAC (see [SECURITY.md](SECURITY.md)); single-node storage.
 

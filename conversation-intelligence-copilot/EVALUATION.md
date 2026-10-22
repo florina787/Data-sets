@@ -25,17 +25,30 @@ All figures below come from runs in this repository. The machine-generated repor
 | End-to-end QA pass rate (51 requests) | 100% (all 11 checks at 100%) |
 | Unsupported questions refused | 6/6 |
 | Follow-up routing (11) | 100% |
-| Retrieval topic precision@5 | 36.7% (random baseline 12.5%) |
-| Retrieval exact (topic+product) P@5 / hit-rate@5 / MRR@5 | 32.8% / 50.0% / 0.374 |
+| Retrieval topic precision@5 (MiniLM) | **61.7%** (LSA fallback 36.7%; random baseline 12.5%) |
+| Retrieval exact (topic+product) P@5 / hit-rate@5 / MRR@5 | 58.3% / 80.6% / 0.718 (LSA: 32.8% / 50.0% / 0.374) |
 | Retrieval duplicate rate | 0% |
-| Retrieval latency p50 / p95 | 18.5 / 20.7 ms (LSA + FAISS, local CPU) |
+| Retrieval latency p50 / p95 | 35.4 / 61.8 ms MiniLM (LSA 18.5 / 20.7 ms), FAISS, local CPU |
 | Lexicon fallback vs template labels (21,639 messages) | accuracy 78.1%, Cohen's κ 0.669 |
-| End-to-end latency p50 / p95 | 159 / 602 ms (deterministic mode, local) |
+| End-to-end latency p50 / p95 | 167 / 776 ms (deterministic mode, MiniLM retrieval, local) |
 | Automated tests | backend 97 (65 unit, 32 integration) · frontend Vitest 8 · Playwright E2E 10 — all passing |
 
 ### Retrieval by topic
 
-Strong where the paraphrase shares vocabulary with the template (duplicate charge 100% topic P@5, feature not working 92%), near zero where it does not ("cannot sign in, my profile is blocked" → account locked 0%; "application keeps closing" → app crash 4%). This is the expected weakness of the LSA fallback; pretrained sentence embeddings were the intended backend but could not be downloaded in the build environment.
+The index was first built with the LSA fallback (Hugging Face was blocked at the time), then rebuilt with `sentence-transformers/all-MiniLM-L6-v2` once network access allowed the download; both runs use the same 36 queries.
+
+| Topic | LSA topic P@5 | MiniLM topic P@5 |
+|---|---|---|
+| account_locked | 0.00 | 1.00 |
+| app_crash | 0.04 | 0.84 |
+| coupon_not_applied | 0.12 | 0.60 |
+| duplicate_charge | 1.00 | 1.00 |
+| general_help | 0.40 | 0.24 |
+| not_received | 0.00 | 0.60 |
+| payment_not_reflected | 0.20 | 0.00 |
+| service_malfunction | 0.88 | 0.96 |
+
+MiniLM fixes the paraphrases with no shared vocabulary ("cannot sign in, my profile is blocked" → account locked), but two topics got worse: generic help questions and "payment went through but X was never activated", which now retrieves other issue types. Hybrid lexical + vector scoring is the next improvement. When the model cannot be loaded, `EMBEDDING_BACKEND=auto` still falls back to LSA and records why.
 
 ## 3. Classification evaluation — what can and cannot be claimed
 

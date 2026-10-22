@@ -211,5 +211,5 @@ sequenceDiagram
 | Registered operations instead of text-to-SQL | No fabricated or unsafe queries; exact, testable numbers | New question types need a new operation |
 | Deterministic labeller as default | The data is templated (426 unique texts), so rules are exact, free and reproducible; Gemini was unavailable during development | The mapping is a developer judgement; validated only by agreement checks and (optionally) human review |
 | Deterministic intent parser as fallback | Works with no key; fails safe to "unsupported" | Brittle on paraphrases (50% on a held-out set) — Gemini is the intended primary path |
-| LSA fallback embeddings | Fully offline, fast (≈20 ms) | Weak on paraphrases with no shared words (topic P@5 37%) |
+| MiniLM embeddings with LSA fallback | MiniLM: topic P@5 62% on paraphrases; LSA keeps retrieval working fully offline | MiniLM needs a model download and is slower (≈35 ms vs 20 ms); LSA is weak on paraphrases (37%) |
 | DuckDB + SQLite + FAISS in-process | Zero infrastructure, reproducible | Single-node; see production notes in README |

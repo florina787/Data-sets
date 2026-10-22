@@ -15,7 +15,7 @@ Status vocabulary: **Implemented and verified** (code integrated, reachable, tes
 | Gemini adapter (structured output, repair, rate limit, retries, circuit, cache, tokens/cost) | Implemented but not fully verified | `llm/*` | scripted-SDK tests | Live API never reached (key blocked) |
 | Gemini intent and grounded explanation | Implemented but not fully verified | `intent_agent.py`, `nodes.explanation` | scripted tests incl. grounding rejection | Not run live |
 | Resumable Gemini batch labelling + coverage | Implemented but not fully verified | `gemini_labeler.py`, `make label` | partial-coverage pipeline test | Not run live |
-| Knowledge retrieval (FAISS, filters, evidence) | Implemented and verified | `retrieval/*`, Explorer semantic search | API + eval | LSA fallback; MiniLM not downloadable here |
+| Knowledge retrieval (FAISS, filters, evidence) | Implemented and verified | `retrieval/*`, Explorer semantic search | API + eval | Two topics weaker with MiniLM; LSA used when the model is unavailable |
 | Session memory and follow-ups | Implemented and verified | `memory/store.py` | memory/graph/E2E | No cross-session memory |
 | QA agent and numeric grounding | Implemented and verified | `qa_agent.py`, `grounding.py` | graph + eval | Grounding checks numbers, not wording |
 | Governance (PII, injection flags, safeguards, audit) | Implemented and verified | Governance page | security tests | No auth/RBAC |
@@ -26,7 +26,7 @@ Status vocabulary: **Implemented and verified** (code integrated, reachable, tes
 | Synthetic / combined dataset modes | Implemented and verified | header selector (when enabled) | supervisor/API tests | Demo data only |
 | Docker Compose packaging | Implemented but not fully verified | Dockerfiles, compose | — | Image build blocked by registry rate limits in sandbox |
 | CI (pytest, typecheck, Vitest, build) | Implemented but not fully verified | `.github/workflows/cic-ci.yml` | — | Runs on the next PR |
-| Sentence-Transformers embeddings | Partial | adapter + optional extra | — | Weights could not be downloaded here |
+| Sentence-Transformers embeddings | Implemented and verified | `all-MiniLM-L6-v2`, index manifest | retrieval evaluation | Optional extra; needs Hugging Face on first run |
 | LangSmith tracing | Partial | `ENABLE_LANGSMITH` sets env for LangGraph | — | Requires a LangSmith key; not exercised |
 | Authentication / RBAC / multi-tenancy | Not implemented | — | — | See SECURITY.md |
 | Image generation for answers | Not implemented (deliberate) | — | — | Charts and real screenshots only; no decorative images |

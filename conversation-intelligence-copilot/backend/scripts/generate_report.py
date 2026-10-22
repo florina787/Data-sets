@@ -282,7 +282,7 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
     rt = e["retrieval"]
     bullets([
         f"Knowledge retrieval: conversation-aware chunks (4 turns, overlap 2), FAISS with metadata filters, one passage per conversation, evidence with message IDs and CSV lines. "
-        f"On {rt['queries']} paraphrased queries: topic precision@5 {rt['topic_precision@5']:.1%} vs {rt['random_baseline_topic_precision']:.1%} random (LSA fallback; MiniLM could not be downloaded).",
+        f"On {rt['queries']} paraphrased queries: topic precision@5 {rt['topic_precision@5']:.1%} vs {rt['random_baseline_topic_precision']:.1%} random with {rt['embedding_backend']} (36.7% with the LSA fallback used when the model is unavailable).",
         "Specialised LLM agent: Gemini classification of unique masked texts (sentiment, act, empathy, resolution, topic, product) in bounded, resumable batches with "
         "a content-hash cache and honest coverage reporting; scripted-SDK tested; not run live (credential blocked).",
         "Memory: session store of resolved intent, scope, plan and deterministic references; follow-ups such as 'compare the top two', 'previous month', "
@@ -307,7 +307,7 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
         "Live Gemini behaviour (intent, explanations, labels, latency, tokens) is unmeasured.",
         "Sentiment/empathy mappings are developer judgements; human-agreement metrics await labels from the in-app blind review.",
         "The deterministic intent parser is brittle on paraphrases (held-out accuracy above), though most misses fail safe.",
-        "LSA retrieval is weak when queries share no words with the transcripts.",
+        "Retrieval still misses some paraphrases (generic help and paid-but-not-delivered queries regressed with MiniLM); the LSA fallback is much weaker.",
         "Synthetic, templated data: most topic differences are not significant; no cost, churn, CSAT or handle-time data.",
         "No authentication/RBAC; single-node storage; Docker images not built in the sandbox (registry rate limits).",
     ])
@@ -399,7 +399,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
        ["End-to-end QA pass rate", f"{ev['qa_pass_rate']:.0%} ({ev['requests']} requests, {ev['follow_up_requests']} follow-ups)"],
        ["Unsupported refused / supported answered", f"{ev['unsupported_correctly_refused']} / {ev['supported_answered']}"],
        ["Intent (rules) tuning / held-out", f"{it['accuracy']:.0%} / {it['heldout']['accuracy']:.0%}"],
-       ["Retrieval topic P@5 (LSA)", f"{rt['topic_precision@5']:.1%} (random {rt['random_baseline_topic_precision']:.1%})"],
+       [f"Retrieval topic P@5 ({rt['embedding_backend'].split('/')[-1]})", f"{rt['topic_precision@5']:.1%} (random {rt['random_baseline_topic_precision']:.1%})"],
        ["Latency p50 / p95 (deterministic)", f"{ev['latency_p50_ms']:.0f} / {ev['latency_p95_ms']:.0f} ms"],
        ["Gemini", f"not reachable: {str(e['model'].get('reason'))[:90]}"]], [6 * cm, W - 6 * cm])
 
@@ -486,7 +486,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
        ["Reference 'the first one' unresolved after a turn without ranking", "Use most recent ranking, with a note"],
        ["'Which agents should be fired?' routed to coaching", "Personnel decisions refused"],
        ["Coaching crash when no resolution is assessable", "Nullable float handling"], ["Cancellation recorded as failure", "Recorded as cancelled"]], [9 * cm, W - 9 * cm])
-    P("Trade-offs: registered operations over text-to-SQL (safe, exact; less open-ended); deterministic defaults (reproducible; brittle intent on paraphrases); LSA fallback (offline; weak semantics); "
+    P("Trade-offs: registered operations over text-to-SQL (safe, exact; less open-ended); deterministic defaults (reproducible; brittle intent on paraphrases); MiniLM embeddings with an LSA fallback (better semantics, needs a model download; fallback works offline but is weak); "
       "in-process stores (zero infrastructure; single node).")
 
     story.append(Paragraph("12. Deployment and production roadmap", h1))
