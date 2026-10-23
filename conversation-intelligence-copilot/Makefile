@@ -45,8 +45,9 @@ evaluate:           ## Evaluation on the real dataset -> data/manifests/evaluati
 screenshots:        ## Capture docs/screenshots from a running app
 	cd frontend && node e2e/capture-screenshots.mjs ../docs/screenshots
 
-report:             ## Generate the submission DOCX and the detailed engineering PDF
+report:             ## Generate the submission DOCX, the engineering PDF and the personalised submission PDF
 	cd backend && uv run python -m scripts.generate_report
+	cd backend && uv run python -m scripts.generate_submission_pdf
 
 docker-up:
 	docker compose up --build

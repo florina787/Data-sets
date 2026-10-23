@@ -24,7 +24,8 @@
 <a href="#-how-it-works"><b>How it works</b></a> ·
 <a href="#-evaluation"><b>Evaluation</b></a> ·
 <a href="#-run-it-in-your-ide"><b>IDE setup</b></a> ·
-<a href="docs/reports"><b>Reports</b></a>
+<a href="docs/reports/Florina_Conversation_Intelligence_Copilot_Report.pdf"><b>Report (PDF)</b></a> ·
+<a href="docs/article/MEDIUM_ARTICLE.md"><b>Article</b></a>
 
 <br><br>
 
@@ -687,7 +688,9 @@ examples/   sample requests and outputs
 | [ASSUMPTIONS.md](ASSUMPTIONS.md) | Dataset interpretation, labels, windows, scoring |
 | [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md) | The six enhancements, with limitations |
 | [Compliance audit](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md) | Sentence-by-sentence audit against the assignment |
-| [docs/reports/](docs/reports) | Submission report (DOCX) and engineering report (PDF) |
+| [Submission report (PDF)](docs/reports/Florina_Conversation_Intelligence_Copilot_Report.pdf) | The personalised submission report: what I built, what I chose not to build, and how |
+| [docs/reports/](docs/reports) | Also: submission report (DOCX) and engineering report (PDF) |
+| [Article: *No LLM required*](docs/article/MEDIUM_ARTICLE.md) | The engineering story and ten challenges; interactive version in [`docs/article/index.html`](docs/article/index.html) |
 | [SECURITY.md](SECURITY.md) | Threat model and controls |
 
 **Production roadmap (not implemented here):**
