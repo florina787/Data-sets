@@ -149,11 +149,11 @@ def architecture_figure() -> Path:
     def arrow(x1, y1, x2, y2):
         ax.add_patch(FancyArrowPatch((x1, y1), (x2, y2), arrowstyle="-|>", mutation_scale=9, color=MUTED, lw=0.9))
 
-    chain = [("Input\nvalidation", 2), ("Session\nmemory", 15), ("Intent\n(Gemini | rules)", 28), ("Supervisor /\nplanner", 41)]
+    chain = [("Input\nvalidation", 1), ("Session\nmemory", 11.2), ("Zero-LLM\nrouter", 21.4), ("Intent\n(rules→model)", 31.6), ("Supervisor /\nplanner", 41.8)]
     for t, x in chain:
-        box(x, 30, 10.5, 8, t, INDIGO)
+        box(x, 30, 8.6, 8, t, INDIGO)
     for (_, x1), (_, x2) in zip(chain, chain[1:]):
-        arrow(x1 + 10.8, 34, x2 - 0.3, 34)
+        arrow(x1 + 8.9, 34, x2 - 0.3, 34)
     specs = ["Topic", "Sentiment", "Coaching", "Leadership", "Analytics"]
     for i, s in enumerate(specs):
         box(56, 34 - i * 6.2, 13, 4.6, f"{s} agent", VIOLET)
@@ -169,7 +169,7 @@ def architecture_figure() -> Path:
         arrow(69.3, 36.3 - i * 6.2, 74.7, 38.5)
     arrow(69.3, 4.3, 74.7, 37.5)
     ax.text(2, 22, "DuckDB: registered,\nparameterised operations\n(no model-written SQL)", fontsize=7, color=MUTED)
-    ax.text(2, 12, "Gemini: intent, explanation,\nlabelling only — numbers\nnever generated", fontsize=7, color=MUTED)
+    ax.text(2, 12, "Optional LLM (local Qwen, Groq\nor Gemini): interpretation only;\nnumbers are never generated", fontsize=7, color=MUTED)
     fig.tight_layout()
     p = FIG / "architecture.png"
     fig.savefig(p, dpi=180)
@@ -222,7 +222,12 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
 
     def bullets(items):
         for it in items:
-            doc.add_paragraph(it, style="List Bullet")
+            if it.startswith("  • "):
+                doc.add_paragraph(it[4:], style="List Bullet 2")
+            elif it.endswith(":"):
+                doc.add_paragraph().add_run(it).bold = True
+            else:
+                doc.add_paragraph(it, style="List Bullet")
 
     def table(rows, header):
         t = doc.add_table(rows=1, cols=len(header))
@@ -255,22 +260,29 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
         "Timestamps are not in turn order in any of the 3,000 conversations: turn index is authoritative; conversations are dated by their earliest message.",
         f"{p['agents']:,} agent IDs for 3,000 conversations (max 2 each): per-agent rankings would be unreliable, so coaching analysis is sample-size gated.",
         "Messages are templated (426 unique texts); customer follow-ups and agents' closing actions are largely independent of the issue — reported, not hidden.",
+        "Derived rules: a conversation is negative when its customer messages average -0.25 or lower (exact arithmetic at the boundary); "
+        "leadership priority = 0.30 volume + 0.25 negative rate + 0.15 escalation + 0.15 unresolved + 0.10 resolution misfit + 0.05 trend (min-max scaled).",
+        "No data was appended. A separate set of 120 generated demo conversations (scripts/generate_synthetic.py, IDs 'S…') exists only for testing "
+        "the combined mode; it is excluded from the default build and from every reported figure.",
     ])
 
     h("3. Architecture and agent flow")
     doc.add_picture(str(figs["arch"]), width=Cm(17))
-    para("Input validation → session memory → intent (Gemini structured output, or a deterministic parser) → supervisor/planner (resolves follow-up "
-         "references and the date window; picks registered operations, one specialist and a retrieval mode) → topic / sentiment / coaching / leadership / "
-         "analytics agent, in parallel with retrieval when the query is known, or after it when the query depends on the result → evidence assembly → "
-         "explanation (Gemini, rejected if it contains any number not in the verified results) → visualisation planner → QA agent → governance agent → "
-         "response → memory and telemetry. Each request is checkpointed; each node emits real start/finish events that the UI and the Agent Harness show.")
+    para("Input validation → session memory → Zero-LLM router (decides whether a model is needed at all: fact questions, including all four "
+         "assignment questions, are answered with no model call) → intent (policy rules → high-precision rules → calibrated semantic match → the model, "
+         "category only, constrained JSON → clarify) → supervisor/planner (resolves follow-up references and the date window; picks registered "
+         "operations, one specialist and a retrieval mode) → topic / sentiment / coaching / leadership / analytics agent, in parallel with retrieval or "
+         "after it → evidence assembly → explanation (deterministic, or the model, rejected if it contains any number not in the verified results) → "
+         "visualisation → QA agent with the Evidence Challenger (quotes re-read from the database, causal wording qualified) → governance → response → "
+         "memory and telemetry. Agents exchange a typed state; results use one versioned schema (AnalysisResult, ChatResponse). Each request is "
+         "checkpointed, and each node emits real start/finish events shown in the UI, the Agent Harness and AI Decision Replay.")
 
     h("4. Model and tool choices")
     table([
-        ["Gemini Flash (google-genai)", "Intent, grounded explanation, batch classification; structured JSON with closed enums; rate-limited, retried, cached, circuit-broken; tokens and cost recorded."],
+        ["Optional LLM: local Qwen2.5-1.5B (llama.cpp, no key), Groq, or Gemini", "Used only when needed: category-only intent classification when rules are unsure, grounded explanation for interpretive questions, optional batch labelling (Gemini). One client interface: constrained JSON, cache, one repair, rate limit, retries, circuit breaker; tokens recorded (unknown, never zero). No key is needed to run the app."],
         ["LangGraph", "Explicit, testable routing, parallel branches, checkpointing, observable nodes."],
         ["DuckDB", "All numbers: registered, parameterised operations; Wilson intervals, chi-square and z-tests for uncertainty."],
-        ["FAISS + embeddings", "Exact cosine search with metadata filters; MiniLM preferred, local LSA fallback."],
+        ["FAISS + MiniLM + LSA", "Two exact-cosine indexes with metadata filters, fused by weighted reciprocal rank fusion (hybrid search)."],
         ["SQLite", "Session memory, checkpoints, telemetry, audit, human review."],
         ["React · Recharts · React Flow", "Chat-first workspace, validated declarative charts, live agent graph."],
     ], ["Component", "Role"])
@@ -278,7 +290,8 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
     h("5. The four analytical demonstrations")
     top = q1["table"]["rows"][:5]
     para(f"Q1 — Negative topics, {q1['scope']['window']['label']} (latest month in the data): {q1['metrics'][1]['value']} of {q1['metrics'][0]['value']} "
-         f"conversations negative. Top five by count: " + ", ".join(f"{r['name']} ({int(r['negative'])})" for r in top) + ". By rate, "
+         f"conversations negative. Top five by count: " + ", ".join(f"{r['name']} ({int(r['negative'])})" for r in top) + ". "
+         + next((n + " " for n in q1["uncertainty_notes"] if "is a tie" in n), "") + "By rate, "
          + max(q1["series"]["all_groups"]["rows"], key=lambda r: r["negative_rate"])["name"] + f" leads; the chi-square p-value "
          f"({next(m['value'] for m in q1['metrics'] if m['id'] == 'chi_square_p')}) shows the differences are not significant at 5%, and the answer says so.")
     doc.add_picture(str(figs["q1"]), width=Cm(17))
@@ -293,18 +306,40 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
     lr = d["lead"]
     para(f"Q4 — Leadership: a documented priority score (volume, negative rate, escalation requests, unresolved endings, resolution misfit, trend). "
          f"First: {lr['table']['rows'][0]['name']} (score {lr['table']['rows'][0]['priority_score']}); each recommendation names a finding, driver, action, "
-         f"owner, evidence and uncertainty. Sensitivity: {lr['uncertainty_notes'][-2] if len(lr['uncertainty_notes']) > 1 else ''}")
+         f"owner, evidence and uncertainty. " + next((n for n in lr["uncertainty_notes"] if n.startswith("Sensitivity")), ""))
     doc.add_picture(str(figs["lead"]), width=Cm(17))
 
     h("6. Bonus extensions")
     rt = e["retrieval"]
+    bm = rt["by_mode"]
+    rr = routing()
+    qwen = json.loads((PROJECT_ROOT / "data/manifests/intent_routing/test_qwen_only_v2_1_final.json").read_text())
     bullets([
-        f"Knowledge retrieval: conversation-aware chunks (4 turns, overlap 2), FAISS with metadata filters, one passage per conversation, evidence with message IDs and CSV lines. "
-        f"On {rt['queries']} paraphrased queries: topic precision@5 {rt['topic_precision@5']:.1%} vs {rt['random_baseline_topic_precision']:.1%} random with {rt['embedding_backend']} (36.7% with the LSA fallback used when the model is unavailable).",
-        "Specialised LLM agent: Gemini classification of unique masked texts (sentiment, act, empathy, resolution, topic, product) in bounded, resumable batches with "
-        "a content-hash cache and honest coverage reporting; scripted-SDK tested; not run live (credential blocked).",
-        "Memory: session store of resolved intent, scope, plan and deterministic references; follow-ups such as 'compare the top two', 'previous month', "
-        f"'the first one', 'why ranked first', 'which findings are uncertain'. Follow-up routing on the evaluation sessions: {ev['follow_up_routing_accuracy']:.0%}.",
+        "Knowledge retrieval:",
+        f"  • Indexing: 4-turn chunks (overlap 2) from the 3,000 conversations, embedded twice (MiniLM 384-d semantic, LSA 192-d lexical) in FAISS with metadata filters.",
+        "  • Triggers: similar-case questions; coaching evidence (in parallel); examples for the top leadership or negative-topic result (after the analysis, filtered to it).",
+        "  • Evidence: one passage per conversation with message IDs, turn range, CSV line references and each method's rank.",
+        "  • How it improves answers: it attaches real, on-topic transcripts to the computed result, and answers similar-case questions that analytics cannot. "
+        "Retrieval never produces numbers. Answer quality with and without retrieval was not measured.",
+        f"  • Evaluation ({rt['queries']} paraphrased queries): topic precision@5 {bm['hybrid']['topic_precision@5']:.1%} hybrid vs "
+        f"{bm['dense']['topic_precision@5']:.1%} MiniLM, {bm['lsa']['topic_precision@5']:.1%} LSA, {rt['random_baseline_topic_precision']:.1%} random; "
+        f"hit@5 {bm['hybrid']['hit_rate@5']:.1%}. The fusion weight was tuned on the same queries.",
+        "Specialised LLM agent (intent classification):",
+        "  • What it is: a local Qwen2.5-1.5B-Instruct model (llama.cpp, free, CPU) used as a constrained classifier. It returns one intent category from a "
+        "closed list (JSON-schema grammar), with definitions and 15 hard examples in the prompt.",
+        "  • Why chosen: a hosted model was unavailable (Gemini key blocked, no Groq key). Classification of questions, not generation of facts, is where a "
+        "small model is safe, because every entity and number still comes from deterministic code.",
+        "  • How it fits: the router calls it only when rules and semantic matching cannot route a question with high precision (6.9% of test questions).",
+        f"  • Usefulness, on the held-out test split scored once: router with the model {rr['router']['accuracy']:.1%} vs {rr['no_llm']['accuracy']:.1%} without it, "
+        f"and {rr['before']['accuracy']:.1%} for the previous router. The model alone scores {qwen['accuracy']:.1%}, which is why it is a fallback, not the primary path.",
+        "  • Also implemented but not run live: a Gemini batch labeller for message sentiment, act, empathy and resolution (scripted-SDK tested).",
+        "Memory:",
+        "  • Stored per turn in SQLite: question, resolved intent, scope, plan and deterministic references (ranked keys, conversation IDs).",
+        "  • Retrieved: the last N turns are loaded at the start of each request.",
+        "  • Effect: follow-ups such as 'compare the top two', 'previous month', 'the first one', 'why ranked first' are resolved from stored references, "
+        f"re-validated against the database, and the stored plan is re-run on current data. Follow-up routing on the evaluation sessions: {ev['follow_up_routing_accuracy']:.0%}.",
+        "  • Reliability and privacy: model prose is never reused as fact; sessions are isolated; questions are kept as typed (not PII-masked) for "
+        "SESSION_RETENTION_DAYS (30) and can be deleted per session.",
     ])
 
     h("7. Evaluation")
@@ -316,10 +351,11 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
         ["Intent routing (benchmark v2 test)", routing_text()],
         ["Retrieval topic P@5", f"{rt['topic_precision@5']:.1%}"],
         ["Latency p50 / p95", f"{ev['latency_p50_ms']:.0f} / {ev['latency_p95_ms']:.0f} ms"],
-        ["Automated tests", "97 backend · 8 Vitest · 10 Playwright — passing"],
+        ["Automated tests", "138 backend · 8 Vitest · 17 Playwright — passing"],
     ], ["Measure", "Result"])
-    para("Gemini could not be evaluated live: the development environment's credential returned 401 API_KEY_SERVICE_BLOCKED. End-to-end results above are for the deterministic path; "
-         "intent routing was also measured with the local Qwen2.5-1.5B model (docs/evaluation/INTENT_ROUTING.md).")
+    para("End-to-end results are for the default AUTO path, where the four assignment questions need no model. Intent routing was measured with the local "
+         "Qwen2.5-1.5B model (docs/evaluation/INTENT_ROUTING.md). Hosted models (Gemini, Groq) were not evaluated live: the Gemini credential in the "
+         "development environment returned 401 API_KEY_SERVICE_BLOCKED and no Groq key was available.")
 
     h("8. Limitations")
     bullets([
@@ -496,7 +532,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
     shot("15-governance.png", "Governance: controls, model availability, blind human review, audit.", crop_h=1300)
 
     story.append(Paragraph("10. Test results", h1))
-    T([["Suite", "Result"], ["Backend unit (pytest)", "80 passed"], ["Backend integration (pytest)", "56 passed"], ["Frontend unit (Vitest)", "8 passed"],
+    T([["Suite", "Result"], ["Backend unit (pytest)", "82 passed"], ["Backend integration (pytest)", "56 passed"], ["Frontend unit (Vitest)", "8 passed"],
        ["End to end (Playwright, Chromium)", "17 passed"], ["Typecheck / production build", "passed"]], [7 * cm, W - 7 * cm])
     T([["QA check", "Pass rate"]] + [[k, f"{v:.0%}"] for k, v in ev["check_pass_rates"].items()], [7 * cm, W - 7 * cm])
     T([["Held-out routing miss (benchmark v2 test)", "Expected", "Predicted"]] + [[x["question"], x["expected"], x["predicted"]] for x in routing().get("router", {}).get("errors", [])],

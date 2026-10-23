@@ -19,46 +19,48 @@ All figures below come from runs in this repository. The machine-generated repor
 
 | Metric | Result |
 |---|---|
-| Q1 numbers vs independent oracle (Nov 2025) | **exact match** — 682 conversations, 239 negative, all top-5 counts |
+| Q1 numbers vs independent oracle (Nov 2025) | **exact match**: 682 conversations, 240 negative, all top-5 counts (rank 5 is a disclosed tie at 24) |
 | Intent accuracy, tuning set (40) | 100% (after fixing 2 errors this set exposed — optimistic) |
 | Intent accuracy, legacy held-out (20) | 50% at the time (superseded; the set was read during the v2 work) |
 | Intent routing, **benchmark v2 test** (73) | **95.9%** (macro F1 0.932) confidence router + local Qwen; 90.4% with no model; previous router 61.6% |
 | End-to-end QA pass rate (51 requests) | 88% — every critical check passes; 6 answers carry non-critical Evidence Challenger warnings (evidence coverage 92%, sample-size disclosure 90%). Before the challenger existed this read 100%. |
 | Unsupported questions refused | 6/6 |
 | Follow-up routing (11) | 100% |
-| Retrieval topic precision@5 (hybrid, default) | **62.2%** (MiniLM alone 62.2%, LSA alone 32.2%; random baseline 12.5%) |
-| Retrieval exact (topic+product) P@5 / hit-rate@5 / MRR@5 | hybrid 57.8% / 86.1% / 0.698 · MiniLM 56.1% / 83.3% / 0.711 · LSA 30.6% / 47.2% / 0.353 |
+| Retrieval topic precision@5 (hybrid, default) | **62.8%** (MiniLM alone 62.2%, LSA alone 28.9%; random baseline 12.5%) |
+| Retrieval exact (topic+product) P@5 / hit-rate@5 / MRR@5 | hybrid 58.3% / 86.1% / 0.708 · MiniLM 56.1% / 83.3% / 0.711 · LSA 28.9% / 41.7% / 0.333 |
 | Retrieval duplicate rate | 0% |
-| Retrieval latency p50 / p95 | hybrid 38.6 / 54.2 ms · MiniLM 23.8 / 45.8 ms · LSA 13.9 / 17.3 ms (FAISS, local CPU) |
+| Retrieval latency p50 / p95 | hybrid 38.6 / 53.2 ms · MiniLM 25.0 / 56.9 ms · LSA 15.7 / 21.0 ms (FAISS, local CPU) |
 | Lexicon fallback vs template labels (21,639 messages) | accuracy 78.1%, Cohen's κ 0.669 |
-| End-to-end latency p50 / p95 | 133 / 560 ms (deterministic mode, hybrid retrieval, local) |
-| Automated tests | backend 136 · frontend Vitest 8 · Playwright E2E 17 (10 core + 7 for the six enhancements) — all passing |
+| End-to-end latency p50 / p95 | 125 / 540 ms (deterministic mode, hybrid retrieval, local) |
+| Automated tests | backend 138 · frontend Vitest 8 · Playwright E2E 17 (10 core + 7 for the six enhancements), all passing |
 
 ### Retrieval: LSA vs MiniLM vs hybrid (36 paraphrase queries)
 
-Both embeddings are built and used. Hybrid search ranks with each index separately, then fuses the rankings with weighted Reciprocal Rank Fusion (k=60).
+Both embeddings are built and used. Hybrid search ranks with each index separately, then fuses the rankings with weighted Reciprocal Rank Fusion (k=60). The index holds the 3,000 supplied conversations (18,639 chunks).
 
 | Method | Topic P@5 | Exact P@5 | Hit@5 | MRR@5 |
 |---|---|---|---|---|
-| LSA (TF-IDF + SVD, 192 dims) | 32.2% | 30.6% | 47.2% | 0.353 |
+| LSA (TF-IDF + SVD, 192 dims) | 28.9% | 28.9% | 41.7% | 0.333 |
 | MiniLM (all-MiniLM-L6-v2, 384 dims) | 62.2% | 56.1% | 83.3% | 0.711 |
-| Hybrid, equal weights (measured once, not shipped) | 51.1% | 47.8% | 66.7% | 0.591 |
-| **Hybrid, LSA weight 0.15 (default)** | **62.2%** | **57.8%** | **86.1%** | 0.698 |
+| Hybrid, equal weights (measured once, not shipped)* | 51.1% | 47.8% | 66.7% | 0.591 |
+| **Hybrid, LSA weight 0.15 (default)** | **62.8%** | **58.3%** | **86.1%** | 0.708 |
 
-**Disclosure.** The LSA weight (0.15) was chosen on these same 36 queries, so the hybrid row is optimistic relative to MiniLM alone. The gain over MiniLM is small (+1.7 points exact P@5, +2.8 points hit rate), and MRR is slightly lower. The honest reading: hybrid matches MiniLM on precision and finds a relevant conversation slightly more often, at about 15 ms extra latency.
+\* Measured on the earlier index build, which also contained the 120 generated demo conversations (filtered out at query time). LSA's vocabulary depends on the documents indexed, which is why LSA-only scores moved slightly (32.2% → 28.9% topic P@5) when the default build stopped indexing the demo data; MiniLM is unchanged.
+
+**Disclosure.** The LSA weight (0.15) was chosen on these same 36 queries, so the hybrid row is optimistic relative to MiniLM alone. The gain over MiniLM is small: +2.2 points exact P@5 and +2.8 points hit rate, with MRR about equal. The honest reading: hybrid matches MiniLM on precision and finds a relevant conversation slightly more often, at about 14 ms extra median latency.
 
 | Topic | LSA topic P@5 | MiniLM topic P@5 | Hybrid topic P@5 |
 |---|---|---|---|
 | account_locked | 0.00 | 1.00 | 1.00 |
-| app_crash | 0.04 | 0.84 | 0.80 |
-| coupon_not_applied | 0.12 | 0.60 | 0.72 |
-| duplicate_charge | 0.76 | 1.00 | 1.00 |
-| general_help | 0.32 | 0.32 | 0.40 |
-| not_received | 0.00 | 0.64 | 0.44 |
+| app_crash | 0.00 | 0.84 | 0.80 |
+| coupon_not_applied | 0.16 | 0.60 | 0.72 |
+| duplicate_charge | 0.60 | 1.00 | 1.00 |
+| general_help | 0.20 | 0.32 | 0.48 |
+| not_received | 0.00 | 0.64 | 0.40 |
 | payment_not_reflected | 0.20 | 0.00 | 0.00 |
-| service_malfunction | 0.88 | 0.88 | 0.92 |
+| service_malfunction | 0.92 | 0.88 | 0.92 |
 
-LSA contributes on lexical matches (coupon wording, generic help). It still fails on "payment went through but the service was never activated", which every method misses. When MiniLM cannot be loaded, `EMBEDDING_BACKEND=auto` falls back to LSA only and records why in the index manifest.
+LSA contributes on lexical matches. Every method misses "payment went through but the service was never activated" phrasings. When MiniLM cannot be loaded, `EMBEDDING_BACKEND=auto` falls back to LSA only and records why in the index manifest.
 
 ## 3. Classification evaluation — what can and cannot be claimed
 

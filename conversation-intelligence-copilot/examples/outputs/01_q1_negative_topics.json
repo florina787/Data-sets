@@ -1,8 +1,8 @@
 [
   {
     "version": "1.0",
-    "request_id": "R-1aae3ea227a1",
-    "session_id": "S-4ae51c1144ab",
+    "request_id": "R-72da7c5048e5",
+    "session_id": "S-566f249296de",
     "status": "completed",
     "question": "What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?",
     "resolved_intent": {
@@ -81,7 +81,7 @@
       "audience": "analyst"
     },
     "headline": "Top negative topics in November 2025: General help request, Duplicate charge, Paid but service not delivered, Feature not working, Login / account locked.",
-    "answer": "239 of 682 conversations in November 2025 were negative (35.0%). Ranked by number of negative conversations, the top 5 topics are General help request (49), Duplicate charge (42), Paid but service not delivered (30), Feature not working (28), Login / account locked (24). General help request accounts for 20.5% of negative conversations. By negative rate rather than count, Duplicate charge is highest at 48.3% (95% CI 38.1%\u201358.6%).",
+    "answer": "240 of 682 conversations in November 2025 were negative (35.2%). Ranked by number of negative conversations, the top 5 topics are General help request (49), Duplicate charge (42), Paid but service not delivered (30), Feature not working (28), Login / account locked (24). General help request accounts for 20.4% of negative conversations. By negative rate rather than count, Duplicate charge is highest at 48.3% (95% CI 38.1%\u201358.6%). Rank 5 is a tie: Login / account locked (24 of 58), Coupon not applying (24 of 84) share the same count. The tie-breaker (higher negative rate) lists Login / account locked; the others are equally entitled to the last place.",
     "key_points": [
       "#1 General help request: 49 negative of 156 (31.4%, 95% CI 24.6%\u201339.1%)",
       "#2 Duplicate charge: 42 negative of 87 (48.3%, 95% CI 38.1%\u201358.6%)",
@@ -102,7 +102,7 @@
       {
         "id": "negative_conversations",
         "label": "Negative conversations",
-        "value": 239,
+        "value": 240,
         "unit": "count",
         "numerator": null,
         "denominator": null,
@@ -111,9 +111,9 @@
       {
         "id": "negative_rate_overall",
         "label": "Overall negative rate",
-        "value": 0.3504,
+        "value": 0.3519,
         "unit": "percent",
-        "numerator": 239,
+        "numerator": 240,
         "denominator": 682,
         "description": ""
       },
@@ -132,7 +132,7 @@
         "value": 49,
         "unit": "count",
         "numerator": 49,
-        "denominator": 239,
+        "denominator": 240,
         "description": ""
       },
       {
@@ -147,9 +147,9 @@
       {
         "id": "negative_rate_overall",
         "label": "Negative conversations",
-        "value": 0.3504,
+        "value": 0.3519,
         "unit": "percent",
-        "numerator": 239,
+        "numerator": 240,
         "denominator": 682,
         "description": ""
       },
@@ -174,9 +174,9 @@
       {
         "id": "latest_negative_rate",
         "label": "Negative rate 2025-11",
-        "value": 0.3504,
+        "value": 0.3519,
         "unit": "percent",
-        "numerator": 239,
+        "numerator": 240,
         "denominator": 682,
         "description": ""
       }
@@ -191,7 +191,7 @@
         "negative_rate": 0.3141,
         "rate_ci_low": 0.2465,
         "rate_ci_high": 0.3907,
-        "share_of_negative": 0.205,
+        "share_of_negative": 0.2042,
         "escalation_requests": 179.0,
         "rank_by_rate": 5
       },
@@ -204,7 +204,7 @@
         "negative_rate": 0.4828,
         "rate_ci_low": 0.3807,
         "rate_ci_high": 0.5863,
-        "share_of_negative": 0.1757,
+        "share_of_negative": 0.175,
         "escalation_requests": 110.0,
         "rank_by_rate": 1
       },
@@ -217,7 +217,7 @@
         "negative_rate": 0.4,
         "rate_ci_low": 0.2966,
         "rate_ci_high": 0.5131,
-        "share_of_negative": 0.1255,
+        "share_of_negative": 0.125,
         "escalation_requests": 99.0,
         "rank_by_rate": 3
       },
@@ -230,7 +230,7 @@
         "negative_rate": 0.3684,
         "rate_ci_low": 0.2688,
         "rate_ci_high": 0.4808,
-        "share_of_negative": 0.1172,
+        "share_of_negative": 0.1167,
         "escalation_requests": 81.0,
         "rank_by_rate": 4
       },
@@ -243,7 +243,7 @@
         "negative_rate": 0.4138,
         "rate_ci_low": 0.2963,
         "rate_ci_high": 0.542,
-        "share_of_negative": 0.1004,
+        "share_of_negative": 0.1,
         "escalation_requests": 69.0,
         "rank_by_rate": 2
       }
@@ -612,10 +612,11 @@
     ],
     "recommendations": [],
     "uncertainty_notes": [
-      "The negative rate does not differ significantly across topics (chi-square p = 0.0566). Rankings mostly reflect how many conversations each group has, so treat small gaps between ranks as noise.",
+      "Rank 5 is a tie: Login / account locked (24 of 58), Coupon not applying (24 of 84) share the same count. The tie-breaker (higher negative rate) lists Login / account locked; the others are equally entitled to the last place.",
+      "The negative rate does not differ significantly across topics (chi-square p = 0.0707). Rankings mostly reflect how many conversations each group has, so treat small gaps between ranks as noise.",
       "Sentiment and topic labels are derived from message templates by a deterministic rule set (see EVALUATION.md for agreement checks).",
-      "Sentiment mix does not differ significantly by topic (chi-square p = 0.1722).",
-      "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend."
+      "Sentiment mix does not differ significantly by topic (chi-square p = 0.1938).",
+      "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend."
     ],
     "method_notes": [
       "Each conversation is counted once, under the primary topic of the customer's opening message.",
@@ -631,17 +632,225 @@
       "Show three supporting examples.",
       "Which agents handled those concerns?"
     ],
-    "execution_trace_id": "R-1aae3ea227a1",
+    "execution_trace_id": "R-72da7c5048e5",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "negative_topics",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'negative_topics'.",
+          "rule": "negative_topics",
+          "label": "negative_topics"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'negative_topics'.",
+        "rule": "negative_topics",
+        "label": "negative_topics",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.4
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "negative_topics",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'negative_topics'.",
+        "rule": "negative_topics",
+        "label": "negative_topics"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": {
+      "title": "Negative sentiment by topic",
+      "generated_from": "What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?",
+      "kpi_chart_ids": [
+        "R-72da7c5048e5_neg_kpis"
+      ],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "negative_topics",
+              "why": "A ranking question: horizontal bars order the groups by negative conversations.",
+              "width": "half"
+            },
+            {
+              "chart_id": "sentiment_distribution",
+              "why": "Overall sentiment mix.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Reliability",
+          "items": [
+            {
+              "chart_id": "negative_rate_ci",
+              "why": "Highest count is not highest rate; 95% intervals show which differences could be noise.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Context",
+          "items": [
+            {
+              "chart_id": "sentiment_by_group",
+              "why": "Sentiment mix per group.",
+              "width": "half"
+            },
+            {
+              "chart_id": "sentiment_trend",
+              "why": "Month-by-month negative rate with intervals: is it changing?",
+              "width": "half"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "November 2025"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "All dates",
+          "question": "Same analysis across the whole dataset."
+        },
+        {
+          "label": "Previous month",
+          "question": "What about the previous month?"
+        },
+        {
+          "label": "Why General help request?",
+          "question": "What is driving negative sentiment in general help request?"
+        },
+        {
+          "label": "Compare top two",
+          "question": "Compare the top two topics."
+        },
+        {
+          "label": "Show examples",
+          "question": "Show supporting examples for the first one."
+        }
+      ],
+      "operations": [
+        "rank_negative_topics",
+        "sentiment_distribution",
+        "sentiment_trend"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "24/24 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "evidence_coverage",
+          "status": "pass",
+          "detail": "3/3 top-ranked groups have a supporting conversation attached",
+          "items": []
+        },
+        {
+          "check": "evidence_relevance",
+          "status": "pass",
+          "detail": "6/6 evidence conversations are negative, matching a claim about negative sentiment",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "1 group(s) below 30 conversations \u2014 caveat attached",
+          "items": [
+            "None (n=1)"
+          ]
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "Counter-evidence stated alongside the claim",
+          "items": [
+            "69% of General help request conversations were not negative."
+          ]
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [
+        "69% of General help request conversations were not negative."
+      ],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 6,
+      "total": 6
     },
     "quality_status": {
       "status": "pass",
@@ -662,7 +871,7 @@
           "check": "denominators",
           "passed": true,
           "critical": true,
-          "detail": "Group totals 682/239 vs scope 682/239 conversations/negative"
+          "detail": "Group totals 682/240 vs scope 682/240 conversations/negative"
         },
         {
           "check": "ranking_consistency",
@@ -686,7 +895,7 @@
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "6 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -704,11 +913,41 @@
           "check": "uncertainty_disclosed",
           "passed": true,
           "critical": false,
-          "detail": "4 uncertainty notes attached to the response"
+          "detail": "5 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "24/24 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "evidence_coverage",
+          "passed": true,
+          "critical": false,
+          "detail": "3/3 top-ranked groups have a supporting conversation attached"
+        },
+        {
+          "check": "evidence_relevance",
+          "passed": true,
+          "critical": false,
+          "detail": "6/6 evidence conversations are negative, matching a claim about negative sentiment"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "1 group(s) below 30 conversations \u2014 caveat attached"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 10,
-      "total": 10
+      "passed": 15,
+      "total": 15
     },
     "governance": [
       {
@@ -734,10 +973,10 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 316.6,
+    "latency_ms": 192.5,
     "charts": [
       {
-        "chart_id": "R-1aae3ea227a1_neg_kpis",
+        "chart_id": "R-72da7c5048e5_neg_kpis",
         "chart_type": "kpi",
         "title": "Key figures",
         "description": "",
@@ -747,13 +986,13 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-1aae3ea227a1_neg",
+        "source_analysis_id": "R-72da7c5048e5_neg",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Conversations in scope: 682; Negative conversations: 239; Overall negative rate: 0.3504; Top topic: General help request",
+        "accessibility_summary": "Conversations in scope: 682; Negative conversations: 240; Overall negative rate: 0.3519; Top topic: General help request",
         "data_preview": [
           {
             "id": "conversations_in_scope",
@@ -767,7 +1006,7 @@
           {
             "id": "negative_conversations",
             "label": "Negative conversations",
-            "value": 239,
+            "value": 240,
             "unit": "count",
             "numerator": null,
             "denominator": null,
@@ -776,9 +1015,9 @@
           {
             "id": "negative_rate_overall",
             "label": "Overall negative rate",
-            "value": 0.3504,
+            "value": 0.3519,
             "unit": "percent",
-            "numerator": 239,
+            "numerator": 240,
             "denominator": 682,
             "description": ""
           },
@@ -831,7 +1070,7 @@
           "conversation_ids": []
         },
         "dataset_scope": "original",
-        "source_analysis_id": "R-1aae3ea227a1",
+        "source_analysis_id": "R-72da7c5048e5",
         "evidence_ids": [
           "C0011749",
           "C0007786",
@@ -840,7 +1079,7 @@
           "C0010437",
           "C0001427"
         ],
-        "uncertainty_note": "The negative rate does not differ significantly across topics (chi-square p = 0.0566). Rankings mostly reflect how many conversations each group has, so treat small gaps between ranks as noise.",
+        "uncertainty_note": "Rank 5 is a tie: Login / account locked (24 of 58), Coupon not applying (24 of 84) share the same count. The tie-breaker (higher negative rate) lists Login / account locked; the others are equally entitled to the last place.",
         "drilldown": {
           "kind": "topic",
           "field": "key"
@@ -904,7 +1143,7 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-1aae3ea227a1",
+        "source_analysis_id": "R-72da7c5048e5",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": {
@@ -913,7 +1152,7 @@
         },
         "error_low_field": "rate_ci_low",
         "error_high_field": "rate_ci_high",
-        "accessibility_summary": "General help request: 31.4%; Duplicate charge: 48.3%; Paid but service not delivered: 40.0%; Feature not working: 36.8%; Login / account locked: 41.4%; Item or service not received: 29.5%; Coupon not applying: 27.4%; App crash: 29.4%",
+        "accessibility_summary": "General help request: 31.4%; Duplicate charge: 48.3%; Paid but service not delivered: 40.0%; Feature not working: 36.8%; Login / account locked: 41.4%; Coupon not applying: 28.6%; Item or service not received: 29.5%; App crash: 29.4%",
         "data_preview": [
           {
             "name": "Duplicate charge",
@@ -998,13 +1237,13 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-1aae3ea227a1",
+        "source_analysis_id": "R-72da7c5048e5",
         "evidence_ids": [],
-        "uncertainty_note": "Sentiment mix does not differ significantly by topic (chi-square p = 0.1722).",
+        "uncertainty_note": "Sentiment mix does not differ significantly by topic (chi-square p = 0.1938).",
         "drilldown": null,
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "App crash: 20 negative of 68; Coupon not applying: 23 negative of 84; Duplicate charge: 42 negative of 87; Feature not working: 28 negative of 76; General help request: 49 negative of 156; Item or service not received: 23 negative of 78; Login / account locked: 24 negative of 58; Paid but service not delivered: 30 negative of 75",
+        "accessibility_summary": "App crash: 20 negative of 68; Coupon not applying: 24 negative of 84; Duplicate charge: 42 negative of 87; Feature not working: 28 negative of 76; General help request: 49 negative of 156; Item or service not received: 23 negative of 78; Login / account locked: 24 negative of 58; Paid but service not delivered: 30 negative of 75",
         "data_preview": [
           {
             "name": "App crash",
@@ -1016,8 +1255,8 @@
           },
           {
             "name": "Coupon not applying",
-            "negative": 23.0,
-            "mixed": 52.0,
+            "negative": 24.0,
+            "mixed": 51.0,
             "neutral": 1.0,
             "positive": 8.0,
             "total": 84.0
@@ -1074,24 +1313,24 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-1aae3ea227a1",
+        "source_analysis_id": "R-72da7c5048e5",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "negative: 35.0%; mixed: 56.0%; neutral: 0.1%; positive: 8.8%",
+        "accessibility_summary": "negative: 35.2%; mixed: 55.9%; neutral: 0.1%; positive: 8.8%",
         "data_preview": [
           {
             "sentiment": "negative",
-            "conversations": 239,
-            "share": 0.3504,
+            "conversations": 240,
+            "share": 0.3519,
             "color": "negative"
           },
           {
             "sentiment": "mixed",
-            "conversations": 382,
-            "share": 0.5601,
+            "conversations": 381,
+            "share": 0.5587,
             "color": "mixed"
           },
           {
@@ -1126,16 +1365,16 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-1aae3ea227a1",
+        "source_analysis_id": "R-72da7c5048e5",
         "evidence_ids": [],
-        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
         "drilldown": {
           "kind": "month",
           "field": "month"
         },
         "error_low_field": "rate_ci_low",
         "error_high_field": "rate_ci_high",
-        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.5%; 2025-11: 35.0%",
+        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.6%; 2025-11: 35.2%",
         "data_preview": [
           {
             "month": "2025-08",
@@ -1155,19 +1394,19 @@
           },
           {
             "month": "2025-10",
-            "negative_rate": 0.3346,
-            "rate_ci_low": 0.3024,
-            "rate_ci_high": 0.3685,
+            "negative_rate": 0.3359,
+            "rate_ci_low": 0.3036,
+            "rate_ci_high": 0.3698,
             "conversations": 780,
-            "negative": 261.0
+            "negative": 262.0
           },
           {
             "month": "2025-11",
-            "negative_rate": 0.3504,
-            "rate_ci_low": 0.3156,
-            "rate_ci_high": 0.387,
+            "negative_rate": 0.3519,
+            "rate_ci_low": 0.317,
+            "rate_ci_high": 0.3885,
             "conversations": 682,
-            "negative": 239.0
+            "negative": 240.0
           }
         ],
         "rows": 4
@@ -1177,8 +1416,8 @@
   },
   {
     "version": "1.0",
-    "request_id": "R-ebc3b06e3f00",
-    "session_id": "S-4ae51c1144ab",
+    "request_id": "R-a4420777d1ab",
+    "session_id": "S-566f249296de",
     "status": "completed",
     "question": "Compare the top two topics.",
     "resolved_intent": {
@@ -1537,17 +1776,165 @@
       "Show similar conversations for Duplicate charge.",
       "Which recurring concerns should leadership review first?"
     ],
-    "execution_trace_id": "R-ebc3b06e3f00",
+    "execution_trace_id": "R-a4420777d1ab",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "compare_topics",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'compare'.",
+          "rule": "compare",
+          "label": "compare_topics"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'compare'.",
+        "rule": "compare",
+        "label": "compare_topics",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.2
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "compare_topics",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'compare'.",
+        "rule": "compare",
+        "label": "compare_topics"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": {
+      "title": "Topic comparison",
+      "generated_from": "Compare the top two topics.",
+      "kpi_chart_ids": [],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "compare_topics",
+              "why": "Side-by-side comparison of the selected topics.",
+              "width": "half"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "November 2025"
+        },
+        {
+          "field": "topics",
+          "value": "General help request, Duplicate charge"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "All dates",
+          "question": "Same analysis across the whole dataset."
+        },
+        {
+          "label": "Previous month",
+          "question": "What about the previous month?"
+        }
+      ],
+      "operations": [
+        "compare_topics"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "16/16 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "No counter-evidence applicable",
+          "items": []
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 4,
+      "total": 4
     },
     "quality_status": {
       "status": "pass",
@@ -1580,7 +1967,7 @@
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "4 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -1599,10 +1986,28 @@
           "passed": true,
           "critical": false,
           "detail": "1 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "16/16 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 8,
-      "total": 8
+      "passed": 11,
+      "total": 11
     },
     "governance": [
       {
@@ -1628,7 +2033,7 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 141.3,
+    "latency_ms": 98.0,
     "charts": [
       {
         "chart_id": "compare_topics",
@@ -1652,7 +2057,7 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-ebc3b06e3f00",
+        "source_analysis_id": "R-a4420777d1ab",
         "evidence_ids": [
           "C0014263",
           "C0002874",
@@ -1693,8 +2098,8 @@
   },
   {
     "version": "1.0",
-    "request_id": "R-19b31fe3e3dd",
-    "session_id": "S-4ae51c1144ab",
+    "request_id": "R-3dc3a43e8aab",
+    "session_id": "S-566f249296de",
     "status": "completed",
     "question": "What about the previous month?",
     "resolved_intent": {
@@ -2036,17 +2441,165 @@
       "Show similar conversations for Duplicate charge.",
       "Which recurring concerns should leadership review first?"
     ],
-    "execution_trace_id": "R-19b31fe3e3dd",
+    "execution_trace_id": "R-3dc3a43e8aab",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "compare_topics",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'follow_up_inherit'.",
+          "rule": "follow_up_inherit",
+          "label": "compare_topics"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'follow_up_inherit'.",
+        "rule": "follow_up_inherit",
+        "label": "compare_topics",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.3
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "compare_topics",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'follow_up_inherit'.",
+        "rule": "follow_up_inherit",
+        "label": "compare_topics"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": {
+      "title": "Topic comparison",
+      "generated_from": "What about the previous month?",
+      "kpi_chart_ids": [],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "compare_topics",
+              "why": "Side-by-side comparison of the selected topics.",
+              "width": "half"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "October 2025"
+        },
+        {
+          "field": "topics",
+          "value": "General help request, Duplicate charge"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "All dates",
+          "question": "Same analysis across the whole dataset."
+        },
+        {
+          "label": "Previous month",
+          "question": "What about the previous month?"
+        }
+      ],
+      "operations": [
+        "compare_topics"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "16/16 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "No counter-evidence applicable",
+          "items": []
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 4,
+      "total": 4
     },
     "quality_status": {
       "status": "pass",
@@ -2079,7 +2632,7 @@
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "4 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -2098,10 +2651,28 @@
           "passed": true,
           "critical": false,
           "detail": "1 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "16/16 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 8,
-      "total": 8
+      "passed": 11,
+      "total": 11
     },
     "governance": [
       {
@@ -2127,7 +2698,7 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 142.7,
+    "latency_ms": 90.3,
     "charts": [
       {
         "chart_id": "compare_topics",
@@ -2151,7 +2722,7 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-19b31fe3e3dd",
+        "source_analysis_id": "R-3dc3a43e8aab",
         "evidence_ids": [
           "C0000808",
           "C0001045",

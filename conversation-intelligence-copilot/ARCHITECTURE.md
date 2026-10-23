@@ -125,10 +125,24 @@ Auth/permission errors (401/403/`API_KEY_SERVICE_BLOCKED`) are permanent: no ret
 
 ## 6. Retrieval
 
-* Chunks: 4-turn windows, overlap 2, speaker-labelled, opening complaint prefixed; 18,639 chunks for the original data.
-* Embeddings: `EMBEDDING_BACKEND=auto` tries `sentence-transformers/all-MiniLM-L6-v2`; on failure uses LSA (TF-IDF 1–2-grams + 192-dim SVD), recording the reason in the manifest. `IndexIDMap2(IndexFlatIP)` over L2-normalised vectors = exact cosine search.
-* Search: metadata pre-filter (dataset mode, window, topics, products, sentiments, agents, IDs) via `IDSelectorBatch` → top candidates → optional rerank `0.85·cosine + 0.15·token overlap` → one passage per conversation → evidence with message IDs and turn ranges.
+* Chunks: 4-turn windows, overlap 2, speaker-labelled, opening complaint prefixed; 18,639 chunks from the 3,000 supplied conversations (the optional synthetic demo set is only indexed when `ENABLE_SYNTHETIC_DEMO=true` at build time).
+* Embeddings: two indexes are built and both are used.
+  * **MiniLM** (`sentence-transformers/all-MiniLM-L6-v2`, 384 dims, semantic).
+  * **LSA** (TF-IDF 1–2-grams + 192-dim SVD, lexical).
+  * Each is an `IndexIDMap2(IndexFlatIP)` over L2-normalised vectors, so search is exact cosine.
+  * If MiniLM cannot load, the build is LSA-only and the manifest records why.
+* Search (`retrieval/index.py` `search`):
+  1. Metadata pre-filter (dataset mode, window, topics, products, sentiments, agents, IDs) via `IDSelectorBatch`.
+  2. Each index ranks the allowed passages, keeping the best passage per conversation.
+  3. **Weighted reciprocal rank fusion** combines the rankings (k=60, MiniLM 1.0, LSA 0.15; `RETRIEVAL_MODE=dense|lsa` uses one index).
+  4. Evidence is returned with message IDs, turn ranges, CSV line references, the fused score and each method's rank.
 * Triggers: similar-case questions, coaching evidence (parallel), leadership/negative-topic examples (after analysis), explicit evidence requests. Pure aggregations skip retrieval.
+* How it improves the final answer:
+  * **Grounding.** Leadership and coaching answers carry real transcripts that illustrate the top-ranked concern or the coaching pattern. For leadership, retrieval runs *after* the analysis, filtered to the #1 concern and negative conversations.
+  * **Similar-case questions.** These ("find conversations like…", "show examples of…") can only be answered by retrieval.
+  * **Checked before display.** Every retrieved excerpt is re-read from DuckDB and checked by the Evidence Challenger.
+  * **Measured.** Retrieved examples are on the queried topic 62.8% of the time in the top 5, against 12.5% by chance, and a relevant conversation appears in the top 5 for 86.1% of queries (EVALUATION.md).
+  * **Not measured.** There is no with/without-retrieval comparison of analysts' answer quality. Retrieval never produces numbers, so it cannot change a count or a ranking.
 
 ## 7. Memory
 

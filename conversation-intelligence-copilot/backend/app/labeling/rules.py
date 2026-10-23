@@ -101,7 +101,9 @@ def conversation_sentiment(scores: list[float], sentiments: list[str]) -> str:
     """
     if not scores:
         return "uncertain"
-    mean = sum(scores) / len(scores)
+    # Round so a mean that is exactly on a threshold (e.g. -0.25 from eight scores) is classified the same way
+    # whatever the floating-point summation order; otherwise -0.25 can come out as -0.24999999999999997.
+    mean = round(sum(scores) / len(scores), 9)
     if mean <= NEGATIVE_THRESHOLD:
         return "negative"
     if mean >= POSITIVE_THRESHOLD:

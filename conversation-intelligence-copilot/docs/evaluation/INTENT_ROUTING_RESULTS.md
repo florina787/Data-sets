@@ -16,7 +16,7 @@ Benchmark v2: 288 questions in 95 paraphrase families. train 142 (47 families), 
 | Confidence router, no model | **90.4%** | 0.887 | 2.7% | 11.0% | 100.0% | 0.0% | 0.0% | 0 / 7 ms |
 | Confidence router + local Qwen (final) | **95.9%** | 0.932 | 4.1% | 4.1% | 100.0% | 0.0% | 6.9% | 0 / 750 ms |
 
-Latency is wall-clock per question on 4 CPU cores. Qwen calls reuse llama.cpp's cached system-prompt prefix, so warm calls take about a second; the first call after start-up (model load + full prompt) took 30–55 s in this environment.
+Latency is wall-clock per question on 4 CPU cores. Qwen calls reuse llama.cpp's cached system-prompt prefix, so warm calls take about a second; the first call after start-up (model load + full prompt) took 8.7 s in an idle process, and 30–55 s while other jobs competed for the CPU.
 
 ### Coverage vs accuracy (final router, test)
 

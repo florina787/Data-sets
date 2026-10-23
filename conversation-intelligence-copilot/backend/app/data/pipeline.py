@@ -109,7 +109,8 @@ def run(settings: Settings | None = None) -> dict:
         "archive_members": loaded.archive_members, "rows": len(loaded.frame),
         "citation": "Customer Support Conversation Dataset (Syncora.ai), Kaggle. Supplied sample of 3,000 synthetic conversations.",
     })
-    if settings.synthetic_dataset_path.exists():
+    # The generated demo set is opt-in: a default build contains only the supplied 3,000 conversations.
+    if settings.enable_synthetic_demo and settings.synthetic_dataset_path.exists():
         syn = load_dataset(settings.synthetic_dataset_path)
         frames.append(normalize_messages(syn.frame, "synthetic_demo", syn.source_file))
         sources.append({"dataset_source": "synthetic_demo", "file": syn.source_file, "sha256": syn.sha256, "rows": len(syn.frame),

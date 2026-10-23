@@ -1,8 +1,8 @@
 [
   {
     "version": "1.0",
-    "request_id": "R-c8b68b628efd",
-    "session_id": "S-e0670e7f454a",
+    "request_id": "R-33ac367adbae",
+    "session_id": "S-3f13d79954aa",
     "status": "completed",
     "question": "Which recurring customer concerns should contact-centre leadership review first?",
     "resolved_intent": {
@@ -152,9 +152,9 @@
       {
         "id": "latest_negative_rate",
         "label": "Negative rate 2025-11",
-        "value": 0.3504,
+        "value": 0.3519,
         "unit": "percent",
-        "numerator": 239,
+        "numerator": 240,
         "denominator": 682,
         "description": ""
       },
@@ -195,17 +195,17 @@
         "name": "Coupon not applying",
         "key": "coupon_not_applied",
         "priority": "High",
-        "priority_score": 60.3,
+        "priority_score": 60.8,
         "conversations": 331,
-        "negative": 112.0,
-        "negative_rate": 0.3384,
+        "negative": 113.0,
+        "negative_rate": 0.3414,
         "escalation_rate": 1.1088,
         "unresolved_rate": 0.5347,
         "resolution_misfit_rate": 0.6375,
         "trend": 0.3125,
         "main_driver": "escalation_rate",
         "contrib_frequency": 2.3,
-        "contrib_negative_rate": 16.0,
+        "contrib_negative_rate": 16.5,
         "contrib_escalation_rate": 15.0,
         "contrib_unresolved_rate": 12.7,
         "contrib_resolution_misfit_rate": 9.4,
@@ -237,17 +237,17 @@
         "name": "Paid but service not delivered",
         "key": "payment_not_reflected",
         "priority": "Medium",
-        "priority_score": 52.9,
+        "priority_score": 53.4,
         "conversations": 335,
-        "negative": 124.0,
-        "negative_rate": 0.3701,
+        "negative": 125.0,
+        "negative_rate": 0.3731,
         "escalation_rate": 1.0836,
         "unresolved_rate": 0.5224,
         "resolution_misfit_rate": 0.5075,
         "trend": -0.1176,
         "main_driver": "negative_rate",
         "contrib_frequency": 2.6,
-        "contrib_negative_rate": 21.5,
+        "contrib_negative_rate": 22.0,
         "contrib_escalation_rate": 9.8,
         "contrib_unresolved_rate": 9.7,
         "contrib_resolution_misfit_rate": 7.5,
@@ -340,14 +340,136 @@
     ],
     "evidence": [
       {
-        "evidence_id": "C0013823#6-9",
+        "evidence_id": "C0004076#12-14",
         "kind": "retrieval",
-        "conversation_id": "C0013823",
+        "conversation_id": "C0004076",
         "message_ids": [
-          "C0013823-T06",
-          "C0013823-T07",
-          "C0013823-T08",
-          "C0013823-T09"
+          "C0004076-T12",
+          "C0004076-T13",
+          "C0004076-T14"
+        ],
+        "turn_range": [
+          12,
+          14
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0004076-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 11222"
+          },
+          {
+            "message_id": "C0004076-T13",
+            "turn_index": 13,
+            "role": "agent",
+            "text": "The order is out for delivery. Expected by tomorrow evening.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 11223"
+          },
+          {
+            "message_id": "C0004076-T14",
+            "turn_index": 14,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 11224"
+          }
+        ],
+        "topic": "Item or service not received",
+        "product": "Return",
+        "sentiment": "negative",
+        "agent_id": "AgentQLWR",
+        "date": "2025-11-25",
+        "similarity": 0.621,
+        "reason": "Hybrid match (MiniLM #1, LSA #8; fused by RRF; similarity 0.62)",
+        "retrieval_method": "hybrid",
+        "method_scores": {
+          "dense": {
+            "rank": 1,
+            "similarity": 0.621
+          },
+          "lsa": {
+            "rank": 8,
+            "similarity": 0.6206
+          }
+        }
+      },
+      {
+        "evidence_id": "C0009871#12-14",
+        "kind": "retrieval",
+        "conversation_id": "C0009871",
+        "message_ids": [
+          "C0009871-T12",
+          "C0009871-T13",
+          "C0009871-T14"
+        ],
+        "turn_range": [
+          12,
+          14
+        ],
+        "excerpts": [
+          {
+            "message_id": "C0009871-T12",
+            "turn_index": 12,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 28037"
+          },
+          {
+            "message_id": "C0009871-T13",
+            "turn_index": 13,
+            "role": "agent",
+            "text": "We escalated the case to our specialist team. You'll get an update soon.",
+            "sentiment": "neutral",
+            "act": "resolution",
+            "source_reference": "cs_conversations.csv:line 28038"
+          },
+          {
+            "message_id": "C0009871-T14",
+            "turn_index": 14,
+            "role": "customer",
+            "text": "Still not fixed. Can you escalate?",
+            "sentiment": "negative",
+            "act": "escalation_request",
+            "source_reference": "cs_conversations.csv:line 28039"
+          }
+        ],
+        "topic": "Item or service not received",
+        "product": "Report",
+        "sentiment": "negative",
+        "agent_id": "AgentTYIU",
+        "date": "2025-09-01",
+        "similarity": 0.608,
+        "reason": "Hybrid match (MiniLM #2, LSA #14; fused by RRF; similarity 0.61)",
+        "retrieval_method": "hybrid",
+        "method_scores": {
+          "dense": {
+            "rank": 2,
+            "similarity": 0.608
+          },
+          "lsa": {
+            "rank": 14,
+            "similarity": 0.5874
+          }
+        }
+      },
+      {
+        "evidence_id": "C0006016#6-9",
+        "kind": "retrieval",
+        "conversation_id": "C0006016",
+        "message_ids": [
+          "C0006016-T06",
+          "C0006016-T07",
+          "C0006016-T08",
+          "C0006016-T09"
         ],
         "turn_range": [
           6,
@@ -355,169 +477,60 @@
         ],
         "excerpts": [
           {
-            "message_id": "C0013823-T06",
+            "message_id": "C0006016-T06",
             "turn_index": 6,
             "role": "customer",
             "text": "Still not fixed. Can you escalate?",
             "sentiment": "negative",
             "act": "escalation_request",
-            "source_reference": "cs_conversations.csv:line 38641"
+            "source_reference": "cs_conversations.csv:line 16947"
           },
           {
-            "message_id": "C0013823-T07",
+            "message_id": "C0006016-T07",
             "turn_index": 7,
             "role": "agent",
-            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "text": "Please allow me a moment while I run some checks.",
             "sentiment": "neutral",
-            "act": "courtesy_greeting",
-            "source_reference": "cs_conversations.csv:line 38642"
+            "act": "hold_notice",
+            "source_reference": "cs_conversations.csv:line 16948"
           },
           {
-            "message_id": "C0013823-T08",
+            "message_id": "C0006016-T08",
             "turn_index": 8,
             "role": "customer",
             "text": "Still not fixed. Can you escalate?",
             "sentiment": "negative",
             "act": "escalation_request",
-            "source_reference": "cs_conversations.csv:line 38643"
+            "source_reference": "cs_conversations.csv:line 16949"
           },
           {
-            "message_id": "C0013823-T09",
+            "message_id": "C0006016-T09",
             "turn_index": 9,
             "role": "agent",
             "text": "I understand this is frustrating. I'm investigating now.",
             "sentiment": "neutral",
             "act": "empathy_acknowledgement",
-            "source_reference": "cs_conversations.csv:line 38644"
+            "source_reference": "cs_conversations.csv:line 16950"
           }
         ],
         "topic": "Item or service not received",
-        "product": "Broadband",
+        "product": "Gift Card",
         "sentiment": "negative",
-        "agent_id": "AgentSWOH",
-        "date": "2025-08-24",
-        "similarity": 0.6368,
-        "reason": "Semantic match (cosine similarity 0.64)"
-      },
-      {
-        "evidence_id": "C0006359#8-11",
-        "kind": "retrieval",
-        "conversation_id": "C0006359",
-        "message_ids": [
-          "C0006359-T08",
-          "C0006359-T09",
-          "C0006359-T10",
-          "C0006359-T11"
-        ],
-        "turn_range": [
-          8,
-          11
-        ],
-        "excerpts": [
-          {
-            "message_id": "C0006359-T08",
-            "turn_index": 8,
-            "role": "customer",
-            "text": "Still not fixed. Can you escalate?",
-            "sentiment": "negative",
-            "act": "escalation_request",
-            "source_reference": "cs_conversations.csv:line 17986"
+        "agent_id": "AgentNRGR",
+        "date": "2025-08-17",
+        "similarity": 0.605,
+        "reason": "Hybrid match (MiniLM #3, LSA #9; fused by RRF; similarity 0.60)",
+        "retrieval_method": "hybrid",
+        "method_scores": {
+          "dense": {
+            "rank": 3,
+            "similarity": 0.605
           },
-          {
-            "message_id": "C0006359-T09",
-            "turn_index": 9,
-            "role": "agent",
-            "text": "I understand this is frustrating. I'm investigating now.",
-            "sentiment": "neutral",
-            "act": "empathy_acknowledgement",
-            "source_reference": "cs_conversations.csv:line 17987"
-          },
-          {
-            "message_id": "C0006359-T10",
-            "turn_index": 10,
-            "role": "customer",
-            "text": "Still not fixed. Can you escalate?",
-            "sentiment": "negative",
-            "act": "escalation_request",
-            "source_reference": "cs_conversations.csv:line 17988"
-          },
-          {
-            "message_id": "C0006359-T11",
-            "turn_index": 11,
-            "role": "agent",
-            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
-            "sentiment": "neutral",
-            "act": "courtesy_greeting",
-            "source_reference": "cs_conversations.csv:line 17989"
+          "lsa": {
+            "rank": 9,
+            "similarity": 0.6101
           }
-        ],
-        "topic": "Item or service not received",
-        "product": "Porting",
-        "sentiment": "negative",
-        "agent_id": "AgentGWMD",
-        "date": "2025-11-28",
-        "similarity": 0.6206,
-        "reason": "Semantic match (cosine similarity 0.62)"
-      },
-      {
-        "evidence_id": "C0004939#6-9",
-        "kind": "retrieval",
-        "conversation_id": "C0004939",
-        "message_ids": [
-          "C0004939-T06",
-          "C0004939-T07",
-          "C0004939-T08",
-          "C0004939-T09"
-        ],
-        "turn_range": [
-          6,
-          9
-        ],
-        "excerpts": [
-          {
-            "message_id": "C0004939-T06",
-            "turn_index": 6,
-            "role": "customer",
-            "text": "Still not fixed. Can you escalate?",
-            "sentiment": "negative",
-            "act": "escalation_request",
-            "source_reference": "cs_conversations.csv:line 13756"
-          },
-          {
-            "message_id": "C0004939-T07",
-            "turn_index": 7,
-            "role": "agent",
-            "text": "I can help with that. May I have the registered email or phone?",
-            "sentiment": "neutral",
-            "act": "verification_request",
-            "source_reference": "cs_conversations.csv:line 13757"
-          },
-          {
-            "message_id": "C0004939-T08",
-            "turn_index": 8,
-            "role": "customer",
-            "text": "Still not fixed. Can you escalate?",
-            "sentiment": "negative",
-            "act": "escalation_request",
-            "source_reference": "cs_conversations.csv:line 13758"
-          },
-          {
-            "message_id": "C0004939-T09",
-            "turn_index": 9,
-            "role": "agent",
-            "text": "I understand this is frustrating. I'm investigating now.",
-            "sentiment": "neutral",
-            "act": "empathy_acknowledgement",
-            "source_reference": "cs_conversations.csv:line 13759"
-          }
-        ],
-        "topic": "Item or service not received",
-        "product": "Savings",
-        "sentiment": "negative",
-        "agent_id": "AgentQICM",
-        "date": "2025-08-20",
-        "similarity": 0.6021,
-        "reason": "Semantic match (cosine similarity 0.60)"
+        }
       },
       {
         "evidence_id": "C0007482#analysis",
@@ -912,7 +925,7 @@
           "value": 1.1088,
           "signal": "escalation_rate"
         },
-        "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.3 priority points.",
+        "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.8 priority points.",
         "suggested_action": "Audit the escalation path for this issue and check first-contact resolution guidance.",
         "decision_owner": "Escalations / tier-2 manager",
         "evidence": [
@@ -949,10 +962,10 @@
         "finding": "Paid but service not delivered: 335 conversations (11% of scope), 37% negative, 52% end unresolved, 51% closing actions misfit the issue.",
         "supporting_metric": {
           "label": "Negative rate",
-          "value": 0.3701,
+          "value": 0.3731,
           "signal": "negative_rate"
         },
-        "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 21.5 of its 52.9 priority points.",
+        "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 22.0 of its 53.4 priority points.",
         "suggested_action": "Run a root-cause review of negative conversations for this issue with the owning product team.",
         "decision_owner": "Customer experience lead",
         "evidence": [
@@ -986,7 +999,7 @@
       "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
       "Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%.",
       "Trend compares 2025-11 with 2025-10 conversation counts.",
-      "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+      "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
       "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner."
     ],
     "method_notes": [
@@ -1003,17 +1016,229 @@
       "Which findings are uncertain?",
       "Summarize this for senior leadership."
     ],
-    "execution_trace_id": "R-c8b68b628efd",
+    "execution_trace_id": "R-33ac367adbae",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": "lsa-tfidf-svd192"
+      "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2 + lsa-tfidf-svd192",
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "leadership_priorities",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'leadership'.",
+          "rule": "leadership",
+          "label": "leadership_priorities"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'leadership'.",
+        "rule": "leadership",
+        "label": "leadership_priorities",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.4
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "leadership_priorities",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'leadership'.",
+        "rule": "leadership",
+        "label": "leadership_priorities"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": {
+      "title": "Leadership priorities",
+      "generated_from": "Which recurring customer concerns should contact-centre leadership review first?",
+      "kpi_chart_ids": [
+        "R-33ac367adbae_lead_kpis"
+      ],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "priority_matrix",
+              "why": "Volume vs negativity: concerns in the top-right deserve review first.",
+              "width": "half"
+            },
+            {
+              "chart_id": "priority_scores",
+              "why": "Shows what drives each priority score, so the ranking is auditable.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Reliability",
+          "items": [
+            {
+              "chart_id": "sensitivity",
+              "why": "Does the ranking survive changes to the weights?",
+              "width": "full"
+            }
+          ]
+        },
+        {
+          "title": "Context",
+          "items": [
+            {
+              "chart_id": "sentiment_trend",
+              "why": "Month-by-month negative rate with intervals: is it changing?",
+              "width": "half"
+            },
+            {
+              "chart_id": "resolution_misfit",
+              "why": "Whether agents' closing actions fit the issue raised.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Evidence",
+          "items": [
+            {
+              "chart_id": "retrieval_results",
+              "why": "Semantically similar passages (hybrid MiniLM + LSA retrieval).",
+              "width": "half"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "All dates"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "Latest month",
+          "question": "Same analysis for the last month only."
+        },
+        {
+          "label": "Why Item or service not received?",
+          "question": "What is driving negative sentiment in item or service not received?"
+        },
+        {
+          "label": "Compare top two",
+          "question": "Compare the top two topics."
+        },
+        {
+          "label": "Show examples",
+          "question": "Show supporting examples for the first one."
+        }
+      ],
+      "operations": [
+        "leadership_priorities",
+        "sentiment_trend",
+        "resolution_quality"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "34/34 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "evidence_coverage",
+          "status": "pass",
+          "detail": "3/3 top-ranked groups have a supporting conversation attached",
+          "items": []
+        },
+        {
+          "check": "evidence_relevance",
+          "status": "pass",
+          "detail": "9/9 evidence conversations are negative, matching a claim about negative sentiment",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "Counter-evidence stated alongside the claim",
+          "items": [
+            "61% of Item or service not received conversations were not negative."
+          ]
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [
+        "61% of Item or service not received conversations were not negative."
+      ],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 6,
+      "total": 6
     },
     "quality_status": {
       "status": "pass",
@@ -1058,7 +1283,7 @@
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "9 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -1077,10 +1302,40 @@
           "passed": true,
           "critical": false,
           "detail": "5 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "34/34 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "evidence_coverage",
+          "passed": true,
+          "critical": false,
+          "detail": "3/3 top-ranked groups have a supporting conversation attached"
+        },
+        {
+          "check": "evidence_relevance",
+          "passed": true,
+          "critical": false,
+          "detail": "9/9 evidence conversations are negative, matching a claim about negative sentiment"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 10,
-      "total": 10
+      "passed": 15,
+      "total": 15
     },
     "governance": [
       {
@@ -1111,10 +1366,10 @@
     ],
     "human_review_required": true,
     "errors": [],
-    "latency_ms": 292.6,
+    "latency_ms": 245.4,
     "charts": [
       {
-        "chart_id": "R-c8b68b628efd_lead_kpis",
+        "chart_id": "R-33ac367adbae_lead_kpis",
         "chart_type": "kpi",
         "title": "Key figures",
         "description": "",
@@ -1124,7 +1379,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd_lead",
+        "source_analysis_id": "R-33ac367adbae_lead",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
@@ -1200,7 +1455,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd",
+        "source_analysis_id": "R-33ac367adbae",
         "evidence_ids": [],
         "uncertainty_note": "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
         "drilldown": {
@@ -1209,7 +1464,7 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 33.8% negative, score 60.3; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.0% negative, score 52.9; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7",
+        "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 34.1% negative, score 60.8; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.3% negative, score 53.4; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7",
         "data_preview": [
           {
             "name": "Item or service not received",
@@ -1223,8 +1478,8 @@
             "name": "Coupon not applying",
             "key": "coupon_not_applied",
             "conversations": 331,
-            "negative_rate": 0.3384,
-            "priority_score": 60.3,
+            "negative_rate": 0.3414,
+            "priority_score": 60.8,
             "priority": "High"
           },
           {
@@ -1239,8 +1494,8 @@
             "name": "Paid but service not delivered",
             "key": "payment_not_reflected",
             "conversations": 335,
-            "negative_rate": 0.3701,
-            "priority_score": 52.9,
+            "negative_rate": 0.3731,
+            "priority_score": 53.4,
             "priority": "Medium"
           },
           {
@@ -1304,7 +1559,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd",
+        "source_analysis_id": "R-33ac367adbae",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": {
@@ -1313,7 +1568,7 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.3; Duplicate charge: 59.8; Paid but service not delivered: 52.9; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7",
+        "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.8; Duplicate charge: 59.8; Paid but service not delivered: 53.4; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7",
         "data_preview": [
           {
             "name": "Item or service not received",
@@ -1329,9 +1584,9 @@
           {
             "name": "Coupon not applying",
             "key": "coupon_not_applied",
-            "priority_score": 60.3,
+            "priority_score": 60.8,
             "contrib_frequency": 2.3,
-            "contrib_negative_rate": 16.0,
+            "contrib_negative_rate": 16.5,
             "contrib_escalation_rate": 15.0,
             "contrib_unresolved_rate": 12.7,
             "contrib_resolution_misfit_rate": 9.4,
@@ -1351,9 +1606,9 @@
           {
             "name": "Paid but service not delivered",
             "key": "payment_not_reflected",
-            "priority_score": 52.9,
+            "priority_score": 53.4,
             "contrib_frequency": 2.6,
-            "contrib_negative_rate": 21.5,
+            "contrib_negative_rate": 22.0,
             "contrib_escalation_rate": 9.8,
             "contrib_unresolved_rate": 9.7,
             "contrib_resolution_misfit_rate": 7.5,
@@ -1401,16 +1656,16 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd",
+        "source_analysis_id": "R-33ac367adbae",
         "evidence_ids": [],
-        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
         "drilldown": {
           "kind": "month",
           "field": "month"
         },
         "error_low_field": "rate_ci_low",
         "error_high_field": "rate_ci_high",
-        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.5%; 2025-11: 35.0%",
+        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.6%; 2025-11: 35.2%",
         "data_preview": [
           {
             "month": "2025-08",
@@ -1430,19 +1685,19 @@
           },
           {
             "month": "2025-10",
-            "negative_rate": 0.3346,
-            "rate_ci_low": 0.3024,
-            "rate_ci_high": 0.3685,
+            "negative_rate": 0.3359,
+            "rate_ci_low": 0.3036,
+            "rate_ci_high": 0.3698,
             "conversations": 780,
-            "negative": 261.0
+            "negative": 262.0
           },
           {
             "month": "2025-11",
-            "negative_rate": 0.3504,
-            "rate_ci_low": 0.3156,
-            "rate_ci_high": 0.387,
+            "negative_rate": 0.3519,
+            "rate_ci_low": 0.317,
+            "rate_ci_high": 0.3885,
             "conversations": 682,
-            "negative": 239.0
+            "negative": 240.0
           }
         ],
         "rows": 4
@@ -1464,7 +1719,7 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd",
+        "source_analysis_id": "R-33ac367adbae",
         "evidence_ids": [],
         "uncertainty_note": "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner.",
         "drilldown": null,
@@ -1516,7 +1771,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd",
+        "source_analysis_id": "R-33ac367adbae",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
@@ -1580,11 +1835,11 @@
         "value_format": "number",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-c8b68b628efd",
+        "source_analysis_id": "R-33ac367adbae",
         "evidence_ids": [
-          "C0013823#6-9",
-          "C0006359#8-11",
-          "C0004939#6-9"
+          "C0004076#12-14",
+          "C0009871#12-14",
+          "C0006016#6-9"
         ],
         "uncertainty_note": "Similarity is a ranking signal between embeddings, not a probability or confidence.",
         "drilldown": {
@@ -1593,21 +1848,21 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "C0013823: 0.64; C0006359: 0.62; C0004939: 0.60",
+        "accessibility_summary": "C0004076: 0.62; C0009871: 0.61; C0006016: 0.60",
         "data_preview": [
           {
-            "conversation_id": "C0013823",
-            "similarity": 0.6368,
+            "conversation_id": "C0004076",
+            "similarity": 0.621,
             "topic": "Item or service not received"
           },
           {
-            "conversation_id": "C0006359",
-            "similarity": 0.6206,
+            "conversation_id": "C0009871",
+            "similarity": 0.608,
             "topic": "Item or service not received"
           },
           {
-            "conversation_id": "C0004939",
-            "similarity": 0.6021,
+            "conversation_id": "C0006016",
+            "similarity": 0.605,
             "topic": "Item or service not received"
           }
         ],
@@ -1624,8 +1879,8 @@
   },
   {
     "version": "1.0",
-    "request_id": "R-331245a3baf0",
-    "session_id": "S-e0670e7f454a",
+    "request_id": "R-6aad954a766d",
+    "session_id": "S-3f13d79954aa",
     "status": "completed",
     "question": "Why was this concern ranked first?",
     "resolved_intent": {
@@ -1708,7 +1963,7 @@
             "name": "Item or service not received"
           }
         ],
-        "rerun_of": "R-c8b68b628efd"
+        "rerun_of": "R-33ac367adbae"
       },
       "audience": "analyst"
     },
@@ -1794,9 +2049,9 @@
       {
         "id": "latest_negative_rate",
         "label": "Negative rate 2025-11",
-        "value": 0.3504,
+        "value": 0.3519,
         "unit": "percent",
-        "numerator": 239,
+        "numerator": 240,
         "denominator": 682,
         "description": ""
       },
@@ -1837,17 +2092,17 @@
         "name": "Coupon not applying",
         "key": "coupon_not_applied",
         "priority": "High",
-        "priority_score": 60.3,
+        "priority_score": 60.8,
         "conversations": 331,
-        "negative": 112.0,
-        "negative_rate": 0.3384,
+        "negative": 113.0,
+        "negative_rate": 0.3414,
         "escalation_rate": 1.1088,
         "unresolved_rate": 0.5347,
         "resolution_misfit_rate": 0.6375,
         "trend": 0.3125,
         "main_driver": "escalation_rate",
         "contrib_frequency": 2.3,
-        "contrib_negative_rate": 16.0,
+        "contrib_negative_rate": 16.5,
         "contrib_escalation_rate": 15.0,
         "contrib_unresolved_rate": 12.7,
         "contrib_resolution_misfit_rate": 9.4,
@@ -1879,17 +2134,17 @@
         "name": "Paid but service not delivered",
         "key": "payment_not_reflected",
         "priority": "Medium",
-        "priority_score": 52.9,
+        "priority_score": 53.4,
         "conversations": 335,
-        "negative": 124.0,
-        "negative_rate": 0.3701,
+        "negative": 125.0,
+        "negative_rate": 0.3731,
         "escalation_rate": 1.0836,
         "unresolved_rate": 0.5224,
         "resolution_misfit_rate": 0.5075,
         "trend": -0.1176,
         "main_driver": "negative_rate",
         "contrib_frequency": 2.6,
-        "contrib_negative_rate": 21.5,
+        "contrib_negative_rate": 22.0,
         "contrib_escalation_rate": 9.8,
         "contrib_unresolved_rate": 9.7,
         "contrib_resolution_misfit_rate": 7.5,
@@ -2374,7 +2629,7 @@
           "value": 1.1088,
           "signal": "escalation_rate"
         },
-        "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.3 priority points.",
+        "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.8 priority points.",
         "suggested_action": "Audit the escalation path for this issue and check first-contact resolution guidance.",
         "decision_owner": "Escalations / tier-2 manager",
         "evidence": [
@@ -2411,10 +2666,10 @@
         "finding": "Paid but service not delivered: 335 conversations (11% of scope), 37% negative, 52% end unresolved, 51% closing actions misfit the issue.",
         "supporting_metric": {
           "label": "Negative rate",
-          "value": 0.3701,
+          "value": 0.3731,
           "signal": "negative_rate"
         },
-        "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 21.5 of its 52.9 priority points.",
+        "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 22.0 of its 53.4 priority points.",
         "suggested_action": "Run a root-cause review of negative conversations for this issue with the owning product team.",
         "decision_owner": "Customer experience lead",
         "evidence": [
@@ -2448,7 +2703,7 @@
       "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
       "Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%.",
       "Trend compares 2025-11 with 2025-10 conversation counts.",
-      "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+      "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
       "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner."
     ],
     "method_notes": [
@@ -2465,17 +2720,213 @@
       "Which findings are uncertain?",
       "Summarize this for senior leadership."
     ],
-    "execution_trace_id": "R-331245a3baf0",
+    "execution_trace_id": "R-6aad954a766d",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "explain_previous",
+        "interpretive_cue": "Why",
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'explain_previous'.",
+          "rule": "explain_previous",
+          "label": "explain_previous"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'explain_previous'.",
+        "rule": "explain_previous",
+        "label": "explain_previous",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.2
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "explain_previous",
+      "interpretive_cue": "Why",
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'explain_previous'.",
+        "rule": "explain_previous",
+        "label": "explain_previous"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": {
+      "title": "Explain previous",
+      "generated_from": "Why was this concern ranked first?",
+      "kpi_chart_ids": [
+        "R-6aad954a766d_lead_kpis"
+      ],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "priority_matrix",
+              "why": "Volume vs negativity: concerns in the top-right deserve review first.",
+              "width": "half"
+            },
+            {
+              "chart_id": "priority_scores",
+              "why": "Shows what drives each priority score, so the ranking is auditable.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Reliability",
+          "items": [
+            {
+              "chart_id": "sensitivity",
+              "why": "Does the ranking survive changes to the weights?",
+              "width": "full"
+            }
+          ]
+        },
+        {
+          "title": "Context",
+          "items": [
+            {
+              "chart_id": "sentiment_trend",
+              "why": "Month-by-month negative rate with intervals: is it changing?",
+              "width": "half"
+            },
+            {
+              "chart_id": "resolution_misfit",
+              "why": "Whether agents' closing actions fit the issue raised.",
+              "width": "half"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "All dates"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "Latest month",
+          "question": "Same analysis for the last month only."
+        },
+        {
+          "label": "Why Item or service not received?",
+          "question": "What is driving negative sentiment in item or service not received?"
+        },
+        {
+          "label": "Compare top two",
+          "question": "Compare the top two topics."
+        },
+        {
+          "label": "Show examples",
+          "question": "Show supporting examples for the first one."
+        }
+      ],
+      "operations": [
+        "leadership_priorities",
+        "sentiment_trend",
+        "resolution_quality"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "24/24 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "evidence_coverage",
+          "status": "pass",
+          "detail": "3/3 top-ranked groups have a supporting conversation attached",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "Counter-evidence stated alongside the claim",
+          "items": [
+            "61% of Item or service not received conversations were not negative."
+          ]
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [
+        "61% of Item or service not received conversations were not negative."
+      ],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 5,
+      "total": 5
     },
     "quality_status": {
       "status": "pass",
@@ -2520,7 +2971,7 @@
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "6 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -2539,10 +2990,34 @@
           "passed": true,
           "critical": false,
           "detail": "5 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "24/24 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "evidence_coverage",
+          "passed": true,
+          "critical": false,
+          "detail": "3/3 top-ranked groups have a supporting conversation attached"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 10,
-      "total": 10
+      "passed": 14,
+      "total": 14
     },
     "governance": [
       {
@@ -2568,10 +3043,10 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 267.5,
+    "latency_ms": 198.9,
     "charts": [
       {
-        "chart_id": "R-331245a3baf0_lead_kpis",
+        "chart_id": "R-6aad954a766d_lead_kpis",
         "chart_type": "kpi",
         "title": "Key figures",
         "description": "",
@@ -2581,7 +3056,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-331245a3baf0_lead",
+        "source_analysis_id": "R-6aad954a766d_lead",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
@@ -2657,7 +3132,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-331245a3baf0",
+        "source_analysis_id": "R-6aad954a766d",
         "evidence_ids": [],
         "uncertainty_note": "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
         "drilldown": {
@@ -2666,7 +3141,7 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 33.8% negative, score 60.3; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.0% negative, score 52.9; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7",
+        "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 34.1% negative, score 60.8; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.3% negative, score 53.4; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7",
         "data_preview": [
           {
             "name": "Item or service not received",
@@ -2680,8 +3155,8 @@
             "name": "Coupon not applying",
             "key": "coupon_not_applied",
             "conversations": 331,
-            "negative_rate": 0.3384,
-            "priority_score": 60.3,
+            "negative_rate": 0.3414,
+            "priority_score": 60.8,
             "priority": "High"
           },
           {
@@ -2696,8 +3171,8 @@
             "name": "Paid but service not delivered",
             "key": "payment_not_reflected",
             "conversations": 335,
-            "negative_rate": 0.3701,
-            "priority_score": 52.9,
+            "negative_rate": 0.3731,
+            "priority_score": 53.4,
             "priority": "Medium"
           },
           {
@@ -2761,7 +3236,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-331245a3baf0",
+        "source_analysis_id": "R-6aad954a766d",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": {
@@ -2770,7 +3245,7 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.3; Duplicate charge: 59.8; Paid but service not delivered: 52.9; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7",
+        "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.8; Duplicate charge: 59.8; Paid but service not delivered: 53.4; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7",
         "data_preview": [
           {
             "name": "Item or service not received",
@@ -2786,9 +3261,9 @@
           {
             "name": "Coupon not applying",
             "key": "coupon_not_applied",
-            "priority_score": 60.3,
+            "priority_score": 60.8,
             "contrib_frequency": 2.3,
-            "contrib_negative_rate": 16.0,
+            "contrib_negative_rate": 16.5,
             "contrib_escalation_rate": 15.0,
             "contrib_unresolved_rate": 12.7,
             "contrib_resolution_misfit_rate": 9.4,
@@ -2808,9 +3283,9 @@
           {
             "name": "Paid but service not delivered",
             "key": "payment_not_reflected",
-            "priority_score": 52.9,
+            "priority_score": 53.4,
             "contrib_frequency": 2.6,
-            "contrib_negative_rate": 21.5,
+            "contrib_negative_rate": 22.0,
             "contrib_escalation_rate": 9.8,
             "contrib_unresolved_rate": 9.7,
             "contrib_resolution_misfit_rate": 7.5,
@@ -2858,16 +3333,16 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-331245a3baf0",
+        "source_analysis_id": "R-6aad954a766d",
         "evidence_ids": [],
-        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
         "drilldown": {
           "kind": "month",
           "field": "month"
         },
         "error_low_field": "rate_ci_low",
         "error_high_field": "rate_ci_high",
-        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.5%; 2025-11: 35.0%",
+        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.6%; 2025-11: 35.2%",
         "data_preview": [
           {
             "month": "2025-08",
@@ -2887,19 +3362,19 @@
           },
           {
             "month": "2025-10",
-            "negative_rate": 0.3346,
-            "rate_ci_low": 0.3024,
-            "rate_ci_high": 0.3685,
+            "negative_rate": 0.3359,
+            "rate_ci_low": 0.3036,
+            "rate_ci_high": 0.3698,
             "conversations": 780,
-            "negative": 261.0
+            "negative": 262.0
           },
           {
             "month": "2025-11",
-            "negative_rate": 0.3504,
-            "rate_ci_low": 0.3156,
-            "rate_ci_high": 0.387,
+            "negative_rate": 0.3519,
+            "rate_ci_low": 0.317,
+            "rate_ci_high": 0.3885,
             "conversations": 682,
-            "negative": 239.0
+            "negative": 240.0
           }
         ],
         "rows": 4
@@ -2921,7 +3396,7 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-331245a3baf0",
+        "source_analysis_id": "R-6aad954a766d",
         "evidence_ids": [],
         "uncertainty_note": "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner.",
         "drilldown": null,
@@ -2973,7 +3448,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-331245a3baf0",
+        "source_analysis_id": "R-6aad954a766d",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
@@ -3031,8 +3506,8 @@
   },
   {
     "version": "1.0",
-    "request_id": "R-5b3aeb3d1e8c",
-    "session_id": "S-e0670e7f454a",
+    "request_id": "R-46b4028a051c",
+    "session_id": "S-3f13d79954aa",
     "status": "completed",
     "question": "Which findings are uncertain?",
     "resolved_intent": {
@@ -3106,17 +3581,17 @@
         "Re-ran the previous analysis to answer from current data rather than from the earlier wording."
       ],
       "resolved_references": {
-        "rerun_of": "R-331245a3baf0"
+        "rerun_of": "R-6aad954a766d"
       },
       "audience": "analyst"
     },
     "headline": "5 caveats apply to the previous analysis.",
-    "answer": "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score. Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%. Trend compares 2025-11 with 2025-10 conversation counts. Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+    "answer": "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score. Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%. Trend compares 2025-11 with 2025-10 conversation counts. Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
     "key_points": [
       "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
       "Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%.",
       "Trend compares 2025-11 with 2025-10 conversation counts.",
-      "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+      "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
       "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner."
     ],
     "metrics": [
@@ -3186,9 +3661,9 @@
       {
         "id": "latest_negative_rate",
         "label": "Negative rate 2025-11",
-        "value": 0.3504,
+        "value": 0.3519,
         "unit": "percent",
-        "numerator": 239,
+        "numerator": 240,
         "denominator": 682,
         "description": ""
       },
@@ -3229,17 +3704,17 @@
         "name": "Coupon not applying",
         "key": "coupon_not_applied",
         "priority": "High",
-        "priority_score": 60.3,
+        "priority_score": 60.8,
         "conversations": 331,
-        "negative": 112.0,
-        "negative_rate": 0.3384,
+        "negative": 113.0,
+        "negative_rate": 0.3414,
         "escalation_rate": 1.1088,
         "unresolved_rate": 0.5347,
         "resolution_misfit_rate": 0.6375,
         "trend": 0.3125,
         "main_driver": "escalation_rate",
         "contrib_frequency": 2.3,
-        "contrib_negative_rate": 16.0,
+        "contrib_negative_rate": 16.5,
         "contrib_escalation_rate": 15.0,
         "contrib_unresolved_rate": 12.7,
         "contrib_resolution_misfit_rate": 9.4,
@@ -3271,17 +3746,17 @@
         "name": "Paid but service not delivered",
         "key": "payment_not_reflected",
         "priority": "Medium",
-        "priority_score": 52.9,
+        "priority_score": 53.4,
         "conversations": 335,
-        "negative": 124.0,
-        "negative_rate": 0.3701,
+        "negative": 125.0,
+        "negative_rate": 0.3731,
         "escalation_rate": 1.0836,
         "unresolved_rate": 0.5224,
         "resolution_misfit_rate": 0.5075,
         "trend": -0.1176,
         "main_driver": "negative_rate",
         "contrib_frequency": 2.6,
-        "contrib_negative_rate": 21.5,
+        "contrib_negative_rate": 22.0,
         "contrib_escalation_rate": 9.8,
         "contrib_unresolved_rate": 9.7,
         "contrib_resolution_misfit_rate": 7.5,
@@ -3766,7 +4241,7 @@
           "value": 1.1088,
           "signal": "escalation_rate"
         },
-        "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.3 priority points.",
+        "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.8 priority points.",
         "suggested_action": "Audit the escalation path for this issue and check first-contact resolution guidance.",
         "decision_owner": "Escalations / tier-2 manager",
         "evidence": [
@@ -3803,10 +4278,10 @@
         "finding": "Paid but service not delivered: 335 conversations (11% of scope), 37% negative, 52% end unresolved, 51% closing actions misfit the issue.",
         "supporting_metric": {
           "label": "Negative rate",
-          "value": 0.3701,
+          "value": 0.3731,
           "signal": "negative_rate"
         },
-        "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 21.5 of its 52.9 priority points.",
+        "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 22.0 of its 53.4 priority points.",
         "suggested_action": "Run a root-cause review of negative conversations for this issue with the owning product team.",
         "decision_owner": "Customer experience lead",
         "evidence": [
@@ -3840,7 +4315,7 @@
       "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
       "Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%.",
       "Trend compares 2025-11 with 2025-10 conversation counts.",
-      "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+      "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
       "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner."
     ],
     "method_notes": [
@@ -3857,17 +4332,213 @@
       "Which findings are uncertain?",
       "Summarize this for senior leadership."
     ],
-    "execution_trace_id": "R-5b3aeb3d1e8c",
+    "execution_trace_id": "R-46b4028a051c",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "uncertainty_review",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'uncertainty_review'.",
+          "rule": "uncertainty_review",
+          "label": "uncertainty_review"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'uncertainty_review'.",
+        "rule": "uncertainty_review",
+        "label": "uncertainty_review",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.3
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "uncertainty_review",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'uncertainty_review'.",
+        "rule": "uncertainty_review",
+        "label": "uncertainty_review"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": {
+      "title": "Uncertainty review",
+      "generated_from": "Which findings are uncertain?",
+      "kpi_chart_ids": [
+        "R-46b4028a051c_lead_kpis"
+      ],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "priority_matrix",
+              "why": "Volume vs negativity: concerns in the top-right deserve review first.",
+              "width": "half"
+            },
+            {
+              "chart_id": "priority_scores",
+              "why": "Shows what drives each priority score, so the ranking is auditable.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Reliability",
+          "items": [
+            {
+              "chart_id": "sensitivity",
+              "why": "Does the ranking survive changes to the weights?",
+              "width": "full"
+            }
+          ]
+        },
+        {
+          "title": "Context",
+          "items": [
+            {
+              "chart_id": "sentiment_trend",
+              "why": "Month-by-month negative rate with intervals: is it changing?",
+              "width": "half"
+            },
+            {
+              "chart_id": "resolution_misfit",
+              "why": "Whether agents' closing actions fit the issue raised.",
+              "width": "half"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "All dates"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "Latest month",
+          "question": "Same analysis for the last month only."
+        },
+        {
+          "label": "Why Item or service not received?",
+          "question": "What is driving negative sentiment in item or service not received?"
+        },
+        {
+          "label": "Compare top two",
+          "question": "Compare the top two topics."
+        },
+        {
+          "label": "Show examples",
+          "question": "Show supporting examples for the first one."
+        }
+      ],
+      "operations": [
+        "leadership_priorities",
+        "sentiment_trend",
+        "resolution_quality"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "24/24 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "evidence_coverage",
+          "status": "pass",
+          "detail": "3/3 top-ranked groups have a supporting conversation attached",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "Counter-evidence stated alongside the claim",
+          "items": [
+            "61% of Item or service not received conversations were not negative."
+          ]
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [
+        "61% of Item or service not received conversations were not negative."
+      ],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 5,
+      "total": 5
     },
     "quality_status": {
       "status": "pass",
@@ -3912,7 +4583,7 @@
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "6 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -3931,10 +4602,34 @@
           "passed": true,
           "critical": false,
           "detail": "5 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "24/24 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "evidence_coverage",
+          "passed": true,
+          "critical": false,
+          "detail": "3/3 top-ranked groups have a supporting conversation attached"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 10,
-      "total": 10
+      "passed": 14,
+      "total": 14
     },
     "governance": [
       {
@@ -3960,10 +4655,10 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 263.1,
+    "latency_ms": 176.2,
     "charts": [
       {
-        "chart_id": "R-5b3aeb3d1e8c_lead_kpis",
+        "chart_id": "R-46b4028a051c_lead_kpis",
         "chart_type": "kpi",
         "title": "Key figures",
         "description": "",
@@ -3973,7 +4668,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5b3aeb3d1e8c_lead",
+        "source_analysis_id": "R-46b4028a051c_lead",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
@@ -4049,7 +4744,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5b3aeb3d1e8c",
+        "source_analysis_id": "R-46b4028a051c",
         "evidence_ids": [],
         "uncertainty_note": "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
         "drilldown": {
@@ -4058,7 +4753,7 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 33.8% negative, score 60.3; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.0% negative, score 52.9; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7",
+        "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 34.1% negative, score 60.8; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.3% negative, score 53.4; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7",
         "data_preview": [
           {
             "name": "Item or service not received",
@@ -4072,8 +4767,8 @@
             "name": "Coupon not applying",
             "key": "coupon_not_applied",
             "conversations": 331,
-            "negative_rate": 0.3384,
-            "priority_score": 60.3,
+            "negative_rate": 0.3414,
+            "priority_score": 60.8,
             "priority": "High"
           },
           {
@@ -4088,8 +4783,8 @@
             "name": "Paid but service not delivered",
             "key": "payment_not_reflected",
             "conversations": 335,
-            "negative_rate": 0.3701,
-            "priority_score": 52.9,
+            "negative_rate": 0.3731,
+            "priority_score": 53.4,
             "priority": "Medium"
           },
           {
@@ -4153,7 +4848,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5b3aeb3d1e8c",
+        "source_analysis_id": "R-46b4028a051c",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": {
@@ -4162,7 +4857,7 @@
         },
         "error_low_field": null,
         "error_high_field": null,
-        "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.3; Duplicate charge: 59.8; Paid but service not delivered: 52.9; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7",
+        "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.8; Duplicate charge: 59.8; Paid but service not delivered: 53.4; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7",
         "data_preview": [
           {
             "name": "Item or service not received",
@@ -4178,9 +4873,9 @@
           {
             "name": "Coupon not applying",
             "key": "coupon_not_applied",
-            "priority_score": 60.3,
+            "priority_score": 60.8,
             "contrib_frequency": 2.3,
-            "contrib_negative_rate": 16.0,
+            "contrib_negative_rate": 16.5,
             "contrib_escalation_rate": 15.0,
             "contrib_unresolved_rate": 12.7,
             "contrib_resolution_misfit_rate": 9.4,
@@ -4200,9 +4895,9 @@
           {
             "name": "Paid but service not delivered",
             "key": "payment_not_reflected",
-            "priority_score": 52.9,
+            "priority_score": 53.4,
             "contrib_frequency": 2.6,
-            "contrib_negative_rate": 21.5,
+            "contrib_negative_rate": 22.0,
             "contrib_escalation_rate": 9.8,
             "contrib_unresolved_rate": 9.7,
             "contrib_resolution_misfit_rate": 7.5,
@@ -4250,16 +4945,16 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5b3aeb3d1e8c",
+        "source_analysis_id": "R-46b4028a051c",
         "evidence_ids": [],
-        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+        "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
         "drilldown": {
           "kind": "month",
           "field": "month"
         },
         "error_low_field": "rate_ci_low",
         "error_high_field": "rate_ci_high",
-        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.5%; 2025-11: 35.0%",
+        "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.6%; 2025-11: 35.2%",
         "data_preview": [
           {
             "month": "2025-08",
@@ -4279,19 +4974,19 @@
           },
           {
             "month": "2025-10",
-            "negative_rate": 0.3346,
-            "rate_ci_low": 0.3024,
-            "rate_ci_high": 0.3685,
+            "negative_rate": 0.3359,
+            "rate_ci_low": 0.3036,
+            "rate_ci_high": 0.3698,
             "conversations": 780,
-            "negative": 261.0
+            "negative": 262.0
           },
           {
             "month": "2025-11",
-            "negative_rate": 0.3504,
-            "rate_ci_low": 0.3156,
-            "rate_ci_high": 0.387,
+            "negative_rate": 0.3519,
+            "rate_ci_low": 0.317,
+            "rate_ci_high": 0.3885,
             "conversations": 682,
-            "negative": 239.0
+            "negative": 240.0
           }
         ],
         "rows": 4
@@ -4313,7 +5008,7 @@
         "value_format": "percent",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5b3aeb3d1e8c",
+        "source_analysis_id": "R-46b4028a051c",
         "evidence_ids": [],
         "uncertainty_note": "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner.",
         "drilldown": null,
@@ -4365,7 +5060,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5b3aeb3d1e8c",
+        "source_analysis_id": "R-46b4028a051c",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,

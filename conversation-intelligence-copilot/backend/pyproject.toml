@@ -33,6 +33,9 @@ dev = [
 [project.optional-dependencies]
 # Optional: local transformer embeddings. Requires downloading weights from Hugging Face.
 transformers = ["sentence-transformers>=3.0"]
+# Optional: free local LLM (Qwen2.5-1.5B-Instruct GGUF via llama.cpp, CPU). Builds from source where no wheel exists
+# (needs a C/C++ toolchain and CMake). Weights are downloaded separately with `make llm-download`.
+local-llm = ["llama-cpp-python>=0.3.36", "huggingface-hub>=0.24"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

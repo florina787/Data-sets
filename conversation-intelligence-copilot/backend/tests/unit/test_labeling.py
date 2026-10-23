@@ -55,3 +55,13 @@ def test_aggregate_empathy_response_and_resolution_fit():
     assert a["negative_turns_with_reply"] == 2 and a["empathic_replies"] == 1 and a["empathy_response_rate"] == 0.5
     assert a["final_resolution"] == "coupon_applied" and a["resolution_relevant"] is False
     assert a["escalation_requests"] == 1 and a["ends_negative"] is False
+
+
+def test_threshold_mean_is_classified_consistently():
+    from app.labeling.rules import conversation_sentiment
+
+    # Customer scores of C0014957: the exact mean is -0.25, but naive float summation gives -0.24999999999999997,
+    # which used to label it "mixed" while other conversations at -0.25 were "negative".
+    scores = [-0.6, 0.8, -0.6, 0.8, -0.6, -0.6, -0.6, -0.6]
+    assert sum(scores) / len(scores) > -0.25  # the float artefact this guards against
+    assert conversation_sentiment(scores, ["negative", "positive"]) == "negative"

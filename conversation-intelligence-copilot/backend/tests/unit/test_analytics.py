@@ -121,3 +121,13 @@ def test_coaching_when_no_resolution_is_assessable(db):
     """Regression: an all-NULL resolution_relevant column (e.g. only general-help or unknown topics) must not crash."""
     r = run_operation(db, "agent_coaching_review", Scope(topics=["general_help"]), {"min_conversations": 1})
     assert r.status == "ok" and r.metric("irrelevant_resolution_rate").value is None
+
+
+def test_tie_at_the_cut_off_is_disclosed(db):
+    # Fixture, all dates: Duplicate charge (C1, C6) and App crash (C3, C8) both have 2 negative conversations.
+    r = run_operation(db, "rank_negative_topics", Scope(), {"top_n": 1, "min_conversations": 1})
+    assert len(r.table.rows) == 1
+    note = r.uncertainty_notes[0]
+    assert note.startswith("Rank 1 is a tie:") and "Duplicate charge (2 of 3)" in note and "App crash (2 of 2)" in note
+    two = run_operation(db, "rank_negative_topics", Scope(), {"top_n": 2, "min_conversations": 1})
+    assert not any("is a tie" in n for n in two.uncertainty_notes)  # no tie between rank 2 and rank 3

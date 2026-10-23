@@ -5,7 +5,7 @@ Start: `make dev` (or `docker compose up --build` → http://localhost:8080). Op
 ## 1. Q1 — negative topics (3 min)
 1. Click the **Sentiment × topics** card.
 2. Point at the progress chips: real LangGraph nodes as they start and finish (input → memory → intent → supervisor → topic agent → evidence → explanation → visualisation → QA → governance → response).
-3. Answer: November 2025 is the latest month **in the data** (the calendar note explains the rule and coverage); 239 of 682 conversations negative; top 5 by count.
+3. Answer: November 2025 is the latest month **in the data** (the calendar note explains the rule and coverage); 240 of 682 conversations negative; top 5 by count, with the rank-5 tie (Login vs Coupon, both 24) disclosed in the answer.
 4. Show **Negative rate with 95% CI**: highest count ≠ highest rate (General help leads by count because it merges two templates; Duplicate charge leads by rate). Uncertainty: chi-square p = 0.057.
 5. Click a bar → the conversations behind it → a transcript with CSV line references.
 6. Click **QA 10/10** to show the checks; click **Trace** → Agent Harness.

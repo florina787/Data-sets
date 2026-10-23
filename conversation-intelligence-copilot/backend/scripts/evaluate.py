@@ -14,6 +14,7 @@ import tempfile
 import time
 import zipfile
 from collections import Counter
+from fractions import Fraction
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -74,7 +75,8 @@ def oracle_q1(raw_zip: Path, month: str) -> dict:
         for t in g[(g["role"] == "customer") & (g["turn_index"] > 0)]["text"]:
             scores.append(next(v for k, v in ORACLE_SCORES.items() if t.startswith(k)))
         totals[topic] += 1
-        if sum(scores) / len(scores) <= -0.25:
+        # Exact arithmetic: a mean of exactly -0.25 must count as negative (floats give -0.24999999999999997).
+        if sum(Fraction(str(v)) for v in scores) / len(scores) <= Fraction(-1, 4):
             out[topic] += 1
     return {"conversations": int(sum(totals.values())), "negative": int(sum(out.values())), "negative_by_topic": dict(out), "by_topic": dict(totals)}
 

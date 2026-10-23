@@ -1,8 +1,8 @@
 [
   {
     "version": "1.0",
-    "request_id": "R-5921e9db51f2",
-    "session_id": "S-3bc4a15b6ab4",
+    "request_id": "R-778d0f75b3d9",
+    "session_id": "S-7a536aab2f4e",
     "status": "completed",
     "question": "How did customer sentiment change over the course of a selected conversation?",
     "resolved_intent": {
@@ -54,6 +54,13 @@
             "conversation_id": "C0000479"
           },
           "purpose": "Turn-by-turn customer sentiment"
+        },
+        {
+          "op": "conversation_xray",
+          "params": {
+            "conversation_id": "C0000479"
+          },
+          "purpose": "X-Ray of the same conversation (signals linked to messages)"
         }
       ],
       "retrieval": {
@@ -75,7 +82,11 @@
       "Turn 4: worsened by 1.60",
       "Turn 8: improved by 1.40",
       "Turn 10: worsened by 0.80",
-      "Turn 12: worsened by 1.00"
+      "Turn 12: worsened by 1.00",
+      "X-Ray [high]: Problem resurfaced after the customer said it was fixed \u2014 turns 2, 4, 6, 12",
+      "X-Ray [high]: Urgency pressure (2\u00d7) \u2014 turns 4, 6",
+      "X-Ray [high]: Closing action does not fit the issue \u2014 turns 11",
+      "X-Ray [high]: Customer asked to escalate (1\u00d7) \u2014 turns 12"
     ],
     "metrics": [
       {
@@ -149,6 +160,42 @@
         "numerator": null,
         "denominator": null,
         "description": ""
+      },
+      {
+        "id": "messages",
+        "label": "Messages",
+        "value": 13,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "customer_turns",
+        "label": "Customer messages",
+        "value": 7,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "escalation_signals",
+        "label": "Escalation signals",
+        "value": 2,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
+      },
+      {
+        "id": "repeated_concerns",
+        "label": "Repeated concerns",
+        "value": 3,
+        "unit": "count",
+        "numerator": null,
+        "denominator": null,
+        "description": ""
       }
     ],
     "rankings": [],
@@ -163,6 +210,8 @@
           "C0000479-T02",
           "C0000479-T03",
           "C0000479-T04",
+          "C0000479-T05",
+          "C0000479-T06",
           "C0000479-T07",
           "C0000479-T08",
           "C0000479-T09",
@@ -219,6 +268,24 @@
             "sentiment": "negative",
             "act": "urgency",
             "source_reference": "cs_conversations.csv:line 1164"
+          },
+          {
+            "message_id": "C0000479-T05",
+            "turn_index": 5,
+            "role": "agent",
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "sentiment": "neutral",
+            "act": "apology",
+            "source_reference": "cs_conversations.csv:line 1165"
+          },
+          {
+            "message_id": "C0000479-T06",
+            "turn_index": 6,
+            "role": "customer",
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "sentiment": "negative",
+            "act": "urgency",
+            "source_reference": "cs_conversations.csv:line 1166"
           },
           {
             "message_id": "C0000479-T07",
@@ -287,27 +354,687 @@
     "recommendations": [],
     "uncertainty_notes": [
       "Turn order follows turn_index; timestamps in this dataset are not in turn order and are not used for sequencing.",
-      "Scores come from a fixed mapping of message templates to sentiment (-1 to 1); they are ordinal, not calibrated probabilities."
+      "Scores come from a fixed mapping of message templates to sentiment (-1 to 1); they are ordinal, not calibrated probabilities.",
+      "Signals come from deterministic message labels (template mapping), not from reading tone; treat them as pointers to review, not as a verdict on the agent.",
+      "Turn order follows turn_index; timestamps in this dataset are not in turn order."
     ],
     "method_notes": [
-      "A turning point is a change of at least 0.8 in sentiment score between consecutive customer messages."
+      "A turning point is a change of at least 0.8 in sentiment score between consecutive customer messages.",
+      "Repeated concern: the same customer act (issue report, urgency, waiting, escalation) two or more times, or a verbatim repeat.",
+      "Unacknowledged negative message: the next agent reply carries no empathy or apology label.",
+      "Phases: first two messages = opening, last two = closing, the rest = middle."
     ],
     "follow_up_questions": [
       "Show similar conversations.",
       "Did the agent's closing action fit the issue?",
       "Which agents may need coaching on empathy?"
     ],
-    "execution_trace_id": "R-5921e9db51f2",
+    "execution_trace_id": "R-778d0f75b3d9",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "sentiment_trajectory",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "rules",
+          "reason": "High-precision rule 'trajectory_selected'.",
+          "rule": "trajectory_selected",
+          "label": "sentiment_trajectory"
+        }
+      },
+      "intent_routing": {
+        "method": "rules",
+        "reason": "High-precision rule 'trajectory_selected'.",
+        "rule": "trajectory_selected",
+        "label": "sentiment_trajectory",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.2
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "sentiment_trajectory",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "rules",
+        "reason": "High-precision rule 'trajectory_selected'.",
+        "rule": "trajectory_selected",
+        "label": "sentiment_trajectory"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": {
+      "operation": "conversation_xray",
+      "params": {
+        "conversation_id": "C0000479"
+      },
+      "metrics": [
+        {
+          "id": "messages",
+          "label": "Messages",
+          "value": 13,
+          "unit": "count",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "customer_turns",
+          "label": "Customer messages",
+          "value": 7,
+          "unit": "count",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "escalation_signals",
+          "label": "Escalation signals",
+          "value": 2,
+          "unit": "count",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "repeated_concerns",
+          "label": "Repeated concerns",
+          "value": 3,
+          "unit": "count",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "communication_gaps",
+          "label": "Communication gaps",
+          "value": 3,
+          "unit": "count",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "high_severity",
+          "label": "High-severity findings",
+          "value": 5,
+          "unit": "count",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "final_score",
+          "label": "Final customer sentiment",
+          "value": -1.0,
+          "unit": "sentiment",
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        },
+        {
+          "id": "topic",
+          "label": "Topic",
+          "value": "Coupon not applying \u00b7 Voucher",
+          "unit": null,
+          "numerator": null,
+          "denominator": null,
+          "description": ""
+        }
+      ],
+      "table": {
+        "columns": [
+          "message_id",
+          "turn_index",
+          "speaker_role",
+          "phase",
+          "act",
+          "sentiment",
+          "sentiment_score",
+          "empathy",
+          "resolution",
+          "text",
+          "signals"
+        ],
+        "rows": [
+          {
+            "message_id": "C0000479-T00",
+            "turn_index": 0,
+            "speaker_role": "customer",
+            "phase": "opening",
+            "act": "issue_report",
+            "sentiment": "negative",
+            "sentiment_score": -0.6,
+            "empathy": false,
+            "resolution": null,
+            "text": "Coupon isn\u2019t applying on checkout for the Voucher.",
+            "signals": []
+          },
+          {
+            "message_id": "C0000479-T01",
+            "turn_index": 1,
+            "speaker_role": "agent",
+            "phase": "opening",
+            "act": "apology",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": true,
+            "resolution": null,
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "signals": [
+              "scripted_repeat"
+            ]
+          },
+          {
+            "message_id": "C0000479-T02",
+            "turn_index": 2,
+            "speaker_role": "customer",
+            "phase": "middle",
+            "act": "confirms_fixed",
+            "sentiment": "positive",
+            "sentiment_score": 1.0,
+            "empathy": false,
+            "resolution": null,
+            "text": "Got it. I\u2019ve retried, and it works now.",
+            "signals": [
+              "reopened_after_fix"
+            ]
+          },
+          {
+            "message_id": "C0000479-T03",
+            "turn_index": 3,
+            "speaker_role": "agent",
+            "phase": "middle",
+            "act": "courtesy_greeting",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": false,
+            "resolution": null,
+            "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+            "signals": []
+          },
+          {
+            "message_id": "C0000479-T04",
+            "turn_index": 4,
+            "speaker_role": "customer",
+            "phase": "middle",
+            "act": "urgency",
+            "sentiment": "negative",
+            "sentiment_score": -0.6,
+            "empathy": false,
+            "resolution": null,
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "signals": [
+              "reopened_after_fix",
+              "urgency",
+              "repeated_concern",
+              "verbatim_repeat"
+            ]
+          },
+          {
+            "message_id": "C0000479-T05",
+            "turn_index": 5,
+            "speaker_role": "agent",
+            "phase": "middle",
+            "act": "apology",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": true,
+            "resolution": null,
+            "text": "I'm sorry about the trouble. Let me check your account.",
+            "signals": [
+              "scripted_repeat"
+            ]
+          },
+          {
+            "message_id": "C0000479-T06",
+            "turn_index": 6,
+            "speaker_role": "customer",
+            "phase": "middle",
+            "act": "urgency",
+            "sentiment": "negative",
+            "sentiment_score": -0.6,
+            "empathy": false,
+            "resolution": null,
+            "text": "Thoda jaldi please, flight in 2 hours.",
+            "signals": [
+              "reopened_after_fix",
+              "urgency",
+              "repeated_concern",
+              "verbatim_repeat",
+              "unacknowledged_negative"
+            ]
+          },
+          {
+            "message_id": "C0000479-T07",
+            "turn_index": 7,
+            "speaker_role": "agent",
+            "phase": "middle",
+            "act": "hold_notice",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": false,
+            "resolution": null,
+            "text": "Please allow me a moment while I run some checks.",
+            "signals": [
+              "unacknowledged_negative"
+            ]
+          },
+          {
+            "message_id": "C0000479-T08",
+            "turn_index": 8,
+            "speaker_role": "customer",
+            "phase": "middle",
+            "act": "gratitude",
+            "sentiment": "positive",
+            "sentiment_score": 0.8,
+            "empathy": false,
+            "resolution": null,
+            "text": "Thanks, that helps.",
+            "signals": []
+          },
+          {
+            "message_id": "C0000479-T09",
+            "turn_index": 9,
+            "speaker_role": "agent",
+            "phase": "middle",
+            "act": "empathy_acknowledgement",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": true,
+            "resolution": null,
+            "text": "I understand this is frustrating. I'm investigating now.",
+            "signals": []
+          },
+          {
+            "message_id": "C0000479-T10",
+            "turn_index": 10,
+            "speaker_role": "customer",
+            "phase": "middle",
+            "act": "waiting",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": false,
+            "resolution": null,
+            "text": "Okay, waiting for an update.",
+            "signals": []
+          },
+          {
+            "message_id": "C0000479-T11",
+            "turn_index": 11,
+            "speaker_role": "agent",
+            "phase": "closing",
+            "act": "resolution",
+            "sentiment": "neutral",
+            "sentiment_score": 0.0,
+            "empathy": false,
+            "resolution": "account_reset",
+            "text": "I\u2019ve reset your account. Please try logging in again.",
+            "signals": [
+              "resolution_mismatch"
+            ]
+          },
+          {
+            "message_id": "C0000479-T12",
+            "turn_index": 12,
+            "speaker_role": "customer",
+            "phase": "closing",
+            "act": "escalation_request",
+            "sentiment": "negative",
+            "sentiment_score": -1.0,
+            "empathy": false,
+            "resolution": null,
+            "text": "Still not fixed. Can you escalate?",
+            "signals": [
+              "reopened_after_fix",
+              "escalation_request",
+              "ends_unresolved"
+            ]
+          }
+        ]
+      },
+      "series": {
+        "signals": {
+          "columns": [
+            "kind",
+            "category",
+            "severity",
+            "title",
+            "detail",
+            "message_ids",
+            "turns",
+            "first_turn"
+          ],
+          "rows": [
+            {
+              "kind": "reopened_after_fix",
+              "category": "repeated_concern",
+              "severity": "high",
+              "title": "Problem resurfaced after the customer said it was fixed",
+              "detail": "The customer confirmed a fix, then raised a negative message again: the fix may not have held.",
+              "message_ids": [
+                "C0000479-T02",
+                "C0000479-T04",
+                "C0000479-T06",
+                "C0000479-T12"
+              ],
+              "turns": [
+                2,
+                4,
+                6,
+                12
+              ],
+              "first_turn": 2
+            },
+            {
+              "kind": "urgency",
+              "category": "escalation",
+              "severity": "high",
+              "title": "Urgency pressure (2\u00d7)",
+              "detail": "The customer stressed time pressure.",
+              "message_ids": [
+                "C0000479-T04",
+                "C0000479-T06"
+              ],
+              "turns": [
+                4,
+                6
+              ],
+              "first_turn": 4
+            },
+            {
+              "kind": "resolution_mismatch",
+              "category": "communication_gap",
+              "severity": "high",
+              "title": "Closing action does not fit the issue",
+              "detail": "Agent's action (account reset) does not match a coupon not applying issue.",
+              "message_ids": [
+                "C0000479-T11"
+              ],
+              "turns": [
+                11
+              ],
+              "first_turn": 11
+            },
+            {
+              "kind": "escalation_request",
+              "category": "escalation",
+              "severity": "high",
+              "title": "Customer asked to escalate (1\u00d7)",
+              "detail": "Explicit escalation request: the customer no longer trusts this channel to fix the issue.",
+              "message_ids": [
+                "C0000479-T12"
+              ],
+              "turns": [
+                12
+              ],
+              "first_turn": 12
+            },
+            {
+              "kind": "ends_unresolved",
+              "category": "outcome",
+              "severity": "high",
+              "title": "Conversation ends with a negative customer message",
+              "detail": "No confirmation of a fix by the end of the transcript.",
+              "message_ids": [
+                "C0000479-T12"
+              ],
+              "turns": [
+                12
+              ],
+              "first_turn": 12
+            },
+            {
+              "kind": "repeated_concern",
+              "category": "repeated_concern",
+              "severity": "medium",
+              "title": "Pressed for urgency 2 times",
+              "detail": "The same concern recurs: earlier replies did not settle it.",
+              "message_ids": [
+                "C0000479-T04",
+                "C0000479-T06"
+              ],
+              "turns": [
+                4,
+                6
+              ],
+              "first_turn": 4
+            },
+            {
+              "kind": "verbatim_repeat",
+              "category": "repeated_concern",
+              "severity": "medium",
+              "title": "Customer repeated the same message 2\u00d7",
+              "detail": "\u201cThoda jaldi please, flight in 2 hours.\u201d",
+              "message_ids": [
+                "C0000479-T04",
+                "C0000479-T06"
+              ],
+              "turns": [
+                4,
+                6
+              ],
+              "first_turn": 4
+            },
+            {
+              "kind": "unacknowledged_negative",
+              "category": "communication_gap",
+              "severity": "medium",
+              "title": "1 negative message(s) answered without acknowledgement",
+              "detail": "The next agent reply did not acknowledge the customer's frustration (no empathy or apology).",
+              "message_ids": [
+                "C0000479-T06",
+                "C0000479-T07"
+              ],
+              "turns": [
+                6,
+                7
+              ],
+              "first_turn": 6
+            },
+            {
+              "kind": "scripted_repeat",
+              "category": "communication_gap",
+              "severity": "low",
+              "title": "Agent sent the same reply 2\u00d7",
+              "detail": "\u201cI'm sorry about the trouble. Let me check your account.\u201d",
+              "message_ids": [
+                "C0000479-T01",
+                "C0000479-T05"
+              ],
+              "turns": [
+                1,
+                5
+              ],
+              "first_turn": 1
+            }
+          ]
+        },
+        "phases": {
+          "columns": [
+            "phase",
+            "customer_messages",
+            "mean_sentiment",
+            "negative"
+          ],
+          "rows": [
+            {
+              "phase": "opening",
+              "customer_messages": 1,
+              "mean_sentiment": -0.6,
+              "negative": 1
+            },
+            {
+              "phase": "middle",
+              "customer_messages": 5,
+              "mean_sentiment": 0.12,
+              "negative": 2
+            },
+            {
+              "phase": "closing",
+              "customer_messages": 1,
+              "mean_sentiment": -1.0,
+              "negative": 1
+            }
+          ]
+        }
+      },
+      "method_notes": [
+        "Repeated concern: the same customer act (issue report, urgency, waiting, escalation) two or more times, or a verbatim repeat.",
+        "Unacknowledged negative message: the next agent reply carries no empathy or apology label.",
+        "Phases: first two messages = opening, last two = closing, the rest = middle."
+      ],
+      "uncertainty_notes": [
+        "Signals come from deterministic message labels (template mapping), not from reading tone; treat them as pointers to review, not as a verdict on the agent.",
+        "Turn order follows turn_index; timestamps in this dataset are not in turn order."
+      ],
+      "coverage": {
+        "agent_id": "AgentCEYF",
+        "topic": "coupon_not_applied",
+        "product": "Voucher",
+        "sentiment": "mixed",
+        "date": "2025-11-28 00:00:00",
+        "signals": 9
+      }
+    },
+    "root_cause": null,
+    "dashboard": {
+      "title": "Conversation journey",
+      "generated_from": "How did customer sentiment change over the course of a selected conversation?",
+      "kpi_chart_ids": [
+        "R-778d0f75b3d9_traj_kpis",
+        "R-778d0f75b3d9_xr_kpis"
+      ],
+      "sections": [
+        {
+          "title": "Answer",
+          "items": [
+            {
+              "chart_id": "sentiment_trajectory",
+              "why": "A single conversation over time: a line of customer sentiment by turn.",
+              "width": "half"
+            }
+          ]
+        },
+        {
+          "title": "Drill-down",
+          "items": [
+            {
+              "chart_id": "trajectory_timeline",
+              "why": "The annotated transcript behind the line.",
+              "width": "full"
+            }
+          ]
+        }
+      ],
+      "filters": [
+        {
+          "field": "window",
+          "value": "All dates"
+        }
+      ],
+      "refinements": [
+        {
+          "label": "Latest month",
+          "question": "Same analysis for the last month only."
+        },
+        {
+          "label": "Similar conversations",
+          "question": "Find conversations similar to C0000479."
+        }
+      ],
+      "operations": [
+        "sentiment_trajectory",
+        "conversation_xray"
+      ],
+      "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+    },
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "13/13 quoted excerpts match their source message word for word",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "Counter-evidence stated alongside the claim",
+          "items": [
+            "Sentiment also improved at turn(s) 2, 8; the arc is not uniformly negative."
+          ]
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [
+        "Sentiment also improved at turn(s) 2, 8; the arc is not uniformly negative."
+      ],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 4,
+      "total": 4
     },
     "quality_status": {
       "status": "pass",
@@ -316,7 +1043,7 @@
           "check": "registered_operations",
           "passed": true,
           "critical": true,
-          "detail": "Operations: ['sentiment_trajectory']"
+          "detail": "Operations: ['sentiment_trajectory', 'conversation_xray']"
         },
         {
           "check": "filters_applied",
@@ -334,13 +1061,13 @@
           "check": "chart_consistency",
           "passed": true,
           "critical": true,
-          "detail": "3 charts match their source tables"
+          "detail": "4 charts match their source tables"
         },
         {
           "check": "evidence_valid",
           "passed": true,
           "critical": false,
-          "detail": "0 evidence items resolved to source messages"
+          "detail": "1 evidence items resolved to source messages"
         },
         {
           "check": "evidence_present",
@@ -358,11 +1085,29 @@
           "check": "uncertainty_disclosed",
           "passed": true,
           "critical": false,
-          "detail": "2 uncertainty notes attached to the response"
+          "detail": "4 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "13/13 quoted excerpts match their source message word for word"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 8,
-      "total": 8
+      "passed": 11,
+      "total": 11
     },
     "governance": [
       {
@@ -388,10 +1133,10 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 119.0,
+    "latency_ms": 117.6,
     "charts": [
       {
-        "chart_id": "R-5921e9db51f2_traj_kpis",
+        "chart_id": "R-778d0f75b3d9_traj_kpis",
         "chart_type": "kpi",
         "title": "Key figures",
         "description": "",
@@ -401,7 +1146,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5921e9db51f2_traj",
+        "source_analysis_id": "R-778d0f75b3d9_traj",
         "evidence_ids": [],
         "uncertainty_note": null,
         "drilldown": null,
@@ -458,6 +1203,73 @@
         "rows": 5
       },
       {
+        "chart_id": "R-778d0f75b3d9_xr_kpis",
+        "chart_type": "kpi",
+        "title": "Key figures",
+        "description": "",
+        "x_field": null,
+        "y_field": null,
+        "series": [],
+        "value_format": "count",
+        "filters": {},
+        "dataset_scope": "original",
+        "source_analysis_id": "R-778d0f75b3d9_xr",
+        "evidence_ids": [],
+        "uncertainty_note": null,
+        "drilldown": null,
+        "error_low_field": null,
+        "error_high_field": null,
+        "accessibility_summary": "Messages: 13; Escalation signals: 2; Repeated concerns: 3; Communication gaps: 3; High-severity findings: 5",
+        "data_preview": [
+          {
+            "id": "messages",
+            "label": "Messages",
+            "value": 13,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "escalation_signals",
+            "label": "Escalation signals",
+            "value": 2,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "repeated_concerns",
+            "label": "Repeated concerns",
+            "value": 3,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "communication_gaps",
+            "label": "Communication gaps",
+            "value": 3,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          },
+          {
+            "id": "high_severity",
+            "label": "High-severity findings",
+            "value": 5,
+            "unit": "count",
+            "numerator": null,
+            "denominator": null,
+            "description": ""
+          }
+        ],
+        "rows": 5
+      },
+      {
         "chart_id": "sentiment_trajectory",
         "chart_type": "line",
         "title": "Customer sentiment \u00b7 C0000479",
@@ -479,7 +1291,7 @@
         "value_format": "score",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5921e9db51f2",
+        "source_analysis_id": "R-778d0f75b3d9",
         "evidence_ids": [
           "C0000479-T02",
           "C0000479-T04",
@@ -564,7 +1376,7 @@
         "value_format": "count",
         "filters": {},
         "dataset_scope": "original",
-        "source_analysis_id": "R-5921e9db51f2",
+        "source_analysis_id": "R-778d0f75b3d9",
         "evidence_ids": [
           "C0000479-T02",
           "C0000479-T04",

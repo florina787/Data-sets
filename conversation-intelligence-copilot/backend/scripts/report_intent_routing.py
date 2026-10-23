@@ -43,7 +43,7 @@ def main() -> None:
                      f"{pct(r['unsupported_rejection_rate'])} | {pct(r['false_refusal_rate'])} | {pct(r['llm_invocation_rate'])} | "
                      f"{r['latency_ms']['p50']:.0f} / {r['latency_ms']['p95']:.0f} ms |")
     L += ["", "Latency is wall-clock per question on 4 CPU cores. Qwen calls reuse llama.cpp's cached system-prompt prefix, so "
-          "warm calls take about a second; the first call after start-up (model load + full prompt) took 30–55 s in this environment.", ""]
+          "warm calls take about a second; the first call after start-up (model load + full prompt) took 8.7 s in an idle process, and 30–55 s while other jobs competed for the CPU.", ""]
     final = load("test", "router_v2", "_final")
     if final:
         L += ["### Coverage vs accuracy (final router, test)", "",

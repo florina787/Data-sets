@@ -103,6 +103,6 @@ Screenshots: [18 dashboard](screenshots/18-dynamic-dashboard.png), [19 replay + 
 * **Small samples for root cause.** It needs at least 20 conversations in a topic and 8 on each side of a factor. Within the latest month alone, several factors are untestable.
 * **Template-generated data.** X-Ray and root-cause signals come from template-level labels. With synthetic-looking data, associations may reflect how the data was generated rather than real agent behaviour.
 * **Weak semantic routing.** The semantic routing stage is built but disabled by its own calibration: no threshold reached 95% precision on validation.
-* **Local-model latency.** HYBRID AI with the local model is slow on CPU: about 1 s per warm routing call, 30–55 s for the first call after start-up, and tens of seconds for a model-written explanation.
+* **Local-model latency.** HYBRID AI with the local model is slow on CPU: about 1 s per warm routing call, ≈ 9 s for the first call after start-up on an idle 4-core CPU (30–55 s under CPU contention), and tens of seconds for a model-written explanation.
 * **The dashboard is not a saved artefact.** It is regenerated per question. Pinning and sharing dashboards is not implemented.
 * **Replay depends on telemetry retention.** Replay reads the telemetry store; if telemetry is cleared, older answers can't be replayed.

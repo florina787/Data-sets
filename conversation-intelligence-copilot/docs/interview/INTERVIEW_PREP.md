@@ -13,7 +13,7 @@ In-process, columnar, exact SQL over 42k rows in milliseconds; read-only connect
 1. Closed-enum structured outputs, schema-validated, one repair attempt. 2. IDs from the model re-validated against the DB. 3. Explanations rejected if they contain any number not in the verified results. 4. QA agent checks denominators, ranks, chart-to-table equality and citations on every answer. 5. Memory stores references, not prose.
 
 ## How does retrieval work, and how good is it?
-Conversation-aware chunks → embeddings → exact cosine search in FAISS with metadata pre-filtering → one passage per conversation → evidence with message IDs and CSV lines. With MiniLM: topic P@5 61.7% vs 12.5% random on paraphrased queries (36.7% with the offline LSA fallback). MiniLM fixed paraphrases with no shared words but regressed on generic help and payment-not-reflected queries; hybrid lexical + vector scoring is the next step.
+Conversation-aware chunks → embeddings → exact cosine search in FAISS with metadata pre-filtering → one passage per conversation → evidence with message IDs and CSV lines. Two indexes (MiniLM + LSA) fused by weighted reciprocal rank fusion: topic P@5 62.8% vs 12.5% random on paraphrased queries (MiniLM alone 62.2%, LSA alone 28.9%). The fusion weight was tuned on the same queries, and the gain over MiniLM is small; every method still misses payment-not-reflected paraphrases.
 
 ## How are model failures handled?
 Retryable errors (408/429/5xx/timeouts) back off with jitter or Retry-After; permanent errors (401/403) open the circuit immediately; repeated failures open it after a threshold; the request falls back to deterministic intent and explanation; the UI shows "Deterministic mode" with the reason and a retry button.

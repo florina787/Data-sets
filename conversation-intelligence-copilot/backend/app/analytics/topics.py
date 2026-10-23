@@ -88,6 +88,14 @@ def rank_negative_topics(db: AnalyticsDB, scope: Scope, top_n: int = 5, dimensio
         t = two_proportion_test(int(a["negative"]), int(a["conversations"]), int(b["negative"]), int(b["conversations"]))
         if t["p_value"] is not None and t["p_value"] >= 0.05:
             unc.append(f"#1 ({a['name']}) and #2 ({b['name']}) have overlapping uncertainty in negative rate (p = {t['p_value']}).")
+    key = "negative" if rank_by == "count" else "negative_rate"
+    if len(ranked) > top_n and ranked.iloc[top_n - 1][key] == ranked.iloc[top_n][key]:
+        last = ranked.iloc[top_n - 1]
+        tied = ranked[ranked[key] == last[key]]
+        names = ", ".join(f"{r['name']} ({int(r['negative'])} of {int(r['conversations'])})" for _, r in tied.iterrows())
+        tie_rule = "higher negative rate" if rank_by == "count" else "more negative conversations"
+        unc.insert(0, f"Rank {top_n} is a tie: {names} share the same {'count' if rank_by == 'count' else 'rate'}. "
+                      f"The tie-breaker ({tie_rule}) lists {last['name']}; the others are equally entitled to the last place.")
     count_top = set(by_count.head(top_n)["name"])
     rate_top = set(by_rate.head(top_n)["name"])
     if count_top != rate_top:

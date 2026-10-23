@@ -37,6 +37,9 @@ def negative_topics(r: dict, extra: dict) -> dict:
               f"{first['name']} accounts for {pct(first['share_of_negative'])} of negative conversations. "
               f"By negative rate rather than count, {top_rate['name']} is highest at {pct(top_rate['negative_rate'])} "
               f"(95% CI {pct(top_rate['rate_ci_low'])}–{pct(top_rate['rate_ci_high'])}).")
+    tie = next((n for n in r.get("uncertainty_notes", []) if n.startswith("Rank ") and "is a tie" in n), None)
+    if tie:
+        answer += " " + tie
     return {
         "headline": f"Top negative {dim}s in {_window(r)}: " + ", ".join(row["name"] for row in rows[:5]) + ".",
         "answer": answer,

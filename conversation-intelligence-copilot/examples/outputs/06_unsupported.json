@@ -1,8 +1,8 @@
 [
   {
     "version": "1.0",
-    "request_id": "R-8bfd0f3d473f",
-    "session_id": "S-0ef840e14693",
+    "request_id": "R-1cb97ec4a9fc",
+    "session_id": "S-887032f2e714",
     "status": "unsupported",
     "question": "What is the revenue impact of these complaints?",
     "resolved_intent": {
@@ -71,17 +71,125 @@
       "What were the top 5 topics most associated with negative sentiment last month?",
       "Which recurring customer concerns should leadership review first?"
     ],
-    "execution_trace_id": "R-8bfd0f3d473f",
+    "execution_trace_id": "R-1cb97ec4a9fc",
     "model_metadata": {
       "provider": "gemini",
-      "model": "gemini-2.5-flash",
+      "model": "llama-3.3-70b-versatile",
       "mode": "deterministic",
       "available": false,
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "intent_source": "rules",
       "explanation_source": "deterministic",
       "label_source": "rules",
-      "embedding_backend": null
+      "embedding_backend": null,
+      "routing": {
+        "requested_mode": "auto",
+        "route": "analytics_only",
+        "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+        "llm_available": false,
+        "llm_steps": [],
+        "rules_category": "unsupported",
+        "interpretive_cue": null,
+        "intent_precheck": {
+          "method": "policy",
+          "reason": "Policy rule 'policy_refusal': The question needs data the dataset does not contain or asks for a personnel decision.",
+          "rule": "policy_refusal",
+          "label": "unsupported"
+        }
+      },
+      "intent_routing": {
+        "method": "policy",
+        "reason": "Policy rule 'policy_refusal': The question needs data the dataset does not contain or asks for a personnel decision.",
+        "rule": "policy_refusal",
+        "label": "unsupported",
+        "llm_calls": 0,
+        "semantic": null,
+        "llm": null,
+        "stages": [
+          "policy",
+          "rules"
+        ],
+        "latency_ms": 0.2
+      },
+      "token_usage": {
+        "calls": 0,
+        "model_calls": 0,
+        "cache_hits": 0,
+        "reported_calls": 0,
+        "unreported_calls": 0,
+        "complete": true,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "by_purpose": []
+      }
+    },
+    "routing": {
+      "requested_mode": "auto",
+      "route": "analytics_only",
+      "reason": "No LLM is available (LLM_PROVIDER=none); deterministic analytics answer the question.",
+      "llm_available": false,
+      "llm_steps": [],
+      "rules_category": "unsupported",
+      "interpretive_cue": null,
+      "intent_precheck": {
+        "method": "policy",
+        "reason": "Policy rule 'policy_refusal': The question needs data the dataset does not contain or asks for a personnel decision.",
+        "rule": "policy_refusal",
+        "label": "unsupported"
+      }
+    },
+    "token_usage": {
+      "calls": 0,
+      "model_calls": 0,
+      "cache_hits": 0,
+      "reported_calls": 0,
+      "unreported_calls": 0,
+      "complete": true,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "estimated_cost_usd": 0.0,
+      "by_purpose": []
+    },
+    "xray": null,
+    "root_cause": null,
+    "dashboard": null,
+    "evidence_review": {
+      "verdict": "supported",
+      "checks": [
+        {
+          "check": "excerpt_fidelity",
+          "status": "pass",
+          "detail": "No excerpts quoted",
+          "items": []
+        },
+        {
+          "check": "sample_size",
+          "status": "pass",
+          "detail": "No group below 30 conversations",
+          "items": []
+        },
+        {
+          "check": "counter_evidence",
+          "status": "pass",
+          "detail": "No counter-evidence applicable",
+          "items": []
+        },
+        {
+          "check": "causal_language",
+          "status": "pass",
+          "detail": "No unqualified causal claims",
+          "items": []
+        }
+      ],
+      "challenges": [],
+      "counter_evidence": [],
+      "added_notes": [],
+      "replaced_explanation": false,
+      "passed": 4,
+      "total": 4
     },
     "quality_status": {
       "status": "pass",
@@ -127,10 +235,28 @@
           "passed": true,
           "critical": false,
           "detail": "0 uncertainty notes attached to the response"
+        },
+        {
+          "check": "excerpt_fidelity",
+          "passed": true,
+          "critical": true,
+          "detail": "No excerpts quoted"
+        },
+        {
+          "check": "sample_size",
+          "passed": true,
+          "critical": false,
+          "detail": "No group below 30 conversations"
+        },
+        {
+          "check": "causal_language",
+          "passed": true,
+          "critical": false,
+          "detail": "No unqualified causal claims"
         }
       ],
-      "passed": 7,
-      "total": 7
+      "passed": 10,
+      "total": 10
     },
     "governance": [
       {
@@ -156,7 +282,7 @@
     ],
     "human_review_required": false,
     "errors": [],
-    "latency_ms": 214.2,
+    "latency_ms": 37.2,
     "charts": [],
     "graphs": []
   }
