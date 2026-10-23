@@ -9,7 +9,7 @@ All figures below come from runs in this repository. The machine-generated repor
 | Area | Method | Data |
 |---|---|---|
 | Analytical correctness | (a) Hand-built fixture with hand-computed answers (exact counts, ranks, denominators, windows, agent metrics, turning points); (b) an **independent oracle** that re-implements Q1 from the raw CSV with its own regexes and score table and is compared with the system's answer. | `tests/fixtures/build_fixture.py`; real dataset |
-| Intent classification | Labelled question set (40) on which the parser was tuned, plus a **held-out** set of 20 paraphrases written afterwards and scored once. | `tests/evaluation/datasets/` |
+| Intent classification | Benchmark v2: 288 questions in 95 paraphrase families, split by family into train / validation / test; test frozen and scored once ([INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)). Legacy 40 + 20 sets kept for reference. | `tests/evaluation/datasets/` |
 | Labelling | Template coverage; agreement between the lexicon fallback and template labels on all 21,639 real customer messages; blind human review (in-app). | real dataset |
 | Retrieval | 36 paraphrased queries that avoid template wording (e.g. "billed two times for Wallet"); relevance = same issue topic (and product where named); P@5, hit-rate@5, MRR@5, duplicates, latency; random baseline. | real dataset |
 | End to end | 40 single questions + 3 multi-turn sessions (11 follow-ups) through the full graph: QA pass rate per check, refusal of unsupported questions, follow-up routing, latency. | real dataset |
@@ -21,7 +21,8 @@ All figures below come from runs in this repository. The machine-generated repor
 |---|---|
 | Q1 numbers vs independent oracle (Nov 2025) | **exact match** — 682 conversations, 239 negative, all top-5 counts |
 | Intent accuracy, tuning set (40) | 100% (after fixing 2 errors this set exposed — optimistic) |
-| Intent accuracy, **held-out** (20) | **50%** — 7 of the 10 misses fail safe as "unsupported"; 3 misrouted (2 trajectory questions → conversation detail, 1 → topic frequency) |
+| Intent accuracy, legacy held-out (20) | 50% at the time (superseded; the set was read during the v2 work) |
+| Intent routing, **benchmark v2 test** (73) | **95.9%** (macro F1 0.932) confidence router + local Qwen; 90.4% with no model; previous router 61.6% |
 | End-to-end QA pass rate (51 requests) | 100% (all 11 checks at 100%) |
 | Unsupported questions refused | 6/6 |
 | Follow-up routing (11) | 100% |

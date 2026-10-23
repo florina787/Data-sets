@@ -25,7 +25,7 @@ More screenshots: [`docs/screenshots/`](docs/screenshots) (coaching, memory foll
 
 ```
 Analyst question
-  → input validation → session memory → intent (Gemini structured | rules)
+  → input validation → session memory → Zero-LLM router → intent (policy → rules → semantic → model → clarify)
   → supervisor/planner (resolve references, date window, registered operations)
   → specialist agent (topic | sentiment | coaching | leadership | analytics)  ‖  retrieval (FAISS)
   → evidence assembly → explanation (Gemini, numeric-grounding check | deterministic)
@@ -111,7 +111,7 @@ Syncora.ai Customer Support Conversation sample (Kaggle), 3,000 synthetic conver
 | Q1 vs an independent oracle | exact match (682 conversations, 239 negative, top-5 counts) |
 | End-to-end QA pass rate | 100% of 51 requests (11 checks each) |
 | Unsupported questions refused | 6/6 |
-| Intent (rules fallback) | 100% tuning set · **50% held-out paraphrases** (7/10 misses refused safely) |
+| Intent routing (benchmark v2, 73 held-out questions, scored once) | **95.9%** confidence router + local Qwen · 90.4% with no model · previous router 61.6% — [details](docs/evaluation/INTENT_ROUTING.md) |
 | Retrieval topic P@5 | 61.7% with MiniLM (36.7% with the LSA fallback; 12.5% random) |
 | Latency (deterministic, local) | p50 167 ms · p95 776 ms |
 
@@ -132,6 +132,8 @@ curl -s localhost:8000/api/chat -H 'Content-Type: application/json' \
 * Retrieval uses `all-MiniLM-L6-v2` (install with `uv sync --extra transformers`; needs Hugging Face access on first run). Without it the app falls back to local LSA embeddings and records why in the index manifest.
 * Sentiment/empathy mappings are developer judgements; human-agreement metrics need labels from the in-app review panel.
 * No authentication/RBAC (see [SECURITY.md](SECURITY.md)); single-node storage.
+* Intent routing: the 95.9% held-out figure comes from 73 questions written by the same author as the rules (3–9 per intent), so it is indicative rather than precise. Three known misroutes are listed, unfixed, in [INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md). The semantic routing stage is built but left disabled by its own calibration. Hosted-model routing (Groq/Gemini) was not evaluated.
+* The local model (Qwen2.5-1.5B on CPU) answers a routing call in about 1 s once warm; the first call after start-up takes 30–55 s.
 
 Implementation status per feature: [docs/IMPLEMENTATION_MATRIX.md](docs/IMPLEMENTATION_MATRIX.md) · requirements traceability: [docs/requirements/REQUIREMENTS_MATRIX.md](docs/requirements/REQUIREMENTS_MATRIX.md) · reports: [docs/reports/](docs/reports) · demo script: [docs/interview/DEMO_SCRIPT.md](docs/interview/DEMO_SCRIPT.md).
 

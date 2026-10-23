@@ -55,7 +55,7 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-  S((START)) --> IV[input_validation] --> SC[session_context] --> IN[intent] --> SUP[supervisor / planner]
+  S((START)) --> IV[input_validation] --> SC[session_context] --> RT[router] --> IN[intent] --> SUP[supervisor / planner]
   SUP -. topic questions .-> TA[topic_agent]
   SUP -. sentiment / trajectory .-> SA[sentiment_agent]
   SUP -. coaching .-> CA[coaching_agent]
@@ -79,7 +79,8 @@ flowchart TB
 
 | Node | Does | Never does |
 |---|---|---|
-| intent | Gemini structured `IntentOutput` (closed enums), cross-checked by regex for IDs; deterministic parser when the model is unavailable or fails | Produce numbers or SQL |
+| router | Zero-LLM decision: does this question need a model at all (AUTO / ANALYTICS ONLY / HYBRID AI) | Call a model |
+| intent | Confidence-aware routing: policy → high-precision rules → calibrated semantic match → vague-question guard → model (category only, constrained JSON) → weak rules → clarify; entities always from deterministic extractors ([INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)) | Produce numbers or SQL; invent a confidence score |
 | supervisor | Resolve follow-up references and date window, authorise dataset mode, validate IDs, choose operations / specialist / retrieval mode | Compute results |
 | specialists | Run registered operations with validated arguments; resolve dependencies (e.g. compare the top two topics when none named) | Free-form SQL |
 | retrieval | Filtered FAISS search, one passage per conversation, optional lexical rerank | Treat similarity as confidence |
@@ -210,6 +211,6 @@ sequenceDiagram
 | LangGraph over a single prompt or free agent loop | Explicit, testable routing; real parallel branches; checkpointing; every node observable | More code than one prompt |
 | Registered operations instead of text-to-SQL | No fabricated or unsafe queries; exact, testable numbers | New question types need a new operation |
 | Deterministic labeller as default | The data is templated (426 unique texts), so rules are exact, free and reproducible; Gemini was unavailable during development | The mapping is a developer judgement; validated only by agreement checks and (optionally) human review |
-| Deterministic intent parser as fallback | Works with no key; fails safe to "unsupported" | Brittle on paraphrases (50% on a held-out set) — Gemini is the intended primary path |
+| Rules first, model only when needed | 90.4% held-out with no model, 95.9% with the local model, model called for 6.9% of questions | Rules are hand-written by the benchmark's author; a semantic stage was built but calibration left it off (precision below 95%) |
 | MiniLM embeddings with LSA fallback | MiniLM: topic P@5 62% on paraphrases; LSA keeps retrieval working fully offline | MiniLM needs a model download and is slower (≈35 ms vs 20 ms); LSA is weak on paraphrases (37%) |
 | DuckDB + SQLite + FAISS in-process | Zero infrastructure, reproducible | Single-node; see production notes in README |
