@@ -59,5 +59,5 @@ llm-download:       ## Download the free local LLM (Qwen2.5-1.5B-Instruct GGUF, 
 
 package:            ## Build the submission ZIP from the committed tree (dist/conversation-intelligence-copilot.zip)
 	mkdir -p dist
-	git archive --format=zip --prefix=conversation-intelligence-copilot/ -o dist/conversation-intelligence-copilot.zip HEAD:conversation-intelligence-copilot
+	git -C "$$(git rev-parse --show-toplevel)" archive --format=zip --prefix=conversation-intelligence-copilot/ -o "$(CURDIR)/dist/conversation-intelligence-copilot.zip" HEAD:conversation-intelligence-copilot
 	@ls -lh dist/conversation-intelligence-copilot.zip
