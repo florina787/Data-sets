@@ -24,3 +24,5 @@ frontend/playwright-report/
 *.tsbuildinfo
 data/models/
 dist/
+docs/readme/.frames/
+frontend/.readme-shot.mjs

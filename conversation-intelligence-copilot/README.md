@@ -4,78 +4,104 @@
 
 <br>
 
-<a href="#quick-start"><img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-3776AB?style=flat-square&logo=python&logoColor=white"></a>
-<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-API-009688?style=flat-square&logo=fastapi&logoColor=white">
-<img alt="LangGraph" src="https://img.shields.io/badge/LangGraph-agents-1C3C3C?style=flat-square&logo=langchain&logoColor=white">
-<img alt="DuckDB" src="https://img.shields.io/badge/DuckDB-analytics-FFF000?style=flat-square&logo=duckdb&logoColor=black">
-<img alt="FAISS" src="https://img.shields.io/badge/FAISS-hybrid%20retrieval-0467DF?style=flat-square&logo=meta&logoColor=white">
-<img alt="React 18" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black">
-<br>
-<img alt="Backend tests: 138 passing" src="https://img.shields.io/badge/backend%20tests-138%20passing-2ea44f?style=flat-square">
-<img alt="Playwright: 17 passing" src="https://img.shields.io/badge/Playwright%20e2e-17%20passing-2ea44f?style=flat-square">
-<img alt="Intent routing 95.9% held out" src="https://img.shields.io/badge/intent%20routing-95.9%25%20held%20out-6366F1?style=flat-square">
-<img alt="Runs fully local" src="https://img.shields.io/badge/runs-fully%20local-64748B?style=flat-square">
+<img alt="Python 3.12+" src="https://img.shields.io/badge/python-3.12%2B-3776AB?style=for-the-badge&logo=python&logoColor=white">
+<img alt="LangGraph" src="https://img.shields.io/badge/LangGraph-agents-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white">
+<img alt="DuckDB" src="https://img.shields.io/badge/DuckDB-analytics-FFF000?style=for-the-badge&logo=duckdb&logoColor=black">
+<img alt="FAISS" src="https://img.shields.io/badge/FAISS-retrieval-0467DF?style=for-the-badge&logo=meta&logoColor=white">
+<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-API-009688?style=for-the-badge&logo=fastapi&logoColor=white">
+<img alt="React 18" src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black">
 
-**[Quick start](#quick-start)** · **[The four questions](#the-four-assignment-questions)** · **[Architecture](#how-it-works)** · **[Evaluation](#evaluation)** · **[Gemini design](#if-a-gemini-api-key-were-available)** · **[Reports](docs/reports)**
+<img alt="Backend tests: 138 passing" src="https://img.shields.io/badge/backend%20tests-138%20passing-2ea44f?style=flat-square">
+<img alt="Playwright: 17 passing" src="https://img.shields.io/badge/Playwright-17%20passing-2ea44f?style=flat-square">
+<img alt="Intent routing 95.9% held out" src="https://img.shields.io/badge/intent%20routing-95.9%25%20held%20out-6366F1?style=flat-square">
+<img alt="No API key" src="https://img.shields.io/badge/API%20key-none%20needed-64748B?style=flat-square">
+<img alt="License MIT" src="https://img.shields.io/badge/license-MIT-64748B?style=flat-square">
+
+<h3>Ask a question about your customer conversations.<br>Get computed numbers, cited transcripts and a checked answer, with no LLM required.</h3>
+
+<a href="#-quick-start"><b>Quick start</b></a> ·
+<a href="#-the-four-questions-answered"><b>Results</b></a> ·
+<a href="#-how-it-works"><b>How it works</b></a> ·
+<a href="#-evaluation"><b>Evaluation</b></a> ·
+<a href="#-run-it-in-your-ide"><b>IDE setup</b></a> ·
+<a href="docs/reports"><b>Reports</b></a>
+
+<br><br>
+
+<img src="docs/readme/demo.gif" alt="Demo: a question is typed, the answer appears with KPIs, charts, cited conversations and an evidence review" width="100%">
+
+<sub><b>Live capture.</b> The question is answered in ~0.1 s on a laptop CPU, with zero model calls. Every figure comes from DuckDB.</sub>
 
 </div>
 
----
-
-A **conversation analysis bot for contact-centre analysts**. An analyst asks a question in plain language. A LangGraph workflow decides what analysis is needed, runs registered DuckDB operations over 3,000 customer-support conversations, retrieves source transcripts, explains the result, and checks it before anything is shown. Each answer carries:
-
-* counts and rankings;
-* charts;
-* cited conversations;
-* uncertainty notes;
-* a replay of how it was produced.
-
-Everything runs on your machine. The only language model is a small **local** one (Qwen2.5-1.5B), and it is optional.
-
-> [!IMPORTANT]
-> **Numbers are computed, never generated.** Every count, rate and rank comes from a registered, parameterised DuckDB operation. The local model is used only to interpret questions the rules cannot route and to phrase explanations. Any explanation containing a number that is not in the verified results is rejected.
+<br>
 
 <table>
 <tr>
-<td width="25%" align="center"><b>4 / 4</b><br><sub>assignment questions answered and independently re-computed</sub></td>
-<td width="25%" align="center"><b>3 / 3</b><br><sub>bonus extensions: retrieval, specialised agent, memory</sub></td>
-<td width="25%" align="center"><b>95.9%</b><br><sub>intent routing on 73 held-out questions (was 61.6%)</sub></td>
-<td width="25%" align="center"><b>0 tokens</b><br><sub>for all four assignment questions: the router answers them without a model</sub></td>
+<td width="25%" align="center"><h2>4 / 4</h2><sub>assignment questions answered and independently re-computed</sub></td>
+<td width="25%" align="center"><h2>95.9%</h2><sub>intent routing on 73 held-out questions, up from 61.6%</sub></td>
+<td width="25%" align="center"><h2>125 ms</h2><sub>median answer time on the deterministic path (p95 540 ms)</sub></td>
+<td width="25%" align="center"><h2>$0</h2><sub>to run: everything is local, and the optional model is too</sub></td>
 </tr>
 </table>
 
-<div align="center">
-<img src="docs/screenshots/01-home.png" alt="The analyst workspace: ask a question, pick an analysis mode, or start from one of the four assignment questions" width="100%">
-<sub><i>The analyst workspace: ask anything, or start from one of the four assignment questions.</i></sub>
-</div>
+## ✦ Why it is built this way
 
-## Contents
+Contact-centre analytics fails quietly when a language model is allowed to *produce* numbers. This copilot draws a hard line between computing and interpreting:
 
-- [The four assignment questions](#the-four-assignment-questions)
-- [How it works](#how-it-works)
-- [Bonus extensions](#bonus-extensions)
-- [Six analytical enhancements](#six-analytical-enhancements)
-- [Evaluation](#evaluation)
-- [Quick start](#quick-start)
-- [Configuration](#configuration) · [Models, dependencies and cost](#models-dependencies-and-cost)
-- [If a Gemini API key were available](#if-a-gemini-api-key-were-available)
-- [The dataset](#the-dataset) · [Sample requests and outputs](#sample-requests-and-outputs)
-- [Limitations](#limitations) · [Repository guide](#repository-guide)
+<table>
+<tr>
+<td width="50%" valign="top">
+
+#### 🧮 Numbers are computed, never generated
+Every count, rate and rank comes from one of 15 registered, parameterised DuckDB operations. No model writes SQL. If an explanation contains a number that is not in the verified result, it is rejected.
+
+</td>
+<td width="50%" valign="top">
+
+#### 📎 Every claim has a source
+Answers cite conversations with message IDs and CSV line numbers. Hybrid retrieval (MiniLM + LSA over FAISS) finds the transcripts that illustrate each finding.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+#### ⚖️ Checked before you see it
+A QA agent and an **Evidence Challenger** re-read every quote from the database, disclose small samples, state counter-evidence, and rewrite causal wording as association.
+
+</td>
+<td width="50%" valign="top">
+
+#### 🧭 A model only when it adds something
+A **Zero-LLM router** answers fact questions, including all four assignment questions, without a model. A small local model (Qwen2.5-1.5B, CPU) helps only with questions the rules can't route.
+
+</td>
+</tr>
+</table>
 
 ---
 
-## The four assignment questions
+## ◆ The four questions, answered
 
-All four are answered end to end through the chat UI and the API. Each was re-computed independently from the raw CSV for the [requirements audit](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md).
+| # | Question | Answer in one line |
+|:-:|---|---|
+| 1 | Top 5 topics associated with negative sentiment in the last month | **General help request** (49), Duplicate charge (42), Paid but service not delivered (30), Feature not working (28), Login / account locked (24, tied) |
+| 2 | Agents who may benefit from empathy or communication coaching | **No individual ranking is fair** (≤ 2 conversations per agent). Instead: workforce patterns and a conversation review queue |
+| 3 | How customer sentiment changed over a selected conversation | C0000479: **+1.0 → −1.0**, five turning points, the problem resurfaced after "it works now" |
+| 4 | Recurring concerns leadership should review first | **Item or service not received** (67.1), Coupon not applying (60.8), Duplicate charge (59.8) |
 
-### 1 · Top 5 topics associated with negative sentiment in the last month in the data
+<details open>
+<summary><b>Q1 · Top 5 negative topics in the last month</b></summary>
+
+<br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/q1-negative-topics-dark.png">
   <img alt="Bar chart of negative conversations by topic in November 2025: General help request 49 of 156, Duplicate charge 42 of 87, Paid but service not delivered 30 of 75, Feature not working 28 of 76, Login / account locked 24 of 58" src="docs/readme/q1-negative-topics-light.png" width="100%">
 </picture>
 
-**"Last month" is the latest month in the data** (November 2025), not today's date. In that month **240 of 682** conversations were negative (35.2%).
+**"Last month" means the latest month in the data** (November 2025), not today's date. **240 of 682** conversations that month were negative (35.2%).
 
 | Rank | Topic | Negative | Of | Rate |
 |:-:|---|--:|--:|--:|
@@ -85,26 +111,45 @@ All four are answered end to end through the chat UI and the API. Each was re-co
 | 4 | Feature not working | 28 | 76 | 36.8% |
 | 5 | Login / account locked | 24 | 58 | 41.4% |
 
-The answer also points out:
-* **Rank 5 is a tie.** Coupon not applying also has 24 negative conversations.
-* **By rate, Duplicate charge leads.**
-* **The differences are not statistically significant** (χ² p = 0.07).
+The answer also says what a careful analyst would:
+* rank 5 is a **tie** with Coupon not applying (24);
+* by *rate*, Duplicate charge leads;
+* the differences between topics are **not statistically significant** (χ² p = 0.07).
 
-### 2 · Agents who may benefit from empathy or communication coaching
+<img src="docs/readme/shots/q1-answer.png" alt="The Q1 answer in the app: routing strip showing zero model calls, headline, KPIs and charts" width="100%">
 
-The data holds **2,987 agent IDs for 3,000 conversations, with at most 2 conversations each**. Ranking individual agents would rest on one or two transcripts, so the answer says this plainly. Instead it:
+</details>
 
-* reports workforce patterns: only **3,215 of 10,966 negative customer turns (29.3%)** got an acknowledgement or apology, and **57.3%** of assessable closing actions did not fit the issue;
-* ranks **conversations** for a team-lead review, each with its evidence;
-* flags the output for human review. Questions asking for personnel decisions are refused.
+<details>
+<summary><b>Q2 · Coaching: why the honest answer is "not per agent"</b></summary>
 
-### 3 · How customer sentiment changed over a selected conversation
+<br>
 
-Turn-by-turn customer sentiment is shown in **turn order**. Timestamps in this dataset are not in turn order, and the answer says so. Turning points are shown with the agent message that preceded each one. An **X-Ray** links every finding to the exact messages.
+The data holds **2,987 agent IDs for 3,000 conversations**, with at most 2 conversations each. A per-agent ranking would rest on one or two transcripts, so the answer says so and offers what the data *can* support:
+
+* **Workforce patterns.** Only **3,215 of 10,966 negative customer turns (29.3%)** got an acknowledgement or apology. **57.3%** of assessable closing actions did not fit the issue.
+* **A review queue of conversations**, each with its evidence, for a team lead.
+* **Human review required.** Questions asking for personnel decisions are refused.
+
+</details>
+
+<details>
+<summary><b>Q3 · Sentiment over one conversation, with an X-Ray</b></summary>
+
+<br>
+
+Turn-by-turn customer sentiment is shown in **turn order**. The dataset's timestamps are not in turn order, and the answer says so. Each turning point is shown with the agent message just before it.
 
 > *In C0000479 (Coupon not applying · Voucher), customer sentiment worsened: +1.0 at the first follow-up to −1.0 at the end. Five turning points; the problem resurfaced after the customer said it was fixed.*
 
-### 4 · Recurring concerns leadership should review first
+<img src="docs/readme/shots/xray.png" alt="Conversation X-Ray: timeline, sentiment line, findings and transcript linked by message" width="100%">
+
+</details>
+
+<details open>
+<summary><b>Q4 · What leadership should review first</b></summary>
+
+<br>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/readme/q4-priorities-dark.png">
@@ -119,62 +164,59 @@ Turn-by-turn customer sentiment is shown in **turn order**. Timestamps in this d
 | 4 | Paid but service not delivered | 53.4 | 335 | 37.3% | negative rate |
 | 5 | General help request | 39.0 | 662 | 24.6% | volume |
 
-The score is transparent: weighted, min-max-scaled signals, with the weights shown in the chart legend. A **sensitivity analysis** re-ranks the concerns under 13 weight scenarios: the top concern stays first in 92% of them. Each recommendation names:
-* a finding;
-* the signal driving it;
-* an action;
-* a decision owner;
-* evidence;
-* its uncertainty.
+* **A transparent score:** weighted, min-max-scaled signals; the weights are shown in the chart.
+* **Robust to the weights:** under 13 weight scenarios, the top concern stays first in 92% of them.
+* **Actionable:** each recommendation names a finding, its driver, an action, a decision owner, evidence and its uncertainty.
 
-<table>
-<tr>
-<td width="50%"><img src="docs/screenshots/02-q1-negative-topics.png" alt="Q1 answer in the app"><br><sub>Q1 in the app: answer, KPIs, charts, evidence</sub></td>
-<td width="50%"><img src="docs/screenshots/05-q4-leadership.png" alt="Q4 answer in the app"><br><sub>Q4 in the app: priority matrix and recommendations</sub></td>
-</tr>
-</table>
+<img src="docs/readme/shots/q4-answer.png" alt="The Q4 answer in the app: priority matrix, score breakdown, trend and closing-action fit" width="100%">
+
+</details>
 
 ---
 
-## How it works
-
-### System overview
+## ◆ How it works
 
 ```mermaid
 flowchart LR
-    A([Analyst]) -->|question| UI[React workspace<br/>chat · dashboards · explorer]
+    A([Analyst]) -->|question| UI[React workspace]
     UI -->|REST + SSE| API[FastAPI]
     API --> G{{LangGraph workflow}}
     G -->|registered operations| DB[(DuckDB<br/>3,000 conversations)]
     G -->|hybrid search| VX[(FAISS<br/>MiniLM + LSA)]
-    G -.->|only when needed| LLM[[Optional local LLM<br/>Qwen2.5-1.5B · llama.cpp]]
+    G -.->|only when needed| LLM[[Local LLM<br/>Qwen2.5-1.5B]]
     G --> MEM[(SQLite<br/>memory · telemetry)]
-    G -->|answer + evidence + replay| UI
+    G -->|answer · evidence · replay| UI
+
+    classDef store fill:#ecfeff,stroke:#0891b2,color:#164e63
+    classDef opt fill:#f8fafc,stroke:#94a3b8,color:#334155,stroke-dasharray:4 3
+    class DB,VX,MEM store
+    class LLM opt
 ```
 
-### The agent graph
+### The agent graph, in four stages
 
-Every node is a real LangGraph node that emits start and finish events. The UI animates them live, and Decision Replay plays them back.
+Every box is a real LangGraph node. The UI animates the nodes live as they run, and **AI Decision Replay** plays them back step by step.
 
 ```mermaid
-flowchart TD
-    S((Start)) --> IV[Input validation<br/><sub>limits · injection scan</sub>]
-    IV --> SC[Session memory]
-    SC --> RT{Zero-LLM router<br/><sub>is a model needed?</sub>}
-    RT --> IN[Intent<br/><sub>policy → rules → semantic → model → clarify</sub>]
-    IN --> SUP[Supervisor / planner<br/><sub>window · references · operations</sub>]
-    SUP --> SPEC[Specialist agent<br/><sub>topic · sentiment · coaching · leadership · analytics</sub>]
-    SUP -.parallel.-> RET[Retrieval<br/><sub>FAISS hybrid</sub>]
-    SPEC -.after analysis.-> RET
-    SPEC --> EV[Evidence assembly]
-    RET --> EV
-    EV --> EX[Explanation<br/><sub>deterministic or model + numeric grounding</sub>]
-    EX --> VZ[Visualisation planner]
-    VZ --> QA[QA + Evidence Challenger]
-    QA --> GOV[Governance]
-    GOV --> RS[Response]
-    RS --> MT[Memory + telemetry]
-    MT --> E((End))
+flowchart TB
+    subgraph S1 ["① Understand"]
+        direction LR
+        IV[Input validation] --> SC[Session memory] --> RT{Zero-LLM<br/>router} --> IN[Intent]
+    end
+    subgraph S2 ["② Plan and compute"]
+        direction LR
+        SUP[Supervisor] --> SPEC[Specialist agent<br/><sub>topics · sentiment · coaching · leadership</sub>] --> EV[Evidence assembly]
+        SUP -. parallel .-> RET[FAISS retrieval] --> EV
+    end
+    subgraph S3 ["③ Explain and verify"]
+        direction LR
+        EX[Explanation<br/><sub>numeric grounding</sub>] --> VZ[Visualisation] --> QA[QA + Evidence<br/>Challenger] --> GOV[Governance]
+    end
+    subgraph S4 ["④ Deliver and remember"]
+        direction LR
+        RS[Response] --> MT[Memory + telemetry]
+    end
+    S1 --> S2 --> S3 --> S4
 
     classDef gate fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
     classDef data fill:#ecfeff,stroke:#0891b2,color:#164e63
@@ -193,9 +235,10 @@ flowchart TD
 | Find source transcripts | `retrieval/index.py` | produce numbers |
 | Verify the answer before display | `agents/qa_agent.py`, `agents/evidence_challenger.py` | change a number |
 
-Agents exchange a typed state (`agents/state.py`). Every result uses one versioned schema (`AnalysisResult`, `ChatResponse`). Full design: **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+<details>
+<summary><b>One request, end to end (sequence diagram)</b></summary>
 
-### One request, end to end
+<br>
 
 ```mermaid
 sequenceDiagram
@@ -218,33 +261,71 @@ sequenceDiagram
     Q-->>A: answer · QA 15/15 · evidence review "supported" · replay
 ```
 
-### How intent is routed
+</details>
+
+<details>
+<summary><b>How a question is routed (confidence cascade)</b></summary>
+
+<br>
 
 ```mermaid
 flowchart LR
-    Q[Question] --> P{Policy rule?<br/><sub>revenue · CSAT · firing…</sub>}
+    Q[Question] --> P{Policy rule?}
     P -- yes --> REF[Refuse, explain why]
     P -- no --> R{High-precision rule?}
     R -- yes --> OK[Route]
-    R -- no --> SEM{Semantic match above<br/>calibrated thresholds?}
+    R -- no --> SEM{Semantic match above<br/>calibrated threshold?}
     SEM -- yes --> OK
     SEM -- no --> V{Too vague?}
     V -- yes --> CL[Ask to clarify]
-    V -- no --> M{Local model<br/>available and allowed?}
-    M -- yes --> LLM[Model picks a category<br/><sub>closed list · constrained JSON</sub>] --> VAL{Entities valid?}
+    V -- no --> M{Local model<br/>available?}
+    M -- yes --> LLM[Model picks a category<br/><sub>closed list · JSON grammar</sub>] --> VAL{Entities valid?}
     VAL -- yes --> OK
     VAL -- no --> CL
     M -- no --> CL
 ```
 
-Each decision records which stage routed the question and why. The record is visible in the answer and in **AI Decision Replay**. The semantic stage is built and calibrated, but no threshold reached 95% precision on validation, so it stays switched off ([details](docs/evaluation/INTENT_ROUTING.md)).
+Each decision records which stage routed the question and why. The semantic stage is built and calibrated, but no threshold reached 95% precision on validation, so it stays off ([details](docs/evaluation/INTENT_ROUTING.md)).
+
+</details>
+
+Full design: **[ARCHITECTURE.md](ARCHITECTURE.md)**.
 
 ---
 
-## Bonus extensions
+## ◆ Bonus extensions
 
-<details open>
-<summary><b>1 · Knowledge retrieval: hybrid MiniLM + LSA over 18,639 conversation chunks</b></summary>
+<table>
+<tr>
+<td width="33%" valign="top">
+
+#### 🔎 Knowledge retrieval
+Hybrid **MiniLM + LSA** over 18,639 four-turn chunks, fused with weighted reciprocal rank fusion.
+
+**86.1%** hit@5 · **62.8%** topic P@5 on 36 paraphrased queries.
+
+</td>
+<td width="33%" valign="top">
+
+#### 🤖 Specialised LLM agent
+A **local Qwen2.5-1.5B** intent classifier, constrained to a closed list by a JSON grammar. It is called only when rules are unsure.
+
+**95.9%** with it vs **90.4%** without.
+
+</td>
+<td width="33%" valign="top">
+
+#### 🧠 Memory
+Follow-ups such as *"compare the top two"* resolve to **stored, re-validated references**, never to earlier model prose.
+
+**11 / 11** follow-ups routed correctly.
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary><b>Retrieval: per-method results</b></summary>
 
 <br>
 
@@ -260,15 +341,13 @@ Each decision records which stage routed the question and why. The record is vis
 | Hit rate@5 | 41.7% | 83.3% | **86.1%** |
 
 * **Indexed:** 4-turn windows (overlap 2), embedded twice, in exact-cosine FAISS indexes with metadata filters.
-* **Triggered:** by similar-case questions, by coaching evidence (in parallel), and after the analysis to illustrate the top-ranked result.
-* **Returns:** one passage per conversation, with message IDs, CSV line references and each method's rank.
-* **Improves answers:** real, on-topic transcripts sit beside the computed result. Retrieval never produces a number.
-* **Caveat:** the fusion weight was tuned on these same queries, and the hybrid gain over MiniLM alone is small. [EVALUATION.md](EVALUATION.md) states this.
+* **Triggered:** by similar-case questions, by coaching evidence (in parallel), and after an analysis to illustrate the top result.
+* **Caveat:** the fusion weight was tuned on these same queries, and the gain over MiniLM alone is small. [EVALUATION.md](EVALUATION.md) says so.
 
 </details>
 
-<details open>
-<summary><b>2 · Specialised LLM agent: a local, constrained intent classifier</b></summary>
+<details>
+<summary><b>Specialised agent: routing accuracy by method</b></summary>
 
 <br>
 
@@ -277,78 +356,68 @@ Each decision records which stage routed the question and why. The record is vis
   <img alt="Bar chart of intent routing accuracy on 73 held-out questions: local Qwen with old prompt 19.2%, local Qwen with new prompt 58.9%, rules only before 60.3%, previous router 61.6%, new router without model 90.4%, new router with local Qwen 95.9%" src="docs/readme/routing-accuracy-light.png" width="100%">
 </picture>
 
-* **What it is:** Qwen2.5-1.5B-Instruct running locally (llama.cpp, CPU, no key). It answers with one category from a closed list, enforced by a JSON-schema grammar.
-* **Why this approach:** classifying a question is a safe job for a small model, because every entity and number still comes from deterministic code.
-* **How it fits:** it is called only when rules cannot route a question with high precision (6.9% of test questions).
-* **Usefulness:** 95.9% with it vs 90.4% without, on a held-out split written before the router changed, frozen, and scored once ([protocol](docs/evaluation/INTENT_ROUTING.md)).
+* **Why a small model:** classifying a question is a safe job for one, because every entity and number still comes from deterministic code.
+* **Honest evaluation:** the held-out split was written before the router changed, then frozen and scored once ([protocol](docs/evaluation/INTENT_ROUTING.md)).
 
 </details>
 
-<details open>
-<summary><b>3 · Memory: follow-ups that resolve to stored references, not model prose</b></summary>
+<details>
+<summary><b>Memory: what is stored and reused</b></summary>
 
 <br>
 
 ```mermaid
 flowchart LR
-    T1["Q1: top 5 negative topics<br/>(Nov 2025)"] -->|stores intent · window · ranked keys| M[(Session memory)]
-    M --> T2["“Compare the top two.”<br/>→ #1, #2 resolved from stored keys"]
+    T1["Top 5 negative topics<br/>(Nov 2025)"] -->|intent · window · ranked keys| M[(Session memory)]
+    M --> T2["“Compare the top two.”<br/>→ #1 and #2 from stored keys"]
     M --> T3["“What about the previous month?”<br/>→ window shifted to Oct 2025"]
-    M --> T4["“Why was it ranked first?”<br/>→ stored plan re-run on current data"]
+    M --> T4["“Why was it ranked first?”<br/>→ stored plan re-run"]
 ```
 
-* **Stored per turn:** question, intent, scope, plan, and deterministic references (ranked keys, conversation IDs).
-* **Re-validated:** references are checked against the database before reuse; model prose is never reused as fact.
-* **Measured:** follow-up routing is 11 / 11 on the evaluation sessions.
-* **Privacy:** sessions are isolated, retained for 30 days (configurable) and deletable per session.
+* **Re-validated:** references are checked against the database before reuse.
+* **Private:** sessions are isolated, kept for 30 days (configurable) and deletable.
 
 </details>
 
 ---
 
-## Six analytical enhancements
-
-These go beyond the brief. They are documented in **[docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md)** and audited separately from the assignment requirements.
+## ◆ Beyond the brief: six analytical enhancements
 
 | | Enhancement | What it adds |
 |:-:|---|---|
-| 🧭 | **Zero-LLM Intelligence Router** | AUTO / ANALYTICS ONLY / HYBRID AI modes. Fact questions cost no tokens. Tokens show as "not reported" when unknown, never as a fake zero. |
-| 📊 | **Query-driven dashboards** | Each answer becomes a dashboard: sections with "why this chart", filter chips, and refinements that re-run the analysis. |
-| 🩻 | **Conversation X-Ray** | Escalation signals, repeated concerns and communication gaps, each linked to messages. Timeline, sentiment line and transcript stay in sync. |
-| 🔬 | **Root Cause Investigator** | Tested associations with confidence intervals, symptoms separated from drivers, alternative explanations. Never claims cause. |
-| ⏪ | **AI Decision Replay** | Step-through playback of routing, nodes, DuckDB operations, FAISS searches and model calls, with secrets redacted. |
-| ⚖️ | **Evidence Challenger** | Re-reads every quote from the database, discloses small samples, states counter-evidence, and rewrites causal wording as association. |
+| 🧭 | **Zero-LLM Intelligence Router** | AUTO / ANALYTICS ONLY / HYBRID AI modes; fact questions cost no tokens; unknown token counts show as "not reported", never as a fake zero |
+| 📊 | **Query-driven dashboards** | Each answer becomes a dashboard, with a "why this chart" line per chart and refinements that re-run the analysis |
+| 🩻 | **Conversation X-Ray** | Escalations, repeated concerns and communication gaps, each linked to messages; timeline, chart and transcript stay in sync |
+| 🔬 | **Root Cause Investigator** | Tested associations with intervals, symptoms separated from drivers, alternative explanations; it never claims cause |
+| ⏪ | **AI Decision Replay** | Step-through playback of routing, nodes, DuckDB operations, FAISS searches and model calls, with secrets redacted |
+| ⚖️ | **Evidence Challenger** | Re-reads every quote, discloses small samples, states counter-evidence, rewrites causal claims |
 
 <table>
 <tr>
-<td width="50%"><img src="docs/screenshots/20-conversation-xray.png" alt="Conversation X-Ray"><br><sub>Conversation X-Ray: click a finding and the linked turns light up</sub></td>
-<td width="50%"><img src="docs/screenshots/21-root-cause.png" alt="Root cause investigation"><br><sub>Root cause: drivers vs symptoms, with intervals</sub></td>
+<td width="50%"><img src="docs/readme/shots/root-cause.png" alt="Root Cause Investigator: candidate drivers with negative rate with and without each factor, evidence strength and examples"><br><sub><b>Root Cause Investigator</b>: drivers vs symptoms, with intervals</sub></td>
+<td width="50%"><img src="docs/readme/shots/evidence-review.png" alt="Evidence review: quote checks, sample-size disclosure, counter-evidence"><br><sub><b>Evidence Challenger</b>: what was checked, and what does not fit the claim</sub></td>
 </tr>
 <tr>
-<td width="50%"><img src="docs/screenshots/18-dynamic-dashboard.png" alt="Query-driven dashboard"><br><sub>A dashboard generated for one question</sub></td>
-<td width="50%"><img src="docs/screenshots/19-decision-replay-and-evidence-review.png" alt="Decision replay and evidence review"><br><sub>Decision replay and evidence review</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="docs/screenshots/12-agent-harness.png" alt="Agent harness"><br><sub>Agent Harness: the real execution graph</sub></td>
-<td width="50%"><img src="docs/screenshots/22-hybrid-retrieval.png" alt="Hybrid retrieval in the explorer"><br><sub>Hybrid search: each result shows its MiniLM and LSA rank</sub></td>
+<td width="50%"><img src="docs/readme/shots/decision-replay.png" alt="AI decision replay: route, intent, plan, and step-through of every node"><br><sub><b>AI Decision Replay</b>: every decision, step by step</sub></td>
+<td width="50%"><img src="docs/readme/shots/agent-harness.png" alt="Agent harness: the real LangGraph execution graph with timings"><br><sub><b>Agent Harness</b>: the real execution graph and timings</sub></td>
 </tr>
 </table>
 
-More screenshots: [`docs/screenshots/`](docs/screenshots) (coaching, memory follow-ups, explorer, dashboards, prompt library, metrics, governance, drill-down, mobile).
+Details and limitations: **[docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md)** · full-page screenshots: [`docs/screenshots/`](docs/screenshots).
 
 ---
 
-## Evaluation
+## ◆ Evaluation
 
 | What was measured | Result |
 |---|---|
-| Q1 against an independent oracle (raw CSV, separate code) | **exact match**: 682 conversations, 240 negative, all top-5 counts |
-| Intent routing, 73 held-out questions (scored once) | **95.9%** accuracy, macro F1 0.932; 90.4% with no model; previous router 61.6% |
+| Q1 vs an independent oracle (raw CSV, separate code) | **exact match**: 682 conversations, 240 negative, all top-5 counts |
+| Intent routing, 73 held-out questions, scored once | **95.9%** (macro F1 0.932); 90.4% without a model; previous router 61.6% |
 | Unsupported or prohibited questions refused | **6 / 6** end to end; 9 / 9 in the routing test split |
 | Follow-up routing | **11 / 11** |
-| End-to-end QA pass rate (51 requests) | **88%**. Every critical check passes; the rest are Evidence Challenger warnings (small samples, missing example) |
-| Retrieval (36 paraphrased queries) | hybrid topic P@5 **62.8%**, hit@5 **86.1%**; random 12.5% |
-| Latency, deterministic path | p50 **125 ms** · p95 **540 ms** (local CPU) |
+| End-to-end QA pass rate (51 requests) | **88%**: every critical check passes; the rest are Evidence Challenger warnings |
+| Retrieval (36 paraphrased queries) | hybrid hit@5 **86.1%**, topic P@5 **62.8%** (random: 12.5%) |
+| Latency, deterministic path | p50 **125 ms** · p95 **540 ms** on a local CPU |
 | Automated tests | backend **138** · Vitest **8** · Playwright **17**, all passing |
 
 <picture>
@@ -356,48 +425,48 @@ More screenshots: [`docs/screenshots/`](docs/screenshots) (coaching, memory foll
   <img alt="Line chart of monthly negative-conversation rate with 95% intervals: 33.2% in August, 32.0% September, 33.6% October, 35.2% November; intervals overlap" src="docs/readme/sentiment-trend-light.png" width="100%">
 </picture>
 
-Methods, failures and caveats: **[EVALUATION.md](EVALUATION.md)** · intent routing protocol: **[docs/evaluation/INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)** · requirement-by-requirement audit with reproducible evidence: **[docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md)**.
+<sub>The negative rate rises from 32.0% to 35.2%, but the 95% intervals overlap, so the app does not call it a trend.</sub>
+
+Methods, failures and caveats: **[EVALUATION.md](EVALUATION.md)** · routing protocol: **[INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)** · requirement-by-requirement audit: **[compliance audit](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md)**.
 
 ---
 
-## Quick start
+## ◆ Quick start
 
-**Prerequisites:** Python 3.12+ with [uv](https://docs.astral.sh/uv/), Node 22+.
+**Prerequisites:** Python 3.12+ with [uv](https://docs.astral.sh/uv/), Node 22+, and `make`.
 
 ```bash
-cd conversation-intelligence-copilot
+git clone https://github.com/florina787/Data-sets.git
+cd Data-sets/conversation-intelligence-copilot
 cp .env.example .env          # nothing needs to be filled in
-make install                  # uv sync --extra transformers (MiniLM embeddings) + npm ci
-make prepare                  # raw zip → data/processed/analytics.duckdb (≈30 s)
-make index                    # FAISS index: MiniLM + LSA (≈2–3 min on CPU; downloads MiniLM from Hugging Face once)
-make dev                      # API :8000 + UI :5173
+make install                  # Python deps (with MiniLM embeddings) + npm ci
+make prepare                  # raw zip → DuckDB (≈30 s)
+make index                    # FAISS index, MiniLM + LSA (≈2–3 min on CPU)
+make dev                      # API on :8000, UI on :5173
 ```
 
-Open **http://localhost:5173**. API docs: **http://localhost:8000/docs**.
-
-This runs fully without a model: every number comes from DuckDB, and the explanation is deterministic.
+Open **http://localhost:5173**. Interactive API docs are at **http://localhost:8000/docs**.
 
 > [!TIP]
-> **Optional: add the local model** for questions that need interpretation:
+> **Optional local model** for questions that need interpretation (CPU, no key, ≈1.1 GB):
 > ```bash
-> make install-local-llm        # llama-cpp-python (built from source if no wheel exists; needs a C/C++ toolchain and CMake)
-> make llm-download             # Qwen2.5-1.5B-Instruct Q4_K_M (≈1.1 GB) into data/models/
+> make install-local-llm && make llm-download
 > ```
-> It runs on CPU: the first call takes ≈ 9 s, then ≈ 1 s per routing call. A model-written explanation takes tens of seconds. With `LLM_PROVIDER=auto` (the default) it is used as soon as it is downloaded.
+> `llama-cpp-python` is built from source if no wheel exists for your platform (needs a C/C++ toolchain and CMake). The first call takes ≈ 9 s, then ≈ 1 s per routing call.
 
-**Docker:** `docker compose up --build` → UI on http://localhost:8080. The backend prepares data and the index on first start. *The images could not be built in the development sandbox (Docker Hub / ECR anonymous-pull rate limits), so they are not verified end to end.*
+**Docker:** `docker compose up --build`, then open http://localhost:8080. *The images could not be built in the development sandbox (registry rate limits), so they are not verified end to end.*
 
 <details>
 <summary><b>All commands</b></summary>
 
 | Command | What it does |
 |---|---|
-| `make install-local-llm`, `make llm-download` | Optional: install llama.cpp bindings, then download the local model (≈1.1 GB) |
+| `make install-local-llm`, `make llm-download` | Optional: llama.cpp bindings, then the local model |
 | `make prepare` | Ingest, validate, label, build DuckDB + manifests |
 | `make index` | Build the retrieval index |
-| `make synthetic` | Optional: generate 120 tagged synthetic demo conversations (then `ENABLE_SYNTHETIC_DEMO=true make prepare index`; a default build contains only the supplied 3,000) |
+| `make synthetic` | Optional: 120 tagged synthetic demo conversations (load with `ENABLE_SYNTHETIC_DEMO=true make prepare index`) |
 | `make test` | Backend pytest (138) + frontend typecheck and Vitest (8) |
-| `make e2e` | Playwright end-to-end (17); starts the servers if needed |
+| `make e2e` | Playwright end-to-end (17) |
 | `make evaluate` | Evaluation on the real data → `docs/evaluation/EVALUATION_RESULTS.md` |
 | `make screenshots` | Re-capture `docs/screenshots` from a running app |
 | `make report` | Generate the submission DOCX and the engineering PDF |
@@ -405,135 +474,177 @@ This runs fully without a model: every number comes from DuckDB, and the explana
 
 </details>
 
----
+### ◇ Run it in your IDE
 
-## Configuration
+<details open>
+<summary><b>VS Code / Cursor / Windsurf: one click</b></summary>
 
-All settings are environment variables (see [`.env.example`](.env.example)). Nothing secret is hardcoded.
+<br>
+
+The repo ships a [`.vscode/`](.vscode) folder with debug configurations, tasks and settings.
+
+1. Open the **`conversation-intelligence-copilot`** folder (not the repository root) and accept the recommended extensions.
+2. Run the tasks **`install`**, then **`prepare + index`** (*Terminal → Run Task…*). This is needed once.
+3. In *Run and Debug* (`Ctrl/⌘ + Shift + D`), choose **Full stack (API + UI)** and press **F5**. Breakpoints work in the FastAPI code, including inside LangGraph nodes.
+4. Other launch configurations: **Backend: pytest** (debug tests) and **Data: prepare dataset**. The *Testing* panel discovers the pytest suite automatically.
+
+</details>
 
 <details>
-<summary><b>Environment variables</b></summary>
+<summary><b>PyCharm / IntelliJ</b></summary>
+
+<br>
+
+1. Open `conversation-intelligence-copilot`. Run `make install` once, then set the interpreter to `backend/.venv/bin/python` (*Settings → Python Interpreter → Add → Existing*).
+2. Mark `backend` as **Sources Root**.
+3. Create a run configuration: *Python → Module name* `uvicorn`, parameters `app.main:app --reload --port 8000`, working directory `backend`, with the EnvFile pointed at `.env`.
+4. Create an *npm* run configuration: package.json `frontend/package.json`, command `run`, script `dev`. Alternatively, run `npx vite` in the terminal.
+5. For tests: *pytest* configuration with working directory `backend`.
+
+</details>
+
+<details>
+<summary><b>Any editor: two terminals</b></summary>
+
+<br>
+
+```bash
+# terminal 1
+cd backend && uv run uvicorn app.main:app --reload --port 8000
+# terminal 2
+cd frontend && npx vite
+```
+
+</details>
+
+---
+
+## ◆ Reference
+
+<details>
+<summary><b>Configuration (environment variables)</b></summary>
+
+<br>
+
+All settings are environment variables (see [`.env.example`](.env.example)). Nothing secret is hardcoded.
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `LLM_PROVIDER` | `auto` | `auto` (local model if downloaded, otherwise none), `local`, or `none` (deterministic only) |
-| `LOCAL_MODEL_REPO`, `LOCAL_MODEL_FILE`, `LOCAL_MODEL_DIR` | `Qwen/Qwen2.5-1.5B-Instruct-GGUF`, `qwen2.5-1.5b-instruct-q4_k_m.gguf`, `data/models` | Local model source and location (`make llm-download`) |
+| `LOCAL_MODEL_REPO`, `LOCAL_MODEL_FILE`, `LOCAL_MODEL_DIR` | `Qwen/Qwen2.5-1.5B-Instruct-GGUF`, `qwen2.5-1.5b-instruct-q4_k_m.gguf`, `data/models` | Local model source and location |
 | `LOCAL_N_CTX`, `LOCAL_THREADS`, `LOCAL_MAX_OUTPUT_TOKENS` | 8192, 4, 600 | llama.cpp context, CPU threads, output cap |
 | `LLM_ENABLED` | true | Kill switch for all model calls |
 | `EMBEDDING_BACKEND`, `EMBEDDING_MODEL` | auto, all-MiniLM-L6-v2 | auto falls back to local LSA if the model can't load |
-| `RETRIEVAL_MODE` | hybrid | `hybrid` (MiniLM + LSA, reciprocal rank fusion), `dense`, or `lsa` |
-| `RRF_K`, `HYBRID_LSA_WEIGHT` | 60, 0.15 | Fusion constant and LSA's vote relative to MiniLM (see EVALUATION.md for how it was chosen) |
-| `DATASET_MODE`, `ENABLE_SYNTHETIC_DEMO` | original, false | Dataset modes; the demo set is only loaded when enabled |
+| `RETRIEVAL_MODE` | hybrid | `hybrid` (MiniLM + LSA, RRF), `dense`, or `lsa` |
+| `RRF_K`, `HYBRID_LSA_WEIGHT` | 60, 0.15 | Fusion constant and LSA's vote relative to MiniLM |
+| `DATASET_MODE`, `ENABLE_SYNTHETIC_DEMO` | original, false | The demo set is loaded only when enabled |
 | `MIN_AGENT_CONVERSATIONS` | 3 | Coaching sample-size gate |
 | `SESSION_RETENTION_DAYS` | 30 | Memory retention |
-| `ENABLE_LANGSMITH` | false | Turns on LangSmith tracing (needs `LANGSMITH_API_KEY`) |
+| `ENABLE_LANGSMITH` | false | LangSmith tracing (needs `LANGSMITH_API_KEY`) |
 | `DATABASE_PATH`, `MEMORY_DATABASE_PATH`, `FAISS_INDEX_PATH`, … | `data/…` | Storage locations |
 
 </details>
 
-## Models, dependencies and cost
+<details>
+<summary><b>Models, dependencies and cost</b></summary>
+
+<br>
 
 | Component | Choice | Notes |
 |---|---|---|
-| LLM (optional) | Qwen2.5-1.5B-Instruct (Q4_K_M GGUF) via `llama-cpp-python`, on CPU | Category-only intent classification when rules are unsure, and grounded explanation for interpretive questions. **No key; no model is needed to run the app.** |
+| LLM (optional) | Qwen2.5-1.5B-Instruct (Q4_K_M GGUF) via `llama-cpp-python`, CPU | Category-only intent classification when rules are unsure; grounded explanations. **No key; not needed to run.** |
 | Orchestration | LangGraph (+ SQLite checkpointer) | Conditional and parallel routing, per-request checkpoints |
-| Analytics | DuckDB, pandas, SciPy | Exact, deterministic; Wilson intervals, χ² and z-tests |
-| Retrieval | FAISS; Sentence-Transformers MiniLM + LSA (scikit-learn), fused | Local, free; MiniLM weights downloaded from Hugging Face on first `make index` |
-| Memory / telemetry | SQLite | Sessions, checkpoints, LLM calls, audit |
+| Analytics | DuckDB, pandas, SciPy | Exact and deterministic; Wilson intervals, χ² and z-tests |
+| Retrieval | FAISS; Sentence-Transformers MiniLM + LSA (scikit-learn) | Local and free |
+| Memory / telemetry | SQLite | Sessions, checkpoints, model calls, audit |
 | API | FastAPI, Pydantic v2 | REST + Server-Sent Events |
 | UI | React 18, TypeScript, Vite, Tailwind, Radix, Recharts, React Flow, Framer Motion | Nine pages, light/dark, mobile |
 | Reports | python-docx, ReportLab, matplotlib | Submission DOCX + engineering PDF |
 
-**External services.** The only network access is a one-time download from Hugging Face: the MiniLM weights (on the first index build) and, if you choose, the local model. After that, no data leaves the machine.
+* **External services:** a one-time download from Hugging Face (MiniLM weights and, optionally, the local model). After that, no data leaves the machine.
+* **Cost:** $0. When the local model is used, it makes at most two calls per question; intent classification measured ≈ 660 prompt tokens.
 
-**Cost.** **$0.** Everything, including the model, runs locally. Questions that need no model (all four assignment questions in AUTO mode) also use no CPU time for inference. When the model is used, it makes at most two calls per question. Intent classification was measured at ≈ 660 prompt tokens. Token counts are recorded per call (System Metrics → Token accounting).
+</details>
 
----
+<details>
+<summary><b>Context only: how the API would have been designed with a Gemini key</b></summary>
 
-## If a Gemini API key were available
+<br>
 
 > [!NOTE]
-> **Context only.** This project does not use Gemini or any other hosted model, and none of the changes below are implemented. The section shows how the API would have been designed had a Gemini API key been used.
-
-If a Gemini key had been used, the API would have been built as follows. The guarantees above would stay the same: numbers come from DuckDB, every answer goes through QA and the Evidence Challenger, and no model writes SQL.
+> This project does **not** use Gemini or any hosted model, and nothing below is implemented. It shows how the API would have been designed had a Gemini API key been used. The guarantees would stay the same: numbers from DuckDB, every answer checked by QA and the Evidence Challenger, no model-written SQL.
 
 ```mermaid
 flowchart LR
     Q[Question] --> RT{Zero-LLM router}
     RT -- rules confident --> OPS[Registered DuckDB operations]
     RT -- needs interpretation --> GM[[Gemini Flash<br/>function calling]]
-    GM -->|"call: rank_negative_topics(window, top_n)"| VAL{Validate against<br/>operation registry}
+    GM -->|"rank_negative_topics(window, top_n)"| VAL{Validate against<br/>operation registry}
     VAL -- valid --> OPS
     VAL -- invalid --> CL[Ask to clarify]
     OPS --> EX[[Gemini: grounded explanation<br/>structured output · streamed]]
-    EX --> QA[QA + Evidence Challenger<br/>numeric grounding]
+    EX --> QA[QA + Evidence Challenger]
     QA --> A([Answer])
-    LJ[(Labelling jobs<br/>Gemini Batch API)] -.-> OPS
 ```
 
 **Endpoints that would change**
 
 | Endpoint | Today (local) | With Gemini |
 |---|---|---|
-| `POST /api/chat`, `POST /api/chat/stream` | The local model picks one intent from a closed list; the explanation arrives in one piece | Each registered operation (from `GET /api/analytics/operations`) is exposed to Gemini as a **function declaration**. Gemini picks the operation and parameters; the server validates them against the registry before running anything. The explanation is **streamed** as SSE `explanation.delta` events. Its shape is fixed by a `response_schema` mirroring `ChatResponse`. The response gains a `usage` block (prompt, cached and output tokens, estimated cost) from Gemini's `usage_metadata`. |
-| `GET /api/model/status` | Local model loaded or not | Adds model version, remaining requests and tokens per minute, context-cache state, and the last error (for example quota or auth). |
-| `POST /api/model/retry` | Reloads the local model | Clears the provider back-off after a quota or outage error. |
-| `GET /api/telemetry/tokens` | Local token counts | Split by provider and model, with cached vs uncached input tokens and cost per request, per session and per day. |
-| `POST /api/retrieval/search` | `mode`: hybrid / dense / lsa | Optional `gemini-embedding` as a third method, included in the fusion **only if** it beats MiniLM on the same 36-query benchmark. |
+| `POST /api/chat`, `/api/chat/stream` | Local model picks one intent from a closed list | Each registered operation is a Gemini **function declaration**; the server validates the chosen call before running it. The explanation streams as SSE `explanation.delta` events, shaped by a `response_schema`. The response gains a `usage` block (prompt, cached and output tokens, cost). |
+| `GET /api/model/status` | Local model loaded or not | Model version, rate-limit headroom, context-cache state, last error |
+| `POST /api/model/retry` | Reloads the local model | Clears provider back-off after quota or outage errors |
+| `GET /api/telemetry/tokens` | Local token counts | Split by provider and model, cached vs uncached, cost per request, session and day |
+| `POST /api/retrieval/search` | hybrid / dense / lsa | Optional `gemini-embedding` method, fused only if it beats MiniLM on the same benchmark |
 
-**New endpoints**
+**New endpoints:**
+* `POST /api/labels/jobs`: batch labelling through the Gemini Batch API;
+* `GET /api/labels/jobs/{id}`: progress, tokens and cost of a run;
+* `POST /api/labels/jobs/{id}/apply`: rebuild with the new labels after an agreement check;
+* `GET /api/model/budget`: the remaining session and daily token budgets.
 
-| Endpoint | Purpose |
-|---|---|
-| `POST /api/labels/jobs` | Start a sentiment, empathy and resolution labelling run over the unique message texts through the **Gemini Batch API**: asynchronous, resumable, and cheaper than live calls. It replaces running a labelling script by hand. |
-| `GET /api/labels/jobs/{job_id}` | Progress, failures, tokens and cost of a labelling run. |
-| `POST /api/labels/jobs/{job_id}/apply` | Rebuild DuckDB with the model labels, after the agreement check against the rule labels and the human review sample (`/api/review/*`) passes. |
-| `GET /api/model/budget` | The per-session and per-day token budgets and what is left of them. |
+**Cross-cutting changes:**
+* **Context caching:** the system prompt, taxonomy and operation catalogue are cached once.
+* **Budgets and fallback:** over budget returns `429` + `Retry-After`; AUTO mode falls back to the deterministic answer, and a circuit breaker falls back to the local model.
+* **Data minimisation:** only the question, verified figures and up to four masked excerpts are sent.
+* **Key handling:** the key lives in a secret manager, never reaches the browser, and is redacted from telemetry.
+* **Evaluation gate:** Gemini routing would be scored on the same frozen test split before switching.
 
-**Cross-cutting changes**
+</details>
 
-* **Context caching.** The system prompt, topic taxonomy and operation catalogue are identical on every call, so they would be cached once (Gemini `cachedContents`) to cut input tokens and latency.
-* **Budgets and back-off.** A request over its session or daily token budget returns `429` with `Retry-After`, and AUTO mode falls back to the deterministic answer instead of failing. Provider errors open a circuit breaker; the local model becomes the fallback.
-* **Data minimisation.** Only the question, the verified figures and up to four masked excerpts are sent; raw transcripts and customer identifiers never are. This would be stated on `GET /api/governance/status`.
-* **The key stays server-side.** It would be read from a secret manager, never sent to the browser, and redacted from telemetry and Decision Replay.
-* **Evaluation gate.** Gemini routing would be scored on the same frozen 73-question test split before it replaced the local model.
+<details>
+<summary><b>The dataset</b></summary>
 
----
+<br>
 
-## The dataset
-
-The **Syncora.ai Customer Support Conversation** sample (Kaggle), as attached to the assignment and committed at `data/raw/cs_conversations.csv.zip`:
-
+The **Syncora.ai Customer Support Conversation** sample (Kaggle), as supplied with the assignment (`data/raw/cs_conversations.csv.zip`):
 * 3,000 synthetic conversations;
 * 41,965 messages;
 * August to December 2025.
 
-No conversations were appended. Preparation steps, derived fields and the data dictionary are in **[docs/dataset/DATASET.md](docs/dataset/DATASET.md)**; every interpretation is in **[ASSUMPTIONS.md](ASSUMPTIONS.md)**.
-
-Properties the app surfaces rather than hides:
+No conversations were appended. Data dictionary: [docs/dataset/DATASET.md](docs/dataset/DATASET.md) · interpretations: [ASSUMPTIONS.md](ASSUMPTIONS.md).
 
 | Property | How it is handled |
 |---|---|
 | Every message ends in random filler tokens | removed into `clean_text`; raw text kept |
-| Timestamps are not in turn order (all 3,000 conversations) | turn index is authoritative; conversations dated by their earliest message |
+| Timestamps are not in turn order | turn index is authoritative; conversations dated by their earliest message |
 | ≈ 1 agent per conversation (max 2) | no per-agent ranking; conversations are prioritised for review instead |
-| 426 unique message templates | labels are a documented template mapping; agreement checks in EVALUATION.md |
-| Most topic differences in negative rate are not significant | every ranking states its χ² p-value and intervals |
+| 426 unique message templates | labels are a documented template mapping |
+| Most topic differences are not significant | every ranking states its χ² p-value and intervals |
 
-## Sample requests and outputs
+</details>
 
-[`examples/requests/`](examples/requests) and [`examples/outputs/`](examples/outputs) are generated from real runs (`uv run python -m scripts.generate_examples`), as JSON and readable Markdown. They cover:
-* Q1 with follow-ups;
-* Q2;
-* Q3;
-* Q4 with "why" and "uncertain" follow-ups;
-* retrieval;
-* an unsupported question.
+<details>
+<summary><b>Sample requests and outputs</b></summary>
+
+<br>
+
+[`examples/requests/`](examples/requests) and [`examples/outputs/`](examples/outputs) are generated from real runs (JSON + Markdown). They cover each of the four questions with follow-ups, retrieval, and an unsupported question.
 
 ```bash
 curl -s localhost:8000/api/chat -H 'Content-Type: application/json' \
   -d '{"question":"Which recurring customer concerns should contact-centre leadership review first?"}' \
-  | jq '.headline, .routing.route, .recommendations[0]'
+  | jq '.headline, .routing.route'
 ```
 
 ```json
@@ -541,53 +652,58 @@ curl -s localhost:8000/api/chat -H 'Content-Type: application/json' \
 "analytics_only"
 ```
 
----
+</details>
 
-## Limitations
+<details>
+<summary><b>Limitations</b></summary>
 
-> [!NOTE]
-> These are stated in the reports and the evaluation as well. They are not hidden.
+<br>
 
-* **Only a small local model was used.** It is enough for picking a category, but its explanations are slower and plainer than a hosted model's would be. The hosted design is described [above](#if-a-gemini-api-key-were-available).
-* **Labels are a judgement.** Sentiment and empathy mappings are developer judgements over templated text. Human-agreement metrics need labels from the in-app review panel.
-* **The routing benchmark is small and same-author.** The 95.9% comes from 73 questions (3–9 per intent) written by the same author as the rules: indicative, not precise. Three known misroutes are listed, unfixed, in [INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md).
-* **The hybrid retrieval gain is small** and its weight was tuned on the evaluation queries.
-* **No authentication or RBAC** (see [SECURITY.md](SECURITY.md)). Storage is single-node. Docker images are unverified.
-* **The local model is slow on CPU:** ≈ 1 s per warm routing call; a model-written explanation takes tens of seconds.
+* **A small local model.** It is enough for picking a category, but its explanations are slower and plainer than a hosted model's would be.
+* **Labels are a judgement.** Sentiment and empathy mappings are developer judgements over templated text; human agreement needs labels from the in-app review panel.
+* **A small, same-author routing benchmark.** 73 test questions (3–9 per intent): the 95.9% is indicative, not precise. Known misroutes are listed in [INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md).
+* **A small hybrid retrieval gain,** with the weight tuned on the evaluation queries.
+* **Not production-hardened:** no authentication or RBAC ([SECURITY.md](SECURITY.md)), single-node storage, unverified Docker images.
 
----
+</details>
 
-## Repository guide
+<details>
+<summary><b>Repository guide</b></summary>
+
+<br>
 
 ```
-backend/    FastAPI app (app/), scripts/ (prepare, index, evaluate, reports, figures), tests/ (unit, integration, evaluation datasets)
-frontend/   React app (src/), Playwright end-to-end tests (e2e/)
-data/       raw/ (supplied zip), manifests/ (profile, quality, evaluation, intent routing); processed/, indexes/, models/ are generated
-docs/       dataset, evaluation, reports, screenshots, interview notes, audit, README figures
+backend/    FastAPI app (app/), scripts/ (prepare, index, evaluate, reports, figures), tests/
+frontend/   React app (src/), Playwright tests and capture scripts (e2e/)
+data/       raw/ (supplied zip), manifests/; processed/, indexes/, models/ are generated
+docs/       dataset, evaluation, reports, screenshots, interview notes, audit, README media
 examples/   sample requests and outputs
 ```
 
 | Document | What it covers |
 |---|---|
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Components, agent graph, failure handling, retrieval, memory, security boundaries |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Components, agent graph, failure handling, retrieval, memory, security |
 | [EVALUATION.md](EVALUATION.md) | Every metric, how it was measured, and what cannot be claimed |
 | [ASSUMPTIONS.md](ASSUMPTIONS.md) | Dataset interpretation, labels, windows, scoring |
 | [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md) | The six enhancements, with limitations |
-| [docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md) | Sentence-by-sentence audit against the assignment |
+| [Compliance audit](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md) | Sentence-by-sentence audit against the assignment |
 | [docs/reports/](docs/reports) | Submission report (DOCX) and engineering report (PDF) |
-| [docs/interview/](docs/interview) | Demo script and interview preparation |
 | [SECURITY.md](SECURITY.md) | Threat model and controls |
 
 **Production roadmap (not implemented here):**
 * managed warehouse and vector store;
 * a job queue for labelling;
-* SSO / RBAC and tenant isolation;
+* SSO / RBAC;
 * a secret manager;
-* OpenTelemetry tracing;
+* OpenTelemetry;
 * CI/CD with evaluation gates;
-* prompt / model A/B tests on human-labelled sets;
-* horizontal API scaling.
+* A/B tests on human-labelled sets.
 
-## License
+</details>
 
-MIT, see [LICENSE](LICENSE). The dataset remains subject to its original Kaggle / Syncora terms.
+---
+
+<div align="center">
+<sub>MIT licensed (see <a href="LICENSE">LICENSE</a>). The dataset remains subject to its original Kaggle / Syncora terms.<br>
+README charts are generated by <code>backend/scripts/readme_figures.py</code>; screenshots and the demo by <code>frontend/e2e/capture-readme-media.mjs</code>.</sub>
+</div>
