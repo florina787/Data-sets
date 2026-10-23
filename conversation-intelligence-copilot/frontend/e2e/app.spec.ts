@@ -22,7 +22,7 @@ test("Q1: negative topics in the last month with charts, evidence and QA", async
   await fresh(page);
   await askCard(page, "Sentiment × topics");
   await expect(page.getByRole("heading", { level: 2 })).toContainText("Top negative topics in November 2025");
-  await expect(page.getByText(/239 of 682 conversations/)).toBeVisible();
+  await expect(page.getByText(/240 of 682 conversations/)).toBeVisible();
   await expect(page.getByText("Top negative topics · November 2025")).toBeVisible();
   await expect(page.locator(".recharts-bar-rectangle").first()).toBeVisible();
   await expect(page.getByText(/QA \d+\/\d+/)).toBeVisible();

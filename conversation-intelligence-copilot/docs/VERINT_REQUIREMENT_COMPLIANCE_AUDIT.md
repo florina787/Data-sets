@@ -307,3 +307,22 @@ No failures. Warnings: bundle size; npm deprecation notices (recharts 2.x).
 6. Refresh ARCHITECTURE §6 (hybrid RRF, chunk counts by source) and correct the cold-start latency statement (measured 8.7 s).
 7. Regenerate `examples/outputs` so the samples show the current response contract.
 8. Optionally build the synthetic demo into a separate index or exclude it from the default build, so the UI never shows 3,120.
+
+## 8. Post-audit remediation
+
+The gaps above were fixed after the audit; sections 1–7 are kept as the audit originally recorded them.
+
+| Gap | Status | What changed |
+|---|---|---|
+| 1. Stale report | Fixed | DOCX and PDF regenerated from current results: the Zero-LLM router and confidence router, the local model, hybrid retrieval, current test counts, and the Q1 tie |
+| 2. Local-model docs | Fixed | `local-llm` extra declared in `pyproject.toml`; `make install-local-llm`; README quick start, configuration, cost and external services rewritten. The README now documents the local model only. A hosted Gemini design is included as context and is not implemented. |
+| 3. Submission form | Fixed | `make package` builds `dist/conversation-intelligence-copilot.zip` from the committed tree; the branch folder is also a valid link |
+| 4. D1 threshold bug | Fixed | The conversation mean is rounded to 9 decimals before thresholding; regression test added; Q4 #4 is now 53.4 |
+| 5. Retrieval contribution | Fixed | Report §6 and ARCHITECTURE §6 state how retrieval is indexed, triggered and evaluated. A with/without quality ablation is still not measured. |
+| 6. ARCHITECTURE and latency | Fixed | §6 rewritten (hybrid RRF, 18,639 chunks); cold start corrected to the measured 8.7 s |
+| 7. Examples | Fixed | `examples/outputs` regenerated |
+| 8. Synthetic data in the default build | Fixed | Loaded only with `ENABLE_SYNTHETIC_DEMO=true`; a default build holds the supplied 3,000 conversations |
+
+**Correction to this audit's own evidence.** Fixing D1 showed that a second conversation, C0010797, also sat exactly on the −0.25 boundary. `independent_checks.py` averaged with floats, so it shared the same error and missed it. The evaluation oracle now uses exact fractions. Q1 is **240** of 682 negative conversations (the audit recorded 239), and rank 5 is a tie (Login / account locked and Coupon not applying, 24 each), which the answer now discloses.
+
+**Changed numbers.** Removing the synthetic set from the default build changed the LSA vocabulary. Hybrid retrieval is now 62.8% topic precision@5 and 86.1% hit@5. EVALUATION.md discloses the change.

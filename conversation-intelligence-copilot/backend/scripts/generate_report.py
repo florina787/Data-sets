@@ -39,6 +39,7 @@ def load() -> dict:
     return {
         "profile": m("data_profile"), "quality": m("data_quality_report"), "manifest": m("dataset_manifest"), "eval": m("evaluation_results"),
         "q1": run_operation(db, "rank_negative_topics", nov, {"top_n": 8}).model_dump(),
+        "q1_top5": run_operation(db, "rank_negative_topics", nov, {"top_n": 5}).model_dump(),
         "trend": run_operation(db, "sentiment_trend", Scope(), {}).model_dump(),
         "coach": run_operation(db, "agent_coaching_review", Scope(), {}).model_dump(),
         "lead": run_operation(db, "leadership_priorities", Scope(), {}).model_dump(),
@@ -291,7 +292,7 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
     top = q1["table"]["rows"][:5]
     para(f"Q1 — Negative topics, {q1['scope']['window']['label']} (latest month in the data): {q1['metrics'][1]['value']} of {q1['metrics'][0]['value']} "
          f"conversations negative. Top five by count: " + ", ".join(f"{r['name']} ({int(r['negative'])})" for r in top) + ". "
-         + next((n + " " for n in q1["uncertainty_notes"] if "is a tie" in n), "") + "By rate, "
+         + next((n + " " for n in d["q1_top5"]["uncertainty_notes"] if "is a tie" in n), "") + "By rate, "
          + max(q1["series"]["all_groups"]["rows"], key=lambda r: r["negative_rate"])["name"] + f" leads; the chi-square p-value "
          f"({next(m['value'] for m in q1['metrics'] if m['id'] == 'chi_square_p')}) shows the differences are not significant at 5%, and the answer says so.")
     doc.add_picture(str(figs["q1"]), width=Cm(17))
@@ -448,7 +449,8 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
 
     story.append(Paragraph("Executive summary", h1))
     P("The copilot answers contact-centre questions through a supervised LangGraph workflow over deterministic DuckDB analytics, FAISS retrieval and "
-      "session memory, with Gemini for language and classification when available. All four assignment questions and the three bonus extensions work end to end "
+      "session memory. A Zero-LLM router answers fact questions without a model; an optional LLM (local Qwen2.5-1.5B, Groq or Gemini) handles intent the rules "
+      "cannot route and explanations for interpretive questions. All four assignment questions and the three bonus extensions work end to end "
       "in the API and the UI; every answer carries evidence linked to source rows, uncertainty notes and a QA result.")
     T([["Measure", "Result"],
        ["Q1 vs independent oracle", "exact match" if e["q1_oracle"]["top5_counts_match"] else "mismatch"],
@@ -457,7 +459,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
        ["Intent routing (benchmark v2 test)", routing_text()],
        [f"Retrieval topic P@5 ({rt['embedding_backend'].split('/')[-1]})", f"{rt['topic_precision@5']:.1%} (random {rt['random_baseline_topic_precision']:.1%})"],
        ["Latency p50 / p95 (deterministic)", f"{ev['latency_p50_ms']:.0f} / {ev['latency_p95_ms']:.0f} ms"],
-       ["Gemini", f"not reachable: {str(e['model'].get('reason'))[:90]}"]], [6 * cm, W - 6 * cm])
+       ["LLM providers", "local Qwen2.5-1.5B verified live; Groq not run (no key); Gemini not reachable (401 API_KEY_SERVICE_BLOCKED)"]], [6 * cm, W - 6 * cm])
 
     story.append(Paragraph("1. Requirements", h1))
     P("Requirement IDs (FR, NFR, GOV, EVAL) are mapped to modules and tests in docs/requirements/REQUIREMENTS_MATRIX.md; per-feature status in docs/IMPLEMENTATION_MATRIX.md. "
@@ -491,8 +493,11 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
       f"Lexicon fallback vs template labels on {lb['lexicon_fallback_vs_templates']['n_messages']:,} customer messages: accuracy {lb['lexicon_fallback_vs_templates']['accuracy']:.1%}, "
       f"κ {lb['lexicon_fallback_vs_templates']['cohen_kappa']}. Human review: {lb['human_review'].get('status')}. Gemini labels: not run (model unavailable).")
 
-    story.append(Paragraph("5. Gemini integration", h1))
-    P("google-genai client with response_schema (Pydantic, closed enums), temperature ≤ 0.2, thinking budget 0; one repair attempt with the validation error; "
+    story.append(Paragraph("5. LLM integration", h1))
+    P("One client interface with three providers: a local Qwen2.5-1.5B-Instruct model through llama.cpp (no key; JSON-schema grammar guarantees valid "
+      "output; ≈1 s per warm call on CPU), Groq through its OpenAI-compatible API, and Gemini through google-genai. LLM_PROVIDER=auto picks Groq, then Gemini, "
+      "then the local model, then none. All share the response cache, one bounded schema repair, rate limiting, retries, the circuit breaker and token "
+      "accounting (missing usage metadata is recorded as unknown, never as zero). The Gemini path in detail: google-genai client with response_schema (Pydantic, closed enums), temperature ≤ 0.2, thinking budget 0; one repair attempt with the validation error; "
       "sliding-window RPM limiter and concurrency cap; retries only for 408/429/5xx/timeouts with full-jitter backoff or the server's retryDelay; permanent auth errors open the circuit; "
       "response cache keyed by model, prompt id+version, system, user, schema and config; per-call usage (streamed usage treated as cumulative), latency, retries, cache hits, cost estimate. "
       "Verified against a scripted SDK; the live API returned 401 API_KEY_SERVICE_BLOCKED in the development environment.")

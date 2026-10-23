@@ -23,3 +23,4 @@ frontend/playwright-report/
 *.log
 *.tsbuildinfo
 data/models/
+dist/
