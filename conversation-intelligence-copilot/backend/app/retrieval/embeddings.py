@@ -78,7 +78,7 @@ class SentenceTransformerEmbedder:
         from sentence_transformers import SentenceTransformer  # optional dependency
 
         self.model = SentenceTransformer(model_name)
-        self.dim = int(self.model.get_sentence_embedding_dimension())
+        self.dim = int(getattr(self.model, "get_embedding_dimension", self.model.get_sentence_embedding_dimension)())
         self.name = model_name
 
     def fit(self, texts: list[str]) -> None:  # pretrained: nothing to fit

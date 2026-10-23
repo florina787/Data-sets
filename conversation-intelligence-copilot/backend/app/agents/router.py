@@ -26,8 +26,12 @@ INTERPRETIVE = re.compile(r"\bwhy\b|\bexplain|interpret|recommend|what should|su
 INTERPRETIVE_CATEGORIES = {"explain_previous", "leadership_summary", "root_cause"}
 
 
-def decide(question: str, requested: str, rules_intent: IntentOutput, llm_available: bool, llm_reason: str | None = None) -> dict:
+def decide(question: str, requested: str, rules_intent: IntentOutput, llm_available: bool, llm_reason: str | None = None,
+           unresolved: bool | None = None) -> dict:
+    """`unresolved`: the deterministic stages (rules + semantic) could not route the question with high precision."""
     requested = requested if requested in MODES else "auto"
+    if unresolved is None:
+        unresolved = rules_intent.reasoning == NO_MATCH
     cue = INTERPRETIVE.search(question)
 
     def out(route: str, reason: str, llm_steps: list[str]) -> dict:
@@ -45,8 +49,9 @@ def decide(question: str, requested: str, rules_intent: IntentOutput, llm_availa
     # AUTO
     if rules_intent.reasoning == POLICY_REFUSAL:
         return out("analytics_only", "Policy refusal is deterministic; no model is needed to decline.", [])
-    if rules_intent.reasoning == NO_MATCH:
-        return out("hybrid_ai", "The rules could not parse the question, so the model interprets it.", ["intent", "explanation"])
+    if unresolved:
+        return out("hybrid_ai", "Rules and semantic matching could not route the question with high precision, so the model interprets it.",
+                   ["intent", "explanation"])
     if rules_intent.category in INTERPRETIVE_CATEGORIES or cue:
         why = f"asks for interpretation ('{cue.group(0)}')" if cue else f"'{rules_intent.category}' is an interpretive analysis"
         return out("hybrid_ai", f"The question {why}; registered operations compute the facts and the model explains them.", ["explanation"])

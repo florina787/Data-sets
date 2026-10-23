@@ -104,9 +104,10 @@ def test_with_gemini_grounded_explanation_is_used(env):
     client, models = fake_gemini([router({"category": "negative_topics", "time_window": {"type": "last_month"}, "top_n": 5}, explanation)] * 2)
     gemini_client.set_llm(client)
     r = run_chat(Q1 + " (gemini run)", analysis_mode="hybrid_ai")
-    assert r["model_metadata"]["intent_source"] == "llm" and r["model_metadata"]["explanation_source"] == "llm"
+    # A high-precision rule settles the intent without a model call; HYBRID AI still uses the model to explain.
+    assert r["model_metadata"]["intent_source"] == "rules" and r["model_metadata"]["explanation_source"] == "llm"
     assert r["headline"] == explanation["headline"] and not qa_failures(r)
-    assert r["routing"]["route"] == "hybrid_ai" and r["token_usage"]["model_calls"] == 2
+    assert r["routing"]["route"] == "hybrid_ai" and r["token_usage"]["model_calls"] == 1
 
 
 def test_auto_router_answers_fact_questions_without_any_model_call(env):

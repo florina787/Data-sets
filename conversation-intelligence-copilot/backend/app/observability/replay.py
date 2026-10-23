@@ -70,8 +70,11 @@ def build_replay(store: TelemetryStore, request_id: str) -> dict | None:
         r = resp["routing"]
         decisions.append({"at": "router", "decision": f"Route: {r.get('route')}", "why": r.get("reason")})
     intent = req.get("intent") or {}
+    ir = (resp.get("model_metadata") or {}).get("intent_routing") or {}
     if intent:
-        decisions.append({"at": "intent", "decision": f"Intent: {intent.get('category')}", "why": intent.get("reasoning") or ""})
+        decisions.append({"at": "intent", "decision": f"Intent: {ir.get('label') or intent.get('category')} (via {ir.get('method', 'rules')})",
+                          "why": ir.get("reason") or intent.get("reasoning") or "",
+                          "stages": ir.get("stages"), "semantic": ir.get("semantic"), "llm": ir.get("llm")})
     plan = resp.get("plan") or {}
     if plan:
         decisions.append({"at": "supervisor", "decision": "Plan: " + (", ".join(s["op"] for s in plan.get("steps", [])) or "no operations"),
@@ -85,6 +88,7 @@ def build_replay(store: TelemetryStore, request_id: str) -> dict | None:
     if ev:
         decisions.append({"at": "qa", "decision": f"Evidence review: {ev.get('verdict')}", "why": " ".join(ev.get("challenges", [])) or "No challenges raised."})
     return sanitize({
+        "intent_routing": ir or None,
         "request_id": request_id, "question": req.get("question"), "created_at": req.get("created_at"), "status": req.get("status"),
         "latency_ms": req.get("latency_ms"), "routing": resp.get("routing"), "token_usage": resp.get("token_usage"),
         "decisions": decisions, "steps": steps, "operations": operations, "retrieval": retrieval, "llm_calls": llm,

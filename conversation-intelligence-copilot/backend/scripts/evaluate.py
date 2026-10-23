@@ -114,7 +114,8 @@ def eval_intent() -> dict:
         "n": len(held), "accuracy": round(1 - len(misses) / len(held), 4),
         "safe_failures": sum(p == "unsupported" for _, p in misses), "misrouted": sum(p != "unsupported" for _, p in misses),
         "errors": [{"question": i["question"], "expected": i["expected"], "predicted": p} for i, p in misses],
-        "note": "Written after the parser was tuned on the main set and scored once without further changes.",
+        "note": ("Legacy set: written after the v1 parser was tuned and scored once; it was read during the v2 routing work, "
+                 "so it is no longer unseen. The unbiased figure is benchmark v2 (docs/evaluation/INTENT_ROUTING.md)."),
     }
     llm = get_llm()
     if llm.available():
@@ -125,12 +126,13 @@ def eval_intent() -> dict:
             t0 = time.perf_counter()
             intent, source, _ = resolve_intent(i["question"], None, [], "eval")
             lat.append((time.perf_counter() - t0) * 1000)
-            valid += source == "gemini"
+            valid += source in ("llm", "rules", "semantic")
             g_pred.append(intent.category)
-        out["gemini"] = {"accuracy": round(sum(a == b for a, b in zip(y_true, g_pred)) / len(items), 4), "schema_valid_rate": round(valid / len(items), 4),
+        out["router"] = {"note": "Confidence-aware router (policy -> rules -> semantic -> model -> clarify); see intent_routing in data/manifests.",
+                         "accuracy": round(sum(a == b for a, b in zip(y_true, g_pred)) / len(items), 4), "schema_valid_rate": round(valid / len(items), 4),
                          "p50_ms": pctl(lat, 0.5)}
     else:
-        out["gemini"] = {"status": "not_run", "reason": llm.status().get("reason")}
+        out["router"] = {"status": "not_run", "reason": llm.status().get("reason")}
     return out
 
 
@@ -278,7 +280,7 @@ def main() -> None:
     res["retrieval"] = eval_retrieval()
     print("5/5 end to end…", flush=True)
     res["end_to_end"] = eval_end_to_end()
-    gem = res["intent"]["gemini"]
+    gem = res["intent"]["router"]
     res["prompt_evaluations"] = {
         "intent_understanding": gem if gem.get("status") != "not_run" else {"status": "not_run", "reason": gem.get("reason"),
                                                                              "rules_baseline_accuracy": res["intent"]["accuracy"]},
@@ -289,9 +291,8 @@ def main() -> None:
     e, rt, it, q1 = res["end_to_end"], res["retrieval"], res["intent"], res["q1_oracle"]
     res["summary"] = [
         {"metric": "Q1 numbers vs independent oracle", "display": "match" if q1["top5_counts_match"] and q1["totals_match"] else "MISMATCH", "note": q1["month"]},
-        {"metric": "Intent accuracy (rules, tuning set)", "display": f"{it['accuracy']:.0%}", "note": f"{it['n']} questions; parser was tuned on this set"},
-        {"metric": "Intent accuracy (rules, held-out)", "display": f"{it['heldout']['accuracy']:.0%}",
-         "note": f"{it['heldout']['n']} unseen paraphrases; {it['heldout']['safe_failures']} of {it['heldout']['n'] - round(it['heldout']['accuracy'] * it['heldout']['n'])} misses refused safely"},
+        *_routing_rows(),
+        {"metric": "Intent accuracy (rules, legacy 40-question set)", "display": f"{it['accuracy']:.0%}", "note": f"{it['n']} questions; parser was tuned on this set"},
         {"metric": "QA pass rate (end to end)", "display": f"{e['qa_pass_rate']:.0%}", "note": f"{e['requests']} requests"},
         {"metric": "Follow-up routing", "display": f"{e['follow_up_routing_accuracy']:.0%}", "note": f"{e['follow_up_requests']} follow-ups"},
         {"metric": "Unsupported refused", "display": e["unsupported_correctly_refused"], "note": "no fabricated answers"},
@@ -307,6 +308,20 @@ def main() -> None:
     md.parent.mkdir(parents=True, exist_ok=True)
     md.write_text(render_markdown(res))
     print(json.dumps(res["summary"], indent=2))
+
+
+def _routing_rows() -> list[dict]:
+    """Benchmark v2 results (scripts/evaluate_intent_routing.py); the frozen test split is scored once."""
+    d = PROJECT_ROOT / "data" / "manifests" / "intent_routing"
+    rows = []
+    for name, label in (("test_router_v2_final.json", "Intent routing accuracy (benchmark v2 test, router)"),
+                        ("test_rules_first_v1_final.json", "Intent routing accuracy (benchmark v2 test, previous router)")):
+        f = d / name
+        if f.exists():
+            x = json.loads(f.read_text())
+            rows.append({"metric": label, "display": f"{x['accuracy']:.0%}",
+                         "note": f"{x['n']} held-out questions; macro F1 {x['macro_f1']:.2f}; misrouted {x['misrouting_rate']:.0%}"})
+    return rows
 
 
 def render_markdown(r: dict) -> str:
@@ -328,7 +343,7 @@ def render_markdown(r: dict) -> str:
     lines += [f"### Held-out set: accuracy **{h['accuracy']:.0%}** on {h['n']} unseen paraphrases", "", h["note"],
               f"Misses: {h['safe_failures']} refused as unsupported (safe), {h['misrouted']} routed to a different analysis.", ""]
     lines += [f"* “{x['question']}” → expected `{x['expected']}`, got `{x['predicted']}`" for x in h["errors"]] + [""]
-    lines += [f"Gemini intent evaluation: `{it['gemini']}`", ""]
+    lines += [f"Model intent evaluation (legacy set): `{it['router']}`", ""]
     lf = lb["lexicon_fallback_vs_templates"]
     lines += ["## 3. Labelling", "", f"Template coverage of customer messages: `{lb['template_coverage']}`.", "",
               f"Lexicon fallback vs template labels ({lf['n_messages']} customer messages): accuracy {lf['accuracy']:.1%}, Cohen's κ {lf['cohen_kappa']}.", "",

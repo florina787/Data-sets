@@ -79,7 +79,8 @@ def test_human_review_metrics(client):
 def test_governance_prompts_traces(client):
     g = client.get("/api/governance/status").json()
     assert any(c["status"] == "not_implemented" for c in g["controls"])
-    assert len(client.get("/api/prompts").json()["prompts"]) == 3
+    assert {p["id"] for p in client.get("/api/prompts").json()["prompts"]} == {
+        "grounded_explanation", "intent_understanding", "intent_classification", "message_classification"}
     r = client.post("/api/chat", json={"question": "Show the sentiment trend over time."}).json()
     t = client.get(f"/api/traces/{r['request_id']}").json()
     assert t["nodes"] and client.get("/api/agents/graph").json()["edges"]

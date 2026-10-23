@@ -28,10 +28,8 @@ class Settings(BaseSettings):
     # has been downloaded, else deterministic mode. "none" forces deterministic mode.
     llm_provider: Literal["auto", "groq", "gemini", "local", "none"] = "auto"
 
-    # How model and rules intent are combined. llm_first: the model decides (rules on failure).
-    # rules_first: rules decide when they recognise the question; the model handles only what the rules
-    # cannot parse; policy refusals always stand. auto = rules_first for the small local model, else llm_first.
-    intent_strategy: Literal["auto", "llm_first", "rules_first"] = "auto"
+    # Intent routing is confidence-aware for every provider (app/agents/intent_router.py): policy -> high-precision
+    # rules -> calibrated semantic match -> model -> broad rules -> clarify.
 
     # --- Local LLM (llama.cpp, no key) -----------------------------------------
     local_model_repo: str = "Qwen/Qwen2.5-1.5B-Instruct-GGUF"

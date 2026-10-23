@@ -19,7 +19,8 @@ def test_auto_routes_fact_questions_to_analytics_only():
 def test_auto_routes_interpretation_and_unparsed_questions_to_hybrid():
     r = route("Why is duplicate charge the most negative topic?")
     assert r["route"] == "hybrid_ai" and r["llm_steps"] == ["explanation"] and r["interpretive_cue"].lower() == "why"
-    r = route("Where is customer frustration concentrated?")
+    q = "Something feels off with our customers lately"
+    r = decide(q, "auto", parse_intent(q), True, None, unresolved=True)
     assert r["route"] == "hybrid_ai" and "intent" in r["llm_steps"]
 
 

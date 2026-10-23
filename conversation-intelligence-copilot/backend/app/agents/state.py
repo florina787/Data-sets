@@ -19,6 +19,7 @@ class AnalysisState(TypedDict, total=False):
     previous_turn: dict | None
     resolved_intent: dict
     intent_source: str
+    intent_routing: dict
     analytical_plan: dict
     dataset_scope: dict
     tool_results: dict

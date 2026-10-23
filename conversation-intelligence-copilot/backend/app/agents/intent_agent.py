@@ -1,15 +1,13 @@
-"""Intent agent: LLM structured intent with a deterministic fallback and cross-checks."""
+"""Intent agent: resolves a question to a typed intent through the confidence-aware router.
+
+See app/agents/intent_router.py for the stage order (policy -> rules -> semantic -> LLM -> weak
+rules -> clarify). This module keeps the (intent, source, meta) contract the graph uses.
+"""
 
 from __future__ import annotations
 
-import json
-
-from app.agents.intent_rules import CONV_ID, NO_MATCH, POLICY_REFUSAL, parse_intent
-from app.config import get_settings
-from app.labeling.taxonomy import TOPICS
-from app.llm.gemini_client import LLMUnavailable, get_llm
+from app.agents.intent_router import route_intent
 from app.llm.structured_output import IntentOutput
-from app.prompts.registry import get_prompt
 
 
 def compact_context(previous: dict | None, history: list[dict]) -> dict:
@@ -25,46 +23,11 @@ def compact_context(previous: dict | None, history: list[dict]) -> dict:
     return ctx
 
 
-def rules_intent_for(question: str, previous: dict | None) -> IntentOutput:
-    prev_cat = previous.get("intent", {}).get("category") if previous else None
-    prev_n = len(previous.get("refs", {}).get("ranking", [])[:10]) if previous else None
-    return parse_intent(question, has_previous=previous is not None, previous_category=prev_cat, previous_top_n=prev_n)
+SOURCE = {"llm": "llm", "semantic": "semantic"}
 
 
-def resolve_intent(question: str, previous: dict | None, history: list[dict], request_id: str,
-                   allow_llm: bool = True) -> tuple[IntentOutput, str, dict]:
-    """Return (intent, source, meta). allow_llm=False is the router's zero-LLM path."""
-    rules_intent = rules_intent_for(question, previous)
-    if not allow_llm:
-        return rules_intent, "rules", {"llm_skipped": "router: analytics only"}
-    llm = get_llm()
-    if not llm.available():
-        return rules_intent, "rules", {"llm_status": llm.status().get("reason")}
-    strategy = get_settings().intent_strategy
-    if strategy == "auto":
-        strategy = "rules_first" if llm.status().get("provider") == "local" else "llm_first"
-    if rules_intent.reasoning == POLICY_REFUSAL:
-        return rules_intent, "rules", {"strategy": strategy, "policy_refusal": True}
-    if strategy == "rules_first" and rules_intent.reasoning != NO_MATCH:
-        return rules_intent, "rules", {"strategy": strategy, "llm_skipped": "rules recognised the question"}
-    prompt = get_prompt("intent_understanding")
-    try:
-        res = llm.generate_json(
-            prompt,
-            prompt.render(taxonomy=", ".join(f"{k} ({v.label})" for k, v in TOPICS.items()),
-                          context=json.dumps(compact_context(previous, history), ensure_ascii=False), question=question),
-            IntentOutput, request_id=request_id, purpose="intent")
-    except LLMUnavailable as e:
-        return rules_intent, "rules", {"llm_error": str(e)[:200]}
-    intent: IntentOutput = res.parsed  # type: ignore[assignment]
-    # Deterministic cross-checks: IDs found by regex are authoritative; follow-up flags need a previous turn.
-    ids = [c.upper() for c in CONV_ID.findall(question)]
-    if ids and not intent.conversation_ids:
-        intent.conversation_ids = ids
-    intent.conversation_ids = [c for c in intent.conversation_ids if CONV_ID.fullmatch(c)]
-    if previous is None:
-        intent.is_follow_up = False
-        intent.reference_ranks = []
-    meta = {"strategy": strategy, "model": res.model, "tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "repaired": res.repaired,
-            "rules_category": rules_intent.category, "agrees_with_rules": rules_intent.category == intent.category, "retries": res.retries}
-    return intent, "llm", meta
+def resolve_intent(question: str, previous: dict | None, history: list[dict], request_id: str, allow_llm: bool = True,
+                   selected_conversation_id: str | None = None) -> tuple[IntentOutput, str, dict]:
+    """Return (intent, source, meta). allow_llm=False is the Zero-LLM path (rules + semantic only)."""
+    d = route_intent(question, previous, allow_llm=allow_llm, request_id=request_id, selected_conversation_id=selected_conversation_id)
+    return d.intent, SOURCE.get(d.method, "rules"), {"routing": d.meta()}

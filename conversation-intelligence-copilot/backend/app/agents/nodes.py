@@ -9,7 +9,8 @@ from app.agents import narrative
 from app.agents.evidence_challenger import challenge
 from app.agents.governance_agent import review as governance_review
 from app.agents.grounding import allowed_numbers, ungrounded_numbers
-from app.agents.intent_agent import resolve_intent, rules_intent_for
+from app.agents.intent_agent import resolve_intent
+from app.agents.intent_router import route_intent
 from app.agents.router import decide as route_decision
 from app.agents.qa_agent import run_qa
 from app.agents.supervisor import build_plan, ranking_refs
@@ -68,19 +69,24 @@ def session_context(state: dict) -> dict:
                                                 "reason": u["routing"]["reason"], "llm_steps": u["routing"]["llm_steps"]})
 def router(state: dict) -> dict:
     llm = get_llm()
-    rules = rules_intent_for(state["user_question"], state.get("previous_turn"))
-    routing = route_decision(state["user_question"], state.get("analysis_mode") or "auto", rules, llm.available(), llm.status().get("reason"))
+    det = route_intent(state["user_question"], state.get("previous_turn"), allow_llm=False,
+                       selected_conversation_id=state.get("selected_conversation_id"))
+    routing = route_decision(state["user_question"], state.get("analysis_mode") or "auto", det.intent, llm.available(), llm.status().get("reason"),
+                             unresolved=det.method in ("clarify", "rules_weak"))
+    routing["intent_precheck"] = {k: v for k, v in det.meta().items() if k in ("method", "reason", "rule", "label")}
     return {"routing": routing}
 
 
 @traced("intent", summarize_input=lambda s: {"question": s.get("user_question", "")[:200]},
         summarize_output=lambda u: {"category": u["resolved_intent"]["category"], "source": u["intent_source"],
+                                    "method": u["intent_routing"]["method"], "reason": u["intent_routing"]["reason"],
                                     "window": u["resolved_intent"]["time_window"], "follow_up": u["resolved_intent"]["is_follow_up"]})
 def intent(state: dict) -> dict:
     hist = get_memory().history(state["session_id"], get_settings().max_history_turns)
     allow = "intent" in (state.get("routing") or {}).get("llm_steps", ["intent"])
-    out, source, meta = resolve_intent(state["user_question"], state.get("previous_turn"), hist, state["request_id"], allow_llm=allow)
-    return {"resolved_intent": out.model_dump(), "intent_source": source, "_meta": meta}
+    out, source, meta = resolve_intent(state["user_question"], state.get("previous_turn"), hist, state["request_id"], allow_llm=allow,
+                                       selected_conversation_id=state.get("selected_conversation_id"))
+    return {"resolved_intent": out.model_dump(), "intent_source": source, "intent_routing": meta["routing"], "_meta": meta}
 
 
 @traced("supervisor", summarize_output=lambda u: {"steps": [s["op"] for s in u["analytical_plan"]["steps"]],
@@ -309,7 +315,7 @@ def _model_metadata(state: dict) -> dict:
             "available": st.get("available"), "reason": st.get("reason"), "intent_source": state.get("intent_source"),
             "explanation_source": state.get("explanation_source"), "label_source": get_settings().label_source,
             "embedding_backend": state.get("retrieval_meta", {}).get("embedding_backend"),
-            "routing": state.get("routing"), "token_usage": get_telemetry().request_usage(state["request_id"])}
+            "routing": state.get("routing"), "intent_routing": state.get("intent_routing"), "token_usage": get_telemetry().request_usage(state["request_id"])}
 
 
 def _panel(r: dict | None) -> dict | None:

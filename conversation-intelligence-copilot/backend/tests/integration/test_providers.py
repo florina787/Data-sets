@@ -83,15 +83,29 @@ def test_local_model_missing_file_is_reported(env, tmp_path):
         LocalLlamaClient(s)
 
 
-def test_rules_first_strategy_skips_model_for_recognised_questions(env):
+def test_confidence_router_calls_model_only_when_deterministic_stages_cannot_route(env):
     from app.agents.intent_agent import resolve_intent
     from app.llm import gemini_client
 
-    fake = FakeLlama(json.dumps({"category": "unsupported"}))
+    fake = FakeLlama(json.dumps({"category": "root_cause"}))
     gemini_client.set_llm(LocalLlamaClient(get_settings(), llama=fake))
     intent, source, meta = resolve_intent("Which recurring customer concerns should contact-centre leadership review first?", None, [], "t")
-    assert intent.category == "leadership_priorities" and source == "rules" and fake.kwargs is None  # model never called
-    intent, source, _ = resolve_intent("Which agents should be fired?", None, [], "t")
-    assert intent.category == "unsupported" and source == "rules" and fake.kwargs is None  # policy refusal stands
-    intent, source, _ = resolve_intent("Where is customer frustration concentrated?", None, [], "t")
-    assert source == "llm" and fake.kwargs is not None  # rules could not parse it, so the model was asked
+    assert intent.category == "leadership_priorities" and source == "rules" and fake.kwargs is None  # high-precision rule: no model call
+    intent, source, meta = resolve_intent("Which agents should be fired?", None, [], "t")
+    assert intent.category == "unsupported" and meta["routing"]["method"] == "policy" and fake.kwargs is None  # policy refusal stands
+    intent, source, meta = resolve_intent("Something feels off with our customers lately", None, [], "t")
+    assert source == "llm" and intent.category == "root_cause" and fake.kwargs is not None  # nothing deterministic matched
+    assert fake.kwargs["response_format"]["schema"]["properties"]["category"]["enum"][-1] == "clarify"  # constrained, closed set
+    fake.kwargs = None
+    _, _, meta = resolve_intent("Something feels off with our customers lately", None, [], "t", allow_llm=False)
+    assert meta["routing"]["method"] == "clarify" and fake.kwargs is None  # Zero-LLM path never calls the model
+
+
+def test_model_choice_needing_a_missing_entity_is_rejected(env):
+    from app.agents.intent_agent import resolve_intent
+    from app.llm import gemini_client
+
+    fake = FakeLlama(json.dumps({"category": "agent_profile"}))
+    gemini_client.set_llm(LocalLlamaClient(get_settings(), llama=fake))
+    intent, _, meta = resolve_intent("Anything odd with the support desk recently", None, [], "t")
+    assert meta["routing"]["method"] == "clarify" and "needs an entity" in meta["routing"]["llm"]["rejected"]

@@ -18,6 +18,19 @@ WindowType = Literal["all", "last_month", "month", "previous_month", "next_month
 SentimentLabel = Literal["positive", "neutral", "negative", "mixed", "uncertain"]
 
 
+ClassifiableIntent = Literal[
+    "negative_topics", "topic_frequency", "sentiment_distribution", "sentiment_trend", "compare_topics", "root_cause",
+    "leadership_priorities", "agent_coaching", "agent_profile", "resolution_quality", "sentiment_trajectory", "conversation_xray",
+    "conversation_detail", "similar_conversations", "conversation_list", "dataset_overview", "unsupported", "clarify",
+]
+
+
+class IntentClassification(BaseModel):
+    """Category-only output for the small local model; entities come from deterministic extractors."""
+
+    category: ClassifiableIntent
+
+
 class TimeWindowSpec(BaseModel):
     type: WindowType = "inherit"
     month: str | None = Field(None, description="YYYY-MM when type is 'month'")
