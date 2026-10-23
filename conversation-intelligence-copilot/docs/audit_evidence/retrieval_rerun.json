@@ -1,0 +1,35 @@
+{
+ "lsa": {
+  "mode": "lsa",
+  "queries": 36,
+  "topic_precision@5": 0.3222,
+  "exact_precision@5": 0.3056,
+  "hit_rate@5": 0.4722,
+  "mrr@5": 0.3528,
+  "duplicate_rate": 0.0,
+  "latency_p50_ms": 14.6,
+  "latency_p95_ms": 23.7
+ },
+ "dense": {
+  "mode": "dense",
+  "queries": 36,
+  "topic_precision@5": 0.6222,
+  "exact_precision@5": 0.5611,
+  "hit_rate@5": 0.8333,
+  "mrr@5": 0.7106,
+  "duplicate_rate": 0.0,
+  "latency_p50_ms": 23.2,
+  "latency_p95_ms": 29.1
+ },
+ "hybrid": {
+  "mode": "hybrid",
+  "queries": 36,
+  "topic_precision@5": 0.6222,
+  "exact_precision@5": 0.5778,
+  "hit_rate@5": 0.8611,
+  "mrr@5": 0.6977,
+  "duplicate_rate": 0.0,
+  "latency_p50_ms": 35.8,
+  "latency_p95_ms": 39.3
+ }
+}

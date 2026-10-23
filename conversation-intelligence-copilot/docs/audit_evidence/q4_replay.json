@@ -1,0 +1,597 @@
+{
+ "intent_routing": {
+  "method": "rules",
+  "reason": "High-precision rule 'leadership'.",
+  "rule": "leadership",
+  "label": "leadership_priorities",
+  "llm_calls": 0,
+  "semantic": null,
+  "llm": null,
+  "stages": [
+   "policy",
+   "rules"
+  ],
+  "latency_ms": 0.4
+ },
+ "request_id": "R-2bd097e8e08f",
+ "question": "Which recurring customer concerns should contact-centre leadership review first?",
+ "created_at": "2026-10-23T00:45:25.814323+00:00",
+ "status": "completed",
+ "latency_ms": 246.1,
+ "routing": {
+  "requested_mode": "auto",
+  "route": "analytics_only",
+  "reason": "Rules recognised 'leadership_priorities' and registered operations compute the full answer; a model would add cost without adding facts.",
+  "llm_available": true,
+  "llm_steps": [],
+  "rules_category": "leadership_priorities",
+  "interpretive_cue": null,
+  "intent_precheck": {
+   "method": "rules",
+   "reason": "High-precision rule 'leadership'.",
+   "rule": "leadership",
+   "label": "leadership_priorities"
+  }
+ },
+ "token_usage": {
+  "calls": 0,
+  "model_calls": 0,
+  "cache_hits": 0,
+  "reported_calls": 0,
+  "unreported_calls": 0,
+  "complete": true,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "by_purpose": []
+ },
+ "decisions": [
+  {
+   "at": "router",
+   "decision": "Route: analytics_only",
+   "why": "Rules recognised 'leadership_priorities' and registered operations compute the full answer; a model would add cost without adding facts."
+  },
+  {
+   "at": "intent",
+   "decision": "Intent: leadership_priorities (via rules)",
+   "why": "High-precision rule 'leadership'.",
+   "stages": [
+    "policy",
+    "rules"
+   ],
+   "semantic": null,
+   "llm": null
+  },
+  {
+   "at": "supervisor",
+   "decision": "Plan: leadership_priorities, sentiment_trend, resolution_quality",
+   "why": "Specialist: leadership_agent; retrieval: after_analysis"
+  },
+  {
+   "at": "explanation",
+   "decision": "Explanation: deterministic",
+   "why": "router: analytics only"
+  },
+  {
+   "at": "qa",
+   "decision": "Evidence review: supported",
+   "why": "No challenges raised."
+  }
+ ],
+ "steps": [
+  {
+   "node": "input_validation",
+   "label": "Input validation",
+   "role": "Sanitise the question, enforce limits, flag injection attempts.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.551181+00:00",
+   "duration_ms": 0.0,
+   "output": {
+    "chars": 80,
+    "flags": 0
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "session_context",
+   "label": "Session memory",
+   "role": "Load prior turns and references for follow-up resolution.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.552877+00:00",
+   "duration_ms": 1.2,
+   "output": {
+    "history_turns": 0,
+    "has_previous": false
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "router",
+   "label": "Intelligence router",
+   "role": "Zero-LLM routing: decide whether a model is needed at all, and record why.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.555872+00:00",
+   "duration_ms": 0.5,
+   "output": {
+    "route": "analytics_only",
+    "requested": "auto",
+    "reason": "Rules recognised 'leadership_priorities' and registered operations compute the full answer; a model would add cost without adding facts.",
+    "llm_steps": []
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "intent",
+   "label": "Intent agent",
+   "role": "Interpret the question into a typed intent (LLM, or rules).",
+   "engine": "rules / LLM",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.558056+00:00",
+   "duration_ms": 0.9,
+   "output": {
+    "category": "leadership_priorities",
+    "source": "rules",
+    "method": "rules",
+    "reason": "High-precision rule 'leadership'.",
+    "window": {
+     "type": "inherit",
+     "month": null,
+     "n": null
+    },
+    "follow_up": false
+   },
+   "meta": {
+    "routing": {
+     "method": "rules",
+     "reason": "High-precision rule 'leadership'.",
+     "rule": "leadership",
+     "label": "leadership_priorities",
+     "llm_calls": 0,
+     "semantic": null,
+     "llm": null,
+     "stages": [
+      "policy",
+      "rules"
+     ],
+     "latency_ms": 0.4
+    }
+   },
+   "error": null
+  },
+  {
+   "node": "supervisor",
+   "label": "Supervisor / planner",
+   "role": "Resolve references and date window; choose registered operations and agents.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.563212+00:00",
+   "duration_ms": 7.5,
+   "output": {
+    "steps": [
+     "leadership_priorities",
+     "sentiment_trend",
+     "resolution_quality"
+    ],
+    "specialist": "leadership_agent",
+    "retrieval": "after_analysis",
+    "window": "All dates",
+    "notes": []
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "leadership_agent",
+   "label": "Leadership agent",
+   "role": "Transparent prioritisation of recurring concerns and recommendations.",
+   "engine": "DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.572337+00:00",
+   "duration_ms": 89.7,
+   "output": {
+    "leadership_priorities": {
+     "status": "ok",
+     "metrics": {
+      "conversations_in_scope": 3000,
+      "concerns": 8,
+      "top_concern": "Item or service not received",
+      "top_score": 67.1
+     }
+    },
+    "sentiment_trend": {
+     "status": "ok",
+     "metrics": {
+      "months": 4,
+      "latest_negative_rate": 0.3504
+     }
+    },
+    "resolution_quality": {
+     "status": "ok",
+     "metrics": {
+      "misfit_rate": 0.5731
+     }
+    }
+   },
+   "meta": {
+    "operations": [
+     {
+      "op": "leadership_priorities",
+      "engine": "duckdb",
+      "params": {
+       "top_n": "\u2026"
+      },
+      "status": "ok",
+      "duration_ms": 75.0,
+      "rows": 8,
+      "metrics": 6
+     },
+     {
+      "op": "sentiment_trend",
+      "engine": "duckdb",
+      "params": {},
+      "status": "ok",
+      "duration_ms": 5.7,
+      "rows": 4,
+      "metrics": 2
+     },
+     {
+      "op": "resolution_quality",
+      "engine": "duckdb",
+      "params": {},
+      "status": "ok",
+      "duration_ms": 8.9,
+      "rows": 8,
+      "metrics": 1
+     }
+    ]
+   },
+   "error": null
+  },
+  {
+   "node": "retrieval",
+   "label": "Retrieval agent",
+   "role": "Semantic search over the FAISS index with metadata filters.",
+   "engine": "FAISS",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.664096+00:00",
+   "duration_ms": 45.1,
+   "output": {
+    "results": 3,
+    "candidates": 100,
+    "latency_ms": 44.9,
+    "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2 + lsa-tfidf-svd192",
+    "query": "Something the customer expected has not arrived. Customer is frustrated, it is still not fixed and asks to escalate."
+   },
+   "meta": {
+    "engine": "faiss",
+    "k": 3,
+    "mode": "hybrid",
+    "methods": {
+     "dense": "sentence-transformers/all-MiniLM-L6-v2",
+     "lsa": "lsa-tfidf-svd192"
+    },
+    "fusion": "weighted reciprocal rank fusion (k=60, MiniLM 1.0, LSA 0.15)",
+    "filters": {
+     "topics": [
+      "not_received"
+     ],
+     "sentiments": [
+      "negative"
+     ],
+     "window": "All dates"
+    },
+    "returned": 3,
+    "latency_ms": 44.9
+   },
+   "error": null
+  },
+  {
+   "node": "evidence",
+   "label": "Evidence assembly",
+   "role": "Resolve cited IDs to source messages and validate them.",
+   "engine": "DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.710370+00:00",
+   "duration_ms": 48.0,
+   "output": {
+    "items": 9,
+    "validation": {}
+   },
+   "meta": {
+    "requested": 9,
+    "resolved": 9,
+    "invalid": [],
+    "out_of_scope": []
+   },
+   "error": null
+  },
+  {
+   "node": "explanation",
+   "label": "Explanation agent",
+   "role": "Grounded narrative (LLM with numeric check, or deterministic).",
+   "engine": "deterministic / LLM",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.760044+00:00",
+   "duration_ms": 0.1,
+   "output": {
+    "source": "deterministic",
+    "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+   },
+   "meta": {
+    "reason": "router: analytics only"
+   },
+   "error": null
+  },
+  {
+   "node": "visualization",
+   "label": "Visualization planner",
+   "role": "Choose charts and build validated specs from results.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.762005+00:00",
+   "duration_ms": 0.8,
+   "output": {
+    "charts": [
+     "R-2bd097e8e08f_lead_kpis",
+     "priority_matrix",
+     "priority_scores",
+     "sentiment_trend",
+     "resolution_misfit",
+     "sensitivity",
+     "retrieval_results"
+    ],
+    "graphs": 1,
+    "dashboard_sections": [
+     "Answer",
+     "Reliability",
+     "Context",
+     "Evidence"
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "qa",
+   "label": "QA agent",
+   "role": "Check filters, denominators, rankings, charts, citations and grounding.",
+   "engine": "rules + DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.764359+00:00",
+   "duration_ms": 11.1,
+   "output": {
+    "status": "pass",
+    "passed": "15/15",
+    "evidence_verdict": "supported",
+    "challenges": 0
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "governance",
+   "label": "Governance agent",
+   "role": "PII, coaching safeguards, dataset authorisation, audit.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.776691+00:00",
+   "duration_ms": 0.6,
+   "output": {
+    "findings": [
+     "pii_masking:pass",
+     "prompt_injection:pass",
+     "human_review:required",
+     "tool_safety:pass",
+     "dataset_authorisation:pass"
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "response",
+   "label": "Response assembly",
+   "role": "Build the unified, versioned response contract.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.778927+00:00",
+   "duration_ms": 1.3,
+   "output": {
+    "status": "completed",
+    "charts": 7
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "memory_telemetry",
+   "label": "Memory + telemetry",
+   "role": "Persist session references and execution telemetry.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.781286+00:00",
+   "duration_ms": 3.5,
+   "output": {
+    "saved": true
+   },
+   "meta": {},
+   "error": null
+  }
+ ],
+ "operations": [
+  {
+   "op": "leadership_priorities",
+   "engine": "duckdb",
+   "params": {
+    "top_n": 5
+   },
+   "status": "ok",
+   "duration_ms": 75.0,
+   "rows": 8,
+   "metrics": 6
+  },
+  {
+   "op": "sentiment_trend",
+   "engine": "duckdb",
+   "params": {},
+   "status": "ok",
+   "duration_ms": 5.7,
+   "rows": 4,
+   "metrics": 2
+  },
+  {
+   "op": "resolution_quality",
+   "engine": "duckdb",
+   "params": {},
+   "status": "ok",
+   "duration_ms": 8.9,
+   "rows": 8,
+   "metrics": 1
+  }
+ ],
+ "retrieval": [
+  {
+   "node": "retrieval",
+   "engine": "faiss",
+   "mode": "hybrid",
+   "methods": {
+    "dense": "sentence-transformers/all-MiniLM-L6-v2",
+    "lsa": "lsa-tfidf-svd192"
+   },
+   "fusion": "weighted reciprocal rank fusion (k=60, MiniLM 1.0, LSA 0.15)",
+   "k": 3,
+   "filters": {
+    "topics": [
+     "not_received"
+    ],
+    "sentiments": [
+     "negative"
+    ],
+    "window": "All dates"
+   },
+   "returned": 3,
+   "latency_ms": 44.9,
+   "query": "Something the customer expected has not arrived. Customer is frustrated, it is still not fixed and asks to escalate."
+  }
+ ],
+ "llm_calls": [],
+ "qa": {
+  "status": "pass",
+  "passed": 15,
+  "total": 15,
+  "checks": [
+   {
+    "check": "registered_operations",
+    "passed": true,
+    "critical": true,
+    "detail": "Operations: ['leadership_priorities', 'sentiment_trend', 'resolution_quality']"
+   },
+   {
+    "check": "filters_applied",
+    "passed": true,
+    "critical": false,
+    "detail": "All results use the planned scope"
+   },
+   {
+    "check": "ranking_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "Priority scores in descending order"
+   },
+   {
+    "check": "denominators",
+    "passed": true,
+    "critical": true,
+    "detail": "Concern volumes sum to conversations in scope"
+   },
+   {
+    "check": "proportions_valid",
+    "passed": true,
+    "critical": true,
+    "detail": "All proportions within [0, 1]"
+   },
+   {
+    "check": "chart_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "7 charts match their source tables"
+   },
+   {
+    "check": "evidence_valid",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items resolved to source messages"
+   },
+   {
+    "check": "evidence_present",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items attached"
+   },
+   {
+    "check": "explanation_grounded",
+    "passed": true,
+    "critical": true,
+    "detail": "All numbers in the answer trace to verified results"
+   },
+   {
+    "check": "uncertainty_disclosed",
+    "passed": true,
+    "critical": false,
+    "detail": "5 uncertainty notes attached to the response"
+   },
+   {
+    "check": "excerpt_fidelity",
+    "passed": true,
+    "critical": true,
+    "detail": "34/34 quoted excerpts match their source message word for word"
+   },
+   {
+    "check": "evidence_coverage",
+    "passed": true,
+    "critical": false,
+    "detail": "3/3 top-ranked groups have a supporting conversation attached"
+   },
+   {
+    "check": "evidence_relevance",
+    "passed": true,
+    "critical": false,
+    "detail": "9/9 evidence conversations are negative, matching a claim about negative sentiment"
+   },
+   {
+    "check": "sample_size",
+    "passed": true,
+    "critical": false,
+    "detail": "No group below 30 conversations"
+   },
+   {
+    "check": "causal_language",
+    "passed": true,
+    "critical": false,
+    "detail": "No unqualified causal claims"
+   }
+  ]
+ },
+ "evidence_review": {
+  "verdict": "supported",
+  "passed": 6,
+  "total": 6,
+  "challenges": []
+ },
+ "counts": {
+  "nodes": 14,
+  "duckdb_operations": 3,
+  "faiss_searches": 1,
+  "llm_calls": 0,
+  "llm_calls_live": 0
+ },
+ "started_at": "2026-10-23T00:45:25.551181+00:00",
+ "sanitisation": "Secrets redacted, secret-named fields and tracebacks dropped, text truncated to 300 characters; prompt bodies are not included."
+}
