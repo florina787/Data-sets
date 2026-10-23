@@ -263,7 +263,7 @@ def story() -> list:
                   ["Dataset handling", "§2 Dataset handling: preparation steps, assumptions, derived fields, labels, aggregations"],
                   ["System design", "§3 System design: components, contracts, schemas and data passed between agents"],
                   ["Agent flow", "§4 Agent flow: the four-stage graph, one request end to end, routing, failure handling"],
-                  ["Model and tool choices", "§5 Model and tool choices: alternatives, dependencies, API keys, cost assumptions"],
+                  ["Model and tool choices", "§5 Model and tool choices: alternatives, dependencies, API keys, cost assumptions, and why a local model instead of a hosted API"],
                   ["Evaluation: representative successes and failures", "§9 Evaluation: Representative successes; Representative failures"],
                   ["Evaluation: task-specific metrics", "§9 Evaluation: Task-specific metrics"],
                   ["Evaluation: grounding quality", "§9 Evaluation: Grounding quality"],
@@ -413,11 +413,25 @@ def story() -> list:
                    "<b>External services:</b> a one-time download from Hugging Face (MiniLM weights, and the local model if chosen). After that, no data leaves the machine.",
                    "<b>Cost:</b> $0. When the local model is used it makes at most two calls per question; intent classification measured about 660 prompt tokens.",
                    "<b>Latency:</b> deterministic answers p50 125 ms, p95 540 ms. With the local model, a warm routing call takes about a second; the first call after start-up took 8.7 s on an idle CPU."])
-    st += [thinking("I planned to use a hosted model, but the key I had during development returned 401 API_KEY_SERVICE_BLOCKED. "
-                    "Instead of waiting, I asked what the product actually needs a model for. The honest answer was: routing the "
-                    "questions the rules cannot, and phrasing explanations. A 1.5B local model can do the first well when it is "
-                    "constrained, and the second acceptably. That constraint made the system cheaper, private by default, and easier "
-                    "to evaluate. A hosted model remains a configuration change, not a redesign.")]
+    st += [P("Why a local model instead of a hosted API", "h3"),
+           P("The brief allows free, commercial or open-source hosted models. I deliberately chose a small open-source model that runs "
+             "locally, for these reasons:", "body")]
+    st += bullets(["<b>The hosted key I had did not work.</b> The API key available during development returned <font face='Mono'>401 API_KEY_SERVICE_BLOCKED</font>. "
+                   "I did not want the prototype, or its evaluation, to depend on a credential I could not rely on.",
+                   "<b>The model's job is narrow.</b> By design it never computes numbers or writes SQL. It only picks a question category from a closed "
+                   "list when the rules are unsure (6.9% of test questions) and phrases explanations of verified results. A 1.5B model constrained "
+                   "by a JSON grammar does this well: routing accuracy rises from 90.4% without it to 95.9% with it.",
+                   "<b>Anyone can run it.</b> Reviewers need no account, no API key and no budget. The whole system, model included, costs $0 to run.",
+                   "<b>The data stays on the machine.</b> Customer conversations are never sent to a third party, which matters for contact-centre data.",
+                   "<b>Results are reproducible.</b> The model file is pinned, so the benchmarks score the same model every time. Hosted models can "
+                   "change behind the same name, and rate limits or outages would have made the evaluation harder to repeat.",
+                   "<b>Answers never wait on a network.</b> If the model is missing or slow, the request falls back to the deterministic answer."])
+    st += [P("<b>The trade-off.</b> A local CPU model is slower and writes plainer explanations than a large hosted model: about 1 s per "
+             "routing call, and tens of seconds for a model-written explanation. A hosted model can be added later behind the same router "
+             "without redesigning anything (see §12).", "body"),
+           thinking("When the key failed, instead of waiting I asked what the product actually needs a model for. The honest answer was: "
+                    "routing the questions the rules cannot, and phrasing explanations. Once I saw how narrow that job was, a small local model "
+                    "was not a compromise. It made the system cheaper, private by default, and easier to evaluate.")]
 
     # 6. The four questions
     st += h1("6 · Results", "The four questions, answered")
