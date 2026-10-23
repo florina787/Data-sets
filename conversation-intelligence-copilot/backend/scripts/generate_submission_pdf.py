@@ -241,13 +241,10 @@ def story() -> list:
              "the three bonus extensions, evaluation, limitations and next improvements, as the brief requests. It is written "
              "in the first person because most of what matters here is judgement: what I chose to build, what I chose "
              "<i>not</i> to build, and why.", "lead"),
-           table([["Deliverable (brief §6)", "Where to find it"],
-                  ["Source code and setup/run instructions", "Repository README · Quick start; <font face='Mono'>make install / prepare / index / dev</font>"],
-                  ["Sample requests and outputs", "<font face='Mono'>examples/requests/</font> and <font face='Mono'>examples/outputs/</font> (generated from real runs)"],
-                  ["Obtaining or preparing the dataset", "Supplied CSV committed at <font face='Mono'>data/raw/</font>; <font face='Mono'>make prepare</font>; docs/dataset/DATASET.md"],
-                  ["Environment variables, external services", "<font face='Mono'>.env.example</font>; README · Configuration; none required"],
-                  ["Report (this document)", "Also in the repository: <font face='Mono'>docs/reports/</font>"]],
-                 [0.38, 0.62]),
+           P("Implementation repository: <font face='Mono'>github.com/florina787/Data-sets</font> (folder "
+             "<font face='Mono'>conversation-intelligence-copilot</font>, branch <font face='Mono'>claude/happy-edison-gef7ay</font>). "
+             "A ZIP can be built from it with <font face='Mono'>make package</font>. The next pages map every item in §6 of the brief "
+             "to where it is answered.", "body"),
            NextPageTemplate("body"), PageBreak()]
 
     # Contents
@@ -255,6 +252,33 @@ def story() -> list:
     toc.levelStyles = [S["toc1"]]
     toc.dotsMinLevel = 0
     st += [P("CONTENTS", "kicker"), Paragraph("What is in this report", S["h1"]), Spacer(1, 6), toc, PageBreak()]
+
+    # Submission checklist (brief §6)
+    st += h1("Submission checklist", "How this submission meets §6 of the brief")
+    st += [P("The brief asks for a short report and the implementation repository. This page maps each requirement to where it is "
+             "answered, so nothing has to be searched for.", "body"),
+           P("The report covers", "h3"),
+           table([["Required topic", "Where in this report"],
+                  ["Problem framing", "§1 Problem framing"],
+                  ["Dataset handling", "§2 Dataset handling: preparation steps, assumptions, derived fields, labels, aggregations"],
+                  ["System design", "§3 System design: components, contracts, schemas and data passed between agents"],
+                  ["Agent flow", "§4 Agent flow: the four-stage graph, one request end to end, routing, failure handling"],
+                  ["Model and tool choices", "§5 Model and tool choices: alternatives, dependencies, API keys, cost assumptions"],
+                  ["Evaluation: representative successes and failures", "§9 Evaluation: Representative successes; Representative failures"],
+                  ["Evaluation: task-specific metrics", "§9 Evaluation: Task-specific metrics"],
+                  ["Evaluation: grounding quality", "§9 Evaluation: Grounding quality"],
+                  ["Evaluation: latency or consistency", "§9 Evaluation: Latency and consistency"],
+                  ["Limitations", "§11 Limitations"],
+                  ["Next improvements", "§12 Next improvements"]],
+                 [0.42, 0.58], bold_first=True),
+           P("The repository includes", "h3"),
+           table([["Required item", "Where in the repository"],
+                  ["Source code and clear setup/run instructions", "<font face='Mono'>backend/</font>, <font face='Mono'>frontend/</font>; README · Quick start (<font face='Mono'>make install / prepare / index / dev</font>), IDE setup, Docker"],
+                  ["Sample requests and outputs", "<font face='Mono'>examples/requests/</font> (6 requests) and <font face='Mono'>examples/outputs/</font> (JSON + readable Markdown), generated from real runs"],
+                  ["Instructions for obtaining or preparing the dataset", "Supplied file committed at <font face='Mono'>data/raw/cs_conversations.csv.zip</font>; <font face='Mono'>make prepare</font>; <font face='Mono'>docs/dataset/DATASET.md</font>"],
+                  ["Environment-variable requirements and external-service notes", "<font face='Mono'>.env.example</font>; README · Configuration and Models, dependencies and cost. No API key or external service is required."]],
+                 [0.36, 0.64], bold_first=True),
+           P("Details for each repository item are in §13.", "small")]
 
     # 0. Summary
     st += h1("Summary", "What I built, in one page")
@@ -458,18 +482,40 @@ def story() -> list:
                   ["Reliability and privacy", "References are re-validated against the database before reuse. Sessions are isolated, retained for 30 days (configurable) and deletable per session."]],
                  [0.3, 0.7], bold_first=True)]
 
-    # 8. Evaluation
-    st += h1("8 · Evaluation", "What I measured, what worked, and what failed")
-    st += [table([["Measure", "Result", "How"],
+    # 8. Six enhancements
+    st += h1("8 · Beyond the brief", "Six enhancements")
+    st += [P("After the four questions and the three extensions worked, I added six enhancements. Each one came from asking what an "
+             "analyst would need in order to trust an answer, or to act on it. They follow the same rule as the rest of the system: "
+             "they read verified results and never produce numbers of their own.", "body"),
+           table([["Enhancement", "What it adds", "Why I built it"],
+                  ["Zero-LLM Intelligence Router", "Decides before any model call whether a model is needed. Analysts can also choose Analytics only or Hybrid AI.", "Fact questions should cost nothing and never depend on a model. All four brief questions use zero model calls."],
+                  ["Query-driven dashboards", "Turns each answer into a dashboard with a reason for each chart, filter chips and refinements that re-run the analysis.", "An answer is usually the start of an investigation, not the end of one."],
+                  ["Conversation X-Ray", "Escalations, repeated concerns and communication gaps in one conversation, each linked to the exact messages.", "Q3 asks how sentiment changed; a team lead also needs to see where and why."],
+                  ["Root Cause Investigator", "Tests factors associated with negative sentiment, with intervals, separating symptoms from candidate drivers.", "To answer why without claiming cause from observational data."],
+                  ["AI Decision Replay", "Step-through playback of routing, every node, each DuckDB operation, retrieval and model call, with secrets redacted.", "Reviewers and analysts can check how an answer was produced."],
+                  ["Evidence Challenger", "Re-reads every quote, discloses small samples, states counter-evidence and rewrites causal wording.", "A second, adversarial check before anything is shown."]],
+                 [0.22, 0.42, 0.36], bold_first=True),
+           two_figures(README / "shots" / "root-cause.png", README / "shots" / "evidence-review.png",
+                       "Figure 9. Root Cause Investigator: drivers vs symptoms, with intervals.",
+                       "Figure 10. Evidence Challenger: what was checked, and what does not fit the claim."),
+           Spacer(1, 6),
+           thinking("Building the Evidence Challenger exposed two real bugs: QA had been reporting zero resolved evidence items because "
+                    "one node overwrote another's report, and a repeated-phrase detector always returned zero. It also caught one of my "
+                    "own sentences: it rewrote \"because of\" into \"associated with\" in the tie disclosure for Q1. My wording was the problem.")]
+
+    # 9. Evaluation
+    st += h1("9 · Evaluation", "What I measured, what worked, and what failed")
+    st += [P("I evaluated the system the way the brief suggests: task-specific metrics, representative successes and failures, "
+             "grounding quality, and latency and consistency. Every benchmark was written before the change it measures.", "body"),
+           P("Task-specific metrics", "h3"),
+           table([["Measure", "Result", "How"],
                   ["Q1 vs independent oracle", "Exact match", "Separate code over the raw CSV, exact fractions"],
                   ["Intent routing (73 held-out)", "95.9% · macro F1 0.932", "Frozen split, scored once; 90.4% without a model"],
                   ["Refusals of unsupported questions", "6 / 6 end to end", "Revenue, CSAT, personnel decisions, off-topic"],
                   ["Follow-up routing", "11 / 11", "Multi-turn evaluation sessions"],
                   ["End-to-end QA pass rate", "88% of 51 requests", "All critical checks pass; the rest are Challenger warnings"],
-                  ["Grounding", "100% excerpt fidelity · 100% grounded explanations", "Quotes re-read from DuckDB; numeric grounding check"],
-                  ["Evidence coverage", "92.3%", "Share of top-ranked claims with an attached example"],
-                  ["Retrieval", "hit@5 86.1% · topic P@5 62.8%", "36 paraphrased queries; p50 39 ms"],
-                  ["Latency (deterministic)", "p50 125 ms · p95 540 ms", "Local CPU, end to end"],
+                  ["Retrieval", "hit@5 86.1% · topic P@5 62.8%", "36 paraphrased queries; MiniLM alone 83.3% / 62.2%"],
+                  ["Label agreement", "78% accuracy · Cohen's κ 0.67", "Template labels vs an independent lexicon"],
                   ["Automated tests", "138 backend · 8 Vitest · 17 Playwright", "All passing"]],
                  [0.3, 0.32, 0.38], bold_first=True),
            P("Representative successes", "h3")]
@@ -490,12 +536,18 @@ def story() -> list:
              "averaged with floats. The oracle now uses exact fractions, and a regression test pins the case.", "body"),
            thinking("Two implementations that share an assumption are really one implementation. Since then I check the checker: the "
                     "oracle uses a different arithmetic from the system it verifies."),
-           P("Consistency.", "h3"),
-           P("The deterministic path returns identical answers for identical questions. The routing benchmark records the stage "
-             "that decided each question, so changes in behaviour can be traced to a rule, a threshold or the model.", "body")]
+           P("Grounding quality", "h3")]
+    st += bullets(["<b>Excerpt fidelity 100%:</b> every quoted excerpt is re-read from DuckDB and must match word for word (34 of 34 in the Q4 example).",
+                   "<b>Grounded explanations 100%:</b> an explanation containing any number not in the verified result is rejected and replaced by the deterministic narrative.",
+                   "<b>Evidence coverage 92.3%:</b> the share of top-ranked claims with an attached example; missing examples are flagged as warnings.",
+                   "<b>Evidence relevance:</b> examples must fit the claim (negative examples for a negative claim); counter-evidence is stated alongside."])
+    st += [P("Latency and consistency", "h3")]
+    st += bullets(["<b>Deterministic answers:</b> p50 125 ms, p95 540 ms end to end on a local CPU. Retrieval alone: p50 39 ms.",
+                   "<b>With the local model:</b> about 1 s per warm routing call; the first call after start-up took 8.7 s on an idle CPU and 30–55 s under CPU contention. Model-written explanations take tens of seconds.",
+                   "<b>Consistency:</b> the deterministic path returns identical answers for identical questions. The routing benchmark records the stage that decided each question, so any change in behaviour can be traced to a rule, a threshold or the model."])
 
     # 9. What I did / didn't
-    st += h1("9 · Judgement", "What I did, what I chose not to do, and how I worked")
+    st += h1("10 · Judgement", "What I did, what I chose not to do, and how I worked")
     st += [table([["I chose not to…", "Because…"],
                   ["Rank individual agents", "No agent has more than two conversations; a ranking would be noise with consequences."],
                   ["Let a model write SQL or produce numbers", "Numbers must be reproducible and testable; the registry keeps claims finite and reviewable."],
@@ -515,7 +567,7 @@ def story() -> list:
                    "<b>Finally, an audit of my own submission</b> against every sentence of the brief, which found the float bug, a stale report and missing documentation. I fixed them and recorded the fixes."])
 
     # 10. Limitations
-    st += h1("10 · Limitations", "What a reviewer should know")
+    st += h1("11 · Limitations", "What a reviewer should know")
     st += bullets(["<b>Labels are a judgement</b> over templated synthetic text; agreement with human labellers is not yet measured.",
                    "<b>The routing benchmark is small and same-author:</b> 73 test questions written by the person who wrote the rules. The 95.9% is indicative, not precise.",
                    "<b>The hybrid retrieval gain is small</b>, and its weight was tuned on the evaluation queries.",
@@ -524,7 +576,7 @@ def story() -> list:
                    "<b>Not production-hardened:</b> no authentication or role-based access, single-node storage, Docker images not verified end to end."])
 
     # 11. Next improvements
-    st += h1("11 · Next improvements", "From prototype to production")
+    st += h1("12 · Next improvements", "From prototype to production")
     st += [table([["Area", "Next step"],
                   ["Quality", "Collect human labels in the review panel; measure agreement; re-write a routing benchmark with other authors."],
                   ["Models", "Optionally add a hosted model behind the same router: function calling over the operation registry, streamed and schema-constrained explanations, context caching, token budgets with fallback to the local model, and the same frozen test split as a gate."],
@@ -534,18 +586,40 @@ def story() -> list:
                  [0.2, 0.8], bold_first=True)]
 
     # 12. Reproduce
-    st += h1("12 · Reproducing this work", "Running it in minutes")
-    st += [P("Python 3.12+ with uv, Node 22+ and make. No API key is needed.", "body"),
+    st += h1("13 · Repository", "What is in the repository, and how to run it")
+    st += [P(f"<a href='{REPO}' color='#0d6b74'>{REPO}</a>", "small"),
+           P("Source code and setup/run instructions", "h3"),
+           P("<font face='Mono'>backend/</font> holds the FastAPI app, agents, analytics, retrieval, memory and tests. "
+             "<font face='Mono'>frontend/</font> holds the React workspace and Playwright tests. Python 3.12+ with uv, Node 22+ and make; no API key.", "body"),
            Paragraph("git clone https://github.com/florina787/Data-sets.git<br/>"
                      "cd Data-sets/conversation-intelligence-copilot &amp;&amp; git checkout claude/happy-edison-gef7ay<br/>"
                      "cp .env.example .env<br/>make install &amp;&amp; make prepare &amp;&amp; make index<br/>"
                      "make dev            # UI http://localhost:5173 · API docs http://localhost:8000/docs<br/>"
                      "make test &amp;&amp; make e2e # 138 + 8 + 17 tests<br/>"
                      "make install-local-llm &amp;&amp; make llm-download   # optional local model", S["code"]),
-           P(f"Repository: <a href='{REPO}' color='#0d6b74'>{REPO}</a>", "small"),
-           P("VS Code launch configurations are included (Full stack, pytest, prepare). The README also documents PyCharm and "
-             "two-terminal setups, every environment variable, the sample requests and outputs, and a requirement-by-requirement "
-             "compliance audit.", "body"),
+           P("The README also covers Docker, VS Code launch configurations, PyCharm and a two-terminal setup.", "small"),
+           P("Sample requests and outputs", "h3"),
+           P("<font face='Mono'>examples/requests/</font> holds six requests and <font face='Mono'>examples/outputs/</font> the matching "
+             "responses as JSON and readable Markdown, generated from real runs: the four brief questions (with follow-ups), a "
+             "retrieval request and an unsupported question. For example:", "body"),
+           Paragraph("curl -s localhost:8000/api/chat -H 'Content-Type: application/json' \\<br/>"
+                     "&nbsp;&nbsp;-d '{\"question\":\"Which recurring customer concerns should contact-centre leadership review first?\"}'", S["code"]),
+           P("Obtaining or preparing the dataset", "h3"),
+           P("The supplied sample is committed at <font face='Mono'>data/raw/cs_conversations.csv.zip</font>, so nothing needs to be "
+             "downloaded. <font face='Mono'>make prepare</font> validates, cleans, labels and loads it into DuckDB (about 30 seconds), and "
+             "<font face='Mono'>make index</font> builds the retrieval index. The data dictionary is in "
+             "<font face='Mono'>docs/dataset/DATASET.md</font> and every interpretation in <font face='Mono'>ASSUMPTIONS.md</font>.", "body"),
+           P("Environment variables and external services", "h3"),
+           table([["Variable", "Default", "Purpose"],
+                  ["LLM_PROVIDER", "auto", "auto uses the local model if downloaded, otherwise none; none forces deterministic answers"],
+                  ["LOCAL_MODEL_REPO / FILE / DIR", "Qwen2.5-1.5B GGUF, data/models", "Local model source and location"],
+                  ["RETRIEVAL_MODE, RRF_K, HYBRID_LSA_WEIGHT", "hybrid, 60, 0.15", "Retrieval method and fusion settings"],
+                  ["ENABLE_SYNTHETIC_DEMO", "false", "Demo conversations are loaded only when enabled"],
+                  ["SESSION_RETENTION_DAYS", "30", "Memory retention"]],
+                 [0.36, 0.26, 0.38]),
+           P("All settings are environment variables listed in <font face='Mono'>.env.example</font>; nothing secret is hardcoded and "
+             "no API key is required. The only external service is a one-time download from Hugging Face (MiniLM weights, and the "
+             "local model if chosen). Cost: $0.", "body"),
            Spacer(1, 10),
            thinking("The brief says you are not looking for a polished enterprise product, but for practical engineering judgement. "
                     "I tried to spend my effort where judgement shows: deciding what the model should not do, refusing to overstate "
