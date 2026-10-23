@@ -79,7 +79,7 @@ flowchart TB
 
 | Node | Does | Never does |
 |---|---|---|
-| router | Zero-LLM decision: does this question need a model at all (AUTO / ANALYTICS ONLY / HYBRID AI) | Call a model |
+| router | (see [docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md)) Zero-LLM decision: does this question need a model at all (AUTO / ANALYTICS ONLY / HYBRID AI) | Call a model |
 | intent | Confidence-aware routing: policy → high-precision rules → calibrated semantic match → vague-question guard → model (category only, constrained JSON) → weak rules → clarify; entities always from deterministic extractors ([INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)) | Produce numbers or SQL; invent a confidence score |
 | supervisor | Resolve follow-up references and date window, authorise dataset mode, validate IDs, choose operations / specialist / retrieval mode | Compute results |
 | specialists | Run registered operations with validated arguments; resolve dependencies (e.g. compare the top two topics when none named) | Free-form SQL |

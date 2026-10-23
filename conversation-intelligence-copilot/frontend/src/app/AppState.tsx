@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { api, streamChat } from "@/services/api";
-import type { ChatResponse, NodeStatus, StreamEvent } from "@/types/api";
+import type { AnalysisMode, ChatResponse, NodeStatus, StreamEvent } from "@/types/api";
 
 export interface NodeProgress { status: NodeStatus; label?: string; duration_ms?: number; summary?: Record<string, any>; error?: string | null }
 
@@ -23,6 +23,8 @@ interface AppState {
   sessionId: string | null;
   datasetMode: "original" | "synthetic" | "combined";
   setDatasetMode: (m: "original" | "synthetic" | "combined") => void;
+  analysisMode: AnalysisMode;
+  setAnalysisMode: (m: AnalysisMode) => void;
   selectedConversation: string | null;
   setSelectedConversation: (id: string | null) => void;
   turns: Turn[];
@@ -39,6 +41,8 @@ interface AppState {
 
 const Ctx = createContext<AppState | null>(null);
 const SESSION_KEY = "cic.session";
+const MODE_KEY = "cic.analysisMode";
+const MODES: AnalysisMode[] = ["auto", "analytics_only", "hybrid_ai"];
 
 function safeGet(key: string): string | null {
   try { return localStorage.getItem(key); } catch { return null; }
@@ -51,6 +55,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionId] = useState<string | null>(() => safeGet(SESSION_KEY));
   const [datasetMode, setDatasetMode] = useState<"original" | "synthetic" | "combined">("original");
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+  const [analysisMode, setAnalysisModeState] = useState<AnalysisMode>(() => {
+    const v = safeGet(MODE_KEY) as AnalysisMode | null;
+    return v && MODES.includes(v) ? v : "auto";
+  });
+  const setAnalysisMode = useCallback((m: AnalysisMode) => { setAnalysisModeState(m); safeSet(MODE_KEY, m); }, []);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [model, setModel] = useState<ModelStatus | null>(null);
   const [health, setHealth] = useState<any>(null);
@@ -93,11 +102,11 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       }
     };
     abortRef.current = streamChat(
-      { question, session_id: safeGet(SESSION_KEY), dataset_mode: datasetMode, selected_conversation_id: selectedConversation },
+      { question, session_id: safeGet(SESSION_KEY), dataset_mode: datasetMode, selected_conversation_id: selectedConversation, analysis_mode: analysisMode },
       onEvent,
       (err) => { update(turnId, (t) => ({ ...t, status: "error", error: err.message, retryable: true })); abortRef.current = null; },
     );
-  }, [datasetMode, selectedConversation, refreshModel]);
+  }, [datasetMode, selectedConversation, analysisMode, refreshModel]);
 
   const ask = useCallback((question: string) => {
     const q = question.trim();
@@ -136,9 +145,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const busy = turns.some((t) => t.status === "streaming");
-  const value = useMemo<AppState>(() => ({ sessionId, datasetMode, setDatasetMode, selectedConversation, setSelectedConversation, turns, ask, cancel,
+  const value = useMemo<AppState>(() => ({ sessionId, datasetMode, setDatasetMode, analysisMode, setAnalysisMode, selectedConversation, setSelectedConversation, turns, ask, cancel,
     retry, newSession, loadSession, busy, model, refreshModel, health }),
-  [sessionId, datasetMode, selectedConversation, turns, ask, cancel, retry, newSession, loadSession, busy, model, refreshModel, health]);
+  [sessionId, datasetMode, analysisMode, setAnalysisMode, selectedConversation, turns, ask, cancel, retry, newSession, loadSession, busy, model, refreshModel, health]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

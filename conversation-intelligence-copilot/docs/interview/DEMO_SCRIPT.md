@@ -30,5 +30,13 @@ Start: `make dev` (or `docker compose up --build` → http://localhost:8080). Op
 ## 6. Bonus — memory (2 min)
 After Q1: "Compare the top two topics." → "What about the previous month?" → "Now show similar conversations for the first one." Point at the plan notes ("Resolved '#1, #2' …", "Kept the previous date window …"). Then "Which findings are uncertain?" re-runs the analysis rather than trusting earlier text.
 
-## 7. Engineering depth (2 min)
+## 7. The six enhancements (4 min)
+1. **Router.** Point at the mode switch above the composer. Q1 shows "Zero-LLM route", tokens "0 (no model call)" and the rule that routed it. Switch to Hybrid AI and ask "Why are duplicate charge customers so unhappy?": the strip says why a model was used, and tokens show a number, or "not reported", never a fake 0.
+2. **Dashboard.** On Q1 click **Dashboard**. Sections with "why this chart", filter chips, then click **Previous month** — it re-runs the analysis.
+3. **X-Ray.** Ask "X-ray conversation C0000479" and click "Problem resurfaced after the customer said it was fixed". Turns 2, 4, 6 and 12 light up in the timeline, the sentiment line and the transcript. Then click turn 11: the closing-action mismatch highlights.
+4. **Root cause.** In Analytics-only mode, ask "What is driving negative sentiment in duplicate charges?". Show low empathy (43% vs 25%, strong), the weak factors, escalation shown as a *symptom*, and the alternative explanations.
+5. **Evidence review + replay.** Under Q4, the Evidence review shows quotes re-read from the database and counter-evidence. Open **AI decision replay**, press play, and show the DuckDB operations with timings, the FAISS search, and "no model calls".
+6. **Hybrid retrieval.** In Explorer → Semantic search, every result shows "MiniLM #n · LSA #n". Switch to "LSA only" to show the difference.
+
+## 8. Engineering depth (2 min)
 Agent Harness (skipped vs completed nodes, node inspector, model calls) → Prompt Library → System Metrics (latency per node, requests by intent, model errors) → Governance (controls incl. "not implemented", blind human review, audit log).

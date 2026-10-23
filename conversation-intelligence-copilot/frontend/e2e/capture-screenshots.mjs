@@ -78,6 +78,37 @@ await page.locator(".recharts-bar-rectangle").first().click();
 await page.waitForSelector("text=Conversations behind this data point", { timeout: 15000 });
 await shot("16-drilldown", false);
 
+// --- Six enhancements (Analytics-only mode so captures are deterministic) ---------------------------------
+async function askText(q, mode = "analytics_only") {
+  await page.goto(base + "/");
+  await page.evaluate((m) => { localStorage.removeItem("cic.session"); localStorage.setItem("cic.analysisMode", m); }, mode);
+  await page.goto(base + "/");
+  await page.locator("#composer").fill(q);
+  await page.keyboard.press("Enter");
+  await page.waitForSelector('[data-testid="routing-strip"]', { timeout: 180000 });
+}
+await askText("What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?");
+await page.getByTestId("view-dashboard").click();
+await shot("18-dynamic-dashboard");
+await page.getByTestId("view-answer").click();
+await page.getByTestId("decision-replay").getByRole("button").first().click();
+await page.waitForSelector("text=DuckDB operations");
+await page.getByTestId("replay-step-router").click();
+await page.getByTestId("decision-replay").scrollIntoViewIfNeeded();
+await shot("19-decision-replay-and-evidence-review");
+await askText("X-ray conversation C0000479");
+await page.getByTestId("xray-signal-reopened_after_fix").click();
+await shot("20-conversation-xray");
+await askText("What is driving negative sentiment in duplicate charges?");
+await shot("21-root-cause");
+await page.goto(base + "/explorer");
+await page.getByRole("tab", { name: "Semantic search" }).click();
+await page.locator("#sem").fill("customer charged twice wants a refund");
+await page.getByRole("button", { name: "Search" }).click();
+await page.waitForSelector("text=/mode hybrid/", { timeout: 30000 });
+await shot("22-hybrid-retrieval", false);
+await page.evaluate(() => localStorage.setItem("cic.analysisMode", "auto"));
+
 const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true });
 const m = await mobile.newPage();
 await m.goto(base + "/");

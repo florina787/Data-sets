@@ -10,7 +10,16 @@ Status vocabulary: **Implemented and verified** (code integrated, reachable, tes
 | Q2 coaching (sample-size gated) | Implemented and verified | chat, Coaching page | fixture, graph, E2E | ≤ 2 conversations per agent in data |
 | Q3 conversation trajectory | Implemented and verified | chat, Explorer | fixture, graph, E2E | Ordinal template scores |
 | Q4 leadership priorities with sensitivity and owners | Implemented and verified | chat, Leadership page | fixture, graph, E2E | No cost/churn data |
-| General Q&A (13 operations), unsupported refusal | Implemented and verified | registry | intent + eval | Rules parser brittle on paraphrases (50% held-out) |
+| General Q&A (15 operations), unsupported refusal | Implemented and verified | registry | intent + eval | — |
+| Confidence-aware intent routing (policy → rules → semantic → model → clarify) | Implemented and verified | `agents/intent_router.py`, `docs/evaluation/INTENT_ROUTING.md` | `test_intent_router.py`, benchmark v2 | 95.9% on 73 held-out questions; semantic stage disabled by calibration; hosted models not evaluated |
+| Zero-LLM Intelligence Router (AUTO / ANALYTICS ONLY / HYBRID AI) + honest token accounting | Implemented and verified | mode switch, routing strip, `/api/telemetry/tokens` | `test_router.py`, `test_graph.py`, e2e | — |
+| Query-driven dynamic dashboards | Implemented and verified | "Dashboard" tab | `test_enhancements.py`, e2e | Regenerated per question; not saved or shareable |
+| Conversation X-Ray (synchronised timeline ↔ transcript) | Implemented and verified | X-Ray panel | hand-counted fixture, e2e | Signals from template labels |
+| Root Cause Investigator | Implemented and verified | root-cause panel | fixture statistics, e2e | Associational only; needs ≥ 20 conversations per topic |
+| AI Decision Replay | Implemented and verified | replay panel, `/api/replay/{id}` | replay + sanitiser tests, e2e | Depends on telemetry retention |
+| Analytical Evidence Challenger | Implemented and verified | Evidence review section, QA checks | challenger tests, e2e | Causal rewriting is pattern-based |
+| Hybrid retrieval (MiniLM + LSA, weighted RRF) with per-method ranks in the UI | Implemented and verified | evidence cards, Explorer switch, Metrics | retrieval eval, e2e | LSA weight tuned on the evaluation queries |
+| Local LLM (Qwen2.5-1.5B, llama.cpp) and Groq providers | Implemented and verified (local); Groq implemented but not fully verified | `llm/local_client.py`, `llm/groq_client.py` | `test_providers.py` | Groq not run live (no key); local model slow on CPU |
 | LangGraph orchestration, conditional + parallel routing, checkpointing | Implemented and verified | `agents/graph.py` | stream/graph tests | — |
 | Gemini adapter (structured output, repair, rate limit, retries, circuit, cache, tokens/cost) | Implemented but not fully verified | `llm/*` | scripted-SDK tests | Live API never reached (key blocked) |
 | Gemini intent and grounded explanation | Implemented but not fully verified | `intent_agent.py`, `nodes.explanation` | scripted tests incl. grounding rejection | Not run live |

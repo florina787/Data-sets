@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-22T17:45:03+00:00",
+  "generated_at": "2026-10-23T00:33:24+00:00",
   "dataset": "cs_conversations.csv (Syncora sample, 3,000 conversations)",
   "model": {
     "provider": "gemini",
     "mode": "deterministic",
     "available": false,
-    "model": "gemini-2.5-flash",
-    "reason": "GEMINI_API_KEY is not set",
+    "model": "llama-3.3-70b-versatile",
+    "reason": "LLM_PROVIDER=none",
     "circuit": "n/a"
   },
   "q1_oracle": {
@@ -155,66 +155,15 @@
     "errors": [],
     "heldout": {
       "n": 20,
-      "accuracy": 0.5,
-      "safe_failures": 7,
-      "misrouted": 3,
-      "errors": [
-        {
-          "question": "Where is customer frustration concentrated?",
-          "expected": "negative_topics",
-          "predicted": "unsupported"
-        },
-        {
-          "question": "Give me the worst-performing topics for September 2025",
-          "expected": "negative_topics",
-          "predicted": "topic_frequency"
-        },
-        {
-          "question": "Which reps should get communication training?",
-          "expected": "agent_coaching",
-          "predicted": "unsupported"
-        },
-        {
-          "question": "Walk me through how the customer felt in C0001673",
-          "expected": "sentiment_trajectory",
-          "predicted": "conversation_detail"
-        },
-        {
-          "question": "Did the customer calm down by the end of conversation C0000837?",
-          "expected": "sentiment_trajectory",
-          "predicted": "conversation_detail"
-        },
-        {
-          "question": "What should the head of support look at first this quarter?",
-          "expected": "leadership_priorities",
-          "predicted": "unsupported"
-        },
-        {
-          "question": "Has sentiment improved since August?",
-          "expected": "sentiment_trend",
-          "predicted": "unsupported"
-        },
-        {
-          "question": "What share of conversations are positive?",
-          "expected": "sentiment_distribution",
-          "predicted": "unsupported"
-        },
-        {
-          "question": "Pull up a few chats where someone was double charged",
-          "expected": "similar_conversations",
-          "predicted": "unsupported"
-        },
-        {
-          "question": "How many agents are in the data?",
-          "expected": "dataset_overview",
-          "predicted": "unsupported"
-        }
-      ],
-      "note": "Written after the parser was tuned on the main set and scored once without further changes."
+      "accuracy": 1.0,
+      "safe_failures": 0,
+      "misrouted": 0,
+      "errors": [],
+      "note": "Legacy set: written after the v1 parser was tuned and scored once; it was read during the v2 routing work, so it is no longer unseen. The unbiased figure is benchmark v2 (docs/evaluation/INTENT_ROUTING.md)."
     },
-    "gemini": {
+    "router": {
       "status": "not_run",
-      "reason": "GEMINI_API_KEY is not set"
+      "reason": "LLM_PROVIDER=none"
     }
   },
   "labels": {
@@ -299,7 +248,7 @@
     },
     "gemini_labels": {
       "status": "not_run",
-      "reason": "GEMINI_API_KEY is not set"
+      "reason": "LLM_PROVIDER=none"
     }
   },
   "retrieval": {
@@ -310,8 +259,8 @@
     "hit_rate@5": 0.8611,
     "mrr@5": 0.6977,
     "duplicate_rate": 0.0,
-    "latency_p50_ms": 46.4,
-    "latency_p95_ms": 68.2,
+    "latency_p50_ms": 38.6,
+    "latency_p95_ms": 54.2,
     "by_topic": [
       {
         "topic": "account_locked",
@@ -370,8 +319,8 @@
         "hit_rate@5": 0.4722,
         "mrr@5": 0.3528,
         "duplicate_rate": 0.0,
-        "latency_p50_ms": 16.8,
-        "latency_p95_ms": 29.2,
+        "latency_p50_ms": 13.9,
+        "latency_p95_ms": 17.3,
         "by_topic": [
           {
             "topic": "account_locked",
@@ -423,8 +372,8 @@
         "hit_rate@5": 0.8333,
         "mrr@5": 0.7106,
         "duplicate_rate": 0.0,
-        "latency_p50_ms": 27.7,
-        "latency_p95_ms": 38.2,
+        "latency_p50_ms": 23.8,
+        "latency_p95_ms": 45.8,
         "by_topic": [
           {
             "topic": "account_locked",
@@ -476,8 +425,8 @@
         "hit_rate@5": 0.8611,
         "mrr@5": 0.6977,
         "duplicate_rate": 0.0,
-        "latency_p50_ms": 46.4,
-        "latency_p95_ms": 68.2,
+        "latency_p50_ms": 38.6,
+        "latency_p95_ms": 54.2,
         "by_topic": [
           {
             "topic": "account_locked",
@@ -528,18 +477,23 @@
   "end_to_end": {
     "requests": 51,
     "follow_up_requests": 11,
-    "qa_pass_rate": 1.0,
+    "qa_pass_rate": 0.8824,
     "check_pass_rates": {
+      "causal_language": 1.0,
       "chart_consistency": 1.0,
       "coaching_sample_size_gate": 1.0,
       "denominators": 1.0,
+      "evidence_coverage": 0.9231,
       "evidence_present": 1.0,
+      "evidence_relevance": 1.0,
       "evidence_valid": 1.0,
+      "excerpt_fidelity": 1.0,
       "explanation_grounded": 1.0,
       "filters_applied": 1.0,
       "proportions_valid": 1.0,
       "ranking_consistency": 1.0,
       "registered_operations": 1.0,
+      "sample_size": 0.902,
       "uncertainty_disclosed": 1.0
     },
     "unsupported_correctly_refused": "6/6",
@@ -547,22 +501,53 @@
     "follow_up_routing_accuracy": 1.0,
     "follow_up_errors": [],
     "evidence_items_total": 189,
-    "latency_p50_ms": 150.5,
-    "latency_p95_ms": 713.7,
+    "latency_p50_ms": 132.9,
+    "latency_p95_ms": 560.3,
     "llm_mode": {
       "deterministic": 51
     },
-    "qa_failures": []
+    "qa_failures": [
+      {
+        "question": "Which issues drive negative sentiment?",
+        "check": "sample_size",
+        "detail": "1 group(s) below 30 conversations \u2014 added a caveat"
+      },
+      {
+        "question": "Which products have the highest negative rate?",
+        "check": "evidence_coverage",
+        "detail": "0/3 top-ranked groups have a supporting conversation attached"
+      },
+      {
+        "question": "Top 3 negative topics in October 2025",
+        "check": "sample_size",
+        "detail": "1 group(s) below 30 conversations \u2014 added a caveat"
+      },
+      {
+        "question": "What is the overall sentiment distribution?",
+        "check": "sample_size",
+        "detail": "1 group(s) below 30 conversations \u2014 added a caveat"
+      },
+      {
+        "question": "How do customers feel overall?",
+        "check": "sample_size",
+        "detail": "1 group(s) below 30 conversations \u2014 added a caveat"
+      },
+      {
+        "question": "Sentiment breakdown by domain",
+        "check": "sample_size",
+        "detail": "1 group(s) below 30 conversations \u2014 added a caveat"
+      }
+    ]
   },
   "prompt_evaluations": {
     "intent_understanding": {
       "status": "not_run",
-      "reason": "GEMINI_API_KEY is not set",
+      "reason": "LLM_PROVIDER=none",
       "rules_baseline_accuracy": 1.0
     },
     "message_classification": {
       "status": "not_run",
-      "reason": "GEMINI_API_KEY is not set"
+      "reason": "LLM_PROVIDER=none"
     },
     "grounded_explanation": {
       "status": "not_run",
@@ -576,18 +561,23 @@
       "note": "2025-11"
     },
     {
-      "metric": "Intent accuracy (rules, tuning set)",
+      "metric": "Intent routing accuracy (benchmark v2 test, router)",
+      "display": "96%",
+      "note": "73 held-out questions; macro F1 0.93; misrouted 4%"
+    },
+    {
+      "metric": "Intent routing accuracy (benchmark v2 test, previous router)",
+      "display": "62%",
+      "note": "73 held-out questions; macro F1 0.55; misrouted 14%"
+    },
+    {
+      "metric": "Intent accuracy (rules, legacy 40-question set)",
       "display": "100%",
       "note": "40 questions; parser was tuned on this set"
     },
     {
-      "metric": "Intent accuracy (rules, held-out)",
-      "display": "50%",
-      "note": "20 unseen paraphrases; 7 of 10 misses refused safely"
-    },
-    {
       "metric": "QA pass rate (end to end)",
-      "display": "100%",
+      "display": "88%",
       "note": "51 requests"
     },
     {
@@ -612,9 +602,9 @@
     },
     {
       "metric": "Latency p50 / p95",
-      "display": "150 / 714 ms",
+      "display": "133 / 560 ms",
       "note": "deterministic mode, local"
     }
   ],
-  "duration_seconds": 23.0
+  "duration_seconds": 19.3
 }

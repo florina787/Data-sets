@@ -107,6 +107,71 @@ export interface Evidence {
   date: string;
   similarity: number | null;
   reason: string;
+  retrieval_method?: "hybrid" | "dense" | "lsa" | null;
+  method_scores?: Partial<Record<"dense" | "lsa", { rank: number; similarity: number }>>;
+}
+
+export type AnalysisMode = "auto" | "analytics_only" | "hybrid_ai";
+
+export interface Routing {
+  requested_mode: AnalysisMode;
+  route: "analytics_only" | "hybrid_ai";
+  reason: string;
+  llm_available: boolean;
+  llm_steps: string[];
+  rules_category?: string;
+  interpretive_cue?: string | null;
+  intent_precheck?: { method: string; reason: string; rule: string; label: string };
+}
+
+/** Tokens are null when calls were made but the provider reported no usage; 0 only when no model call was made. */
+export interface TokenUsage {
+  calls: number;
+  model_calls: number;
+  cache_hits: number;
+  reported_calls: number;
+  unreported_calls: number;
+  complete: boolean;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  estimated_cost_usd: number | null;
+  by_purpose: { purpose: string; model: string; total_tokens: number | null; cache_hit: number; status: string; latency_ms: number }[];
+}
+
+export interface Panel {
+  operation: string;
+  params: Record<string, any>;
+  metrics: Metric[];
+  table: Table | null;
+  series: Record<string, Table>;
+  method_notes: string[];
+  uncertainty_notes: string[];
+  coverage: Record<string, any>;
+}
+
+export interface DashboardSpec {
+  title: string;
+  generated_from: string;
+  kpi_chart_ids: string[];
+  sections: { title: string; items: { chart_id: string; why: string; width: "full" | "half" }[] }[];
+  filters: { field: string; value: string }[];
+  refinements: { label: string; question: string }[];
+  operations: string[];
+  layout_rule: string;
+}
+
+export interface ChallengeCheck { check: string; status: "pass" | "warn" | "fail"; detail: string; items: any[] }
+
+export interface EvidenceReview {
+  verdict: "supported" | "partially supported" | "challenged";
+  checks: ChallengeCheck[];
+  challenges: string[];
+  counter_evidence: string[];
+  added_notes: string[];
+  replaced_explanation: boolean;
+  passed: number;
+  total: number;
 }
 
 export interface Recommendation {
@@ -153,6 +218,12 @@ export interface ChatResponse {
   human_review_required: boolean;
   errors: { node: string; error: string }[];
   latency_ms?: number;
+  routing?: Routing;
+  token_usage?: TokenUsage;
+  xray?: Panel | null;
+  root_cause?: Panel | null;
+  dashboard?: DashboardSpec | null;
+  evidence_review?: EvidenceReview | null;
 }
 
 export type NodeStatus = "pending" | "running" | "completed" | "failed" | "skipped" | "cancelled";

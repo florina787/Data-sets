@@ -8,6 +8,12 @@ import { useApp } from "@/app/AppState";
 import { ChartCard } from "@/components/charts/ChartCard";
 import { Badge, Card, CardHeader, SentimentBadge, Tip } from "@/components/common/ui";
 import { useEvidence } from "@/components/evidence/EvidenceContext";
+import { DashboardView } from "@/components/insights/DashboardView";
+import { DecisionReplay } from "@/components/insights/DecisionReplay";
+import { EvidenceReview } from "@/components/insights/EvidenceReview";
+import { RootCausePanel } from "@/components/insights/RootCausePanel";
+import { RoutingStrip } from "@/components/insights/RoutingStrip";
+import { XRayPanel } from "@/components/insights/XRayPanel";
 import { RelationGraph } from "@/components/workflow/RelationGraph";
 import { humanize, ms } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -27,6 +33,7 @@ export function EvidenceCard({ e, i }: { e: Evidence; i: number }) {
         <SentimentBadge value={e.sentiment} />
         {e.similarity !== null && <Tip content="Cosine similarity between the query and passage embeddings: a ranking signal, not a probability."><span><Badge tone="cyan">sim {e.similarity.toFixed(2)}</Badge></span></Tip>}
       </div>
+      {e.method_scores && Object.keys(e.method_scores).length > 0 && <MethodRanks e={e} />}
       <p className="mt-1.5 text-[11px] text-faint">{e.reason} · turns {e.turn_range[0]}–{e.turn_range[1]} · {e.agent_id} · {e.date}</p>
       <div className="mt-2 flex-1 space-y-1.5">
         {e.excerpts.slice(0, 4).map((x) => (
@@ -42,6 +49,22 @@ export function EvidenceCard({ e, i }: { e: Evidence; i: number }) {
         Open full transcript →
       </button>
     </motion.div>
+  );
+}
+
+const METHOD_NAME = { dense: "MiniLM", lsa: "LSA" } as const;
+
+/** Which retrieval methods found this passage, and at what rank (hybrid = weighted reciprocal rank fusion of both). */
+function MethodRanks({ e }: { e: Evidence }) {
+  const ms_ = e.method_scores ?? {};
+  return (
+    <div className="mt-1.5 flex flex-wrap items-center gap-1 text-[10px]" data-testid="method-ranks">
+      {e.retrieval_method === "hybrid" && <Tip content="Ranked by weighted Reciprocal Rank Fusion of the MiniLM (dense) and LSA (sparse) rankings."><span><Badge tone="violet">hybrid RRF</Badge></span></Tip>}
+      {(["dense", "lsa"] as const).map((k) => ms_[k] ? (
+        <Tip key={k} content={`${METHOD_NAME[k]} ranked this conversation #${ms_[k]!.rank} (cosine ${ms_[k]!.similarity.toFixed(2)}).`}>
+          <span><Badge>{METHOD_NAME[k]} #{ms_[k]!.rank}</Badge></span></Tip>
+      ) : e.retrieval_method === "hybrid" ? <Badge key={k} className="opacity-60">{METHOD_NAME[k]} —</Badge> : null)}
+    </div>
   );
 }
 
@@ -71,6 +94,7 @@ function RecommendationCard({ r, i }: { r: Recommendation; i: number }) {
 export function ResponseView({ r }: { r: ChatResponse }) {
   const { ask, busy } = useApp();
   const [showChecks, setShowChecks] = useState(false);
+  const [view, setView] = useState<"answer" | "dashboard">("answer");
   const kpis = r.charts.filter((c) => c.chart_type === "kpi");
   const charts = r.charts.filter((c) => c.chart_type !== "kpi");
   const qa = r.quality_status;
@@ -91,6 +115,7 @@ export function ResponseView({ r }: { r: ChatResponse }) {
         <Badge>{r.dataset_scope.window.label}</Badge>
         <Link to={`/harness/${r.request_id}`} className="focus-ring rounded-full"><Badge tone="cyan"><Network className="h-3 w-3" />Trace</Badge></Link>
       </div>
+      <RoutingStrip r={r} />
       {showChecks && (
         <ul className="grid gap-1.5 rounded-xl border border-line bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
           {qa.checks.map((c) => (
@@ -120,6 +145,21 @@ export function ResponseView({ r }: { r: ChatResponse }) {
         </div>
       )}
 
+      {r.root_cause && <RootCausePanel panel={r.root_cause} />}
+      {r.xray && <XRayPanel panel={r.xray} />}
+
+      {r.dashboard && (r.charts.length > 0) && (
+        <div role="tablist" aria-label="Result view" className="inline-flex rounded-xl border border-line bg-white/[0.02] p-0.5 text-xs">
+          {(["answer", "dashboard"] as const).map((v) => (
+            <button key={v} role="tab" aria-selected={view === v} onClick={() => setView(v)} data-testid={`view-${v}`}
+              className={cn("focus-ring rounded-lg px-3 py-1 font-medium transition", view === v ? "bg-indigo/20 text-ink" : "text-faint hover:text-ink")}>
+              {v === "answer" ? "Answer" : "Dashboard"}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {view === "dashboard" && r.dashboard ? <DashboardView r={r} /> : <>
       {kpis.map((k, i) => <ChartCard key={k.chart_id} spec={k} delay={0.05 * i} />)}
 
       {charts.length > 0 && (
@@ -133,6 +173,7 @@ export function ResponseView({ r }: { r: ChatResponse }) {
         </div>
       )}
       {r.graphs.map((g) => <RelationGraph key={g.graph_id} spec={g} />)}
+      </>}
 
       {r.recommendations.length > 0 && (
         <section aria-labelledby={`recs-${r.request_id}`}>
@@ -158,6 +199,8 @@ export function ResponseView({ r }: { r: ChatResponse }) {
         </section>
       )}
 
+      {r.evidence_review && <EvidenceReview review={r.evidence_review} />}
+
       {(r.uncertainty_notes.length > 0 || r.method_notes.length > 0) && (
         <details className="group rounded-xl border border-line bg-white/[0.02]" open={r.uncertainty_notes.length > 0}>
           <summary className="focus-ring flex cursor-pointer list-none items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold">
@@ -170,6 +213,8 @@ export function ResponseView({ r }: { r: ChatResponse }) {
           </div>
         </details>
       )}
+
+      <DecisionReplay requestId={r.request_id} />
 
       {r.follow_up_questions.length > 0 && (
         <div className="flex flex-wrap gap-2">

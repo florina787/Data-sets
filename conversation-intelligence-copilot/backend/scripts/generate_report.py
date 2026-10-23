@@ -180,6 +180,24 @@ def architecture_figure() -> Path:
 # ---------------------------------------------------------------------------------------------
 # Short submission report (DOCX)
 # ---------------------------------------------------------------------------------------------
+def routing() -> dict:
+    """Benchmark v2 intent-routing results (scored once on the frozen test split)."""
+    base = PROJECT_ROOT / "data" / "manifests" / "intent_routing"
+    out = {}
+    for k, f in (("router", "test_router_v2_final.json"), ("no_llm", "test_router_v2_no_llm_final.json"), ("before", "test_rules_first_v1_final.json")):
+        if (base / f).exists():
+            out[k] = json.loads((base / f).read_text())
+    return out
+
+
+def routing_text() -> str:
+    r = routing()
+    if "router" not in r:
+        return "not run"
+    return (f"{r['router']['accuracy']:.1%} on {r['router']['n']} held-out questions (no model: {r['no_llm']['accuracy']:.1%}; "
+            f"previous router: {r['before']['accuracy']:.1%})")
+
+
 def docx_report(d: dict, figs: dict[str, Path]) -> Path:
     from docx import Document
     from docx.shared import Cm, Pt, RGBColor
@@ -295,27 +313,29 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
         ["Q1 vs independent oracle", "exact match" if e["q1_oracle"]["top5_counts_match"] and e["q1_oracle"]["totals_match"] else "mismatch"],
         ["End-to-end QA pass rate", f"{ev['qa_pass_rate']:.0%} of {ev['requests']} requests"],
         ["Unsupported questions refused", ev["unsupported_correctly_refused"]],
-        ["Intent (rules fallback)", f"{it['accuracy']:.0%} tuning set; {it['heldout']['accuracy']:.0%} held-out"],
+        ["Intent routing (benchmark v2 test)", routing_text()],
         ["Retrieval topic P@5", f"{rt['topic_precision@5']:.1%}"],
         ["Latency p50 / p95", f"{ev['latency_p50_ms']:.0f} / {ev['latency_p95_ms']:.0f} ms"],
         ["Automated tests", "97 backend · 8 Vitest · 10 Playwright — passing"],
     ], ["Measure", "Result"])
-    para("Gemini could not be evaluated live: the development environment's credential returned 401 API_KEY_SERVICE_BLOCKED. All results above are for the deterministic path.")
+    para("Gemini could not be evaluated live: the development environment's credential returned 401 API_KEY_SERVICE_BLOCKED. End-to-end results above are for the deterministic path; "
+         "intent routing was also measured with the local Qwen2.5-1.5B model (docs/evaluation/INTENT_ROUTING.md).")
 
     h("8. Limitations")
     bullets([
-        "Live Gemini behaviour (intent, explanations, labels, latency, tokens) is unmeasured.",
+        "Live hosted-model behaviour (Gemini/Groq intent, explanations, labels, latency, tokens) is unmeasured; the local model is slow on CPU.",
         "Sentiment/empathy mappings are developer judgements; human-agreement metrics await labels from the in-app blind review.",
-        "The deterministic intent parser is brittle on paraphrases (held-out accuracy above), though most misses fail safe.",
-        "Retrieval still misses some paraphrases (generic help and paid-but-not-delivered queries regressed with MiniLM); the LSA fallback is much weaker.",
+        "Intent routing reaches 95.9% on 73 held-out questions written by the rules' author; three known misroutes are documented, unfixed. The semantic routing stage is disabled by its own calibration.",
+        "Root cause findings are associational and depend on template-level labels; X-Ray signals are pointers for review, not a verdict.",
+        "Retrieval still misses 'paid but not delivered' paraphrases with every method; hybrid MiniLM + LSA fusion is only marginally better than MiniLM alone, and its LSA weight was tuned on the evaluation queries.",
         "Synthetic, templated data: most topic differences are not significant; no cost, churn, CSAT or handle-time data.",
         "No authentication/RBAC; single-node storage; Docker images not built in the sandbox (registry rate limits).",
     ])
 
     h("9. Next improvements")
     bullets([
-        "Enable Gemini; run labelling and the intent/explanation evaluation live; compare with rules and human labels.",
-        "Pretrained or Gemini embeddings with hybrid BM25 + vector search; re-run the retrieval benchmark.",
+        "Enable a hosted model (Groq or Gemini); run labelling and the routing/explanation evaluation live; compare with rules and human labels.",
+        "A held-out retrieval query set to validate the hybrid weight; a fresh routing test set to measure the three proposed rule fixes.",
         "Collect a few hundred human labels for calibrated sentiment/empathy evaluation.",
         "SSO/RBAC, managed storage, OpenTelemetry/LangSmith, CI evaluation gates.",
     ])
@@ -398,7 +418,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
        ["Q1 vs independent oracle", "exact match" if e["q1_oracle"]["top5_counts_match"] else "mismatch"],
        ["End-to-end QA pass rate", f"{ev['qa_pass_rate']:.0%} ({ev['requests']} requests, {ev['follow_up_requests']} follow-ups)"],
        ["Unsupported refused / supported answered", f"{ev['unsupported_correctly_refused']} / {ev['supported_answered']}"],
-       ["Intent (rules) tuning / held-out", f"{it['accuracy']:.0%} / {it['heldout']['accuracy']:.0%}"],
+       ["Intent routing (benchmark v2 test)", routing_text()],
        [f"Retrieval topic P@5 ({rt['embedding_backend'].split('/')[-1]})", f"{rt['topic_precision@5']:.1%} (random {rt['random_baseline_topic_precision']:.1%})"],
        ["Latency p50 / p95 (deterministic)", f"{ev['latency_p50_ms']:.0f} / {ev['latency_p95_ms']:.0f} ms"],
        ["Gemini", f"not reachable: {str(e['model'].get('reason'))[:90]}"]], [6 * cm, W - 6 * cm])
@@ -413,7 +433,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
     T([["Layer", "Responsibility"],
        ["Data", "schema discovery, filler removal, PII masking, quality report, atomic DuckDB build"],
        ["Labelling", "versioned taxonomy, deterministic labeller, resumable Gemini labelling with cache"],
-       ["Analytics", "13 registered operations; Wilson CI, chi-square, z-tests; sensitivity analysis"],
+       ["Analytics", "15 registered operations (incl. Conversation X-Ray and Root Cause); Wilson CI, chi-square, z-tests; sensitivity analysis"],
        ["LLM", "structured output, repair, rate limit, retries + Retry-After, circuit breaker, cache, token/cost accounting"],
        ["Retrieval", "chunking, embedder adapter, FAISS + metadata filters, evidence assembly"],
        ["Agents", "LangGraph graph, supervisor, specialists, explanation, QA, governance, tracing, checkpointing"],
@@ -476,17 +496,18 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
     shot("15-governance.png", "Governance: controls, model availability, blind human review, audit.", crop_h=1300)
 
     story.append(Paragraph("10. Test results", h1))
-    T([["Suite", "Result"], ["Backend unit (pytest)", "65 passed"], ["Backend integration (pytest)", "32 passed"], ["Frontend unit (Vitest)", "8 passed"],
-       ["End to end (Playwright, Chromium)", "10 passed"], ["Typecheck / production build", "passed"]], [7 * cm, W - 7 * cm])
+    T([["Suite", "Result"], ["Backend unit (pytest)", "80 passed"], ["Backend integration (pytest)", "56 passed"], ["Frontend unit (Vitest)", "8 passed"],
+       ["End to end (Playwright, Chromium)", "17 passed"], ["Typecheck / production build", "passed"]], [7 * cm, W - 7 * cm])
     T([["QA check", "Pass rate"]] + [[k, f"{v:.0%}"] for k, v in ev["check_pass_rates"].items()], [7 * cm, W - 7 * cm])
-    T([["Held-out intent miss", "Expected", "Predicted"]] + [[x["question"], x["expected"], x["predicted"]] for x in it["heldout"]["errors"]], [9 * cm, 3.5 * cm, W - 12.5 * cm])
+    T([["Held-out routing miss (benchmark v2 test)", "Expected", "Predicted"]] + [[x["question"], x["expected"], x["predicted"]] for x in routing().get("router", {}).get("errors", [])],
+      [9 * cm, 3.5 * cm, W - 12.5 * cm])
 
     story.append(Paragraph("11. Failure analysis and trade-offs", h1))
     T([["Defect found", "Fix"], ["Partial-month rule skipped a month ending one day early", "Require early stop and low volume"],
        ["Reference 'the first one' unresolved after a turn without ranking", "Use most recent ranking, with a note"],
        ["'Which agents should be fired?' routed to coaching", "Personnel decisions refused"],
        ["Coaching crash when no resolution is assessable", "Nullable float handling"], ["Cancellation recorded as failure", "Recorded as cancelled"]], [9 * cm, W - 9 * cm])
-    P("Trade-offs: registered operations over text-to-SQL (safe, exact; less open-ended); deterministic defaults (reproducible; brittle intent on paraphrases); MiniLM embeddings with an LSA fallback (better semantics, needs a model download; fallback works offline but is weak); "
+    P("Trade-offs: registered operations over text-to-SQL (safe, exact; less open-ended); deterministic defaults with a Zero-LLM router (reproducible, zero tokens for fact questions; a model only for interpretation); hybrid MiniLM + LSA retrieval (both indexes used, rankings fused; LSA alone works offline but is weak); "
       "in-process stores (zero infrastructure; single node).")
 
     story.append(Paragraph("12. Deployment and production roadmap", h1))

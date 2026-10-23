@@ -87,7 +87,7 @@ test("agent harness shows the executed graph with real statuses", async ({ page 
   await page.getByRole("button", { name: /^Leadership priorities/ }).click();
   await expect(page.getByText("Recommendations for leadership")).toBeVisible({ timeout: 60_000 });
   await page.getByRole("link", { name: /Trace/ }).click();
-  await expect(page.locator(".react-flow__node")).toHaveCount(19);
+  await expect(page.locator(".react-flow__node")).toHaveCount(20); // 18 nodes incl. the Zero-LLM router, plus START and END
   await expect(page.locator(".react-flow__node").filter({ hasText: "Leadership agent" })).toContainText("completed");
   await expect(page.locator(".react-flow__node").filter({ hasText: "Coaching agent" })).toContainText("skipped");
   await page.locator(".react-flow__node").filter({ hasText: "Supervisor / planner" }).click();

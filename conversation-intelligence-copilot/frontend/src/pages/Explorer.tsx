@@ -28,11 +28,15 @@ function SemanticSearch({ onOpen }: { onOpen: (id: string) => void }) {
   const [res, setRes] = useState<any>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const run = async () => {
+  const [mode, setMode] = useState<"hybrid" | "dense" | "lsa">("hybrid");
+  const run = async (m = mode) => {
     if (q.trim().length < 2) return;
     setBusy(true); setErr(null);
-    try { setRes(await api.post("/api/retrieval/search", { query: q, k: 10, dataset_mode: datasetMode })); } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
+    try { setRes(await api.post("/api/retrieval/search", { query: q, k: 10, dataset_mode: datasetMode, mode: m })); } catch (e) { setErr((e as Error).message); } finally { setBusy(false); }
   };
+  const MODES = [["hybrid", "Hybrid (MiniLM + LSA)", "Weighted reciprocal rank fusion of both rankings (default)."],
+    ["dense", "MiniLM only", "Sentence-transformer embeddings (dense, semantic)."],
+    ["lsa", "LSA only", "TF-IDF + SVD (sparse, lexical)."]] as const;
   return (
     <div className="space-y-3">
       <form onSubmit={(e) => { e.preventDefault(); run(); }} className="flex gap-2">
@@ -41,16 +45,24 @@ function SemanticSearch({ onOpen }: { onOpen: (id: string) => void }) {
           className="focus-ring flex-1 rounded-xl border border-line bg-surface px-3 py-2 text-sm placeholder:text-faint" />
         <Button variant="primary" disabled={busy}><Sparkles className="h-4 w-4" />Search</Button>
       </form>
+      <div role="radiogroup" aria-label="Retrieval method" className="flex flex-wrap gap-1">
+        {MODES.map(([id, label, tip]) => (
+          <button key={id} role="radio" aria-checked={mode === id} title={tip} data-testid={`retrieval-${id}`} onClick={() => { setMode(id); if (res) run(id); }}
+            className={cn("focus-ring rounded-lg border px-2 py-1 text-[11px] transition", mode === id ? "border-indigo/50 bg-indigo/15 text-ink" : "border-line text-faint hover:text-ink")}>{label}</button>
+        ))}
+      </div>
       {err && <ErrorState message={err} />}
       {res && (
         <>
-          <p className="text-[11px] text-faint">{res.results.length} passages · {res.latency_ms} ms · {res.embedding_backend} · {res.score_note}</p>
+          <p className="text-[11px] text-faint">{res.results.length} passages · {res.latency_ms} ms · mode {res.mode} · {Object.values(res.methods ?? {}).join(" + ")}{res.mode === "hybrid" && res.fusion ? ` · ${res.fusion}` : ""}</p>
           <ul className="space-y-2">
             {res.results.map((r: any) => (
               <li key={r.evidence_id}>
                 <button onClick={() => onOpen(r.conversation_id)} className="focus-ring w-full rounded-xl border border-line bg-white/[0.02] p-3 text-left hover:border-indigo/40">
                   <div className="flex flex-wrap items-center gap-1.5 text-xs"><span className="font-mono text-cyan">{r.conversation_id}</span><Badge>{r.topic}</Badge>
                     {r.product && <Badge>{r.product}</Badge>}<SentimentBadge value={r.sentiment} /><Badge tone="cyan">sim {r.similarity.toFixed(2)}</Badge>
+                    {r.method_scores?.dense && <Badge>MiniLM #{r.method_scores.dense.rank}</Badge>}
+                    {r.method_scores?.lsa && <Badge>LSA #{r.method_scores.lsa.rank}</Badge>}
                     <span className="text-faint">turns {r.turn_range[0]}–{r.turn_range[1]}</span></div>
                   <pre className="mt-2 whitespace-pre-wrap font-sans text-xs leading-relaxed text-ink/80">{r.text}</pre>
                 </button>

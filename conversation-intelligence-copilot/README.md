@@ -12,13 +12,25 @@
 | **Agent Harness (real execution trace)** | **Q3 · sentiment trajectory** |
 | ![Harness](docs/screenshots/12-agent-harness.png) | ![Q3](docs/screenshots/04-q3-trajectory.png) |
 
+| ![X-Ray](docs/screenshots/20-conversation-xray.png) | ![Root cause](docs/screenshots/21-root-cause.png) |
+|---|---|
+| ![Dynamic dashboard](docs/screenshots/18-dynamic-dashboard.png) | ![Decision replay](docs/screenshots/19-decision-replay-and-evidence-review.png) |
+
 More screenshots: [`docs/screenshots/`](docs/screenshots) (coaching, memory follow-ups, retrieval, explorer, dashboards, prompt library, metrics, governance, drilldown, mobile).
 
 ## What it does
 
 * **The four assignment questions**, end to end: top-5 negative topics in the last month *represented in the data*; agents who may benefit from empathy/communication coaching (with a sample-size gate and evidence); a selected conversation's sentiment trajectory; the recurring concerns leadership should review first (transparent priority score, sensitivity analysis, owners).
-* **General analytical Q&A** over 13 registered operations (distribution, trend, frequency, comparisons, resolution fit, conversation lists and detail, agent profile, coverage), plus follow-ups ("compare the top two", "previous month", "the first one", "why was this ranked first?", "which findings are uncertain?", "summarise for leadership") — and honest refusals for what the data cannot answer.
+* **General analytical Q&A** over 15 registered operations (distribution, trend, frequency, comparisons, resolution fit, conversation lists and detail, agent profile, coverage), plus follow-ups ("compare the top two", "previous month", "the first one", "why was this ranked first?", "which findings are uncertain?", "summarise for leadership") — and honest refusals for what the data cannot answer.
 * **All three bonus extensions**: knowledge retrieval (FAISS), a specialised LLM classification agent (resumable Gemini labelling), and session memory.
+* **Six analytical enhancements** ([docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md)):
+  * a Zero-LLM Intelligence Router (AUTO / ANALYTICS ONLY / HYBRID AI, with honest token reporting);
+  * query-driven dashboards;
+  * Conversation X-Ray with a synchronised timeline and transcript;
+  * a Root Cause Investigator (associations, symptoms vs drivers, alternative explanations);
+  * AI Decision Replay;
+  * an Analytical Evidence Challenger.
+* **Hybrid retrieval**: MiniLM and LSA, fused by weighted reciprocal rank fusion. The UI shows each method's rank.
 * **Enterprise layer**: nine-page UI, validated dynamic charts with drilldown/export, Agent Harness, prompt library, system metrics, governance with blind human review, audit trail, dataset modes.
 
 ## How it works
@@ -109,11 +121,11 @@ Syncora.ai Customer Support Conversation sample (Kaggle), 3,000 synthetic conver
 | | |
 |---|---|
 | Q1 vs an independent oracle | exact match (682 conversations, 239 negative, top-5 counts) |
-| End-to-end QA pass rate | 100% of 51 requests (11 checks each) |
+| End-to-end QA pass rate | 88% of 51 requests; every critical check passes, the rest are Evidence Challenger warnings (see EVALUATION.md) |
 | Unsupported questions refused | 6/6 |
 | Intent routing (benchmark v2, 73 held-out questions, scored once) | **95.9%** confidence router + local Qwen · 90.4% with no model · previous router 61.6% — [details](docs/evaluation/INTENT_ROUTING.md) |
-| Retrieval topic P@5 | 61.7% with MiniLM (36.7% with the LSA fallback; 12.5% random) |
-| Latency (deterministic, local) | p50 167 ms · p95 776 ms |
+| Retrieval (hybrid MiniLM + LSA) | topic P@5 62.2%, hit@5 86.1% (MiniLM alone 62.2% / 83.3%, LSA alone 32.2% / 47.2%; random 12.5%) |
+| Latency (deterministic, local) | p50 133 ms · p95 560 ms |
 
 Details and limitations: [EVALUATION.md](EVALUATION.md).
 

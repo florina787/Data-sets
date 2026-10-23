@@ -9,6 +9,8 @@ import { api } from "@/services/api";
 export default function Metrics() {
   const { data, error, loading, reload } = useAsync(() => api.get<any>("/api/telemetry/summary"), []);
   const ev = useAsync(() => api.get<any>("/api/evaluation/results"), []);
+  const tok = useAsync(() => api.get<any>("/api/telemetry/tokens"), []);
+  const ret = useAsync(() => api.get<any>("/api/retrieval/status"), []);
   if (error) return <ErrorState message={error.message} onRetry={reload} />;
   if (loading || !data) return <Skeleton className="h-[600px]" />;
   const r = data.requests, l = data.llm, p = data.pipeline;
@@ -22,7 +24,8 @@ export default function Metrics() {
         <Stat label="p95 latency" value={ms(r.p95_ms)} />
         <Stat label="Follow-ups" value={num(r.follow_ups)} hint="used session memory" />
         <Stat label="LLM calls" value={num(l.calls)} hint={`${num(l.failures)} failed · ${num(l.cache_hits)} cached`} tone={l.failures ? "warning" : "default"} />
-        <Stat label="Tokens" value={num(l.total_tokens)} hint={`in ${num(l.input_tokens)} / out ${num(l.output_tokens)}`} />
+        <Stat label="Tokens (per query)" value={tok.data ? (tok.data.per_query.total_tokens === null ? "not reported" : num(tok.data.per_query.total_tokens)) : "…"}
+          hint={tok.data ? `${num(tok.data.per_query.unreported)} call(s) without usage metadata` : undefined} />
         <Stat label="Est. cost" value={`$${(l.cost ?? 0).toFixed(4)}`} hint="configurable rates" />
       </section>
       <div className="grid gap-4 xl:grid-cols-2">
@@ -62,6 +65,34 @@ export default function Metrics() {
             {data.llm_errors.length ? <ul className="space-y-1">{data.llm_errors.map((e: any) => <li key={e.error} className="rounded-lg border border-neg/20 bg-neg/5 p-2 text-[11px] text-ink/80">{e.n}× {String(e.error).slice(0, 160)}</li>)}</ul>
               : <p className="text-faint">No model errors recorded.</p>}
           </div></Card>
+      </div>
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card data-testid="token-accounting"><CardHeader title="Token accounting" subtitle="Dataset preprocessing is kept apart from per-question usage; unknown is never shown as zero" />
+          <div className="space-y-3 p-5 pt-3 text-xs">{!tok.data ? <Skeleton className="h-24" /> : (<>
+            {(["preprocessing", "per_query"] as const).map((k) => { const t = tok.data[k]; return (
+              <div key={k} className="rounded-lg border border-line p-2.5"><p className="font-medium text-ink">{k === "preprocessing" ? "Dataset preprocessing (labelling)" : "Per-question (intent + explanation)"}</p>
+                <p className="mt-1 text-muted">{num(t.calls)} calls · {num(t.cache_hits)} cached · tokens <span className="text-ink">{t.total_tokens === null ? "not reported" : num(t.total_tokens)}</span>
+                  {t.unreported > 0 && <span className="text-warn"> · {t.unreported} without usage metadata</span>}</p>
+                {k === "preprocessing" && <p className="mt-1 text-faint">{t.note}</p>}</div>); })}
+            <div><p className="label mb-1">Routing outcomes</p>
+              <ul className="space-y-1">{tok.data.routes.map((x: any) => <li key={String(x.route)} className="flex justify-between text-muted">
+                <span>{x.route === "analytics_only" ? "Zero-LLM (analytics only)" : x.route === "hybrid_ai" ? "Hybrid AI" : "before the router existed"}</span>
+                <span className="text-ink">{num(x.n)} answers{x.model_calls ? ` · ${num(x.model_calls)} model calls` : ""}</span></li>)}</ul></div>
+          </>)}</div></Card>
+        <Card data-testid="retrieval-backends" className="xl:col-span-2"><CardHeader title="Retrieval backends" subtitle="Both embeddings are built and used: hybrid search fuses the MiniLM and LSA rankings" />
+          <div className="space-y-3 p-5 pt-3 text-xs">{!ret.data ? <Skeleton className="h-24" /> : !ret.data.available ? <p className="text-warn">{ret.data.reason ?? "Index unavailable"}</p> : (<>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {Object.entries(ret.data.backends ?? {}).map(([k, b]: [string, any]) => <Stat key={k} label={k === "dense" ? "Dense (MiniLM)" : "Sparse (LSA)"} value={`${b.dimensions} dims`} hint={`${b.name} · built in ${b.build_seconds}s`} />)}
+              <Stat label="Default mode" value={ret.data.default_mode} hint={ret.data.fusion} />
+            </div>
+            <p className="text-muted">{num(ret.data.chunks)} chunks from {num(ret.data.conversations)} conversations ({ret.data.chunk_turns}-turn windows, overlap {ret.data.chunk_overlap}).</p>
+            {ev.data?.retrieval?.by_mode && (
+              <table className="w-full text-left"><thead><tr className="text-[10px] uppercase text-faint"><th className="py-1">Method (paraphrase benchmark)</th><th>Topic P@5</th><th>Exact P@5</th><th>Hit@5</th><th>MRR</th><th>p50</th></tr></thead>
+                <tbody className="divide-y divide-line">{Object.entries(ev.data.retrieval.by_mode).map(([m, x]: [string, any]) => (
+                  <tr key={m}><td className="py-1.5 text-ink">{m === "dense" ? "MiniLM" : m === "lsa" ? "LSA" : "Hybrid (RRF)"}</td><td>{pct(x["topic_precision@5"], 1)}</td><td>{pct(x["exact_precision@5"], 1)}</td>
+                    <td>{pct(x["hit_rate@5"], 1)}</td><td>{x["mrr@5"]?.toFixed?.(3) ?? "—"}</td><td>{ms(x.latency_p50_ms)}</td></tr>))}</tbody></table>
+            )}
+          </>)}</div></Card>
       </div>
       <Card><CardHeader title="Evaluation results" subtitle={ev.data?.generated_at ? `Generated ${ev.data.generated_at}` : "Run `make evaluate`"} />
         <div className="p-5 pt-3">{ev.loading ? <Skeleton className="h-24" /> : !ev.data || ev.data.status === "not_run" ? <EmptyState title="No evaluation run yet" description={ev.data?.note} /> : (

@@ -48,7 +48,7 @@ export const api = {
 
 /** POST + Server-Sent Events. Returns an abort function. */
 export function streamChat(
-  body: { question: string; session_id?: string | null; dataset_mode?: string; selected_conversation_id?: string | null },
+  body: { question: string; session_id?: string | null; dataset_mode?: string; selected_conversation_id?: string | null; analysis_mode?: string },
   onEvent: (e: StreamEvent) => void,
   onError: (err: Error) => void,
 ): () => void {
