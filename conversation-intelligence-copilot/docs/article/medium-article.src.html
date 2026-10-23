@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No LLM Required</title>
+<!-- Medium-ready edition of the article. Images are embedded by docs/article/build_medium.py; tables are written as lists because Medium has no tables. -->
+<style>
+:root { --ink: #242424; --ink-2: #6b6b6b; --rule: #e6e6e6; --accent: #1a8917; --code: #f2f2f2; --bg: #ffffff; }
+@media (prefers-color-scheme: dark) { :root { --ink: #e8e8e8; --ink-2: #a8a8a8; --rule: #333; --accent: #4cc24a; --code: #1f1f1f; --bg: #121212; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 20px/1.6 Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  padding: 48px max(20px, env(safe-area-inset-left, 0px)) 80px max(20px, env(safe-area-inset-right, 0px)); }
+article { max-width: 680px; margin: 0 auto; }
+h1, h2, h3 { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; letter-spacing: -0.015em; line-height: 1.2; }
+h1 { font-size: 42px; font-weight: 700; margin: 0 0 12px; }
+h2 { font-size: 26px; font-weight: 700; margin: 48px 0 8px; }
+h3 { font-size: 21px; font-weight: 700; margin: 36px 0 4px; }
+.subtitle { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 22px; color: var(--ink-2); line-height: 1.4; margin: 0 0 24px; }
+.meta { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 15px; color: var(--ink-2); border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule); padding: 12px 0; margin-bottom: 32px; }
+p { margin: 0 0 22px; }
+a { color: inherit; text-decoration: underline; }
+ul, ol { margin: 0 0 22px; padding-left: 28px; } li { margin-bottom: 8px; }
+blockquote { margin: 28px 0; padding-left: 20px; border-left: 3px solid var(--ink); font-style: italic; }
+figure { margin: 36px 0; } figure img { width: 100%; height: auto; display: block; border-radius: 2px; }
+figcaption { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; color: var(--ink-2); text-align: center; margin-top: 10px; }
+pre { background: var(--code); padding: 20px; font: 15px/1.5 Menlo, Monaco, "Courier New", monospace; overflow-x: auto; border-radius: 4px; margin: 0 0 22px; }
+code { font: 16px Menlo, Monaco, "Courier New", monospace; background: var(--code); padding: 2px 4px; border-radius: 3px; }
+pre code { padding: 0; background: none; font-size: 15px; }
+hr { border: 0; text-align: center; margin: 40px 0; } hr::before { content: "· · ·"; color: var(--ink-2); letter-spacing: 0.6em; font-size: 24px; }
+.cta { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; border: 1px solid var(--rule); border-radius: 8px; padding: 18px 20px; font-size: 17px; }
+.tags { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<article>
+
+<h1>No LLM Required: How I Built an AI Copilot That Still Gives the Right Answer With the Model Switched Off</h1>
+<p class="subtitle">An AI engineer’s notes on building a contact-centre analytics copilot: the rule that shaped it, the router that decides when a model is worth calling, and ten problems that nearly sank it.</p>
+<div class="meta">By Florina · 18 min read · Code: <a href="https://github.com/florina787/Data-sets/tree/claude/happy-edison-gef7ay/conversation-intelligence-copilot">github.com/florina787/Data-sets</a></div>
+
+<figure><img src="IMG:docs/readme/demo.gif" alt="The copilot answering a question with KPIs, charts, cited conversations and an evidence review, with zero model calls"><figcaption>The copilot answering a question in about a tenth of a second, with zero model calls.</figcaption></figure>
+
+<p>A contact-centre analyst asks a simple question: <em>which topics drove negative sentiment last month?</em></p>
+<p>The tempting build is to give the transcripts to a large language model and print whatever comes back. It reads well. It might also be wrong, in ways nobody notices until a leadership deck goes out with a number that never existed.</p>
+<p>I have shipped enough analytics to distrust that build. A wrong number in a dashboard is worse than no dashboard, because people act on it. So I built the opposite.</p>
+<p>The <strong>Conversation Intelligence Copilot</strong> is an agentic analytics assistant for customer-support conversations. A LangGraph workflow plans the analysis, runs registered DuckDB queries over 3,000 conversations (41,965 messages), retrieves the transcripts behind each finding, explains the result, and audits its own answer before anyone sees it.</p>
+<p>A language model is optional. The four questions the project was built around are answered with <strong>zero model calls</strong>, in a median of <strong>125 ms</strong> on a laptop CPU.</p>
+<ul>
+  <li><strong>4 / 4</strong> assignment questions answered and independently re-computed</li>
+  <li><strong>95.9%</strong> intent-routing accuracy on 73 held-out questions, scored once</li>
+  <li><strong>125 ms</strong> median answer time (p95 540 ms) on the deterministic path</li>
+  <li><strong>$0</strong> to run, model included</li>
+</ul>
+
+<h2>The rule that shaped everything</h2>
+<p>Before writing any code, I wrote one rule and let it settle every later trade-off:</p>
+<blockquote>Numbers are computed, never generated.</blockquote>
+<p>I wrote it down because I knew I would be tempted later. At some point a model would “almost” get a count right, and it would be so much faster to let it.</p>
+<ul>
+  <li><strong>Every figure is computed.</strong> Every count, rate and rank comes from one of 15 registered, parameterised DuckDB operations.</li>
+  <li><strong>The model never writes SQL.</strong></li>
+  <li><strong>Explanations are checked.</strong> If an explanation contains a figure that is not in the verified result, it is thrown away and a deterministic explanation is used instead.</li>
+</ul>
+<figure><img src="IMG:docs/article/img/flow-verify.png" alt="Verification flow: an explanation is only shown if every number in it exists in the verified result, then the Evidence Challenger checks it"><figcaption>An explanation is shown only if every number in it exists in the verified result.</figcaption></figure>
+<p>Once that rule existed, a harder question followed: if the model cannot contribute facts, when is it worth calling at all? I spent more time on that question than on any single feature.</p>
+
+<h2>The system at a glance</h2>
+<figure><img src="IMG:docs/article/img/flow-overview.png" alt="System overview: React UI, FastAPI, a LangGraph workflow, DuckDB, FAISS, SQLite and an optional local model"><figcaption>The model (dashed) is optional and runs locally.</figcaption></figure>
+<ul>
+  <li><strong>Orchestration:</strong> LangGraph, with a SQLite checkpointer.</li>
+  <li><strong>Analytics:</strong> DuckDB, pandas and SciPy. Exact and deterministic, with Wilson intervals and χ² tests.</li>
+  <li><strong>Retrieval:</strong> FAISS, with MiniLM sentence embeddings and LSA, fused by reciprocal rank fusion.</li>
+  <li><strong>Memory and telemetry:</strong> SQLite.</li>
+  <li><strong>API and UI:</strong> FastAPI with Server-Sent Events; React 18 with TypeScript, Recharts and React Flow.</li>
+  <li><strong>Optional model:</strong> Qwen2.5-1.5B-Instruct, run locally with llama.cpp on CPU. No API key.</li>
+</ul>
+<p>The workflow runs in four stages. Every box is a real LangGraph node: the UI lights each one up live as it runs, and a <strong>Decision Replay</strong> panel lets you step back through them afterwards.</p>
+<figure><img src="IMG:docs/article/img/flow-stages.png" alt="The agent graph in four stages: understand, plan and compute, explain and verify, deliver and remember"><figcaption>The LangGraph workflow in four stages.</figcaption></figure>
+<p>Three choices in this graph matter more than the rest.</p>
+<ol>
+  <li><strong>The supervisor plans; it does not compute.</strong> It resolves the time window and any references to earlier answers, then chooses registered operations. The analytics layer accepts nothing else.</li>
+  <li><strong>Retrieval runs in parallel, and only illustrates.</strong> Hybrid search finds real transcripts for the top-ranked result. It never produces a number.</li>
+  <li><strong>Verification is a stage, not an afterthought.</strong> A QA agent and an Evidence Challenger run on every answer.</li>
+</ol>
+
+<h2>The Zero-LLM router</h2>
+<p>Before any model is involved, a cascade of cheap, high-precision checks decides what the question is, and whether a model would add anything.</p>
+<figure><img src="IMG:docs/article/img/flow-router.png" alt="The routing cascade: policy check, high-precision rules, semantic match, vagueness guard, local model, clarify"><figcaption>Policy refusals always win. The model is the last resort, not the first.</figcaption></figure>
+<ul>
+  <li><strong>Fact questions stop at the rules.</strong> A rule recognises the intent, the registered operations compute the full answer, and a model would only add cost and latency.</li>
+  <li><strong>The model is called in two situations:</strong> when no rule can route the question with high precision, or when the question asks for interpretation (<em>why</em>, <em>explain</em>, <em>recommend</em>). Even then it only picks a category from a closed list, or phrases an explanation of numbers that were already computed.</li>
+  <li><strong>Policy checks run first and always win.</strong> Questions that need data the dataset doesn’t have (revenue, CSAT, handle time), or that ask for a personnel decision, are refused deterministically. No model is needed to say no.</li>
+</ul>
+<p>How some real questions are routed:</p>
+<ul>
+  <li>“What were the top 5 topics associated with negative sentiment last month?” → <strong>analytics only</strong>, 0 model calls.</li>
+  <li>“Why is duplicate charge so negative?” → <strong>hybrid</strong>: DuckDB computes the facts, the model explains them. 1 model call.</li>
+  <li>“How much revenue did we lose to coupon issues?” → <strong>refused</strong>, because the data has no revenue. 0 model calls.</li>
+  <li>“Anything interesting?” → <strong>asks to clarify</strong>. 0 model calls.</li>
+</ul>
+
+<h2>Question one, answered</h2>
+<p>The first question asks for the top 5 topics associated with negative sentiment <em>in the last month</em>. “Last month” was the first trap. The data spans August to early December 2025, so the last month means the latest month in the data, not today’s calendar month.</p>
+<p>In November 2025, <strong>240 of 682</strong> conversations were negative.</p>
+<figure><img src="IMG:docs/readme/q1-negative-topics-light.png" alt="Negative conversations by topic in November 2025, top 5 highlighted, with the tie at rank 5"><figcaption>Top 5 highlighted. Rank 5 is a tie.</figcaption></figure>
+<ol>
+  <li><strong>General help request:</strong> 49 of 156 (31.4%)</li>
+  <li><strong>Duplicate charge:</strong> 42 of 87 (48.3%)</li>
+  <li><strong>Paid but service not delivered:</strong> 30 of 75 (40.0%)</li>
+  <li><strong>Feature not working:</strong> 28 of 76 (36.8%)</li>
+  <li><strong>Login / account locked:</strong> 24 of 58 (41.4%), tied with Coupon not applying (24 of 84)</li>
+</ol>
+<ul>
+  <li><strong>By count, General help request leads</strong>, because it has twice the volume of any other topic.</li>
+  <li><strong>By rate, Duplicate charge leads.</strong></li>
+  <li><strong>The differences are not significant.</strong> The confidence intervals overlap heavily, and a χ² test across topics gives p = 0.07.</li>
+</ul>
+<p>A careful analyst would say all of that out loud, so the copilot does.</p>
+
+<h2>The challenges</h2>
+<p>None of these were in the brief. They are the problems that took the time, roughly in the order I hit them.</p>
+
+<h3>1. A mean of exactly −0.25, according to a computer</h3>
+<p>A conversation counts as negative when the mean sentiment of its customer turns is −0.25 or lower. Conversation C0010797 has eight customer turns:</p>
+<pre><code>−0.6, −0.6, −0.6, −0.6, +0.8, −0.6, +0.8, −0.6</code></pre>
+<p>On paper the mean is exactly −0.25. In floating point, summed left to right, it is not:</p>
+<pre><code>let sum = 0;
+for (const s of [-0.6, -0.6, -0.6, -0.6, 0.8, -0.6, 0.8, -0.6]) sum += s;
+sum / 8;            // -0.24999999999999994
+sum / 8 &lt;= -0.25;   // false: labelled "not negative"</code></pre>
+<p>I found it because one score in my own audit was off by 0.5, and I refused to explain it away.</p>
+<ul>
+  <li><strong>The fix</strong> rounds the mean to 9 decimals before the comparison.</li>
+  <li><strong>It changed real answers.</strong> A leadership priority score moved from 52.9 to 53.4, and the November negative count went from 239 to 240.</li>
+  <li><strong>My checker had the same bug.</strong> The independent checker I wrote to recompute answers from the raw CSV also averaged with floats, so it agreed with the bug. The evaluation oracle now uses exact fractions, and a regression test pins this exact score pattern.</li>
+</ul>
+<p><strong>Lesson:</strong> check the checker. Two implementations that share an assumption are one implementation.</p>
+
+<h3>2. Timestamps that are not in turn order</h3>
+<p>In all 3,000 conversations, message timestamps don’t follow the turn order. Sort by time and a conversation reads as nonsense: answers before questions, thanks before help. The turn index is authoritative, each conversation is dated by its earliest message, and every sentiment-trajectory answer says that timestamps were not used for ordering.</p>
+
+<h3>3. One agent per conversation makes coaching rankings unfair</h3>
+<p>Question two asks which agents may benefit from coaching. The data holds <strong>2,987 agent IDs for 3,000 conversations</strong>, with at most two conversations each. Any ranking of individual agents would rest on one or two transcripts.</p>
+<p>I would rather tell a team lead “the data cannot support this” than hand them a ranking that could cost someone their job on the strength of two chats. So the copilot says so, and answers the useful version of the question instead:</p>
+<ul>
+  <li><strong>Workforce-level patterns.</strong> Only <strong>29.3%</strong> of negative customer turns got an acknowledgement or apology, and <strong>57.3%</strong> of assessable closing actions didn’t fit the issue.</li>
+  <li><strong>A review queue of conversations</strong>, each with its evidence.</li>
+  <li><strong>Human review required.</strong> Every coaching answer is flagged for it, and requests for personnel decisions are refused.</li>
+</ul>
+
+<h3>4. 41,965 messages, 426 unique texts</h3>
+<p>The dataset is synthetic. Every message ends with random filler tokens, and once those are stripped there are only <strong>426</strong> distinct message templates. That sounded like a problem; it was an opportunity. I labelled the 426 templates with a documented rule set instead of labelling 41,965 messages with a model. The trade-off is explicit: the labels are my judgement, the app includes a panel for collecting human labels, and the evaluation says plainly that agreement with humans has not been measured yet.</p>
+
+<h3>5. The hosted model key was blocked</h3>
+<p>My plan included a hosted model. The key I had during development returned <code>401 API_KEY_SERVICE_BLOCKED</code>. This became the most useful constraint of the project, because it forced the question: what does the product actually <em>need</em> a model for?</p>
+<p>I made the model optional everywhere and added a free local one, Qwen2.5-1.5B-Instruct (about 1.1 GB), through llama.cpp on CPU. A warm routing call takes about a second. The first call after start-up measured 8.7 s on an idle CPU, and 30 to 55 s when other jobs competed for it.</p>
+
+<h3>6. A small model routing questions: 19% accurate</h3>
+<p>My first prompt asked the 1.5B model to classify questions into intents. On a frozen held-out test set, it scored <strong>19.2%</strong>. Rewriting the prompt around a closed category list, enforced by a JSON-schema grammar, took it to <strong>58.9%</strong>.</p>
+<p>I could have kept tuning prompts. I decided against it: a 1.5B model was never going to be reliable on the long tail, and every prompt tweak was a guess I could not verify without spending the test set. The fix was to stop asking the model to do the whole job. The confidence cascade lets each stage answer only when it is sure.</p>
+<figure><img src="IMG:docs/readme/routing-accuracy-light.png" alt="Intent routing accuracy on 73 held-out questions, from 19.2% to 95.9%"><figcaption>Accuracy on 73 held-out questions, written before the router changed, frozen, and scored once.</figcaption></figure>
+<ul>
+  <li>Local Qwen, first prompt: <strong>19.2%</strong></li>
+  <li>Local Qwen, closed-list prompt: <strong>58.9%</strong></li>
+  <li>Previous router (rules first): <strong>61.6%</strong></li>
+  <li>Confidence router, no model: <strong>90.4%</strong></li>
+  <li>Confidence router + local Qwen: <strong>95.9%</strong></li>
+</ul>
+<p>Two details I am proud of:</p>
+<ul>
+  <li><strong>The semantic stage turned itself off.</strong> The semantic-similarity stage was built and calibrated, and then disabled by its own calibration: no threshold reached 95% precision on validation.</li>
+  <li><strong>The model is rarely needed.</strong> It is now called for only 6.9% of test questions.</li>
+</ul>
+
+<h3>7. The Evidence Challenger corrected my own sentence</h3>
+<p>The Evidence Challenger is an adversarial check that runs after the explanation is written. It:</p>
+<ul>
+  <li>re-reads every quoted excerpt from the database, word for word;</li>
+  <li>discloses samples under 30;</li>
+  <li>states counter-evidence (“61% of Item-not-received conversations were not negative”);</li>
+  <li>rewrites causal wording as association.</li>
+</ul>
+<p>When I added the tie disclosure to question one, I wrote that a topic was listed last <em>because of</em> the tie-breaker. The Challenger rewrote “because of” as “associated with” and mangled the sentence. It was doing its job; my wording was the problem.</p>
+<p>Building it also exposed two real bugs:</p>
+<ul>
+  <li>QA had been reporting “0 evidence items resolved”, because the explanation node overwrote the evidence report.</li>
+  <li>A repeated-phrase detector always returned zero.</li>
+</ul>
+
+<h3>8. Demo data leaking into the real answers</h3>
+<p>For UI demos I generated 120 tagged synthetic conversations. They were loaded by default, so the dashboard showed 3,120 conversations for an assignment that supplied 3,000. Demo data is now opt-in. Removing it changed the lexical index’s vocabulary, which moved the retrieval scores. The evaluation reports the new numbers and explains why they changed, rather than keeping the old, slightly better ones.</p>
+
+<h3>9. Retrieval that is honest about a small gain</h3>
+<p>Retrieval indexes 18,639 four-turn chunks twice: once with MiniLM embeddings and once with LSA. The two rankings are fused with weighted reciprocal rank fusion.</p>
+<figure><img src="IMG:docs/readme/retrieval-methods-light.png" alt="Retrieval quality by method: LSA, MiniLM and hybrid"><figcaption>36 paraphrased queries. Hybrid hit rate@5 86.1% vs MiniLM 83.3% and LSA 41.7%.</figcaption></figure>
+<p>The hybrid wins, but only by a little, and the fusion weight was tuned on these same queries. The evaluation says both things. A small honest gain is more useful to a reviewer than a large flattering one.</p>
+
+<h3>10. Token counts that don’t lie</h3>
+<p>Every answer shows its route, how the intent was resolved, and the tokens used. Getting the token count right took more care than I expected:</p>
+<ul>
+  <li>tokens show as “0 (no model call)” only when no model was called;</li>
+  <li>when a provider returns no usage data, the UI says <em>not reported</em>, never a fake zero;</li>
+  <li>streaming usage is taken as the cumulative maximum, not summed across chunks, which had been double counting.</li>
+</ul>
+
+<h2>What it doesn’t do</h2>
+<p>These are the questions a reviewer should ask.</p>
+<ul>
+  <li><strong>It doesn’t claim cause.</strong> The Root Cause Investigator reports tested associations with intervals and separates symptoms from candidate drivers.</li>
+  <li><strong>It doesn’t rank people on thin data.</strong></li>
+  <li><strong>It hasn’t been validated against human labels.</strong> The routing benchmark is 73 questions, written by the same person who wrote the rules. The 95.9% is indicative, and the remaining misroutes are listed in the repository.</li>
+  <li><strong>It isn’t production-hardened.</strong> There is no authentication or role-based access, and storage is single-node.</li>
+</ul>
+
+<h2>What I would keep</h2>
+<p>If I started again tomorrow, I would keep three habits.</p>
+<ol>
+  <li><strong>Write the rule before the code.</strong> “Numbers are computed, never generated” settled dozens of decisions in advance.</li>
+  <li><strong>Make the model earn its call.</strong> A router that can say “no model needed” made the system faster, cheaper and easier to test. It also made the model’s real contribution measurable: 90.4% without it, 95.9% with it.</li>
+  <li><strong>Check the checker.</strong> The float bug survived an independent recomputation because both used the same arithmetic. Using exact fractions in the oracle cost one import.</li>
+</ol>
+
+<h2>Run it yourself</h2>
+<p>No API key and no hosted model. You need Python 3.12+ with <code>uv</code>, Node 22+ and <code>make</code>:</p>
+<pre><code>git clone https://github.com/florina787/Data-sets.git
+cd Data-sets/conversation-intelligence-copilot
+git checkout claude/happy-edison-gef7ay
+cp .env.example .env
+make install &amp;&amp; make prepare &amp;&amp; make index
+make dev          # UI on http://localhost:5173</code></pre>
+<ul>
+  <li><strong>Optional local model:</strong> <code>make install-local-llm &amp;&amp; make llm-download</code></li>
+  <li><strong>VS Code:</strong> open the folder and press F5 on the <em>Full stack</em> launch configuration.</li>
+</ul>
+
+<hr>
+<p class="cta"><strong>The code, the evaluation and every number in this article are in the repository:</strong><br>
+<a href="https://github.com/florina787/Data-sets/tree/claude/happy-edison-gef7ay/conversation-intelligence-copilot">github.com/florina787/Data-sets → conversation-intelligence-copilot</a></p>
+<p class="tags">Artificial Intelligence · LLM · LangGraph · Data Engineering · Customer Experience</p>
+
+</article>
+</body>
+</html>
