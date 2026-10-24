@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api")
 
 
 class NewSession(BaseModel):
-    title: str = Field(default="New conversation", max_length=200)
+    title: str | None = Field(default=None, max_length=200)
     mode: str = Field(default="conversation", pattern="^(conversation|screen|interview|meeting)$")
 
 

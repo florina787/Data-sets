@@ -412,3 +412,20 @@ def test_metrics_are_real_measurements(client):
     assert m["live"]["llm.total_ms"]["count"] >= 1
     assert m["resources"]["backend_rss_mb"] > 0
     assert m["counts"]["messages"] >= 2
+
+
+def test_audio_ws_origin_rules(settings, llm, tmp_path):
+    """Electron's file:// renderer sends Origin "file://" on WebSocket upgrades
+    (fetch sends "null"). Both must be accepted when configured, others refused."""
+    from backend.api.app import create_app
+    from tests.conftest import FakeASR, HashEmbedder
+
+    settings.allowed_origins = ("null", "file://")
+    app = create_app(settings, llm=llm, embedder=HashEmbedder(), transcriber_factory=lambda s, lang=None: FakeASR(s, lang))
+    with TestClient(app, headers={"Authorization": f"Bearer {TOKEN}"}) as c:
+        sid = new_session(c)
+        with c.websocket_connect(f"/ws/audio?session_id={sid}", subprotocols=["veena", TOKEN], headers={"Origin": "file://"}) as ws:
+            assert ws.receive_json()["type"] == "status"
+        with pytest.raises(WebSocketDisconnect):
+            with c.websocket_connect(f"/ws/audio?session_id={sid}", subprotocols=["veena", TOKEN], headers={"Origin": "https://evil.example"}) as ws:
+                ws.receive_json()

@@ -27,7 +27,11 @@ class Embedder:
             if self._model is None:
                 from sentence_transformers import SentenceTransformer
 
-                self._model = SentenceTransformer(self.model_name, device="cpu")
+                try:
+                    # Cached weights load without touching the network (offline use).
+                    self._model = SentenceTransformer(self.model_name, device="cpu", local_files_only=True)
+                except Exception:  # noqa: BLE001 - first run: download once
+                    self._model = SentenceTransformer(self.model_name, device="cpu")
         return self._model
 
     @property

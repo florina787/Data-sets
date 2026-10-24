@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="VEENA.AI ginger Persian cat">
+  <title>VEENA.AI ginger Persian cat</title>
+  
+  <g class="veena-head">
+    <circle cx="128.00" cy="48.00" r="22" fill="#99613E"/><circle cx="153.36" cy="51.65" r="22" fill="#99613E"/><circle cx="176.66" cy="62.29" r="22" fill="#99613E"/><circle cx="196.02" cy="79.06" r="22" fill="#99613E"/><circle cx="209.87" cy="100.61" r="22" fill="#99613E"/><circle cx="217.08" cy="125.19" r="22" fill="#99613E"/><circle cx="217.08" cy="150.81" r="22" fill="#99613E"/><circle cx="209.87" cy="175.39" r="22" fill="#99613E"/><circle cx="196.02" cy="196.94" r="22" fill="#99613E"/><circle cx="176.66" cy="213.71" r="22" fill="#99613E"/><circle cx="153.36" cy="224.35" r="22" fill="#99613E"/><circle cx="128.00" cy="228.00" r="22" fill="#99613E"/><circle cx="102.64" cy="224.35" r="22" fill="#99613E"/><circle cx="79.34" cy="213.71" r="22" fill="#99613E"/><circle cx="59.98" cy="196.94" r="22" fill="#99613E"/><circle cx="46.13" cy="175.39" r="22" fill="#99613E"/><circle cx="38.92" cy="150.81" r="22" fill="#99613E"/><circle cx="38.92" cy="125.19" r="22" fill="#99613E"/><circle cx="46.13" cy="100.61" r="22" fill="#99613E"/><circle cx="59.98" cy="79.06" r="22" fill="#99613E"/><circle cx="79.34" cy="62.29" r="22" fill="#99613E"/><circle cx="102.64" cy="51.65" r="22" fill="#99613E"/>
+    <circle cx="128.00" cy="52.00" r="22" fill="#B87848"/><circle cx="152.23" cy="55.48" r="22" fill="#B87848"/><circle cx="174.50" cy="65.65" r="22" fill="#B87848"/><circle cx="192.99" cy="81.68" r="22" fill="#B87848"/><circle cx="206.23" cy="102.27" r="22" fill="#B87848"/><circle cx="213.12" cy="125.76" r="22" fill="#B87848"/><circle cx="213.12" cy="150.24" r="22" fill="#B87848"/><circle cx="206.23" cy="173.73" r="22" fill="#B87848"/><circle cx="192.99" cy="194.32" r="22" fill="#B87848"/><circle cx="174.50" cy="210.35" r="22" fill="#B87848"/><circle cx="152.23" cy="220.52" r="22" fill="#B87848"/><circle cx="128.00" cy="224.00" r="22" fill="#B87848"/><circle cx="103.77" cy="220.52" r="22" fill="#B87848"/><circle cx="81.50" cy="210.35" r="22" fill="#B87848"/><circle cx="63.01" cy="194.32" r="22" fill="#B87848"/><circle cx="49.77" cy="173.73" r="22" fill="#B87848"/><circle cx="42.88" cy="150.24" r="22" fill="#B87848"/><circle cx="42.88" cy="125.76" r="22" fill="#B87848"/><circle cx="49.77" cy="102.27" r="22" fill="#B87848"/><circle cx="63.01" cy="81.68" r="22" fill="#B87848"/><circle cx="81.50" cy="65.65" r="22" fill="#B87848"/><circle cx="103.77" cy="55.48" r="22" fill="#B87848"/>
+    
+    <path d="M 206.0 98 Q 214.0 44 188.0 32 Q 162.0 34 138.0 66 Z" fill="#B87848" stroke="#99613E" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M 194.0 86 Q 198.0 52 184.0 45 Q 166.0 48 152.0 68 Z" fill="#D6B79B"/>
+    <path d="M 50.0 98 Q 42.0 44 68.0 32 Q 94.0 34 118.0 66 Z" fill="#B87848" stroke="#99613E" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M 62.0 86 Q 58.0 52 72.0 45 Q 90.0 48 104.0 68 Z" fill="#D6B79B"/>
+    <circle cx="128" cy="140" r="86" fill="#B87848"/>
+    <!-- tabby forehead marks -->
+    <path d="M 128 72 L 128 96" stroke="#99613E" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 112 76 Q 114 88 118 98" stroke="#99613E" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="M 144 76 Q 142 88 138 98" stroke="#99613E" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <!-- cream cheeks and muzzle -->
+    <ellipse cx="104" cy="170" rx="34" ry="28" fill="#EFE2D2"/>
+    <ellipse cx="152" cy="170" rx="34" ry="28" fill="#EFE2D2"/>
+    <ellipse cx="128" cy="186" rx="26" ry="20" fill="#EFE2D2"/>
+    <!-- cheek tufts -->
+    <path d="M 46 160 Q 36 168 44 176 Q 38 184 50 188" stroke="#99613E" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M 210 160 Q 220 168 212 176 Q 218 184 206 188" stroke="#99613E" stroke-width="4" fill="none" stroke-linecap="round"/>
+    
+    <g class="veena-eye">
+      <ellipse cx="94" cy="128" rx="22" ry="22" fill="#F7F1E9" stroke="#4A2C1C" stroke-width="3.5"/>
+      <circle cx="94" cy="129" r="17" fill="#99613E"/>
+      <circle cx="94" cy="129" r="11" fill="#B87848" opacity="0.6"/>
+      <ellipse class="veena-pupil" cx="94" cy="129" rx="7.5" ry="10" fill="#2C1A12"/>
+      <circle cx="88" cy="121" r="4.5" fill="#FFFFFF"/>
+      <circle cx="100" cy="135" r="2" fill="#FFFFFF" opacity="0.85"/>
+    </g>
+    <!-- eyelid: hidden unless the blink animation shows it -->
+    <path class="veena-lid" opacity="0" d="M 70 128 Q 94 102 118 128 Q 94 136 70 128 Z" fill="#B87848" stroke="#4A2C1C" stroke-width="3"/>
+    <g class="veena-eye">
+      <ellipse cx="162" cy="128" rx="22" ry="22" fill="#F7F1E9" stroke="#4A2C1C" stroke-width="3.5"/>
+      <circle cx="162" cy="129" r="17" fill="#99613E"/>
+      <circle cx="162" cy="129" r="11" fill="#B87848" opacity="0.6"/>
+      <ellipse class="veena-pupil" cx="162" cy="129" rx="7.5" ry="10" fill="#2C1A12"/>
+      <circle cx="156" cy="121" r="4.5" fill="#FFFFFF"/>
+      <circle cx="168" cy="135" r="2" fill="#FFFFFF" opacity="0.85"/>
+    </g>
+    <!-- eyelid: hidden unless the blink animation shows it -->
+    <path class="veena-lid" opacity="0" d="M 138 128 Q 162 102 186 128 Q 162 136 138 128 Z" fill="#B87848" stroke="#4A2C1C" stroke-width="3"/>
+    <!-- nose and mouth: flat Persian face, nose set high -->
+    <path d="M 117 156 Q 128 150 139 156 Q 134 166 128 168 Q 122 166 117 156 Z" fill="#75462D" stroke="#4A2C1C" stroke-width="2.5" stroke-linejoin="round"/>
+    <path class="veena-mouth" d="M 128 168 L 128 176 M 128 176 Q 120 184 112 179 M 128 176 Q 136 184 144 179" stroke="#4A2C1C" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- whiskers -->
+    <g stroke="#75462D" stroke-width="2" stroke-linecap="round" opacity="0.75">
+      <path d="M 92 172 L 52 166"/><path d="M 92 178 L 54 180"/><path d="M 94 184 L 60 194"/>
+      <path d="M 164 172 L 204 166"/><path d="M 164 178 L 202 180"/><path d="M 162 184 L 196 194"/>
+    </g>
+  </g>
+</svg>

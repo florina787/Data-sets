@@ -20,6 +20,14 @@ from .tables import (
     Setting,
 )
 
+# Placeholder titles, replaced by the first question asked in the session.
+DEFAULT_TITLES = {
+    "conversation": "New conversation",
+    "screen": "Screen session",
+    "meeting": "Meeting",
+    "interview": "Practice interview",
+}
+
 DEFAULT_SETTINGS: dict[str, Any] = {
     "onboarded": False,
     "profile": None,  # lite | balanced | performance
@@ -62,9 +70,9 @@ class Store:
         return self.get_settings()
 
     # ---------- sessions ----------
-    def create_session(self, title: str = "New conversation", mode: str = "conversation") -> ChatSession:
+    def create_session(self, title: str | None = None, mode: str = "conversation") -> ChatSession:
         with db_session(self.engine) as s:
-            cs = ChatSession(title=title[:200], mode=mode)
+            cs = ChatSession(title=(title or DEFAULT_TITLES.get(mode, "New conversation"))[:200], mode=mode)
             s.add(cs)
             s.commit()
             s.refresh(cs)
@@ -179,7 +187,7 @@ class Store:
             cs = s.get(ChatSession, session_id)
             if cs:
                 cs.updated_at = datetime.now(UTC)
-                if cs.title == "New conversation" and role == "user":
+                if cs.title in DEFAULT_TITLES.values() and role == "user":
                     cs.title = content.strip().splitlines()[0][:80] or cs.title
                 s.add(cs)
             s.commit()

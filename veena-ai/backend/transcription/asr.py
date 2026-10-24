@@ -53,9 +53,12 @@ class WhisperTranscriber:
             if self._model is None:
                 from faster_whisper import WhisperModel
 
-                self._model = WhisperModel(
-                    self.model_size, device=self.device, compute_type=self.compute_type, cpu_threads=self.cpu_threads
-                )
+                kw = {"device": self.device, "compute_type": self.compute_type, "cpu_threads": self.cpu_threads}
+                try:
+                    # Cached weights load without touching the network (offline use).
+                    self._model = WhisperModel(self.model_size, local_files_only=True, **kw)
+                except Exception:  # noqa: BLE001 - first run: download once
+                    self._model = WhisperModel(self.model_size, **kw)
 
     def transcribe(
         self,
