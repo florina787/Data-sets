@@ -26,3 +26,7 @@ Cross-disciplinary data repositories, data collections and data search engines:
 10. http://reddit.com/r/datasets
 
 Most Important all the datasets are in CSV ( Comma separated values) format.  
+
+## Projects in this repository
+
+* [**veena-ai**](veena-ai/README.md): VEENA.AI, a local-first desktop AI conversation companion (Electron + Python, Ollama, faster-whisper, FAISS). No subscription or API key required.

@@ -1,0 +1,123 @@
+{
+  "measured_at": "2026-10-24 23:32:27 UTC",
+  "machine": {
+    "os": "Linux 6.18.44-fc-v153",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "cores": "4 physical / 4 logical",
+    "ram_gb": 15.7,
+    "gpu": "none",
+    "python": "3.12.3",
+    "ollama": "ollama version is 0.40.11"
+  },
+  "question_detection": {
+    "rules_ms_per_utterance": 0.014477520000018748
+  },
+  "vad": {
+    "vad": "silero",
+    "ms_per_second_of_audio": 7.15991496394239
+  },
+  "ocr": {
+    "image": "1280x720, 12 lines of code",
+    "ms": {
+      "n": 3,
+      "p50": 671.2673030000005,
+      "min": 597.1284410000023,
+      "max": 1267.3744109999986,
+      "mean": 845.2567183333339
+    }
+  },
+  "embeddings_faiss": {
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "passages_per_second": 70.55227356820886,
+    "query_embed_ms": 11.7737639999973,
+    "faiss_flat_search_ms_10k": 3.430570859999875,
+    "faiss_flat_search_ms_100k": 9.511499620000166
+  },
+  "asr": {
+    "audio_seconds": 4.31,
+    "models": {
+      "tiny": {
+        "load_ms": 6316.215538999998,
+        "final_ms": {
+          "n": 3,
+          "p50": 926.5245280000016,
+          "min": 881.5317580000084,
+          "max": 2260.3861890000017,
+          "mean": 1356.1474916666705
+        },
+        "real_time_factor": 0.21477778748804766,
+        "partial_1_5s_ms": {
+          "n": 3,
+          "p50": 2387.0003239999987,
+          "min": 2035.5284270000027,
+          "max": 2418.635995999992,
+          "mean": 2280.388248999998
+        },
+        "transcript": "How does a hash map handle collision when two keen share a market?"
+      },
+      "base": {
+        "load_ms": 10711.333267000015,
+        "final_ms": {
+          "n": 3,
+          "p50": 1649.7502480000037,
+          "min": 1603.617000000014,
+          "max": 2142.206587000004,
+          "mean": 1798.524611666674
+        },
+        "real_time_factor": 0.38242884830923557,
+        "partial_1_5s_ms": {
+          "n": 3,
+          "p50": 2417.428674000007,
+          "min": 1706.3003179999896,
+          "max": 2584.060220000026,
+          "mean": 2235.929737333341
+        },
+        "transcript": "How does a Hashmab handle collisions when two keys share a market?"
+      }
+    }
+  },
+  "llm": {
+    "model": "qwen2.5:1.5b",
+    "cold_first_token_ms": 80286.58083299999,
+    "warm_first_token_ms": {
+      "n": 3,
+      "p50": 187.3081010000135,
+      "min": 60.352965000021186,
+      "max": 205.07903000000738,
+      "mean": 150.91336533334734
+    },
+    "tokens_per_second": {
+      "n": 3,
+      "p50": 21.165704375400065,
+      "min": 19.412952321789096,
+      "max": 21.97183629098663,
+      "mean": 20.85016432939193
+    },
+    "total_ms": {
+      "n": 3,
+      "p50": 1622.2947680000175,
+      "min": 1161.360080999998,
+      "max": 6779.704116000004,
+      "mean": 3187.7863216666733
+    }
+  },
+  "vision": {
+    "model": "qwen2.5vl:3b",
+    "image": "1280x720 PNG",
+    "first_token_ms": {
+      "n": 2,
+      "p50": 144596.95803150005,
+      "min": 364.23828099998445,
+      "max": 288829.6777820001,
+      "mean": 144596.95803150005
+    },
+    "total_ms": {
+      "n": 2,
+      "p50": 146744.26084700003,
+      "min": 3122.0609179999883,
+      "max": 290366.46077600005,
+      "mean": 146744.26084700003
+    }
+  },
+  "backend_process_rss_mb_after_loading_models": 967.647232
+}
