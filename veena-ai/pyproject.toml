@@ -1,0 +1,78 @@
+[project]
+name = "veena-ai-backend"
+version = "0.1.0"
+description = "VEENA.AI local backend: FastAPI + Ollama + faster-whisper + FAISS"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later" }
+# Versions below are the ones tested in development (see docs/TESTED_VERSIONS.md).
+dependencies = [
+  "fastapi==0.162.0",
+  "uvicorn[standard]==0.54.0",
+  "pydantic==2.14.1",
+  "sqlmodel==0.0.48",
+  "sqlalchemy==2.1.6",
+  "httpx==0.28.1",
+  "python-multipart==0.0.32",
+  "websockets==17.3",
+  "numpy==2.5.4",
+  "psutil==7.2.2",
+  "pillow==13.0.0",
+  "pymupdf==2.0",
+  "python-docx==1.2.0",
+  "markdown-it-py==4.2.0",
+  "faiss-cpu==1.15.1",
+  "pytesseract==0.3.13",
+  "faster-whisper==1.2.1",
+  "ctranslate2==4.8.3",
+  "onnxruntime==1.31.0",
+  "sentence-transformers==6.2.0",
+  "transformers==5.20.2",
+  "torch==2.14.1",
+  "langgraph==1.2.17",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1", "pytest-asyncio==1.4.0", "ruff==0.17.2"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["backend*"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+ignore = [
+  "B008",  # FastAPI Depends() in defaults is the idiom
+  "B905",  # zip(strict=) not needed for our paired arrays
+  "E501",
+  "S101",  # asserts in tests
+  "S603", "S607",  # subprocess calls use fixed argv lists for hardware probes
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+  "ollama: needs a running Ollama with a model installed",
+  "asr: downloads and runs a Whisper model",
+  "embeddings: downloads and runs the sentence-transformers model",
+  "slow: long-running",
+]

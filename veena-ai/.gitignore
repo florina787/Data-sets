@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+node_modules/
+dist/
+dist-electron/
+release/
+out/
+*.log
+.env
+test-results/
+playwright-report/
+packaging/backend-dist/
+packaging/build/
