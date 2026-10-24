@@ -1,0 +1,40 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "InventoryCountChanged (fictional event)",
+ "type": "object",
+ "properties": {
+  "event_id": {
+   "type": "string"
+  },
+  "occurred_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "part_number": {
+   "type": "string"
+  },
+  "location": {
+   "type": "string"
+  },
+  "qty": {
+   "type": "integer"
+  },
+  "source_system": {
+   "type": "string",
+   "enum": [
+    "ERP-SIM",
+    "NIGHTLY-CSV"
+   ]
+  }
+ },
+ "required": [
+  "event_id",
+  "occurred_at",
+  "part_number",
+  "location",
+  "qty",
+  "source_system"
+ ],
+ "x-topic": "inventory.count.changed.v1",
+ "x-producer": "APP-01"
+}

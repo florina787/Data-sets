@@ -1,0 +1,11 @@
+# Pinned MCP tools of the local demo server (POL-006). Unpinned tools are listed but never called.
+tools:
+- name: get_fleet_overview
+  schema_sha256: 66b7d5b910e8c800498484c975ea545db9213f7d06541e269035eb3dce6ea8a2
+  reviewed_by: sec.ines (synthetic)
+- name: get_part_availability
+  schema_sha256: 83cab06291400bbb683f79d16cf50adf1032a2ac8e7347b3c59b5b92761b9f9d
+  reviewed_by: sec.ines (synthetic)
+- name: search_documents
+  schema_sha256: 263a564fb1ae08f109328dd59f72ccd5f80d321faba3bc2e5ddaed5393a970c4
+  reviewed_by: sec.ines (synthetic)

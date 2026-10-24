@@ -1,0 +1,280 @@
+{
+ "note": "Fictional enterprise landscape for the Flying_Florina demo.",
+ "applications": [
+  {
+   "id": "APP-01",
+   "name": "ERP Simulator (IFS-like, fictional)",
+   "kind": "erp",
+   "technology": "Simulated ERP with REST/OData-style projections",
+   "owner": "Finance & Supply IT",
+   "criticality": "high",
+   "interfaces": [
+    "odata",
+    "rest"
+   ],
+   "batch_window": "02:30-03:00",
+   "auth_method": "oauth2-client-credentials (metadata only)",
+   "last_doc_update": "2026-06-01"
+  },
+  {
+   "id": "APP-02",
+   "name": "MRO Application (fictional)",
+   "kind": "mro",
+   "technology": "Java 8 web app on application server",
+   "owner": "MRO IT",
+   "criticality": "critical",
+   "interfaces": [
+    "rest",
+    "jdbc"
+   ],
+   "batch_window": null,
+   "auth_method": "basic-auth over TLS (metadata only)",
+   "last_doc_update": "2024-11-02"
+  },
+  {
+   "id": "APP-03",
+   "name": "MRO Legacy Database (Oracle-like, fictional)",
+   "kind": "database",
+   "technology": "Oracle-like RDBMS, schema MRO_CORE (DDL fixture)",
+   "owner": "DBA team",
+   "criticality": "critical",
+   "interfaces": [
+    "jdbc",
+    "views"
+   ],
+   "batch_window": "01:00-02:30",
+   "auth_method": "db-accounts (metadata only)",
+   "last_doc_update": "2019-03-12"
+  },
+  {
+   "id": "APP-04",
+   "name": "Java ERP Integration Service (fictional)",
+   "kind": "service",
+   "technology": "Java monolith exposing SOAP+REST",
+   "owner": "Integration team",
+   "criticality": "high",
+   "interfaces": [
+    "rest",
+    "soap"
+   ],
+   "batch_window": null,
+   "auth_method": "api-key (metadata only)",
+   "last_doc_update": "2021-07-19"
+  },
+  {
+   "id": "APP-05",
+   "name": "COBOL Batch Emulator (fictional)",
+   "kind": "batch",
+   "technology": "COBOL-style nightly batch emulator",
+   "owner": "Mainframe ops",
+   "criticality": "medium",
+   "interfaces": [
+    "file"
+   ],
+   "batch_window": "00:00-01:00",
+   "auth_method": "host-account (metadata only)",
+   "last_doc_update": "2012-05-30"
+  },
+  {
+   "id": "APP-06",
+   "name": "Flat-file Inventory (fictional)",
+   "kind": "file",
+   "technology": "Nightly CSV export of physical counts",
+   "owner": "Warehouse ops",
+   "criticality": "high",
+   "interfaces": [
+    "file"
+   ],
+   "batch_window": "01:00",
+   "auth_method": "n/a",
+   "last_doc_update": "2023-02-10"
+  },
+  {
+   "id": "APP-07",
+   "name": "Document Repository (SharePoint-like, fictional)",
+   "kind": "documents",
+   "technology": "Document library with revisions",
+   "owner": "Technical publications",
+   "criticality": "high",
+   "interfaces": [
+    "rest"
+   ],
+   "batch_window": null,
+   "auth_method": "sso (metadata only)",
+   "last_doc_update": "2026-05-01"
+  },
+  {
+   "id": "APP-08",
+   "name": "Ticketing App (fictional)",
+   "kind": "ticketing",
+   "technology": "Service desk tickets",
+   "owner": "IT service",
+   "criticality": "low",
+   "interfaces": [
+    "rest",
+    "email"
+   ],
+   "batch_window": null,
+   "auth_method": "sso (metadata only)",
+   "last_doc_update": "2025-08-08"
+  },
+  {
+   "id": "APP-09",
+   "name": "Manufacturing Quality System (fictional)",
+   "kind": "quality",
+   "technology": "NCR/CAPA tracking",
+   "owner": "Quality",
+   "criticality": "high",
+   "interfaces": [
+    "rest",
+    "db"
+   ],
+   "batch_window": null,
+   "auth_method": "sso (metadata only)",
+   "last_doc_update": "2025-12-01"
+  },
+  {
+   "id": "APP-10",
+   "name": "Supplier Portal (fictional)",
+   "kind": "portal",
+   "technology": "External supplier collaboration",
+   "owner": "Procurement",
+   "criticality": "medium",
+   "interfaces": [
+    "rest",
+    "sftp"
+   ],
+   "batch_window": "04:00",
+   "auth_method": "api-key (metadata only)",
+   "last_doc_update": "2026-01-20"
+  },
+  {
+   "id": "APP-11",
+   "name": "Event Bus Emulator (fictional)",
+   "kind": "event_bus",
+   "technology": "Topic-based event broker emulator",
+   "owner": "Integration team",
+   "criticality": "medium",
+   "interfaces": [
+    "events"
+   ],
+   "batch_window": null,
+   "auth_method": "mtls (metadata only)",
+   "last_doc_update": "2026-02-14"
+  },
+  {
+   "id": "APP-12",
+   "name": "API Gateway Emulator (fictional)",
+   "kind": "gateway",
+   "technology": "Gateway in front of new facades",
+   "owner": "Platform",
+   "criticality": "high",
+   "interfaces": [
+    "rest"
+   ],
+   "batch_window": null,
+   "auth_method": "oauth2 (metadata only)",
+   "last_doc_update": "2026-07-30"
+  }
+ ],
+ "dependencies": [
+  {
+   "source": "APP-02",
+   "target": "APP-03",
+   "kind": "database",
+   "protocol": "jdbc",
+   "frequency": "continuous"
+  },
+  {
+   "source": "APP-04",
+   "target": "APP-03",
+   "kind": "database",
+   "protocol": "jdbc",
+   "frequency": "continuous"
+  },
+  {
+   "source": "APP-04",
+   "target": "APP-01",
+   "kind": "api",
+   "protocol": "rest",
+   "frequency": "hourly"
+  },
+  {
+   "source": "APP-05",
+   "target": "APP-03",
+   "kind": "batch",
+   "protocol": "file",
+   "frequency": "nightly"
+  },
+  {
+   "source": "APP-06",
+   "target": "APP-05",
+   "kind": "batch",
+   "protocol": "csv",
+   "frequency": "nightly"
+  },
+  {
+   "source": "APP-05",
+   "target": "APP-01",
+   "kind": "batch",
+   "protocol": "file",
+   "frequency": "nightly"
+  },
+  {
+   "source": "APP-02",
+   "target": "APP-07",
+   "kind": "api",
+   "protocol": "rest",
+   "frequency": "on-demand"
+  },
+  {
+   "source": "APP-09",
+   "target": "APP-03",
+   "kind": "database",
+   "protocol": "db-link",
+   "frequency": "continuous"
+  },
+  {
+   "source": "APP-09",
+   "target": "APP-10",
+   "kind": "api",
+   "protocol": "rest",
+   "frequency": "daily"
+  },
+  {
+   "source": "APP-10",
+   "target": "APP-01",
+   "kind": "batch",
+   "protocol": "sftp",
+   "frequency": "daily"
+  },
+  {
+   "source": "APP-08",
+   "target": "APP-02",
+   "kind": "email",
+   "protocol": "smtp",
+   "frequency": "on-demand"
+  },
+  {
+   "source": "APP-01",
+   "target": "APP-11",
+   "kind": "event",
+   "protocol": "events",
+   "frequency": "near-real-time"
+  },
+  {
+   "source": "APP-12",
+   "target": "APP-01",
+   "kind": "api",
+   "protocol": "rest",
+   "frequency": "on-demand"
+  },
+  {
+   "source": "APP-02",
+   "target": "APP-01",
+   "kind": "api",
+   "protocol": "rest",
+   "frequency": "hourly"
+  }
+ ]
+}

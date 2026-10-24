@@ -1,0 +1,101 @@
+{
+ "openapi": "3.0.3",
+ "info": {
+  "title": "Supplier Portal API (fictional)",
+  "version": "1.3.0",
+  "description": "Synthetic supplier collaboration API."
+ },
+ "servers": [
+  {
+   "url": "https://supplier-portal.example.invalid/v1"
+  }
+ ],
+ "security": [
+  {
+   "apiKey": []
+  }
+ ],
+ "components": {
+  "securitySchemes": {
+   "apiKey": {
+    "type": "apiKey",
+    "in": "header",
+    "name": "X-Supplier-Key"
+   }
+  },
+  "schemas": {
+   "Shipment": {
+    "type": "object",
+    "properties": {
+     "shipmentId": {
+      "type": "string"
+     },
+     "partNo": {
+      "type": "string"
+     },
+     "promisedDate": {
+      "type": "string",
+      "format": "date"
+     },
+     "lotNo": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "paths": {
+  "/shipments": {
+   "get": {
+    "operationId": "listShipments",
+    "summary": "Shipments with cursor pagination",
+    "parameters": [
+     {
+      "name": "cursor",
+      "in": "query",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Page"
+     }
+    }
+   }
+  },
+  "/certificates/{lotNo}": {
+   "get": {
+    "operationId": "getCertificate",
+    "summary": "Certificate of conformity metadata",
+    "parameters": [
+     {
+      "name": "lotNo",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Certificate"
+     }
+    }
+   }
+  },
+  "/webhooks": {
+   "post": {
+    "operationId": "registerWebhook",
+    "summary": "Register callback URL (SSRF-sensitive)",
+    "responses": {
+     "201": {
+      "description": "Registered"
+     }
+    }
+   }
+  }
+ }
+}

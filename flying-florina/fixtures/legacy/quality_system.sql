@@ -1,0 +1,32 @@
+-- FICTIONAL manufacturing quality system schema (APP-09). Parsed, never executed.
+-- system: Manufacturing Quality System (APP-09)
+-- owner: Quality
+-- last_reviewed: 2025-12-01
+
+CREATE TABLE QS_NCR (
+  NCR_ID        INTEGER PRIMARY KEY,
+  PART_NO       VARCHAR(20) NOT NULL,
+  LOT_NO        VARCHAR(20),
+  SUPPLIER_CD   VARCHAR(10),
+  OPENED        TIMESTAMP,
+  DESCRIPTION   TEXT,
+  DISPOSITION   VARCHAR(20)
+);
+
+CREATE TABLE QS_CAPA (
+  CAPA_ID       INTEGER PRIMARY KEY,
+  NCR_ID        INTEGER REFERENCES QS_NCR(NCR_ID),
+  ROOT_CAUSE    TEXT,
+  ACTION_TEXT   TEXT,
+  OWNER         VARCHAR(80),
+  DUE_DATE      DATE,
+  APPROVED_BY   VARCHAR(80)
+);
+
+CREATE TABLE QS_SUPPLIER_CERT (
+  CERT_ID       INTEGER PRIMARY KEY,
+  SUPPLIER_CD   VARCHAR(10) NOT NULL,
+  LOT_NO        VARCHAR(20),
+  CERT_TYPE     VARCHAR(20),
+  RECEIVED      DATE
+);

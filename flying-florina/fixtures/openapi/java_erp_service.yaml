@@ -1,0 +1,74 @@
+# FICTIONAL OpenAPI for the Java ERP Integration Service (APP-04). Synthetic only.
+openapi: 3.0.3
+info:
+  title: Java ERP Integration Service (fictional)
+  version: 4.2.1
+  description: Legacy Java monolith API. Synthetic fixture for Flying_Florina.
+servers:
+  - url: https://erp-int.example.invalid/api
+security:
+  - apiKey: []
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    PartStock:
+      type: object
+      properties:
+        partNo: {type: string}
+        baseCode: {type: string}
+        qtyOnHand: {type: integer}
+        lotNo: {type: string}
+        lastCountDate: {type: string, format: date}
+    WorkOrder:
+      type: object
+      properties:
+        woNo: {type: string}
+        acId: {type: string}
+        statusCd: {type: string}
+        woText: {type: string}
+paths:
+  /stock/{partNo}:
+    get:
+      operationId: getStock
+      summary: Stock by part number
+      parameters:
+        - {name: partNo, in: path, required: true, schema: {type: string}}
+      responses:
+        "200":
+          description: Stock rows
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: "#/components/schemas/PartStock"}}
+  /workorders:
+    get:
+      operationId: listWorkOrders
+      summary: List work orders (no pagination)
+      responses:
+        "200": {description: All work orders}
+    post:
+      operationId: createWorkOrder
+      summary: Create work order (writes to MRO_CORE)
+      requestBody:
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/WorkOrder"}
+      responses:
+        "201": {description: Created}
+  /workorders/{woNo}/close:
+    post:
+      operationId: closeWorkOrder
+      summary: Close work order
+      parameters:
+        - {name: woNo, in: path, required: true, schema: {type: string}}
+      responses:
+        "200": {description: Closed}
+  /admin/sql:
+    post:
+      operationId: runSql
+      summary: Run arbitrary SQL (legacy debug endpoint)
+      responses:
+        "200": {description: Result}

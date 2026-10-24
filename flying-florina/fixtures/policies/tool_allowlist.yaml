@@ -1,0 +1,52 @@
+# Pinned tool allowlist (POL-006). A tool registers only if name, version and
+# input-schema SHA-256 match. Regenerate deliberately after security review:
+#   python -m scripts.pin_tools  (see docs/API_MCP_GUIDE.md)
+tools:
+- name: telemetry.get_series
+  version: 1.0.0
+  schema_sha256: e8c253bfecc9fe37c63a8def3770223b685c472fa6d83f82b66593e0d960d363
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: maintenance.get_history
+  version: 1.0.0
+  schema_sha256: 3bfcc828ab390db66594d11656faea601caead7bf4a767a852ed04c289bf6e74
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: docs.search
+  version: 1.1.0
+  schema_sha256: 6a50550bfe290a9a41fc4b698fb5ce68a75c3bfcf8cc78ac3c1c1e554dd846d9
+  action: search
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: parts.check_availability
+  version: 1.0.0
+  schema_sha256: 9dba3e472a262ff2cc8598d42daff2738e22a1a9f3320580ff2d17e343123266
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: roster.find_qualified
+  version: 1.0.0
+  schema_sha256: 8a3f8cd5ef4152accf4d94b0746762677f8eff2401a0c7e0c3859554d3f3e08e
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: hangar.find_slots
+  version: 1.0.0
+  schema_sha256: fd8d7bef34889cade94712d86d1459fbca022b4253e615ac61ff55f63f321e3a
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: workorder.create_draft
+  version: 1.0.0
+  schema_sha256: a71ebd5c74377578678e6e6cb14360a5c4e5d8f043bb7e65f1303d0d63451f1f
+  action: draft_write
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'
+- name: records.export_email
+  version: 0.9.0
+  schema_sha256: 671f6dee3f04f82475b69b7b839866edc10ef0c6cb3d47df34799a0092c6517c
+  action: export
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-10-01'

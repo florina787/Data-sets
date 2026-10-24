@@ -1,0 +1,70 @@
+# Synthetic governance policy catalog for the Flying_Florina demo.
+# Executable logic: backend/app/core/policy.py (keyed by the same IDs).
+# All references are informational and require qualified compliance review.
+version: "2026.10.1"
+policies:
+  - id: POL-001
+    title: Deny by default
+    severity: critical
+    description: Any actor, role or action without an explicit grant is denied.
+    references: ["NIST SP 800-171 3.1.1 (informational)", "NIST AI RMF GOVERN 1.4 (informational)"]
+  - id: POL-002
+    title: Role-based access per endpoint and tool
+    severity: high
+    description: Each role holds an explicit action set; agents get the intersection of their own set and the requesting human's.
+    references: ["NIST SP 800-171 3.1.2 (informational)"]
+  - id: POL-003
+    title: Classification and attribute-based access
+    severity: critical
+    description: PUBLIC/INTERNAL/RESTRICTED/UNKNOWN labels are enforced before retrieval ranking. UNKNOWN denies sensitive operations until reviewed.
+    references: ["NIST SP 800-171 3.1.3 (informational)", "ITAR/EAR applicability screening (informational only)"]
+  - id: POL-004
+    title: No external exfiltration
+    severity: critical
+    description: RESTRICTED or UNKNOWN data never goes to external or personal destinations; OFFLINE_MODE blocks all external destinations.
+    references: ["NIST SP 800-171 3.13.1 (informational)", "Contractual data-handling clauses (configurable)"]
+  - id: POL-005
+    title: Human approval for consequential writes
+    severity: critical
+    description: Writes are dry-run by default and require an approved, unexpired approval, a matching idempotency key and no prior execution (replay protection).
+    references: ["NIST AI RMF MANAGE 2.4 (informational)"]
+  - id: POL-006
+    title: Tool allowlist and version pinning
+    severity: high
+    description: Only allowlisted tools whose version and schema SHA-256 match the pinned values may be invoked or registered.
+    references: ["OWASP LLM Top 10 - LLM07 Insecure plugin design (informational)"]
+  - id: POL-007
+    title: No self-privilege escalation
+    severity: critical
+    description: Agents can never change roles or policies; humans cannot change their own entitlements; policy changes go through version control.
+    references: ["NIST SP 800-171 3.1.5 (informational)"]
+  - id: POL-008
+    title: Local models only
+    severity: high
+    description: Model calls are allowed only to a loopback endpoint and only when LLM_ENABLED=true. Models never decide policy.
+    references: ["NIST AI RMF MAP 4.1 (informational)"]
+  - id: POL-009
+    title: Governance kill switch
+    severity: critical
+    description: When ON, new tool calls and workflows are denied and active workflows are cancelled.
+    references: ["NIST AI RMF MANAGE 2.3 (informational)"]
+  - id: POL-010
+    title: Authoritative evidence only
+    severity: medium
+    description: Superseded documents or documents without a provenance hash cannot be cited as authoritative; they surface as warnings.
+    references: ["Document control practice (informational)"]
+  - id: POL-011
+    title: Untrusted instruction sources
+    severity: critical
+    description: Instructions found inside retrieved content are data, never commands. Tool calls, exports and writes they request are denied.
+    references: ["OWASP LLM Top 10 - LLM01 Prompt injection (informational)"]
+  - id: POL-012
+    title: Identity required
+    severity: critical
+    description: Every request needs a verified session token with the correct audience; missing or mismatched identity is rejected.
+    references: ["NIST SP 800-171 3.5.1 (informational)"]
+  - id: POL-013
+    title: Separation of duties for approvals
+    severity: high
+    description: Approvers must differ from requesters and hold an approver role for the approval kind.
+    references: ["NIST SP 800-171 3.1.4 (informational)"]

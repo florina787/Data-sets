@@ -1,0 +1,126 @@
+{
+ "openapi": "3.0.3",
+ "info": {
+  "title": "ERP Simulator Projections (IFS-like, fictional)",
+  "version": "25.1.0-sim",
+  "description": "Fictional OData-style REST projections that resemble an ERP. Not an IFS API. Synthetic fixture."
+ },
+ "servers": [
+  {
+   "url": "https://erp-sim.example.invalid/main/ifsapplications/projection/v1"
+  }
+ ],
+ "security": [
+  {
+   "oauth2": [
+    "inventory.read"
+   ]
+  }
+ ],
+ "components": {
+  "securitySchemes": {
+   "oauth2": {
+    "type": "oauth2",
+    "flows": {
+     "clientCredentials": {
+      "tokenUrl": "https://idp.example.invalid/token",
+      "scopes": {
+       "inventory.read": "Read inventory",
+       "workorder.write": "Write work orders"
+      }
+     }
+    }
+   }
+  },
+  "schemas": {
+   "InventoryPart": {
+    "type": "object",
+    "properties": {
+     "PartNo": {
+      "type": "string"
+     },
+     "Contract": {
+      "type": "string"
+     },
+     "QtyOnhand": {
+      "type": "number"
+     },
+     "LotBatchNo": {
+      "type": "string"
+     },
+     "LastCountDate": {
+      "type": "string",
+      "format": "date"
+     }
+    }
+   }
+  }
+ },
+ "paths": {
+  "/InventoryPartInStockHandling.svc/InventoryPartInStockSet": {
+   "get": {
+    "operationId": "listInventoryPartInStock",
+    "summary": "Inventory part in stock (paged with $top/$skip)",
+    "parameters": [
+     {
+      "name": "$filter",
+      "in": "query",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "$top",
+      "in": "query",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "name": "$skip",
+      "in": "query",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Paged set"
+     }
+    }
+   }
+  },
+  "/ActiveSeparateHandling.svc/ActiveSeparateSet": {
+   "get": {
+    "operationId": "listWorkOrders",
+    "summary": "Work orders (paged)",
+    "responses": {
+     "200": {
+      "description": "Paged set"
+     }
+    }
+   },
+   "post": {
+    "operationId": "createWorkOrder",
+    "summary": "Create work order",
+    "responses": {
+     "201": {
+      "description": "Created"
+     }
+    }
+   }
+  },
+  "/EquipmentObjectHandling.svc/EquipmentObjectSet": {
+   "get": {
+    "operationId": "listEquipment",
+    "summary": "Equipment objects",
+    "responses": {
+     "200": {
+      "description": "Paged set"
+     }
+    }
+   }
+  }
+ }
+}

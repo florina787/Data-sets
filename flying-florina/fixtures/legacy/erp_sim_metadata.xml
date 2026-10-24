@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FICTIONAL OData-like metadata for the ERP simulator. Synthetic fixture. -->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="ErpSim" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="InventoryPartInStock">
+        <Key><PropertyRef Name="PartNo"/><PropertyRef Name="Contract"/></Key>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="Contract" Type="Edm.String" Nullable="false"/>
+        <Property Name="QtyOnhand" Type="Edm.Decimal"/>
+        <Property Name="LotBatchNo" Type="Edm.String"/>
+        <Property Name="LastCountDate" Type="Edm.Date"/>
+      </EntityType>
+      <EntityType Name="WorkOrder">
+        <Key><PropertyRef Name="WoNo"/></Key>
+        <Property Name="WoNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="MchCode" Type="Edm.String"/>
+        <Property Name="State" Type="Edm.String"/>
+        <NavigationProperty Name="Parts" Type="Collection(ErpSim.InventoryPartInStock)"/>
+      </EntityType>
+      <EntityContainer Name="Container">
+        <EntitySet Name="InventoryPartInStockSet" EntityType="ErpSim.InventoryPartInStock"/>
+        <EntitySet Name="WorkOrderSet" EntityType="ErpSim.WorkOrder"/>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
