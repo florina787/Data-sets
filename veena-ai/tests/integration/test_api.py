@@ -427,5 +427,7 @@ def test_audio_ws_origin_rules(settings, llm, tmp_path):
         with c.websocket_connect(f"/ws/audio?session_id={sid}", subprotocols=["veena", TOKEN], headers={"Origin": "file://"}) as ws:
             assert ws.receive_json()["type"] == "status"
         with pytest.raises(WebSocketDisconnect):
-            with c.websocket_connect(f"/ws/audio?session_id={sid}", subprotocols=["veena", TOKEN], headers={"Origin": "https://evil.example"}) as ws:
+            with c.websocket_connect(
+                f"/ws/audio?session_id={sid}", subprotocols=["veena", TOKEN], headers={"Origin": "https://evil.example"}
+            ) as ws:
                 ws.receive_json()

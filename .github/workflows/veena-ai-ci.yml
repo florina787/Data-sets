@@ -1,0 +1,127 @@
+name: VEENA.AI CI
+
+on:
+  pull_request:
+    paths: ["veena-ai/**", ".github/workflows/veena-ai-ci.yml"]
+  push:
+    paths: ["veena-ai/**", ".github/workflows/veena-ai-ci.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: veena-ai-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu
+  HF_HUB_DISABLE_TELEMETRY: "1"
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: veena-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: veena-ai/pyproject.toml
+      - run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+      - run: pip install -e ".[dev]"
+      - run: ruff check backend tests packaging
+      - run: ruff format --check backend tests
+      # Deterministic suite: simulated LLM/embedder/ASR, real OCR and Silero VAD.
+      # Real-model suites (-m "ollama or asr or embeddings") need local models.
+      - run: pytest -m "not ollama and not asr and not embeddings" -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: veena-ai/apps/desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: veena-ai/apps/desktop/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  package:
+    needs: [backend, frontend]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            target: --win
+            exe: release/win-unpacked/VEENA.AI.exe
+            backend: packaging/backend-dist/veena-backend/veena-backend.exe
+            artifact: release/*.exe
+          - os: ubuntu-latest
+            target: --linux
+            exe: release/linux-unpacked/veena-ai
+            backend: packaging/backend-dist/veena-backend/veena-backend
+            artifact: release/*.AppImage
+          - os: macos-latest
+            target: --mac
+            exe: release/mac-arm64/VEENA.AI.app/Contents/MacOS/VEENA.AI
+            backend: packaging/backend-dist/veena-backend/veena-backend
+            artifact: release/*.dmg
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: veena-ai/pyproject.toml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: veena-ai/apps/desktop/package-lock.json
+      - name: Install backend dependencies
+        working-directory: veena-ai
+        run: pip install -e . pyinstaller==6.22.3
+      - name: Freeze backend (PyInstaller)
+        working-directory: veena-ai
+        run: pyinstaller packaging/backend.spec --noconfirm --distpath packaging/backend-dist --workpath packaging/build
+      - name: Smoke-test frozen backend
+        working-directory: veena-ai
+        run: python packaging/smoke_backend.py ${{ matrix.backend }}
+      - name: Build desktop app and installer
+        working-directory: veena-ai/apps/desktop
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false" # unsigned build
+        run: |
+          npm ci
+          npm run build
+          npx electron-builder ${{ matrix.target }} --publish never
+      - name: Smoke-test packaged app (Linux)
+        if: runner.os == 'Linux'
+        working-directory: veena-ai/apps/desktop
+        run: xvfb-run -a node scripts/smoke-packaged.mjs "${{ matrix.exe }}"
+      - name: Smoke-test packaged app (Windows, macOS)
+        if: runner.os != 'Linux'
+        working-directory: veena-ai/apps/desktop
+        run: node scripts/smoke-packaged.mjs "${{ matrix.exe }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: veena-ai-${{ runner.os }}
+          path: veena-ai/apps/desktop/${{ matrix.artifact }}
+          retention-days: 7
+          if-no-files-found: error

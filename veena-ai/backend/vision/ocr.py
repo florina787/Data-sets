@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 from dataclasses import dataclass
 
@@ -27,14 +28,33 @@ class OCRResult:
     error: str | None = None
 
 
+_WINDOWS_PATHS = (
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+    r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+)
+
+
+def tesseract_cmd() -> str | None:
+    """Tesseract on PATH, or in its default Windows install folder (not on PATH by default)."""
+    found = shutil.which("tesseract")
+    if found:
+        return found
+    if os.name == "nt":
+        return next((p for p in _WINDOWS_PATHS if os.path.exists(p)), None)
+    return None
+
+
 def tesseract_available() -> bool:
-    return shutil.which("tesseract") is not None
+    return tesseract_cmd() is not None
 
 
 def run_ocr(img: Image.Image, lang: str = "eng") -> OCRResult:
-    if not tesseract_available():
+    cmd = tesseract_cmd()
+    if not cmd:
         return OCRResult("", [], available=False, error="Tesseract is not installed")
     import pytesseract
+
+    pytesseract.pytesseract.tesseract_cmd = cmd
 
     try:
         data = pytesseract.image_to_data(img.convert("L"), lang=lang, output_type=pytesseract.Output.DICT, timeout=60)

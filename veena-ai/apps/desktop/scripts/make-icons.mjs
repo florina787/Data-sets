@@ -36,6 +36,31 @@ const wordmark = (w, h, catSize, y) => `<svg xmlns="http://www.w3.org/2000/svg" 
   <text x="50%" y="${y + catSize + 34}" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="${PALETTE.darkBrown}" text-anchor="middle">veena.ai</text>
   <text x="50%" y="${y + catSize + 58}" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="11" fill="${PALETTE.caramel}" text-anchor="middle">Your intelligent conversation companion.</text>
 </svg>`;
-await sharp(Buffer.from(wordmark(164, 314, 120, 60))).png().toFile(path.join(build, "installerSidebar.png"));
+// NSIS only accepts 24-bit BMP for its wizard images.
+async function writeBmp(svg, file) {
+  const { data, info } = await sharp(Buffer.from(svg)).flatten({ background: PALETTE.warmWhite }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const rowSize = Math.ceil((info.width * 3) / 4) * 4;
+  const out = Buffer.alloc(54 + rowSize * info.height);
+  out.write("BM", 0);
+  out.writeUInt32LE(out.length, 2);
+  out.writeUInt32LE(54, 10);
+  out.writeUInt32LE(40, 14);
+  out.writeInt32LE(info.width, 18);
+  out.writeInt32LE(info.height, 22);
+  out.writeUInt16LE(1, 26);
+  out.writeUInt16LE(24, 28);
+  out.writeUInt32LE(rowSize * info.height, 34);
+  for (let y = 0; y < info.height; y++) {
+    for (let x = 0; x < info.width; x++) {
+      const src = (y * info.width + x) * 3;
+      const dst = 54 + (info.height - 1 - y) * rowSize + x * 3;
+      out[dst] = data[src + 2];
+      out[dst + 1] = data[src + 1];
+      out[dst + 2] = data[src];
+    }
+  }
+  fs.writeFileSync(file, out);
+}
+await writeBmp(wordmark(164, 314, 120, 60), path.join(build, "installerSidebar.bmp"));
 await sharp(Buffer.from(wordmark(540, 380, 160, 70))).png().toFile(path.join(build, "background.png"));
 console.log("brand assets written to assets/, public/ and build/");

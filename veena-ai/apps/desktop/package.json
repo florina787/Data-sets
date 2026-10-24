@@ -21,7 +21,8 @@
     "icons": "node scripts/make-icons.mjs",
     "dist:linux": "npm run build && electron-builder --linux",
     "dist:win": "npm run build && electron-builder --win",
-    "dist:mac": "npm run build && electron-builder --mac"
+    "dist:mac": "npm run build && electron-builder --mac",
+    "pretest:e2e": "node scripts/link-e2e.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",
@@ -61,5 +62,84 @@
     "typescript-eslint": "8.72.0",
     "vite": "8.3.5",
     "vitest": "5.0.5"
+  },
+  "build": {
+    "appId": "ai.veena.desktop",
+    "productName": "VEENA.AI",
+    "copyright": "VEENA.AI contributors",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "assets/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../../packaging/backend-dist/veena-backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/installerSidebar.bmp",
+      "createDesktopShortcut": true,
+      "shortcutName": "VEENA.AI",
+      "artifactName": "VEENA.AI-Setup-${version}.${ext}"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "VEENA transcribes your speech locally when you press Listen.",
+        "NSScreenCaptureUsageDescription": "VEENA analyses the screen or window you choose to share, locally."
+      }
+    },
+    "dmg": {
+      "background": "build/background.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "icon": "build/icon.png",
+      "maintainer": "VEENA.AI contributors",
+      "synopsis": "Local-first AI conversation companion"
+    },
+    "publish": null
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/florina787/Data-sets.git",
+    "directory": "veena-ai/apps/desktop"
   }
 }
