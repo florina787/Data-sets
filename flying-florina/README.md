@@ -619,6 +619,7 @@ Read [SECURITY_LIMITATIONS.md](docs/SECURITY_LIMITATIONS.md) before presenting t
 | 🔌 [API & MCP guide](docs/API_MCP_GUIDE.md) | 💰 [ROI method](docs/ROI_METHOD.md) | 🚚 [Deployment & offline install](docs/DEPLOYMENT.md) |
 | 🎤 [Demo scripts](docs/DEMO_SCRIPT.md) | 📄 [One-page pilot brief](docs/ONE_PAGE_BRIEF.md) | ✅ [Test report](docs/TEST_REPORT.md) |
 | 📜 [Third-party notices](THIRD_PARTY_NOTICES.md) | ⚖️ [License (GPL-3.0)](LICENSE) | 🎨 [Brand assets](frontend/public/brand/README.md) |
+| ✍️ [Medium article: the build story and challenges](docs/MEDIUM_ARTICLE.md) | | |
 
 <div align="center">
 <br/>
