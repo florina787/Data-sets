@@ -232,7 +232,7 @@ laptop. Nothing here is estimated.
 | What | Measured |
 |---|---|
 | First word of a text answer (model already loaded) | **187 ms** |
-| Text generation speed (Qwen2.5 1.5B) | **21 words/s** (tokens per second) |
+| Text generation speed (Qwen2.5 1.5B) | **21 tokens/s** (a token is roughly three-quarters of a word) |
 | Transcribing a 4.3-second question (whisper base) | **1.6 s** (2.6× faster than speech) |
 | OCR of a 1280×720 screenshot | **0.67 s** |
 | Searching 100,000 document passages | **10 ms** |
