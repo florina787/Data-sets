@@ -1,0 +1,1159 @@
+{
+ "as_of": "2026-10-23",
+ "synthetic": true,
+ "view": "V_PART_AVAILABILITY",
+ "rows": [
+  {
+   "PART_NO": "P-2210",
+   "PART_DESC": "Fan blade dampener set (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-18986",
+   "LAST_CNT_DT": "2026-07-03",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-2210",
+   "PART_DESC": "Fan blade dampener set (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-38675",
+   "LAST_CNT_DT": "2026-08-11",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-3302",
+   "PART_DESC": "Vibration sensor, accelerometer (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-67591",
+   "LAST_CNT_DT": "2026-06-29",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-3302",
+   "PART_DESC": "Vibration sensor, accelerometer (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 8,
+   "LOT_NO": "LOT-99971",
+   "LAST_CNT_DT": "2026-07-10",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-4415",
+   "PART_DESC": "Hydraulic pump seal kit (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-89115",
+   "LAST_CNT_DT": "2026-06-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-5120",
+   "PART_DESC": "Main rotor damper (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-48379",
+   "LAST_CNT_DT": "2026-09-20",
+   "CRIT_CODE": "C"
+  },
+  {
+   "PART_NO": "P-5120",
+   "PART_DESC": "Main rotor damper (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-39822",
+   "LAST_CNT_DT": "2026-08-13",
+   "CRIT_CODE": "C"
+  },
+  {
+   "PART_NO": "P-6008",
+   "PART_DESC": "Avionics cooling fan (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-42309",
+   "LAST_CNT_DT": "2026-06-26",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-7731",
+   "PART_DESC": "Engine mount isolator kit (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-55188",
+   "LAST_CNT_DT": "2026-10-21",
+   "CRIT_CODE": "C"
+  },
+  {
+   "PART_NO": "P-7731",
+   "PART_DESC": "Engine mount isolator kit (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-55120",
+   "LAST_CNT_DT": "2026-10-22",
+   "CRIT_CODE": "C"
+  },
+  {
+   "PART_NO": "P-7731A",
+   "PART_DESC": "Engine mount isolator kit, alt. vendor (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-61002",
+   "LAST_CNT_DT": "2026-10-20",
+   "CRIT_CODE": "C"
+  },
+  {
+   "PART_NO": "P-7731B",
+   "PART_DESC": "Engine mount isolator kit, gray-market listing (fictional)",
+   "BASE_CODE": "EXTERNAL-LISTING",
+   "QTY_OH": 6,
+   "LOT_NO": "UNKNOWN",
+   "LAST_CNT_DT": "2026-03-11",
+   "CRIT_CODE": "C"
+  },
+  {
+   "PART_NO": "P-8000",
+   "PART_DESC": "Harness clamp A0 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-86621",
+   "LAST_CNT_DT": "2026-08-21",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8000",
+   "PART_DESC": "Harness clamp A0 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-11922",
+   "LAST_CNT_DT": "2026-09-26",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8000",
+   "PART_DESC": "Harness clamp A0 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-97902",
+   "LAST_CNT_DT": "2026-07-06",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8007",
+   "PART_DESC": "Gasket set B1 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-32599",
+   "LAST_CNT_DT": "2026-09-22",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8014",
+   "PART_DESC": "Valve actuator C2 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-80741",
+   "LAST_CNT_DT": "2026-10-09",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8014",
+   "PART_DESC": "Valve actuator C2 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-59147",
+   "LAST_CNT_DT": "2026-08-13",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8021",
+   "PART_DESC": "Harness clamp D3 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-33626",
+   "LAST_CNT_DT": "2026-07-08",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8021",
+   "PART_DESC": "Harness clamp D3 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-72579",
+   "LAST_CNT_DT": "2026-09-27",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8028",
+   "PART_DESC": "Sensor connector E4 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-94937",
+   "LAST_CNT_DT": "2026-07-19",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8028",
+   "PART_DESC": "Sensor connector E4 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-52765",
+   "LAST_CNT_DT": "2026-08-15",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8035",
+   "PART_DESC": "Filter element F5 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-20950",
+   "LAST_CNT_DT": "2026-10-21",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8035",
+   "PART_DESC": "Filter element F5 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-27409",
+   "LAST_CNT_DT": "2026-09-21",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8042",
+   "PART_DESC": "Filter element G6 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-92343",
+   "LAST_CNT_DT": "2026-08-07",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8042",
+   "PART_DESC": "Filter element G6 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-12437",
+   "LAST_CNT_DT": "2026-10-01",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8049",
+   "PART_DESC": "Bracket H7 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-94392",
+   "LAST_CNT_DT": "2026-07-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8056",
+   "PART_DESC": "Filter element I8 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 5,
+   "LOT_NO": "LOT-22158",
+   "LAST_CNT_DT": "2026-07-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8056",
+   "PART_DESC": "Filter element I8 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 8,
+   "LOT_NO": "LOT-63915",
+   "LAST_CNT_DT": "2026-10-17",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8056",
+   "PART_DESC": "Filter element I8 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-48094",
+   "LAST_CNT_DT": "2026-10-12",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8063",
+   "PART_DESC": "Gasket set J9 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 4,
+   "LOT_NO": "LOT-81523",
+   "LAST_CNT_DT": "2026-09-05",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8063",
+   "PART_DESC": "Gasket set J9 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-10220",
+   "LAST_CNT_DT": "2026-09-17",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8070",
+   "PART_DESC": "Sensor connector K10 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-37899",
+   "LAST_CNT_DT": "2026-08-31",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8070",
+   "PART_DESC": "Sensor connector K10 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-64226",
+   "LAST_CNT_DT": "2026-10-03",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8077",
+   "PART_DESC": "Filter element L11 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 5,
+   "LOT_NO": "LOT-92188",
+   "LAST_CNT_DT": "2026-10-16",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8077",
+   "PART_DESC": "Filter element L11 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-11252",
+   "LAST_CNT_DT": "2026-10-08",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8077",
+   "PART_DESC": "Filter element L11 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-58330",
+   "LAST_CNT_DT": "2026-10-14",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8084",
+   "PART_DESC": "Valve actuator M12 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-54246",
+   "LAST_CNT_DT": "2026-08-07",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8084",
+   "PART_DESC": "Valve actuator M12 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-41729",
+   "LAST_CNT_DT": "2026-07-02",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8084",
+   "PART_DESC": "Valve actuator M12 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-64831",
+   "LAST_CNT_DT": "2026-10-09",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8091",
+   "PART_DESC": "Filter element N13 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-27812",
+   "LAST_CNT_DT": "2026-09-27",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8091",
+   "PART_DESC": "Filter element N13 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-83998",
+   "LAST_CNT_DT": "2026-07-11",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8091",
+   "PART_DESC": "Filter element N13 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-16263",
+   "LAST_CNT_DT": "2026-10-05",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8098",
+   "PART_DESC": "Gasket set O14 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-15962",
+   "LAST_CNT_DT": "2026-07-27",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8105",
+   "PART_DESC": "Gasket set P15 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-16588",
+   "LAST_CNT_DT": "2026-08-27",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8105",
+   "PART_DESC": "Gasket set P15 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-65014",
+   "LAST_CNT_DT": "2026-09-07",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8105",
+   "PART_DESC": "Gasket set P15 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-22494",
+   "LAST_CNT_DT": "2026-10-02",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8112",
+   "PART_DESC": "Bushing Q16 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-79433",
+   "LAST_CNT_DT": "2026-09-30",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8119",
+   "PART_DESC": "Bushing R17 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-57766",
+   "LAST_CNT_DT": "2026-09-08",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8119",
+   "PART_DESC": "Bushing R17 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-56150",
+   "LAST_CNT_DT": "2026-10-10",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8126",
+   "PART_DESC": "Valve actuator S18 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-16510",
+   "LAST_CNT_DT": "2026-08-19",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8126",
+   "PART_DESC": "Valve actuator S18 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-51213",
+   "LAST_CNT_DT": "2026-09-03",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8133",
+   "PART_DESC": "Pressure switch T19 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-86315",
+   "LAST_CNT_DT": "2026-08-11",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8133",
+   "PART_DESC": "Pressure switch T19 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-16124",
+   "LAST_CNT_DT": "2026-08-04",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8133",
+   "PART_DESC": "Pressure switch T19 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-72025",
+   "LAST_CNT_DT": "2026-08-30",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8140",
+   "PART_DESC": "Sensor connector U20 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-79428",
+   "LAST_CNT_DT": "2026-10-03",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8140",
+   "PART_DESC": "Sensor connector U20 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-55327",
+   "LAST_CNT_DT": "2026-08-17",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8140",
+   "PART_DESC": "Sensor connector U20 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 4,
+   "LOT_NO": "LOT-34791",
+   "LAST_CNT_DT": "2026-08-14",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8147",
+   "PART_DESC": "Filter element V21 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-75409",
+   "LAST_CNT_DT": "2026-07-24",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8154",
+   "PART_DESC": "Filter element W22 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-78999",
+   "LAST_CNT_DT": "2026-10-07",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8154",
+   "PART_DESC": "Filter element W22 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-73984",
+   "LAST_CNT_DT": "2026-07-27",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8154",
+   "PART_DESC": "Filter element W22 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-11685",
+   "LAST_CNT_DT": "2026-08-18",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8161",
+   "PART_DESC": "Sensor connector X23 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-58921",
+   "LAST_CNT_DT": "2026-09-16",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8161",
+   "PART_DESC": "Sensor connector X23 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 8,
+   "LOT_NO": "LOT-65169",
+   "LAST_CNT_DT": "2026-06-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8161",
+   "PART_DESC": "Sensor connector X23 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-35658",
+   "LAST_CNT_DT": "2026-06-30",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8168",
+   "PART_DESC": "Seal Y24 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-49015",
+   "LAST_CNT_DT": "2026-09-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8168",
+   "PART_DESC": "Seal Y24 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-57580",
+   "LAST_CNT_DT": "2026-07-08",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8175",
+   "PART_DESC": "Valve actuator Z25 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 8,
+   "LOT_NO": "LOT-33621",
+   "LAST_CNT_DT": "2026-10-14",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8175",
+   "PART_DESC": "Valve actuator Z25 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-40573",
+   "LAST_CNT_DT": "2026-08-06",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8175",
+   "PART_DESC": "Valve actuator Z25 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-58115",
+   "LAST_CNT_DT": "2026-09-27",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8182",
+   "PART_DESC": "Bracket A26 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-11870",
+   "LAST_CNT_DT": "2026-08-07",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8182",
+   "PART_DESC": "Bracket A26 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-84500",
+   "LAST_CNT_DT": "2026-07-07",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8189",
+   "PART_DESC": "Harness clamp B27 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-28437",
+   "LAST_CNT_DT": "2026-10-02",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8189",
+   "PART_DESC": "Harness clamp B27 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-32973",
+   "LAST_CNT_DT": "2026-09-15",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8196",
+   "PART_DESC": "Seal C28 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-54917",
+   "LAST_CNT_DT": "2026-10-16",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8196",
+   "PART_DESC": "Seal C28 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-29139",
+   "LAST_CNT_DT": "2026-07-31",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8196",
+   "PART_DESC": "Seal C28 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-24119",
+   "LAST_CNT_DT": "2026-10-13",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8203",
+   "PART_DESC": "Filter element D29 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 8,
+   "LOT_NO": "LOT-84311",
+   "LAST_CNT_DT": "2026-07-17",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8203",
+   "PART_DESC": "Filter element D29 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 4,
+   "LOT_NO": "LOT-15169",
+   "LAST_CNT_DT": "2026-08-17",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8203",
+   "PART_DESC": "Filter element D29 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-44396",
+   "LAST_CNT_DT": "2026-09-11",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8210",
+   "PART_DESC": "Filter element E30 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-79850",
+   "LAST_CNT_DT": "2026-08-27",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8210",
+   "PART_DESC": "Filter element E30 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-18142",
+   "LAST_CNT_DT": "2026-07-31",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8210",
+   "PART_DESC": "Filter element E30 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-92943",
+   "LAST_CNT_DT": "2026-10-02",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8217",
+   "PART_DESC": "Sensor connector F31 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 5,
+   "LOT_NO": "LOT-50346",
+   "LAST_CNT_DT": "2026-08-26",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8217",
+   "PART_DESC": "Sensor connector F31 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-26012",
+   "LAST_CNT_DT": "2026-10-02",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8224",
+   "PART_DESC": "Sensor connector G32 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-55993",
+   "LAST_CNT_DT": "2026-08-11",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8224",
+   "PART_DESC": "Sensor connector G32 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-14124",
+   "LAST_CNT_DT": "2026-09-13",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8231",
+   "PART_DESC": "Bracket H33 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 4,
+   "LOT_NO": "LOT-54947",
+   "LAST_CNT_DT": "2026-07-20",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8231",
+   "PART_DESC": "Bracket H33 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-13876",
+   "LAST_CNT_DT": "2026-07-02",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8231",
+   "PART_DESC": "Bracket H33 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-13536",
+   "LAST_CNT_DT": "2026-09-12",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8238",
+   "PART_DESC": "Bushing I34 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-41517",
+   "LAST_CNT_DT": "2026-07-17",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8238",
+   "PART_DESC": "Bushing I34 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 12,
+   "LOT_NO": "LOT-24138",
+   "LAST_CNT_DT": "2026-08-11",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8238",
+   "PART_DESC": "Bushing I34 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-25555",
+   "LAST_CNT_DT": "2026-09-10",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8245",
+   "PART_DESC": "Gasket set J35 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-75643",
+   "LAST_CNT_DT": "2026-08-20",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8252",
+   "PART_DESC": "Filter element K36 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-46143",
+   "LAST_CNT_DT": "2026-08-20",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8259",
+   "PART_DESC": "Valve actuator L37 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-13888",
+   "LAST_CNT_DT": "2026-08-10",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8259",
+   "PART_DESC": "Valve actuator L37 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-82249",
+   "LAST_CNT_DT": "2026-08-18",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8266",
+   "PART_DESC": "Bearing M38 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-83426",
+   "LAST_CNT_DT": "2026-09-28",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8266",
+   "PART_DESC": "Bearing M38 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-36032",
+   "LAST_CNT_DT": "2026-10-12",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8266",
+   "PART_DESC": "Bearing M38 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-72695",
+   "LAST_CNT_DT": "2026-07-12",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8273",
+   "PART_DESC": "Sensor connector N39 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-22346",
+   "LAST_CNT_DT": "2026-07-03",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8273",
+   "PART_DESC": "Sensor connector N39 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 3,
+   "LOT_NO": "LOT-56108",
+   "LAST_CNT_DT": "2026-08-06",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8280",
+   "PART_DESC": "Bushing O40 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-78212",
+   "LAST_CNT_DT": "2026-09-24",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8287",
+   "PART_DESC": "Pressure switch P41 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-45307",
+   "LAST_CNT_DT": "2026-07-17",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8287",
+   "PART_DESC": "Pressure switch P41 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-96424",
+   "LAST_CNT_DT": "2026-07-27",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8294",
+   "PART_DESC": "Gasket set Q42 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 7,
+   "LOT_NO": "LOT-98936",
+   "LAST_CNT_DT": "2026-09-15",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8294",
+   "PART_DESC": "Gasket set Q42 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-54730",
+   "LAST_CNT_DT": "2026-09-11",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8301",
+   "PART_DESC": "Seal R43 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-26605",
+   "LAST_CNT_DT": "2026-07-22",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8301",
+   "PART_DESC": "Seal R43 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-75364",
+   "LAST_CNT_DT": "2026-07-07",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8301",
+   "PART_DESC": "Seal R43 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 14,
+   "LOT_NO": "LOT-25604",
+   "LAST_CNT_DT": "2026-10-08",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8308",
+   "PART_DESC": "Pressure switch S44 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 6,
+   "LOT_NO": "LOT-62277",
+   "LAST_CNT_DT": "2026-08-24",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8308",
+   "PART_DESC": "Pressure switch S44 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 5,
+   "LOT_NO": "LOT-89946",
+   "LAST_CNT_DT": "2026-10-16",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8315",
+   "PART_DESC": "Sensor connector T45 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-47879",
+   "LAST_CNT_DT": "2026-09-19",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8322",
+   "PART_DESC": "Bearing U46 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 5,
+   "LOT_NO": "LOT-77383",
+   "LAST_CNT_DT": "2026-10-16",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8322",
+   "PART_DESC": "Bearing U46 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-44384",
+   "LAST_CNT_DT": "2026-08-25",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8322",
+   "PART_DESC": "Bearing U46 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 11,
+   "LOT_NO": "LOT-58931",
+   "LAST_CNT_DT": "2026-09-04",
+   "CRIT_CODE": "H"
+  },
+  {
+   "PART_NO": "P-8329",
+   "PART_DESC": "Sensor connector V47 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-75182",
+   "LAST_CNT_DT": "2026-07-22",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8329",
+   "PART_DESC": "Sensor connector V47 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 10,
+   "LOT_NO": "LOT-70514",
+   "LAST_CNT_DT": "2026-10-20",
+   "CRIT_CODE": "L"
+  },
+  {
+   "PART_NO": "P-8336",
+   "PART_DESC": "Filter element W48 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-22323",
+   "LAST_CNT_DT": "2026-07-23",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8336",
+   "PART_DESC": "Filter element W48 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 1,
+   "LOT_NO": "LOT-57058",
+   "LAST_CNT_DT": "2026-08-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8336",
+   "PART_DESC": "Filter element W48 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 5,
+   "LOT_NO": "LOT-83954",
+   "LAST_CNT_DT": "2026-10-03",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8343",
+   "PART_DESC": "Bushing X49 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-20411",
+   "LAST_CNT_DT": "2026-06-25",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8350",
+   "PART_DESC": "Bracket Y50 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 4,
+   "LOT_NO": "LOT-50266",
+   "LAST_CNT_DT": "2026-07-24",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8350",
+   "PART_DESC": "Bracket Y50 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 2,
+   "LOT_NO": "LOT-70125",
+   "LAST_CNT_DT": "2026-07-12",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8350",
+   "PART_DESC": "Bracket Y50 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 13,
+   "LOT_NO": "LOT-80590",
+   "LAST_CNT_DT": "2026-09-14",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8357",
+   "PART_DESC": "Filter element Z51 (fictional)",
+   "BASE_CODE": "EAST-DEPOT",
+   "QTY_OH": 8,
+   "LOT_NO": "LOT-14118",
+   "LAST_CNT_DT": "2026-09-11",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8357",
+   "PART_DESC": "Filter element Z51 (fictional)",
+   "BASE_CODE": "MAIN-HUB",
+   "QTY_OH": 9,
+   "LOT_NO": "LOT-98592",
+   "LAST_CNT_DT": "2026-07-21",
+   "CRIT_CODE": "M"
+  },
+  {
+   "PART_NO": "P-8357",
+   "PART_DESC": "Filter element Z51 (fictional)",
+   "BASE_CODE": "NORTH-FIELD",
+   "QTY_OH": 0,
+   "LOT_NO": "LOT-87826",
+   "LAST_CNT_DT": "2026-10-22",
+   "CRIT_CODE": "M"
+  }
+ ]
+}

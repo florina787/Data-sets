@@ -1,0 +1,15 @@
+# Optional. `python -m uvicorn` + `npm run dev` work without Docker.
+# Offline use: build once while connected, then `docker save` the images (see docs/DEPLOYMENT.md).
+services:
+  backend:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    environment: [DEMO_MODE=true, OFFLINE_MODE=true, "FF_CORS_ORIGINS=http://localhost:4173,http://127.0.0.1:4173"]
+    volumes: [ffdata:/srv/data]
+    ports: ["127.0.0.1:8000:8000"]
+    tmpfs: [/tmp]
+  frontend:
+    build: { context: ., dockerfile: frontend/Dockerfile }
+    depends_on: [backend]
+    ports: ["127.0.0.1:4173:4173"]
+volumes:
+  ffdata: {}

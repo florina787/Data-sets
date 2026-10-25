@@ -1,0 +1,51 @@
+name: Flying_Florina CI
+
+on:
+  pull_request:
+    paths: ["flying-florina/**", ".github/workflows/flying-florina-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["flying-florina/**", ".github/workflows/flying-florina-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flying-florina/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+      - run: .venv/bin/ruff check app tests ../mcp_servers ../scripts
+      # Deterministic, offline: synthetic data, no LLM, no API keys.
+      - run: .venv/bin/python -m pytest
+      - run: .venv/bin/python ../scripts/offline_check.py
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flying-florina/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: flying-florina/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: cd ../backend && python -m venv .venv && .venv/bin/pip install -r requirements.txt
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

@@ -1,0 +1,60 @@
+{
+ "machine": {
+  "python": "3.13.17",
+  "platform": "Linux-6.18.44-fc-v153-x86_64-with-glibc2.39",
+  "cpus": 4
+ },
+ "startup_incl_seed_s": 1.06,
+ "queries": [
+  {
+   "workflow": "maintenance_investigation",
+   "cold_ms": 287,
+   "warm_median_ms": 247
+  },
+  {
+   "workflow": "scenario_compare",
+   "cold_ms": 94,
+   "warm_median_ms": 107
+  },
+  {
+   "workflow": "downtime_analysis",
+   "cold_ms": 1029,
+   "warm_median_ms": 968
+  },
+  {
+   "workflow": "legacy_assessment",
+   "cold_ms": 181,
+   "warm_median_ms": 197
+  },
+  {
+   "workflow": "bridge_generation",
+   "cold_ms": 106,
+   "warm_median_ms": 115
+  },
+  {
+   "workflow": "governance_review",
+   "cold_ms": 83,
+   "warm_median_ms": 95
+  },
+  {
+   "workflow": "executive_pitch",
+   "cold_ms": 275,
+   "warm_median_ms": 163
+  },
+  {
+   "workflow": "document_freshness",
+   "cold_ms": 61,
+   "warm_median_ms": 59
+  },
+  {
+   "workflow": "recovery_options",
+   "cold_ms": 287,
+   "warm_median_ms": 276
+  },
+  {
+   "workflow": "data_export",
+   "cold_ms": 56,
+   "warm_median_ms": 58
+  }
+ ]
+}
