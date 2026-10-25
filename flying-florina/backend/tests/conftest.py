@@ -6,6 +6,7 @@ import pytest
 
 _TMP = Path(tempfile.mkdtemp(prefix="ff-test-"))
 os.environ["FF_DATA_DIR"] = str(_TMP)
+os.environ["FF_GENERATED_DIR"] = str(_TMP / "generated")
 os.environ.setdefault("DEMO_MODE", "true")
 os.environ.setdefault("OFFLINE_MODE", "true")
 os.environ["FF_SESSION_SECRET"] = "test-secret"  # noqa: S105 - test-only value

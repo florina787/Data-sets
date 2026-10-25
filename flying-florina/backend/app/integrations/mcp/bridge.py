@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 from app.core import db
-from app.core.config import GENERATED_DIR
+from app.core.config import get_settings
 from app.core.util import DEMO_TODAY, new_id, now_iso, sha256_text
 from app.services import data
 
@@ -546,7 +546,7 @@ def generate(actor_id: str, capability: str = "part_availability", source_id: st
         raise ValueError(f"Unsupported capability '{capability}'")
     cap = CAPABILITIES[capability]
     bundle_id = new_id("BRG")
-    root = bundle_dir or (GENERATED_DIR / bundle_id)
+    root = bundle_dir or (get_settings().generated_dir / bundle_id)
     version = "1.0.0"
     mapping_md = "| Legacy | Canonical | Type | Note |\n|---|---|---|---|\n" + "\n".join(
         f"| `{m['legacy']}` | `{m['canonical']}` | {m['type']} | {m['note']} |" for m in cap["mapping"])
@@ -624,7 +624,7 @@ def bundle_path(bundle_id: str) -> Path | None:
     if not r:
         return None
     p = Path(r["path"]).resolve()
-    if GENERATED_DIR.resolve() not in p.parents:
+    if get_settings().generated_dir.resolve() not in p.parents:
         return None
     return p
 

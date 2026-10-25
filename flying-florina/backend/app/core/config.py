@@ -73,6 +73,8 @@ class Settings:
     workflow_step_timeout_s: float = 20.0
     max_concurrent_workflows: int = 8
 
+    generated_dir: Path = field(default_factory=lambda: Path(os.environ.get("FF_GENERATED_DIR", str(GENERATED_DIR))))
+
     @property
     def db_path(self) -> Path:
         return self.data_dir / "flying_florina.db"
