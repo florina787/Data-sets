@@ -1,124 +1,278 @@
 <div align="center">
 
-<img src="frontend/public/brand/ff-mark.svg" width="96" alt="Flying_Florina mark" />
+<img src="docs/assets/banner.svg" width="100%" alt="Flying_Florina — From legacy systems to trusted industrial intelligence" />
 
-# Flying_Florina
+<br/>
 
-### From legacy systems to trusted industrial intelligence.
-**Ask. Analyze. Modernize. Govern. Act — with approval.**
+![Synthetic data](https://img.shields.io/badge/data-100%25%20synthetic-D7B46A?style=for-the-badge)
+![Offline](https://img.shields.io/badge/runtime-offline-0B1230?style=for-the-badge)
+![Paid APIs](https://img.shields.io/badge/paid%20APIs-%240-0F8B8D?style=for-the-badge)
+![Policy](https://img.shields.io/badge/policy-deny%20by%20default-5C35B7?style=for-the-badge)
 
-An aerospace & defense **Industrial AI Transformation Command Center** that runs fully offline:
-natural-language questions → deterministic routing → multi-agent workflows → cited evidence and live dashboards →
-**policy-gated, human-approved actions**.
+![pytest](https://img.shields.io/badge/pytest-102%20passed-0F8B8D)
+![playwright](https://img.shields.io/badge/playwright-13%20passed-0F8B8D)
+![vitest](https://img.shields.io/badge/vitest-9%20passed-0F8B8D)
+![generated adapter](https://img.shields.io/badge/generated%20adapter-14%2F14-0F8B8D)
+![security lab](https://img.shields.io/badge/security%20lab-12%2F12-5C35B7)
+![egress](https://img.shields.io/badge/offline%20egress%20attempts-0-0B1230)
+![license](https://img.shields.io/badge/license-GPL--3.0-A78BFA)
 
-![Synthetic data](https://img.shields.io/badge/data-100%25%20synthetic-D7B46A)
-![Offline](https://img.shields.io/badge/runtime-offline-0B1230)
-![Paid APIs](https://img.shields.io/badge/paid%20APIs-%240-0F8B8D)
-![Backend tests](https://img.shields.io/badge/pytest-102%20passed-0F8B8D)
-![E2E](https://img.shields.io/badge/playwright-13%20passed-0F8B8D)
-![Security lab](https://img.shields.io/badge/security%20lab-12%2F12-5C35B7)
-![License](https://img.shields.io/badge/license-GPL--3.0-A78BFA)
+### Ask. Analyze. Modernize. Govern. Act — with approval.
 
-> **Independent concept demo | Not affiliated with or endorsed by IFS.**
-> All data is synthetic and fictional. There is no live IFS (or any other) connection. Nothing here is a
-> certification, an airworthiness determination, or a promise of savings.
+An aerospace & defense **Industrial AI Transformation Command Center**. You ask a question in plain language;
+Flying_Florina routes it to a workflow, runs local agents, retrieves cited evidence, renders live dashboards,
+and **gates every consequential action behind deterministic policy and human approval**. All of it runs offline, on one machine.
 
-<img src="docs/screenshots/01_mission_control.png" width="900" alt="Mission Control: centered chat with sample questions" />
+<sub><b>Independent concept demo | Not affiliated with or endorsed by IFS.</b> All data is synthetic and fictional. No live IFS connection,
+no certification, no airworthiness determinations, no promised savings.</sub>
+
+<br/><br/>
+
+<img src="docs/screenshots/01_mission_control.png" width="49%" alt="Mission Control, light theme" />
+<img src="docs/screenshots/highlights/dark_mission_control.png" width="49%" alt="Mission Control, dark theme" />
+
+<sub>Mission Control in light and dark themes: one prompt, ten working sample questions, live session history.</sub>
 
 </div>
 
 ---
 
-## Contents
+<div align="center">
 
-1. [At a glance](#at-a-glance)
-2. [System architecture](#system-architecture)
-3. [Trust chain and security boundaries](#trust-chain-and-security-boundaries)
-4. [Agent workflows](#agent-workflows)
-5. [Governance flows](#governance-flows)
-6. [Legacy X-Ray and Bridge pipeline](#legacy-x-ray-and-bridge-pipeline)
-7. [Data model](#data-model)
-8. [Screenshot tour](#screenshot-tour)
-9. [Quick start](#quick-start)
-10. [Interview demo](#interview-demo)
-11. [Tests and quality gates](#tests-and-quality-gates)
-12. [Repository layout](#repository-layout)
-13. [Honest limits](#honest-limits)
-14. [Documentation index](#documentation-index)
+**[Architecture](#-architecture)** ·
+**[See it in action](#-see-it-in-action)** ·
+**[Every screen](#-every-screen)** ·
+**[Diagrams](#-how-it-works)** ·
+**[Quick start](#-quick-start)** ·
+**[Demo script](#-interview-demo)** ·
+**[Tests](#-tests-and-quality-gates)** ·
+**[Limits](#-honest-limits)** ·
+**[Docs](#-documentation)**
+
+</div>
 
 ---
 
-## At a glance
+## ✨ Highlights
 
-| Area | What you can do | Proof |
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### 🧭 Ask anything
+Ten sample questions, all functional. Each answer is a **workspace**: answer, KPIs, charts, tables, citations, warnings, assumptions, decision trace, approvals and exports. Follow-ups keep building the conversation.
+
+</td>
+<td width="33%" valign="top">
+
+### 🤖 Real agents, real log
+Thirteen typed agents run as a DAG with parallel waves, retries, timeouts, cancellation and checkpoints. The timeline and agent graph show **persisted events with real timestamps**; nothing is animated or invented.
+
+</td>
+<td width="33%" valign="top">
+
+### 🛡️ Trust you can test
+Thirteen deterministic policies, deny-by-default. The export of restricted records is **denied before the tool runs**: 0 executions. Separation of duties, a replay-proof write path, a kill switch, a hash-chained audit log, and a 12-scenario Security Lab.
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### 🔬 Legacy X-Ray
+Import SQL DDL, OpenAPI, CSV, OData XML, event schemas and ZIP source bundles. They are **parsed, never executed**. You get a dependency map, hotspots, findings, explicit unknowns, eight evidence-backed patterns and a 30/60/90 roadmap.
+
+</td>
+<td valign="top">
+
+### 🔌 Bridges that run
+Generate a read-only FastAPI adapter, an MCP server (official SDK) and their tests from legacy metadata. Run the tests in a sandbox (**14/14 pass**) and download the bundle.
+
+</td>
+<td valign="top">
+
+### 📈 Value with receipts
+Deterministic scenarios, seeded Monte Carlo, sensitivity, and an editable ROI range. Every number comes with its formula and assumptions. Export to PDF, HTML, Markdown, CSV and JSON.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏛 Architecture
+
+<div align="center">
+<img src="docs/assets/architecture.svg" width="100%" alt="Flying_Florina layered architecture" />
+</div>
+
+| Layer | What lives there | Key technology |
 |---|---|---|
-| 🧭 **Mission Control** | Ask any of the 10 sample questions (or your own), watch the real execution log, keep the conversation going, replay sessions | `e2e/core.spec.ts` |
-| ✈️ **AC-204 investigation** | Telemetry stats, access-filtered retrieval, maintenance history, hypotheses, verified parts, qualified technicians, compliance checklist, dry-run draft, approval gate | `tests/test_workflows.py` |
-| 🔬 **Legacy X-Ray** | Parse SQL DDL, OpenAPI, CSV feeds, OData XML, event schemas and ZIP bundles **without executing anything**; dependency map, findings, unknowns, 8 recommendations, 30/60/90 roadmap | `tests/test_api.py` |
-| 🔌 **API & MCP Bridge Studio** | Generate a **runnable** read-only FastAPI adapter + MCP server (official SDK) + tests, run them in a sandbox (14/14 pass), download the bundle | `generated_adapters/example_part_availability` |
-| 🛡️ **Defense Trust Center** | 13 deterministic policies, decision traces, kill switch, approval queue, hash-chained audit log, 12-scenario Security Test Lab | `tests/test_policy.py` |
-| 🚫 **Exfiltration demo** | "Export restricted maintenance records to my personal email" → **DENY (POL-004) before the tool runs**, 0 executions | `test_export_request_denied_before_tool_and_zero_invocations` |
-| 📈 **Simulation & ROI** | Deterministic delay scenarios, seeded Monte Carlo, sensitivity, editable ROI ranges | `tests/test_approvals_sim.py` |
-| 📄 **Reports** | PDF, HTML, Markdown, CSV, JSON; workspace exports; audit packet; SHA-256 recorded | `test_reports_generate_and_download` |
-| 📴 **Offline** | No internet, no LLM, no accounts; a process-level egress guard blocks non-loopback traffic | `scripts/offline_check.py` |
+| **1 · Experience** | Mission Control chat, agent graph, 15 domain pages, light/dark, responsive | React 18 · TypeScript · Vite · Tailwind · ECharts · React Flow · TanStack Query |
+| **2 · API** | Identity, validation, response envelope, typed errors, security headers, 61 OpenAPI paths | FastAPI · Pydantic v2 |
+| **3 · Orchestration** | Deterministic intent router, DAG workflow engine, 13 specialist agents | Explicit typed state machine (LangGraph-compatible semantics) |
+| **4 · Trust** | Tool gateway, policy engine, approvals, audit chain, kill switch, injection guard | Policy-as-code in Python, SHA-256 hash chain |
+| **5 · Capabilities** | Access-aware retrieval, simulation & ROI, Legacy X-Ray, bridge generator, reports | SQLite FTS5/BM25 + TF-IDF · ReportLab |
+| **6 · Data & integration** | Synthetic SQLite, fixtures, demo MCP server, generated adapters; IFS/ERP **not connected** | SQLite · official MCP Python SDK (stdio) |
 
 ---
 
-## System architecture
+## 🎬 See it in action
 
-```mermaid
-flowchart LR
-  subgraph Browser["Browser (React + TypeScript + Vite)"]
-    UI["Mission Control<br/>+ 15 domain pages"]
-  end
+### Act 1: Operational AI on the AC-204 vibration anomaly
 
-  subgraph API["FastAPI backend (local)"]
-    MW["Middleware<br/>request id · security headers · CORS"]
-    AUTH["Demo identity<br/>HMAC token · audience · expiry"]
-    IR["Intake & Intent Agent<br/>deterministic router"]
-    WE["Workflow engine<br/>DAG · parallel waves · retries<br/>timeouts · cancel · checkpoints"]
-    AG["Specialist agents"]
-    GW["Tool gateway"]
-    PE{{"Policy engine<br/>deny-by-default"}}
-    RET["Retrieval<br/>label filter → FTS5/BM25 → TF-IDF"]
-    APR["Approvals<br/>SoD · expiry · idempotency"]
-    LX["Legacy X-Ray parsers"]
-    BR["Bridge generator"]
-    SIM["Simulation & ROI"]
-    REP["Reports<br/>PDF · HTML · MD · CSV · JSON"]
-  end
+> *"Investigate AC-204 vibration anomaly, check maintenance evidence, parts and available technicians, and draft recovery options."*
 
-  subgraph Local["Local resources"]
-    DB[("SQLite<br/>synthetic data · seed 20261024")]
-    AUD[("Hash-chained<br/>audit log")]
-    MCPS["Demo MCP server<br/>(stdio)"]
-    BUNDLE["Generated adapter<br/>+ MCP tool + tests"]
-  end
+<div align="center">
+<img src="docs/screenshots/highlights/agent_graph_timeline.png" width="90%" alt="Agent graph and real execution timeline" />
+<br/><sub><b>Agent graph + execution log.</b> Telemetry, retrieval and history run in parallel; every row is a persisted event with its own timestamp, duration and tools.</sub>
+</div>
 
-  UI -->|"JSON envelope"| MW --> AUTH --> IR --> WE --> AG
-  AG --> GW --> PE
-  PE -->|ALLOW| DB
-  PE -->|DENY| AUD
-  AG --> RET --> DB
-  WE --> SIM
-  WE --> REP
-  API --> APR --> PE
-  API --> LX
-  API --> BR --> BUNDLE
-  API -->|"stdio client"| MCPS --> PE
-  PE --> AUD
-```
+<br/>
 
-| Layer | Technology |
-|---|---|
-| Frontend | React 18, TypeScript (strict), Vite 6, Tailwind 4, TanStack Query, Zustand, Apache ECharts, React Flow, Lucide |
-| Backend | Python 3.11+, FastAPI, Pydantic v2, SQLite (+ FTS5), ReportLab, official MCP Python SDK |
-| Agents | Explicit typed state machine (LangGraph-compatible semantics); no hosted LLM |
-| Tests | pytest, ruff (incl. security rules), Vitest, Testing Library, Playwright |
+<img src="docs/screenshots/highlights/ac204_answer.png" width="49%" alt="Investigation summary" />
+<img src="docs/screenshots/highlights/ac204_vibration_chart.png" width="49%" alt="Vibration chart vs fleet mean" />
+
+<sub><b>Left:</b> the summary: 7-day vibration mean vs its own baseline, hypotheses (not a diagnosis), the fastest compliant recovery, and the pending approval. <b>Right:</b> AC-204 vs the fleet mean, with the fictional demo threshold and a data-quality gap visible.</sub>
+
+<img src="docs/screenshots/highlights/ac204_hypotheses.png" width="49%" alt="Diagnostic hypotheses" />
+<img src="docs/screenshots/highlights/ac204_parts_reconciled.png" width="49%" alt="Parts reconciled across systems" />
+
+<sub><b>Left:</b> hypotheses with supporting and contradicting evidence and the authoritative reference each one needs. <b>Right:</b> inventory reconciled across systems. MAIN-HUB is rejected because ERP says 2 and the physical count says 0.</sub>
+
+<div align="center">
+<img src="docs/screenshots/highlights/ac204_recovery_options.png" width="90%" alt="Recovery options ranked" />
+<br/><sub><b>Recovery options.</b> Only verified stock and authority-backed alternates qualify; the gray-market substitute is rejected for lack of evidence.</sub>
+</div>
+
+<br/>
+
+<div align="center">
+<img src="docs/screenshots/highlights/ac204_citations.png" width="90%" alt="Citations with revision and provenance" />
+<br/><sub><b>Citations.</b> Each one carries its revision, effective date, classification and provenance hash. The supplier bulletin's hidden instruction is <b>quarantined</b>, and the export it asked for is denied (POL-011).</sub>
+</div>
+
+<br/>
+
+<img src="docs/screenshots/highlights/ac204_decision_trace.png" width="49%" alt="Decision trace" />
+<img src="docs/screenshots/highlights/ac204_approval_gate.png" width="49%" alt="Human approval gate" />
+
+<sub><b>Left:</b> every policy decision for the run, with expandable ordered checks. <b>Right:</b> the human approval gate. Nothing is written until a different authorized person approves.</sub>
+
+### Act 2: What-if analysis and root cause
+
+<img src="docs/screenshots/highlights/scenario_chart.png" width="49%" alt="Delay scenario comparison" />
+<img src="docs/screenshots/highlights/downtime_analysis.png" width="49%" alt="Downtime analysis" />
+
+<sub><b>Left:</b> 24/48/72 h part delays. Downtime jumps non-linearly because of hangar-slot availability; the P90 comes from a seeded Monte Carlo over the supplier's history. <b>Right:</b> "Why did downtime rise in October?" answered with a normalized trend, cause decomposition and bootstrap confidence intervals.</sub>
+
+### Act 3: Defense trust
+
+<div align="center">
+<img src="docs/screenshots/highlights/export_denied.png" width="90%" alt="Export denied before execution" />
+<br/><sub><b>"Export restricted maintenance records to my personal email."</b> DENY by POL-004 before execution. The tool ran <b>0</b> times; identity, classification and destination are all on record.</sub>
+</div>
+
+<br/>
+
+<div align="center">
+<img src="docs/screenshots/highlights/security_lab.png" width="90%" alt="Security Test Lab 12 of 12" />
+<br/><sub><b>Security Test Lab.</b> Twelve scenarios run against the live controls: public read, restricted read, external export, expired approval, stale document, privilege escalation, prompt injection, untrusted tool, missing token, wrong audience, replayed write, tool timeout.</sub>
+</div>
+
+<br/>
+
+<img src="docs/screenshots/highlights/audit_ledger.png" width="49%" alt="Hash-chained audit ledger" />
+<img src="docs/screenshots/highlights/agents_failure_retry.png" width="49%" alt="Failure injection and retry" />
+
+<sub><b>Left:</b> the evidence ledger, a hash-chained audit log verified in one click. <b>Right:</b> failure injection in Agent Mission Control. The parts step fails, retries with backoff, and the workflow still completes.</sub>
+
+### Act 4: Legacy modernization, from schema to running bridge
+
+<div align="center">
+<img src="docs/screenshots/highlights/legacy_dependency_map.png" width="90%" alt="Legacy dependency map" />
+<br/><sub><b>Dependency map</b> of a fictional 20-year-old MRO landscape: 12 systems, APIs, batch files and dashed <i>unknowns</i>. The unknowns are open questions; nothing is assumed.</sub>
+</div>
+
+<br/>
+
+<img src="docs/screenshots/highlights/legacy_findings.png" width="49%" alt="Legacy findings" />
+<img src="docs/screenshots/highlights/legacy_recommendations.png" width="49%" alt="Modernization recommendations" />
+
+<sub><b>Left:</b> findings: an arbitrary-SQL endpoint, an SSRF-prone webhook, missing primary keys, stale counts, static API keys. <b>Right:</b> evidence-backed patterns (strangler fig, anti-corruption layer, read-only view, batch bridge, CDC, RAG, documented ERP APIs, MCP facade) with rollback, test plan and confidence.</sub>
+
+<img src="docs/screenshots/highlights/bridge_tests_passed.png" width="49%" alt="Generated tests passing" />
+<img src="docs/screenshots/highlights/mcp_discovery.png" width="49%" alt="MCP discovery" />
+
+<sub><b>Left:</b> the generated adapter's contract, security and MCP stdio tests, run in a sandbox: 14 passed, 0 failed. <b>Right:</b> the demo MCP server, with tools discovered, schema hashes checked against pins, and each call authorized by the policy engine.</sub>
+
+### Act 5: Executive value
+
+<img src="docs/screenshots/highlights/executive_roi.png" width="49%" alt="ROI benefit components" />
+<img src="docs/screenshots/highlights/executive_roadmap.png" width="49%" alt="90-day roadmap" />
+
+<sub>An assumption-driven ROI range with editable inputs, next to the 30/60/90-day pilot roadmap with owners, dependencies and exit criteria.</sub>
+
+### Anywhere: dark mode and mobile
+
+<img src="docs/screenshots/highlights/dark_fleet.png" width="58%" alt="Fleet dashboard, dark theme" />
+<img src="docs/screenshots/highlights/mobile_home.png" width="19%" alt="Mobile home" />
+<img src="docs/screenshots/highlights/mobile_parts.png" width="19%" alt="Mobile parts" />
 
 ---
 
-## Trust chain and security boundaries
+## 🖥 Every screen
+
+Each page below was captured from the running app with synthetic data.
+
+<table>
+<tr>
+<td width="50%"><b>Fleet & Asset Health</b><br/><img src="docs/screenshots/04_fleet.png" alt="Fleet & Asset Health" /></td>
+<td width="50%"><b>Fleet dashboard (full)</b><br/><img src="docs/screenshots/highlights/fleet_dashboard.png" alt="Fleet dashboard" /></td>
+</tr>
+<tr>
+<td><b>AOG Recovery</b><br/><img src="docs/screenshots/05_aog.png" alt="AOG Recovery" /></td>
+<td><b>Maintenance & MRO</b><br/><img src="docs/screenshots/06_maintenance.png" alt="Maintenance & MRO" /></td>
+</tr>
+<tr>
+<td><b>Parts & Supply Chain</b><br/><img src="docs/screenshots/07_parts.png" alt="Parts & Supply Chain" /></td>
+<td><b>Engineering Quality</b><br/><img src="docs/screenshots/08_quality.png" alt="Engineering Quality" /></td>
+</tr>
+<tr>
+<td><b>Legacy X-Ray</b><br/><img src="docs/screenshots/09_legacy.png" alt="Legacy X-Ray" /></td>
+<td><b>API & MCP Bridge Studio</b><br/><img src="docs/screenshots/10_bridge.png" alt="Bridge Studio" /></td>
+</tr>
+<tr>
+<td><b>Agent Mission Control</b><br/><img src="docs/screenshots/highlights/agents_mission_control.png" alt="Agent Mission Control" /></td>
+<td><b>Agent Mission Control (catalog)</b><br/><img src="docs/screenshots/11_agents.png" alt="Agents catalog" /></td>
+</tr>
+<tr>
+<td><b>Defense Trust Center</b><br/><img src="docs/screenshots/12_trust.png" alt="Defense Trust Center" /></td>
+<td><b>Security Test Lab</b><br/><img src="docs/screenshots/12_trust_security_lab.png" alt="Security Test Lab" /></td>
+</tr>
+<tr>
+<td><b>Compliance Evidence</b><br/><img src="docs/screenshots/13_compliance.png" alt="Compliance Evidence" /></td>
+<td><b>Scenario Simulator</b><br/><img src="docs/screenshots/14_simulator.png" alt="Scenario Simulator" /></td>
+</tr>
+<tr>
+<td><b>Reports & Exports</b><br/><img src="docs/screenshots/16_reports.png" alt="Reports & Exports" /></td>
+<td><b>Integrations & Settings</b><br/><img src="docs/screenshots/17_settings.png" alt="Integrations & Settings" /></td>
+</tr>
+<tr>
+<td valign="top"><b>Export request: denied</b><br/><img src="docs/screenshots/03_export_denied.png" alt="Export denied" /></td>
+<td valign="top"><b>Legacy X-Ray: generated bridge and tests (full page)</b><br/><img src="docs/screenshots/18_legacy_bridge_tests.png" alt="Bridge tests full page" /></td>
+</tr>
+<tr>
+<td valign="top"><b>AC-204 investigation: the complete workspace</b><br/><img src="docs/screenshots/02_ac204_investigation.png" alt="Full AC-204 workspace" /></td>
+<td valign="top"><b>Executive Value Studio: the complete 90-day pitch</b><br/><img src="docs/screenshots/15_executive.png" alt="Executive Value Studio full page" /></td>
+</tr>
+</table>
+
+---
+
+## 🧠 How it works
+
+### Trust chain
 
 ```mermaid
 flowchart LR
@@ -133,7 +287,7 @@ flowchart LR
   style X fill:#C53030,color:#fff
 ```
 
-Policy evaluation order (first failure decides; every check is recorded):
+### Policy evaluation order (the first failure decides; every check is recorded)
 
 ```mermaid
 flowchart TB
@@ -166,20 +320,7 @@ flowchart TB
   style ALLOW fill:#0F8B8D,color:#fff
 ```
 
-| Boundary | Control |
-|---|---|
-| Browser → API | Signed token in the `Authorization` header (no cookies, so no CSRF), strict CORS, security headers, validation, upload limits |
-| Agent → tool | Agent rights = its own grants ∩ the requesting human's; schema validation, rate limit, circuit breaker, timeout, redacted logs |
-| Retrieved text → agent | Classification filter **in SQL before ranking**; instruction-like text quarantined; actions it requests are denied (POL-011) |
-| Uploads | Extension allowlist, size limit, binary rejection, ZIP traversal/symlink/bomb checks, XML DTD rejection, parse-only |
-| Generated code | Vetted templates, static checks, tests only on explicit request in a subprocess with a minimal environment and a timeout |
-| Process → network | `OFFLINE_MODE` egress guard blocks non-loopback sockets and DNS |
-
----
-
-## Agent workflows
-
-### Graph 1: maintenance investigation (AC-204)
+### Graph 1: maintenance investigation
 
 ```mermaid
 flowchart LR
@@ -214,27 +355,6 @@ flowchart LR
     b1 -->|ALLOW| b5[permitted tool only] --> b3
   end
 ```
-
-| Agent | Responsibility | Tools (pinned) |
-|---|---|---|
-| Intake & Intent | Deterministic routing, entity extraction, clarification | — |
-| Supervisor | DAG waves, retries, cancellation, checkpoints | — |
-| Asset Telemetry | Baselines, z-scores, outliers, data-quality gaps | `telemetry.get_series` |
-| Knowledge Retrieval | Access-filtered hybrid search, injection quarantine | `docs.search` |
-| Diagnostic Evidence | Hypotheses with supporting/contradicting evidence | `maintenance.get_history` |
-| Parts | Reconciled inventory, authority-backed alternates | `parts.check_availability` |
-| Maintenance Planner | Unexpired qualifications, slots, dry-run drafts | `roster.find_qualified`, `hangar.find_slots`, `workorder.create_draft` |
-| Compliance | Evidence sufficiency (never certification) | `docs.search` |
-| Legacy Discovery / Integration Architect | Metadata parsing, options, adapter generation | — |
-| Scenario Simulator | Deterministic scenarios, seeded Monte Carlo, ROI | — |
-| Security & Governance | Explains decisions; never overrides them | — |
-| Reporting | Workspace blocks, citations, exports | — |
-
-The agent graph and timeline in the UI are drawn from persisted execution events with real timestamps; nothing is animated or invented.
-
----
-
-## Governance flows
 
 ### Exfiltration attempt: denied before execution
 
@@ -288,11 +408,9 @@ flowchart LR
   style OK fill:#0F8B8D,color:#fff
 ```
 
-Tamper-evident, not tamper-proof: a host administrator could rewrite the file and recompute the chain.
+<sub>Tamper-evident, not tamper-proof: a host administrator could rewrite the file and recompute the chain.</sub>
 
----
-
-## Legacy X-Ray and Bridge pipeline
+### Legacy X-Ray → Bridge pipeline
 
 ```mermaid
 flowchart LR
@@ -319,8 +437,6 @@ flowchart LR
   style RUN fill:#0F8B8D,color:#fff
 ```
 
-Canonical mapping used by the generated `get_part_availability(part_number)` adapter:
-
 | Legacy column (`V_PART_AVAILABILITY`) | Canonical field | Rule |
 |---|---|---|
 | `PART_NO` | `part_number` | validated `^P-[0-9A-Z]{3,8}$` |
@@ -330,9 +446,7 @@ Canonical mapping used by the generated `get_part_availability(part_number)` ada
 | `LOT_NO` | `lot` | `UNKNOWN` ⇒ not traceable |
 | `LAST_CNT_DT` | `last_counted` | critical part counted > 30 days ago ⇒ unverified |
 
----
-
-## Data model
+### Data model
 
 ```mermaid
 erDiagram
@@ -359,81 +473,30 @@ erDiagram
 | Parts / inventory records / supplier deliveries | 60 / ~130 / 720 |
 | Technicians / hangar slots | 40 / 60 |
 | Technical documents (fictional, versioned, classified) | 28 |
-| Enterprise applications / incidents | 12 / 8 |
+| Enterprise applications / seeded incidents | 12 / 8 |
 
-Seeded incidents include the AC-204 vibration anomaly, a supplier lead-time slip, an ERP-vs-CSV inventory mismatch, a superseded revision, a missing approval, an unauthorized export, a duplicate work order, and an integration timeout.
+### The agent roster
 
----
-
-## Screenshot tour
-
-All screenshots come from the running app on the build machine, using synthetic data.
-
-### 1 · Mission Control and the operational AI workflow
-
-| Ask Flying_Florina | Export request denied (POL-004, 0 tool executions) |
-|---|---|
-| <img src="docs/screenshots/01_mission_control.png" alt="Mission Control" /> | <img src="docs/screenshots/03_export_denied.png" alt="Export denied" /> |
-
-<details>
-<summary><b>AC-204 investigation, full workspace</b> (timeline, vibration chart, hypotheses, parts reconciliation, recovery options, technicians, compliance checklist, citations, decision trace, approval gate). Click to expand.</summary>
-
-<img src="docs/screenshots/02_ac204_investigation.png" alt="AC-204 investigation workspace" />
-</details>
-
-### 2 · Operations
-
-| Fleet & Asset Health | AOG Recovery |
-|---|---|
-| <img src="docs/screenshots/04_fleet.png" alt="Fleet" /> | <img src="docs/screenshots/05_aog.png" alt="AOG" /> |
-
-| Maintenance & MRO | Parts & Supply Chain |
-|---|---|
-| <img src="docs/screenshots/06_maintenance.png" alt="Maintenance" /> | <img src="docs/screenshots/07_parts.png" alt="Parts" /> |
-
-| Engineering Quality | Scenario Simulator |
-|---|---|
-| <img src="docs/screenshots/08_quality.png" alt="Quality" /> | <img src="docs/screenshots/14_simulator.png" alt="Simulator" /> |
-
-### 3 · Modernization
-
-| Legacy X-Ray: dependency map | API & MCP Bridge Studio |
-|---|---|
-| <img src="docs/screenshots/09_legacy.png" alt="Legacy X-Ray" /> | <img src="docs/screenshots/10_bridge.png" alt="Bridge Studio" /> |
-
-<details>
-<summary><b>Generated adapter preview and sandboxed test results</b>. Click to expand.</summary>
-
-<img src="docs/screenshots/18_legacy_bridge_tests.png" alt="Generated adapter tests passing" />
-</details>
-
-### 4 · Trust and governance
-
-| Defense Trust Center | Security Test Lab: 12/12 |
-|---|---|
-| <img src="docs/screenshots/12_trust.png" alt="Trust Center" /> | <img src="docs/screenshots/12_trust_security_lab.png" alt="Security Test Lab" /> |
-
-| Agent Mission Control | Compliance Evidence |
-|---|---|
-| <img src="docs/screenshots/11_agents.png" alt="Agents" /> | <img src="docs/screenshots/13_compliance.png" alt="Compliance" /> |
-
-### 5 · Value, reports and settings
-
-<details>
-<summary><b>Executive Value Studio: 90-day pitch with roadmap, risks and editable ROI</b>. Click to expand.</summary>
-
-<img src="docs/screenshots/15_executive.png" alt="Executive Value Studio" />
-</details>
-
-| Reports & Exports | Integrations & Settings |
-|---|---|
-| <img src="docs/screenshots/16_reports.png" alt="Reports" /> | <img src="docs/screenshots/17_settings.png" alt="Settings" /> |
+| Agent | Responsibility | Tools (pinned) |
+|---|---|---|
+| Intake & Intent | Deterministic routing, entity extraction, clarification | — |
+| Supervisor | DAG waves, retries, cancellation, checkpoints | — |
+| Asset Telemetry | Baselines, z-scores, outliers, data-quality gaps | `telemetry.get_series` |
+| Knowledge Retrieval | Access-filtered hybrid search, injection quarantine | `docs.search` |
+| Diagnostic Evidence | Hypotheses with supporting/contradicting evidence | `maintenance.get_history` |
+| Parts | Reconciled inventory, authority-backed alternates | `parts.check_availability` |
+| Maintenance Planner | Unexpired qualifications, slots, dry-run drafts | `roster.find_qualified` · `hangar.find_slots` · `workorder.create_draft` |
+| Compliance | Evidence sufficiency (never certification) | `docs.search` |
+| Legacy Discovery · Integration Architect | Metadata parsing, options, adapter generation | — |
+| Scenario Simulator | Deterministic scenarios, seeded Monte Carlo, ROI | — |
+| Security & Governance | Explains decisions; never overrides them | — |
+| Reporting | Workspace blocks, citations, exports | — |
 
 ---
 
-## Quick start
+## 🚀 Quick start
 
-Requires Python 3.11+ and Node 20+. Setup needs network **once** to fetch packages; after that everything runs offline.
+Requires **Python 3.11+** and **Node 20+**. Setup needs network once; after that everything runs offline.
 
 ```mermaid
 flowchart LR
@@ -442,32 +505,40 @@ flowchart LR
   C --> D["make test · make test-e2e · make offline"]
 ```
 
-**macOS / Linux**
+<table>
+<tr><th>macOS / Linux</th><th>Windows PowerShell</th></tr>
+<tr>
+<td>
+
 ```bash
 cd flying-florina
 sh scripts/setup.sh
-make demo            # backend :8000 + UI :5173
-```
-Without Make:
-```bash
-cd flying-florina/backend  && .venv/bin/uvicorn app.main:app --reload --port 8000
-cd flying-florina/frontend && npm run dev
+make demo
+# open http://127.0.0.1:5173
 ```
 
-**Windows PowerShell**
+</td>
+<td>
+
 ```powershell
 cd flying-florina
 powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
-cd backend;  .\.venv\Scripts\uvicorn app.main:app --reload --port 8000
-# second terminal
+cd backend; .\.venv\Scripts\uvicorn app.main:app --port 8000
+# 2nd terminal
 cd frontend; npm run dev
 ```
 
-The UI signs you in as a synthetic persona automatically. You can switch personas in the top bar: Executive, Maintenance Planner, Technician, Reliability Engineer, Enterprise Architect, Security Officer, Auditor, Forward Deployed Engineer, Guest, and an external supplier. The backend enforces permissions; the UI only adapts.
+</td>
+</tr>
+</table>
+
+Without Make: `cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000`, then `cd frontend && npm run dev`.
+
+The UI signs you in as a synthetic persona. Switch personas in the top bar: Executive, Maintenance Planner, Technician, Reliability Engineer, Enterprise Architect, Security Officer, Auditor, Forward Deployed Engineer, Guest, and an external supplier. **The backend enforces rights; the UI only adapts.**
 
 ---
 
-## Interview demo
+## 🎤 Interview demo
 
 ```mermaid
 timeline
@@ -478,11 +549,11 @@ timeline
   Act 4 (1 min) : 90-day pitch : roadmap, risks, ROI ranges : download PDF brief
 ```
 
-Full 3-minute and 8-minute scripts are in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).
+Full 3-minute and 8-minute scripts, plus the questions to expect, are in **[docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)**.
 
 ---
 
-## Tests and quality gates
+## ✅ Tests and quality gates
 
 | Command | What it covers | Result |
 |---|---|---|
@@ -491,13 +562,13 @@ Full 3-minute and 8-minute scripts are in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRI
 | `make test-e2e` (Playwright) | fresh start, personas, all 10 prompts, charts, agent graph, legacy upload, adapter tests, denial, approvals, PDF download, guest denials, offline interception, mobile | **13 passed** |
 | `make offline` | every workflow + reports with the egress guard on, no LLM | **0 egress attempts** |
 | Generated bundle `pytest` | contract 6 · security 6 · MCP stdio 2 | **14 passed** |
-| `make lint` / `npm run typecheck` / `npm run build` | ruff (incl. bandit rules), strict TS, production build | clean |
+| `make lint` · `npm run typecheck` · `npm run build` | ruff (incl. bandit rules) · strict TypeScript · production build | **clean** |
 
-Measured latency on a 4-CPU container, rules only, no LLM: **58 ms** (export denial) to **~970 ms** (downtime analysis with bootstrap CIs); the AC-204 investigation takes about **250 ms**. See [`docs/latency_measured.json`](docs/latency_measured.json) and [`docs/TEST_REPORT.md`](docs/TEST_REPORT.md).
+Measured on a 4-CPU container with rules only, no LLM: **58 ms** (export denial) to **~970 ms** (downtime analysis with bootstrap CIs); the AC-204 investigation takes about **250 ms**. See [latency_measured.json](docs/latency_measured.json) and [TEST_REPORT.md](docs/TEST_REPORT.md).
 
 ---
 
-## Repository layout
+## 🗂 Repository layout
 
 ```
 flying-florina/
@@ -514,47 +585,45 @@ flying-florina/
 ├── backend/tests/       pytest suite
 ├── frontend/src/        components/ · features/<15 pages> · lib/
 ├── frontend/e2e/        Playwright suite
-├── mcp_servers/demo_maintenance/          local stdio MCP server
+├── mcp_servers/demo_maintenance/                   local stdio MCP server
 ├── generated_adapters/example_part_availability/   runnable generated bundle
 ├── fixtures/            documents · legacy schemas · OpenAPI · OData · CSV · policies · tool pins
-├── docs/                architecture · threat model · guides · scripts · screenshots
+├── docs/                architecture · threat model · guides · scripts · assets · screenshots
 └── scripts/             setup · seed · smoke · offline check · latency · pin tools
 ```
 
 ---
 
-## Honest limits
+## ⚖️ Honest limits
 
 | ✅ Real | 🟡 Simulated / demo-grade | ⛔ Not built |
 |---|---|---|
 | Policy engine, approvals, audit chain, retrieval filtering, workflows, parsers, generated adapter + MCP, reports, offline guard | Persona login (no IdP/MFA), approved writes (demo DB only), ERP data (fictional "IFS-like" fixtures), prompt-injection patterns, process-level egress guard, subprocess test sandbox | Live IFS connection, PostgreSQL/Alembic, OPA, embeddings, local-LLM rephrasing (detection only), 3D views, connector gallery |
 
-**Cost:** no paid APIs, hosted inference, cloud services or accounts are used, so incremental software spend is **$0**. You provide the hardware and electricity. Claude Code, which was used to build this, may need its own subscription.
+**Cost:** no paid APIs, hosted inference, cloud services or accounts, so incremental software spend is **$0**. You provide the hardware and electricity. Claude Code, which was used to build this, may need its own subscription.
 
-**Brand assets:** the authorized portrait and logo files named in the spec were not available, so the UI uses a neutral placeholder mark rather than an invented likeness. To use your own assets, see [`frontend/public/brand/README.md`](frontend/public/brand/README.md).
+<img src="docs/assets/logo.png" width="64" align="right" alt="Flying_Florina logo" />
 
-Read [`docs/SECURITY_LIMITATIONS.md`](docs/SECURITY_LIMITATIONS.md) before presenting to a security team, and [`docs/GAP_MATRIX.md`](docs/GAP_MATRIX.md) for the full status list.
+**Brand:** the round mark shown here is an original placeholder. The authorized portrait and logo files named in the spec weren't available, so no likeness was invented. To use your own assets locally, see [frontend/public/brand/README.md](frontend/public/brand/README.md).
+
+Read [SECURITY_LIMITATIONS.md](docs/SECURITY_LIMITATIONS.md) before presenting to a security team, and [GAP_MATRIX.md](docs/GAP_MATRIX.md) for the full status list.
 
 ---
 
-## Documentation index
+## 📚 Documentation
 
-| Topic | Document |
-|---|---|
-| Architecture and trust boundaries | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
-| Plan, environment inventory, task board | [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) |
-| What is real / simulated / missing | [docs/GAP_MATRIX.md](docs/GAP_MATRIX.md) |
-| Threat model | [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) |
-| Security limitations | [docs/SECURITY_LIMITATIONS.md](docs/SECURITY_LIMITATIONS.md) |
-| Compliance mapping (informational) | [docs/COMPLIANCE_MAPPING.md](docs/COMPLIANCE_MAPPING.md) |
-| API and MCP guide | [docs/API_MCP_GUIDE.md](docs/API_MCP_GUIDE.md) |
-| ROI method | [docs/ROI_METHOD.md](docs/ROI_METHOD.md) |
-| Deployment and offline install | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
-| Demo scripts (3 and 8 min) | [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) |
-| One-page pilot brief | [docs/ONE_PAGE_BRIEF.md](docs/ONE_PAGE_BRIEF.md) |
-| Test report | [docs/TEST_REPORT.md](docs/TEST_REPORT.md) |
-| Third-party notices | [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+| | | |
+|---|---|---|
+| 🏛 [Architecture](docs/ARCHITECTURE.md) | 🗺 [Implementation plan](docs/IMPLEMENTATION_PLAN.md) | 📊 [Gap matrix](docs/GAP_MATRIX.md) |
+| 🎯 [Threat model](docs/THREAT_MODEL.md) | 🔒 [Security limitations](docs/SECURITY_LIMITATIONS.md) | 📋 [Compliance mapping](docs/COMPLIANCE_MAPPING.md) |
+| 🔌 [API & MCP guide](docs/API_MCP_GUIDE.md) | 💰 [ROI method](docs/ROI_METHOD.md) | 🚚 [Deployment & offline install](docs/DEPLOYMENT.md) |
+| 🎤 [Demo scripts](docs/DEMO_SCRIPT.md) | 📄 [One-page pilot brief](docs/ONE_PAGE_BRIEF.md) | ✅ [Test report](docs/TEST_REPORT.md) |
+| 📜 [Third-party notices](THIRD_PARTY_NOTICES.md) | ⚖️ [License (GPL-3.0)](LICENSE) | 🎨 [Brand assets](frontend/public/brand/README.md) |
 
 <div align="center">
-<sub>License: GNU GPL v3 (same as the repository root) · Independent concept demo | Not affiliated with or endorsed by IFS</sub>
+<br/>
+<img src="docs/assets/logo.png" width="72" alt="Flying_Florina" />
+<br/>
+<b>Flying_Florina</b><br/>
+<sub>From legacy systems to trusted industrial intelligence.<br/>Independent concept demo · Not affiliated with or endorsed by IFS</sub>
 </div>

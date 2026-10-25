@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1180" width="1600" height="1180" role="img" aria-label="Flying_Florina architecture">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#5C35B7"/></marker>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#C53030"/></marker>
+<linearGradient id="trust" x1="0" x2="1"><stop offset="0" stop-color="#5C35B7"/><stop offset="1" stop-color="#3A2380"/></linearGradient>
+<filter id="sh" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0B1230" flood-opacity="0.12"/></filter></defs>
+<rect width="1600" height="1180" rx="24" fill="#F7F8FC"/>
+<text x="48" y="62" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" fill="#0B1230" text-anchor="start" >Flying_Florina — system architecture</text>
+<text x="48" y="92" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#4B5375" text-anchor="start" >Everything runs on one machine. Every consequential step passes the deterministic policy engine before it executes.</text>
+<rect x="250" y="120" width="1320" height="1030" rx="20" fill="none" stroke="#0B1230" stroke-width="2" stroke-dasharray="10 8" />
+<rect x="1160" y="108" width="310.96000000000004" height="30" rx="15.0" fill="#0B1230" stroke="#0B1230" stroke-width="1" /><text x="1315.48" y="127.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#D7B46A" text-anchor="middle" >LOCAL MACHINE · OFFLINE_MODE · EGRESS GUARD</text>
+<rect x="30" y="140" width="190" height="1000" rx="12" fill="#fff" stroke="#DCD8EC" stroke-width="1.5" filter="url(#sh)"/>
+<text x="125" y="175" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="18" font-weight="800" fill="#0B1230" text-anchor="middle" >People</text>
+<text x="125" y="196" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#4B5375" text-anchor="middle" >10 synthetic personas</text>
+<rect x="45" y="215" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="239" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Executive</text>
+<rect x="45" y="265" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="289" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Maintenance Planner</text>
+<rect x="45" y="315" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="339" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Technician</text>
+<rect x="45" y="365" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="389" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Reliability Engineer</text>
+<rect x="45" y="415" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="439" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Enterprise Architect</text>
+<rect x="45" y="465" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="489" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Security Officer</text>
+<rect x="45" y="515" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="539" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Auditor</text>
+<rect x="45" y="565" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="589" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Fwd Deployed Engineer</text>
+<rect x="45" y="615" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="639" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >Guest (read-only)</text>
+<rect x="45" y="665" width="160" height="38" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="125" y="689" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#0B1230" text-anchor="middle" >External supplier</text>
+<text x="125" y="735" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#4B5375" text-anchor="middle" >Persona changes the view;</text>
+<text x="125" y="752" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#4B5375" text-anchor="middle" >the backend decides rights.</text>
+<path d="M220 300 L 268 300" stroke="#5C35B7" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="270" y="140" width="1280" height="140" rx="16" fill="#fff" stroke="#DCD8EC" stroke-width="1.5" filter="url(#sh)"/>
+<text x="292" y="170" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" fill="#0B1230" text-anchor="start" >1 · Experience — React + TypeScript + Vite</text>
+<text x="292" y="190" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#4B5375" text-anchor="start" >Mission Control chat · live execution timeline · agent graph · 15 pages · light/dark · responsive</text>
+<rect x="292" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="375.1428571428571" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Mission Control</text>
+<text x="375.1428571428571" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >ask · timeline · replay</text>
+<rect x="470.2857142857143" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="553.4285714285714" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Fleet · AOG · MRO</text>
+<text x="553.4285714285714" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >dashboards</text>
+<rect x="648.5714285714286" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="731.7142857142857" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Parts · Quality</text>
+<text x="731.7142857142857" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >supply chain</text>
+<rect x="826.8571428571429" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="910.0" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Legacy X-Ray</text>
+<text x="910.0" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >dependency map</text>
+<rect x="1005.1428571428571" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1088.2857142857142" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Bridge Studio</text>
+<text x="1088.2857142857142" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >10-step wizard</text>
+<rect x="1183.4285714285713" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1266.5714285714284" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Trust Center</text>
+<text x="1266.5714285714284" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >10 tabs</text>
+<rect x="1361.7142857142856" y="206" width="166.28571428571428" height="54" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1444.8571428571427" y="229" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Executive Studio</text>
+<text x="1444.8571428571427" y="247" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >ROI · roadmap</text>
+<path d="M910 280 L910 312" stroke="#5C35B7" stroke-width="2.5" marker-end="url(#ar)"/>
+<text x="924" y="300.0" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4B5375" text-anchor="start" >Bearer token · JSON envelope</text>
+<rect x="270" y="312" width="1280" height="110" rx="16" fill="#fff" stroke="#DCD8EC" stroke-width="1.5" filter="url(#sh)"/>
+<text x="292" y="342" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" fill="#0B1230" text-anchor="start" >2 · API — FastAPI</text>
+<text x="292" y="362" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#4B5375" text-anchor="start" ></text>
+<rect x="292" y="352" width="237.6" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="410.8" y="375" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Identity</text>
+<text x="410.8" y="393" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >HMAC token · audience · expiry</text>
+<rect x="541.6" y="352" width="237.6" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="660.4" y="375" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Security headers</text>
+<text x="660.4" y="393" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >CSP · nosniff · no-store</text>
+<rect x="791.2" y="352" width="237.6" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="910.0" y="375" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Validation</text>
+<text x="910.0" y="393" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >Pydantic · upload limits</text>
+<rect x="1040.8" y="352" width="237.6" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1159.6" y="375" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Envelope</text>
+<text x="1159.6" y="393" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >request_id · typed errors</text>
+<rect x="1290.3999999999999" y="352" width="237.6" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1409.1999999999998" y="375" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >OpenAPI</text>
+<text x="1409.1999999999998" y="393" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >61 paths</text>
+<path d="M910 422 L910 454" stroke="#5C35B7" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="270" y="454" width="1280" height="170" rx="16" fill="#fff" stroke="#DCD8EC" stroke-width="1.5" filter="url(#sh)"/>
+<text x="292" y="484" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" fill="#0B1230" text-anchor="start" >3 · Orchestration — deterministic, no hosted LLM</text>
+<text x="292" y="504" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#4B5375" text-anchor="start" ></text>
+<rect x="292" y="494" width="300" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="442.0" y="517" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Intake &amp; Intent Agent</text>
+<text x="442.0" y="535" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >rules router · clarification</text>
+<rect x="604" y="494" width="924" height="50" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1066.0" y="517" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Workflow engine</text>
+<text x="1066.0" y="535" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >DAG waves · retries · timeouts · cancel · checkpoints</text>
+<rect x="292" y="560" width="82.48" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="333.24" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Telemetry</text>
+<rect x="382.48" y="560" width="82.48" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="423.72" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Retrieval</text>
+<rect x="472.96000000000004" y="560" width="95.92" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="520.9200000000001" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Diagnostics</text>
+<rect x="576.88" y="560" width="55.6" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="604.68" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Parts</text>
+<rect x="640.48" y="560" width="69.04" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="675.0" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Planner</text>
+<rect x="717.52" y="560" width="89.2" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="762.12" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Compliance</text>
+<rect x="814.72" y="560" width="129.52" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="879.48" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Legacy Discovery</text>
+<rect x="952.24" y="560" width="163.12" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="1033.8" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Integration Architect</text>
+<rect x="1123.3600000000001" y="560" width="82.48" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="1164.6000000000001" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Simulator</text>
+<rect x="1213.8400000000001" y="560" width="82.48" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="1255.0800000000002" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Reporting</text>
+<rect x="1304.3200000000002" y="560" width="122.80000000000001" height="32" rx="16.0" fill="#fff" stroke="#A78BFA" stroke-width="1" /><text x="1365.7200000000003" y="580.32" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#5C35B7" text-anchor="middle" >Security &amp; Gov.</text>
+<text x="292" y="612" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#4B5375" text-anchor="start" >13 typed agents with bounded tool access · agent rights = own grants ∩ requesting human&#x27;s grants</text>
+<path d="M910 624 L910 656" stroke="#5C35B7" stroke-width="2.5" marker-end="url(#ar)"/>
+<text x="924" y="644.0" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4B5375" text-anchor="start" >every tool call</text>
+<rect x="270" y="656" width="1280" height="170" rx="16" fill="url(#trust)" stroke="#5C35B7" stroke-width="1.5" filter="url(#sh)"/>
+<text x="292" y="686" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" fill="#fff" text-anchor="start" >4 · Trust layer — policy-as-code, deny by default</text>
+<text x="292" y="706" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#DCD3FF" text-anchor="start" >Evaluated before execution · decisions recorded with ordered checks · no model decides what is allowed</text>
+<rect x="292" y="722" width="196.0" height="58" rx="10" fill="#2A1B66" stroke="#7C5CD6" stroke-width="1.5" />
+<text x="390.0" y="745" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle" >Tool gateway</text>
+<text x="390.0" y="763" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C9BCFF" text-anchor="middle" >pinned · schema SHA-256</text>
+<rect x="500.0" y="722" width="196.0" height="58" rx="10" fill="#2A1B66" stroke="#7C5CD6" stroke-width="1.5" />
+<text x="598.0" y="745" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle" >Policy engine</text>
+<text x="598.0" y="763" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C9BCFF" text-anchor="middle" >13 policies · POL-001…013</text>
+<rect x="708.0" y="722" width="196.0" height="58" rx="10" fill="#2A1B66" stroke="#7C5CD6" stroke-width="1.5" />
+<text x="806.0" y="745" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle" >Approvals</text>
+<text x="806.0" y="763" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C9BCFF" text-anchor="middle" >SoD · expiry · idempotency</text>
+<rect x="916.0" y="722" width="196.0" height="58" rx="10" fill="#2A1B66" stroke="#7C5CD6" stroke-width="1.5" />
+<text x="1014.0" y="745" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle" >Audit chain</text>
+<text x="1014.0" y="763" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C9BCFF" text-anchor="middle" >SHA-256 hash-linked</text>
+<rect x="1124.0" y="722" width="196.0" height="58" rx="10" fill="#2A1B66" stroke="#7C5CD6" stroke-width="1.5" />
+<text x="1222.0" y="745" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle" >Kill switch</text>
+<text x="1222.0" y="763" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C9BCFF" text-anchor="middle" >POL-009</text>
+<rect x="1332.0" y="722" width="196.0" height="58" rx="10" fill="#2A1B66" stroke="#7C5CD6" stroke-width="1.5" />
+<text x="1430.0" y="745" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle" >Injection guard</text>
+<text x="1430.0" y="763" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C9BCFF" text-anchor="middle" >POL-011 quarantine</text>
+<text x="292" y="808" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="700" fill="#D7B46A" text-anchor="start" >ALLOW → tool runs · DENY → tool never runs (export demo: 0 executions)</text>
+<path d="M910 826 L910 858" stroke="#5C35B7" stroke-width="2.5" marker-end="url(#ar)"/>
+<text x="924" y="846.0" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4B5375" text-anchor="start" >ALLOW only</text>
+<rect x="270" y="858" width="1280" height="120" rx="16" fill="#fff" stroke="#DCD8EC" stroke-width="1.5" filter="url(#sh)"/>
+<text x="292" y="888" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" fill="#0B1230" text-anchor="start" >5 · Capabilities</text>
+<text x="292" y="908" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#4B5375" text-anchor="start" ></text>
+<rect x="292" y="898" width="237.6" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="410.8" y="921" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Retrieval</text>
+<text x="410.8" y="939" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >SQL label filter → FTS5/BM25 → TF-IDF</text>
+<rect x="541.6" y="898" width="237.6" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="660.4" y="921" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Simulation &amp; ROI</text>
+<text x="660.4" y="939" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >deterministic · seeded Monte Carlo</text>
+<rect x="791.2" y="898" width="237.6" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="910.0" y="921" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Legacy X-Ray</text>
+<text x="910.0" y="939" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >parse only · never execute</text>
+<rect x="1040.8" y="898" width="237.6" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1159.6" y="921" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Bridge generator</text>
+<text x="1159.6" y="939" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >adapter + MCP + tests</text>
+<rect x="1290.3999999999999" y="898" width="237.6" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1409.1999999999998" y="921" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Reports</text>
+<text x="1409.1999999999998" y="939" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >PDF · HTML · MD · CSV · JSON</text>
+<path d="M910 978 L910 1008" stroke="#5C35B7" stroke-width="2.5" marker-end="url(#ar)"/>
+<rect x="270" y="1008" width="1280" height="128" rx="16" fill="#fff" stroke="#DCD8EC" stroke-width="1.5" filter="url(#sh)"/>
+<text x="292" y="1038" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="17" font-weight="800" fill="#0B1230" text-anchor="start" >6 · Data &amp; integration</text>
+<text x="292" y="1058" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#4B5375" text-anchor="start" ></text>
+<rect x="292" y="1048" width="220" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="402.0" y="1071" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >SQLite</text>
+<text x="402.0" y="1089" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >synthetic · seed 20261024</text>
+<rect x="524" y="1048" width="220" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="634.0" y="1071" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Fixtures</text>
+<text x="634.0" y="1089" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >schemas · OpenAPI · docs</text>
+<rect x="756" y="1048" width="220" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="866.0" y="1071" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Demo MCP server</text>
+<text x="866.0" y="1089" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >stdio · official SDK</text>
+<rect x="988" y="1048" width="240" height="58" rx="10" fill="#F1EEFB" stroke="#DCD8EC" stroke-width="1.5" />
+<text x="1108.0" y="1071" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#0B1230" text-anchor="middle" >Generated adapter</text>
+<text x="1108.0" y="1089" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#4B5375" text-anchor="middle" >sandboxed pytest 14/14</text>
+<rect x="1260" y="1048" width="268" height="58" rx="10" fill="#fff" stroke="#C53030" stroke-width="1.5" stroke-dasharray="6 5" />
+<text x="1394" y="1071" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="700" fill="#C53030" text-anchor="middle" >IFS Cloud / live ERP</text>
+<text x="1394" y="1089" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="11.5" font-weight="400" fill="#C53030" text-anchor="middle" >not connected · documented APIs only</text>
+<text x="1550" y="1170" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#4B5375" text-anchor="end" >Independent concept demo · Not affiliated with or endorsed by IFS · All data fictional</text>
+</svg>

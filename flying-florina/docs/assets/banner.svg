@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-label="Flying_Florina banner">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1230"/><stop offset="0.6" stop-color="#1B1650"/><stop offset="1" stop-color="#3A2380"/></linearGradient>
+<radialGradient id="glow" cx="0.82" cy="0.25" r="0.5"><stop offset="0" stop-color="#A78BFA" stop-opacity="0.35"/><stop offset="1" stop-color="#A78BFA" stop-opacity="0"/></radialGradient>
+<linearGradient id="mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5C35B7"/><stop offset="1" stop-color="#0B1230"/></linearGradient></defs>
+<rect width="1280" height="360" rx="22" fill="url(#bg)"/><rect width="1280" height="360" rx="22" fill="url(#glow)"/>
+<path d="M-100 360 L260 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M10 360 L370 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M120 360 L480 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M230 360 L590 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M340 360 L700 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M450 360 L810 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M560 360 L920 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M670 360 L1030 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M780 360 L1140 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M890 360 L1250 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M1000 360 L1360 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M1110 360 L1470 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M1220 360 L1580 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M1330 360 L1690 0" stroke="#A78BFA" stroke-opacity="0.06" stroke-width="1"/>
+<path d="M640 300 C 840 260, 980 160, 1210 70" stroke="#D7B46A" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="6 8" fill="none"/>
+<g transform="translate(1150,40) rotate(-20)"><path d="M0 18 L70 0 L52 14 L70 22 L46 24 L32 44 Z" fill="#F7F8FC" opacity="0.92"/></g>
+<g transform="translate(70,70)"><circle cx="70" cy="70" r="70" fill="url(#mark)"/><circle cx="70" cy="70" r="61" fill="none" stroke="#D7B46A" stroke-width="2.5"/><path d="M30 84 L110 48 L88 66 L110 75 L84 79 L66 101 Z" fill="#F7F8FC"/><text x="70" y="128" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="16" font-weight="800" fill="#D7B46A" text-anchor="middle" >FF</text></g>
+<text x="250" y="120" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="58" font-weight="800" fill="#F7F8FC" text-anchor="start" >Flying_Florina</text>
+<text x="252" y="160" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="21" font-weight="500" fill="#A78BFA" text-anchor="start" >Aerospace &amp; Defense Industrial AI Transformation Command Center</text>
+<text x="252" y="205" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="25" font-weight="600" fill="#F7F8FC" text-anchor="start" >From legacy systems to trusted industrial intelligence.</text>
+<text x="252" y="238" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#D7B46A" text-anchor="start" >Ask. Analyze. Modernize. Govern. Act — with approval.</text>
+<rect x="252" y="270" width="165.64000000000001" height="30" rx="15.0" fill="#2A2468" stroke="#4B3C9A" stroke-width="1" /><text x="334.82" y="289.86" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#D7B46A" text-anchor="middle" >100% synthetic data</text>
+<rect x="427.64" y="270" width="188.32000000000002" height="30" rx="15.0" fill="#2A2468" stroke="#4B3C9A" stroke-width="1" /><text x="521.8" y="289.86" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#F7F8FC" text-anchor="middle" >Offline · $0 paid APIs</text>
+<rect x="625.96" y="270" width="188.32000000000002" height="30" rx="15.0" fill="#2A2468" stroke="#4B3C9A" stroke-width="1" /><text x="720.12" y="289.86" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#A78BFA" text-anchor="middle" >Deny-by-default policy</text>
+<rect x="824.2800000000001" y="270" width="173.20000000000002" height="30" rx="15.0" fill="#2A2468" stroke="#4B3C9A" stroke-width="1" /><text x="910.8800000000001" y="289.86" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#F7F8FC" text-anchor="middle" >Human approval gates</text>
+<rect x="1007.4800000000001" y="270" width="218.56000000000003" height="30" rx="15.0" fill="#2A2468" stroke="#4B3C9A" stroke-width="1" /><text x="1116.7600000000002" y="289.86" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#D7B46A" text-anchor="middle" >Runnable API + MCP bridges</text>
+<text x="1250" y="342" font-family="Inter, 'Segoe UI', system-ui, -apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9EA6CF" text-anchor="end" >Independent concept demo · Not affiliated with or endorsed by IFS</text>
+</svg>

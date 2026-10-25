@@ -1,5 +1,7 @@
 # Architecture
 
+![Layered architecture](assets/architecture.svg)
+
 ## Components
 
 ```mermaid
