@@ -35,7 +35,9 @@ those together.
 | Works offline after setup | No | **Yes** |
 | Trade-off | Money | Speed on weak hardware (see [benchmarks](#measured-performance)) |
 
-The full story, with the cost math, is in [docs/MEDIUM_ARTICLE.md](docs/MEDIUM_ARTICLE.md).
+**Read the story on Medium:**
+- [Parakeet AI Costs $149.90 a Month. I Built a $0 Replacement](https://medium.com/@florinaregius/parakeet-ai-costs-149-90-c94b8c0b4661)
+- [Google Released an Offline AI Meeting Assistant. So I Built My Own — and It Does More](https://medium.com/@florinaregius/google-released-an-offline-ai-meeting-assistant-so-i-built-my-own-and-it-does-more-69ee5622b5a9)
 
 ## A tour
 
