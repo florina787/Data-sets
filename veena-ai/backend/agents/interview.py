@@ -7,6 +7,7 @@ real assessments that prohibit AI assistance.
 from __future__ import annotations
 
 import json
+import re
 import statistics
 from typing import Any
 
@@ -72,6 +73,19 @@ EVAL_PROMPT = (
     '{{"score": number, "strengths": [string], "improvements": [string], '
     '"model_answer_outline": [string], "follow_up_question": string}}'
 )
+
+
+def _as_list(value: Any) -> list[str]:
+    """Small models sometimes return a string where the schema asks for a list.
+    Iterating that string would yield single characters, so split it into items."""
+    if value is None:
+        return []
+    if isinstance(value, str):
+        parts = re.split(r"\n+|(?<=[.;])\s+(?=[A-Z0-9])", value)
+        return [p.strip(" -•*\t") for p in parts if p.strip(" -•*\t")]
+    if isinstance(value, list):
+        return [str(x).strip() for x in value if str(x).strip()]
+    return [str(value)]
 
 
 def _parse_json(raw: str) -> dict[str, Any]:
@@ -191,9 +205,9 @@ class InterviewCoach:
             score = 0.0
         feedback = {
             "score": score,
-            "strengths": [str(x) for x in fb.get("strengths", [])][:6],
-            "improvements": [str(x) for x in fb.get("improvements", [])][:6],
-            "model_answer_outline": [str(x) for x in fb.get("model_answer_outline", [])][:8],
+            "strengths": _as_list(fb.get("strengths"))[:6],
+            "improvements": _as_list(fb.get("improvements"))[:6],
+            "model_answer_outline": _as_list(fb.get("model_answer_outline"))[:8],
             "follow_up_question": str(fb.get("follow_up_question", ""))[:400],
             "model": model,
         }

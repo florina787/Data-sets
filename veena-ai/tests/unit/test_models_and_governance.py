@@ -66,3 +66,13 @@ def test_governance_flags():
     assert {"unsupported_experience", "unsupported_metric"} <= kinds
     g = review("Grounded [2].", evidence=ev, knowledge_requested=True, interview_mode=False, resume_evidence=False, notes=[])
     assert g["grounded"] and not g["flags"]
+
+
+def test_interview_feedback_lists_tolerate_strings():
+    from backend.agents.interview import _as_list
+
+    # Regression: a string must not be split into single characters.
+    assert _as_list("Cover the data pipeline. Discuss evaluation.") == ["Cover the data pipeline.", "Discuss evaluation."]
+    assert _as_list("- first\n- second") == ["first", "second"]
+    assert _as_list(["a", " ", 3]) == ["a", "3"]
+    assert _as_list(None) == []
