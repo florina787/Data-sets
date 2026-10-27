@@ -488,6 +488,7 @@ The repo ships a [`.vscode/`](.vscode) folder with debug configurations, tasks a
 2. Run the tasks **`install`**, then **`prepare + index`** (*Terminal → Run Task…*). This is needed once.
 3. In *Run and Debug* (`Ctrl/⌘ + Shift + D`), choose **Full stack (API + UI)** and press **F5**. Breakpoints work in the FastAPI code, including inside LangGraph nodes.
 4. Other launch configurations: **Backend: pytest** (debug tests) and **Data: prepare dataset**. The *Testing* panel discovers the pytest suite automatically.
+5. **Optional local model with GitHub Copilot:** in Copilot Chat (Agent mode), type **`/enable-local-llm`**. The prompt file [`.github/prompts/enable-local-llm.prompt.md`](.github/prompts/enable-local-llm.prompt.md) walks Copilot through installing `llama-cpp-python`, downloading the model and checking it after a restart. You approve each command.
 
 </details>
 
