@@ -190,6 +190,15 @@ export interface Recommendation {
 
 export interface QACheck { check: string; passed: boolean; critical: boolean; detail: string }
 
+export interface Groundedness {
+  basis: "dataset" | "model_explained" | "general_knowledge" | "no_analysis";
+  score: number | null;
+  risk: "low" | "medium" | "high";
+  label: string;
+  reasons: string[];
+  components: Record<string, number>;
+}
+
 export interface ChatResponse {
   version: string;
   request_id: string;
@@ -224,6 +233,7 @@ export interface ChatResponse {
   root_cause?: Panel | null;
   dashboard?: DashboardSpec | null;
   evidence_review?: EvidenceReview | null;
+  groundedness?: Groundedness | null;
 }
 
 export type NodeStatus = "pending" | "running" | "completed" | "failed" | "skipped" | "cancelled";

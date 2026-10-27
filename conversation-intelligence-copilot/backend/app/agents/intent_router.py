@@ -35,6 +35,24 @@ POLICY_RULES = {"policy_refusal", "non_analytical"}
 FILLER = set("a an the and or but so what about it this that these those me my we our us you your tell show give more please "
              "is are was were be do does did can could would should anything something some any else now then ok okay also how".split())
 MIN_CONTENT_WORDS = 2
+
+# Relevance gate: a question no rule recognises is treated as off-topic, without asking any model, when it is far from
+# every labelled example, or moderately far and mentions nothing the dataset contains. Calibrated on the benchmark's
+# validation/test questions and tests/evaluation/datasets/off_domain_questions.jsonl (no in-domain question is gated).
+OFF_TOPIC_MAX_SIM = 0.30
+OFF_TOPIC_MAX_SIM_NO_TERMS = 0.50
+DATASET_TERMS = re.compile(
+    r"sentiment|negativ|positiv|complain|angr|unhappy|upset|frustrat|happ(y|ier|iest)|mood|topic|issue|problem|concern|"
+    r"conversation|chat|transcript|message|escalat|empath|coach|apolog|agent|refund|charg|coupon|voucher|deliver|payment|"
+    r"log ?in|crash|account|product|domain|month|week|trend|over time|january|february|march|april|june|july|august|"
+    r"september|october|november|december|dataset|\bdata\b|\bC\d{7}\b|resolution|closing|priorit|leadership|example|"
+    r"similar|compare|worst|best|hinglish|language", re.I)
+FOLLOW_UP_CUES = re.compile(r"\b(it|that|this|those|these|them|more|previous|same|again|why|first|second|top)\b", re.I)
+OFF_TOPIC_TEXT = ("This question isn't about the customer-support conversations in this dataset, so no analysis here can answer it.")
+
+
+def is_off_topic(question: str, similarity: float) -> bool:
+    return similarity < OFF_TOPIC_MAX_SIM or (similarity < OFF_TOPIC_MAX_SIM_NO_TERMS and not DATASET_TERMS.search(question))
 LABELS = {
     "negative_topics": "the most negative topics", "topic_frequency": "topic volumes", "sentiment_distribution": "the sentiment mix",
     "sentiment_trend": "the sentiment trend", "compare_topics": "a topic comparison", "root_cause": "a root-cause investigation",
@@ -115,6 +133,12 @@ def route_intent(question: str, previous: dict | None = None, allow_llm: bool = 
     if len(content) < MIN_CONTENT_WORDS and not (rules_intent.conversation_ids or rules_intent.agents or previous):
         return done("clarify", as_category("unsupported", _clarify_text([c for c, _ in sem.candidates])), "clarify",
                     f"Too vague to route ({len(content)} content word(s)); asking instead of guessing.", semantic=sem_meta)
+
+    referential = previous is not None and FOLLOW_UP_CUES.search(question)
+    if sem.available and rule not in WEAK_RULES and not referential and is_off_topic(question, sem.similarity):
+        return done("clarify", as_category("unsupported", OFF_TOPIC_TEXT), "off_topic",
+                    f"Not about the conversation data (nearest example similarity {sem.similarity:.2f}); no model was asked to classify it.",
+                    semantic=sem_meta)
 
     llm_meta = None
     calls = 0

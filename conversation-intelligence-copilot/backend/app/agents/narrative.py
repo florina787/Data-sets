@@ -306,7 +306,16 @@ BY_OPERATION = {
 
 def build(category: str, primary: dict | None, tool_results: dict, retrieval: list[dict], retrieval_meta: dict, plan: dict) -> dict:
     if plan.get("unsupported_reason"):
-        return {"headline": "I can't answer that reliably from this dataset.", "answer": plan["unsupported_reason"], "key_points": [],
+        reason = plan["unsupported_reason"]
+        if reason.startswith("Clarification needed:"):  # an ambiguous question, not a refusal
+            return {"headline": "Which analysis did you mean?", "answer": reason.removeprefix("Clarification needed:").strip(), "key_points": [],
+                    "follow_up_questions": ["What were the top 5 topics most associated with negative sentiment last month?",
+                                            "Which recurring customer concerns should leadership review first?",
+                                            "How did customer sentiment change in conversation C0000479?"]}
+        if reason.startswith("This question isn't about the customer-support conversations"):
+            return {"headline": "That question is outside this dataset.", "answer": reason, "key_points": [],
+                    "follow_up_questions": ["What does the dataset cover?"]}
+        return {"headline": "I can't answer that reliably from this dataset.", "answer": reason, "key_points": [],
                 "follow_up_questions": ["What were the top 5 topics most associated with negative sentiment last month?",
                                         "Which recurring customer concerns should leadership review first?"]}
     if category == "similar_conversations":

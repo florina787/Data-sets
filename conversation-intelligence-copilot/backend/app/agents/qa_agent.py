@@ -14,7 +14,7 @@ def _check(name: str, passed: bool, detail: str) -> dict:
 
 
 def run_qa(plan: dict, tool_results: dict, charts: list[dict], evidence: list[dict], evidence_report: dict, explanation: dict, facts: dict,
-           evidence_review: dict | None = None) -> dict:
+           evidence_review: dict | None = None, basis: str = "") -> dict:
     checks: list[dict] = []
     ops = [s["op"] for s in plan.get("steps", [])]
     checks.append(_check("registered_operations", all(o in OPERATIONS for o in ops), f"Operations: {ops or 'none'}"))
@@ -82,8 +82,16 @@ def run_qa(plan: dict, tool_results: dict, charts: list[dict], evidence: list[di
         checks.append(_check("evidence_present", bool(evidence) or not needs, f"{len(evidence)} evidence items attached"))
 
     text = " ".join([explanation.get("headline", ""), explanation.get("answer", "")] + explanation.get("key_points", []))
-    bad = ungrounded_numbers(text, allowed_numbers(facts))
-    checks.append(_check("explanation_grounded", not bad, "All numbers in the answer trace to verified results" if not bad else f"Ungrounded numbers: {bad[:8]}"))
+    if basis == "general_knowledge":
+        # Not from the dataset by design: the check is that it says so, not that its numbers trace to results.
+        labelled = explanation.get("answer", "").startswith("Model's own answer, not from the dataset.")
+        checks.append(_check("general_answer_labelled", labelled, "Answer is labelled as the model's own, not from the dataset"
+                             if labelled else "General-knowledge answer is missing its label"))
+    elif not plan.get("steps") and plan.get("unsupported_reason"):
+        checks.append(_check("explanation_grounded", True, "No analysis was run; the reply is guidance text and claims no figures"))
+    else:
+        bad = ungrounded_numbers(text, allowed_numbers(facts))
+        checks.append(_check("explanation_grounded", not bad, "All numbers in the answer trace to verified results" if not bad else f"Ungrounded numbers: {bad[:8]}"))
 
     unc = [n for r in tool_results.values() for n in r.get("uncertainty_notes", [])]
     checks.append(_check("uncertainty_disclosed", True, f"{len(unc)} uncertainty notes attached to the response"))

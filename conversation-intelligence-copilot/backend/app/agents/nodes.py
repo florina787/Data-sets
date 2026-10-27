@@ -9,6 +9,8 @@ from app.agents import narrative
 from app.agents.evidence_challenger import challenge
 from app.agents.governance_agent import review as governance_review
 from app.agents.grounding import allowed_numbers, ungrounded_numbers
+from app.agents.groundedness import score as groundedness_score
+from app.agents.suggestions import suggest
 from app.agents.intent_agent import resolve_intent
 from app.agents.intent_router import route_intent
 from app.agents.router import decide as route_decision
@@ -72,7 +74,7 @@ def router(state: dict) -> dict:
     det = route_intent(state["user_question"], state.get("previous_turn"), allow_llm=False,
                        selected_conversation_id=state.get("selected_conversation_id"))
     routing = route_decision(state["user_question"], state.get("analysis_mode") or "auto", det.intent, llm.available(), llm.status().get("reason"),
-                             unresolved=det.method in ("clarify", "rules_weak"))
+                             unresolved=det.method in ("clarify", "rules_weak", "off_topic"))
     routing["intent_precheck"] = {k: v for k, v in det.meta().items() if k in ("method", "reason", "rule", "label")}
     return {"routing": routing}
 
@@ -227,17 +229,52 @@ def _facts(tool_results: dict) -> dict:
     return facts
 
 
+GENERAL_LABEL = "Model's own answer, not from the dataset."
+
+
+def _general_answer_allowed(state: dict) -> bool:
+    """Questions no analysis can answer (off-topic, unclear, or about data the dataset lacks) may get a labelled
+    general-knowledge answer. Personnel decisions, protected attributes and requests for secrets stay refusals."""
+    from app.agents.intent_rules import ALWAYS_REFUSE
+
+    return state["analytical_plan"]["category"] == "unsupported" and not ALWAYS_REFUSE.search(state["user_question"])
+
+
+def _general_answer(state: dict, llm, det: dict, facts: dict) -> dict | None:
+    from app.agents.supervisor import UNSUPPORTED_HELP
+
+    prompt = get_prompt("general_answer")
+    try:
+        res = llm.generate_json(prompt, prompt.render(capabilities=UNSUPPORTED_HELP, question=state["user_question"]), ExplanationOutput,
+                                request_id=state["request_id"], purpose="general_answer")
+    except LLMUnavailable:
+        return None
+    out = res.parsed.model_dump()  # type: ignore[union-attr]
+    out["answer"] = f"{GENERAL_LABEL} {out['answer']}".strip()  # the label travels with the text, so API clients see it too
+    out["follow_up_questions"] = det["follow_up_questions"]  # computed nudges: always answerable, unlike model suggestions
+    return {"explanation": out, "explanation_source": "general_knowledge", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts},
+            "_meta": {"reason": "no analysis answers this question; labelled general-knowledge answer", "tokens": res.usage.total_tokens,
+                      "cache_hit": res.cache_hit}}
+
+
 @traced("explanation", summarize_output=lambda u: {"source": u.get("explanation_source"), "headline": u.get("explanation", {}).get("headline", "")[:160]})
 def explanation(state: dict) -> dict:
     plan = state["analytical_plan"]
     tool_results = state.get("tool_results", {})
     primary = tool_results.get(plan["steps"][0]["op"]) if plan.get("steps") and tool_results else None
     det = narrative.build(plan["category"], primary, tool_results, state.get("retrieved_evidence", []), state.get("retrieval_meta", {}), plan)
+    if plan["category"] == "unsupported":
+        # Nudge towards the closest questions the data can answer, given this question and the session's recent ones.
+        det["follow_up_questions"] = suggest(state["user_question"], [h["question"] for h in state.get("conversation_history", [])])
     facts = _facts(tool_results)
     facts["retrieval"] = [{k: x[k] for k in ("conversation_id", "similarity", "topic", "product", "turn_range")} for x in state.get("retrieved_evidence", [])]
     llm = get_llm()
     elapsed = time.time() - state.get("started_at", time.time())
     routed_out = "explanation" not in (state.get("routing") or {}).get("llm_steps", ["explanation"])
+    if plan.get("unsupported_reason") and _general_answer_allowed(state) and not routed_out and llm.available():
+        general = _general_answer(state, llm, det, facts)
+        if general:
+            return general
     if plan.get("unsupported_reason") or routed_out or not llm.available() or elapsed > REQUEST_BUDGET_SECONDS * 0.6:
         reason = ("unsupported question" if plan.get("unsupported_reason") else "router: analytics only" if routed_out
                   else "model unavailable" if not llm.available() else "time budget")
@@ -284,7 +321,12 @@ def qa(state: dict) -> dict:
     facts = state.get("verified_metrics", {}).get("facts", {})
     report = state.get("verified_metrics", {}).get("evidence_report", {})
     plan, tool_results = state["analytical_plan"], state.get("tool_results", {})
-    review, expl = challenge(get_db(), plan, tool_results, state.get("evidence", []), state.get("explanation", {}), state.get("explanation_source", ""))
+    source = state.get("explanation_source", "")
+    if source == "general_knowledge":  # nothing to challenge against the data; keep the model's wording and its label
+        review, _ = challenge(get_db(), plan, tool_results, state.get("evidence", []), {}, source)
+        expl = state.get("explanation", {})
+    else:
+        review, expl = challenge(get_db(), plan, tool_results, state.get("evidence", []), state.get("explanation", {}), source)
     out: dict = {}
     if review["replaced_explanation"]:
         expl = state.get("verified_metrics", {}).get("baseline") or expl
@@ -292,8 +334,10 @@ def qa(state: dict) -> dict:
         out["governance_findings"] = state.get("governance_findings", []) + [{
             "policy": "evidence_challenger", "outcome": "rejected_model_output",
             "detail": "Model explanation named factors the analysis does not support; deterministic narrative used."}]
-    res = run_qa(plan, tool_results, state.get("visualizations", []), state.get("evidence", []), report, expl, facts, review)
-    return {**out, "qa_results": res, "evidence_review": review, "explanation": expl}
+    source = out.get("explanation_source", source)
+    res = run_qa(plan, tool_results, state.get("visualizations", []), state.get("evidence", []), report, expl, facts, review, basis=source)
+    return {**out, "qa_results": res, "evidence_review": review, "explanation": expl,
+            "groundedness": groundedness_score(expl, source, facts, review, plan)}
 
 
 @traced("governance", summarize_output=lambda u: {"findings": [f"{f['policy']}:{f['outcome']}" for f in u.get("governance_findings", [])]})
@@ -311,7 +355,7 @@ def governance(state: dict) -> dict:
 def _model_metadata(state: dict) -> dict:
     llm = get_llm()
     st = llm.status()
-    return {"provider": st.get("provider"), "model": st.get("model"), "mode": "llm" if state.get("intent_source") == "llm" or state.get("explanation_source") == "llm" else "deterministic",
+    return {"provider": st.get("provider"), "model": st.get("model"), "mode": "llm" if state.get("intent_source") == "llm" or state.get("explanation_source") in ("llm", "general_knowledge") else "deterministic",
             "available": st.get("available"), "reason": st.get("reason"), "intent_source": state.get("intent_source"),
             "explanation_source": state.get("explanation_source"), "label_source": get_settings().label_source,
             "embedding_backend": state.get("retrieval_meta", {}).get("embedding_backend"),
@@ -359,6 +403,7 @@ def response(state: dict) -> dict:
         model_metadata=(mm := _model_metadata(state)), routing=mm["routing"] or {}, token_usage=mm["token_usage"], quality_status=state.get("qa_results", {}),
         governance=state.get("governance_findings", []),
         dashboard=state.get("dashboard"), evidence_review=state.get("evidence_review"), xray=_panel(tool_results.get("conversation_xray")), root_cause=_panel(tool_results.get("root_cause_investigation")),
+        groundedness=state.get("groundedness"),
         human_review_required=any(f["policy"] == "human_review" for f in state.get("governance_findings", [])),
         errors=state.get("errors", []),
     )

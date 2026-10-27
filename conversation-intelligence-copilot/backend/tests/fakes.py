@@ -48,14 +48,16 @@ def fake_gemini(script: list, **overrides) -> tuple[GeminiClient, FakeModels]:
     return client, models
 
 
-def router(intent: dict | None = None, explanation: dict | None = None):
-    """A content-aware fake: answers intent prompts and explanation prompts differently."""
+def router(intent: dict | None = None, explanation: dict | None = None, general: dict | None = None):
+    """A content-aware fake: answers intent, explanation and general-knowledge prompts differently."""
 
     def respond(contents: str) -> str:
         if "TAXONOMY" in contents and "SESSION_CONTEXT" in contents:
             return json.dumps(intent)
         if "VERIFIED_FACTS" in contents:
             return json.dumps(explanation)
+        if "DATASET THE COPILOT CAN ANALYSE" in contents and general is not None:
+            return json.dumps(general)
         raise AssertionError("unexpected prompt")
 
     return respond

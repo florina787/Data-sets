@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import {
-  AlertTriangle, BrainCircuit, CalendarDays, CheckCircle2, ChevronDown, CircleHelp, Clock, FileSearch, Lightbulb, Network, Quote, ShieldCheck, Sparkles, UserCheck,
+  AlertTriangle, BookOpen, BrainCircuit, Gauge, CalendarDays, CheckCircle2, ChevronDown, CircleHelp, Clock, FileSearch, Lightbulb, Network, Quote, ShieldCheck, Sparkles, UserCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -100,11 +100,25 @@ export function ResponseView({ r }: { r: ChatResponse }) {
   const qa = r.quality_status;
   const statusTone = r.status === "completed" ? "positive" : r.status === "unsupported" || r.status === "insufficient_data" ? "warning" : "negative";
   const mm = r.model_metadata;
+  const general = mm.explanation_source === "general_knowledge";
+  const g = r.groundedness;
+  const categoryLabel = r.plan.category !== "unsupported" ? humanize(r.plan.category)
+    : general ? "Outside the dataset" : r.headline === "Which analysis did you mean?" ? "Needs clarification" : "Unsupported";
+  const statusLabel = general ? "Model's own answer" : categoryLabel === "Needs clarification" ? "Clarify" : humanize(r.status);
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-        <Badge tone="indigo"><Sparkles className="h-3 w-3" />{humanize(r.plan.category)}</Badge>
-        <Badge tone={statusTone}>{humanize(r.status)}</Badge>
+        <Badge tone="indigo"><Sparkles className="h-3 w-3" />{categoryLabel}</Badge>
+        <Badge tone={general ? "violet" : statusTone}>{statusLabel}</Badge>
+        {g && (
+          <Tip content={g.reasons.join(" · ")}>
+            <span data-testid="groundedness">
+              <Badge tone={g.basis === "general_knowledge" ? "warning" : g.risk === "low" ? "positive" : g.risk === "medium" ? "warning" : "negative"}>
+                <Gauge className="h-3 w-3" />{g.label}{g.score !== null ? ` · ${g.risk} hallucination risk` : ""}
+              </Badge>
+            </span>
+          </Tip>
+        )}
         <Tip content={`Intent: ${mm.intent_source}; explanation: ${mm.explanation_source}. ${mm.reason ? `Model note: ${String(mm.reason).slice(0, 140)}` : ""}`}>
           <span><Badge tone={mm.mode === "llm" ? "violet" : "default"}><BrainCircuit className="h-3 w-3" />{mm.mode === "llm" ? `${({ gemini: "Gemini", "vertex-ai": "Vertex AI", groq: "Groq", local: "Local LLM" } as Record<string, string>)[mm.provider] ?? "LLM"} (${mm.model})` : "Deterministic explainer"}</Badge></span>
         </Tip>
@@ -129,7 +143,13 @@ export function ResponseView({ r }: { r: ChatResponse }) {
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
         <h2 className="text-lg font-semibold leading-snug tracking-tight text-ink sm:text-xl">{r.headline}</h2>
-        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-ink/80">{r.answer}</p>
+        {general && (
+          <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-warn/30 bg-warn/[0.06] px-4 py-3 text-xs text-ink/90" role="note" data-testid="general-answer-banner">
+            <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-warn" aria-hidden />
+            <span><b className="text-warn">Model's own answer, not from the dataset.</b> No analysis in this copilot answers this question, so the language model replied from its general knowledge. Nothing here was computed from, or checked against, the conversations. For answers grounded in the data, try one of the suggested questions below.</span>
+          </div>
+        )}
+        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-ink/80">{general ? r.answer.replace(/^Model's own answer, not from the dataset\.\s*/, "") : r.answer}</p>
         {(r.plan.notes.length > 0 || r.dataset_scope.window.explanation) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {r.dataset_scope.window.rule !== "all" && <span className="inline-flex items-start gap-1.5 rounded-lg border border-line bg-white/[0.02] px-2 py-1 text-[11px] text-muted"><CalendarDays className="mt-px h-3 w-3 shrink-0" aria-hidden />{r.dataset_scope.window.explanation}</span>}
@@ -216,6 +236,11 @@ export function ResponseView({ r }: { r: ChatResponse }) {
 
       <DecisionReplay requestId={r.request_id} />
 
+      {r.follow_up_questions.length > 0 && r.plan.category === "unsupported" && (
+        <p className="flex items-center gap-1.5 text-xs font-medium text-muted" data-testid="nudge-heading">
+          <Lightbulb className="h-3.5 w-3.5 text-indigo" aria-hidden />Closest questions I can answer from the data
+        </p>
+      )}
       {r.follow_up_questions.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {r.follow_up_questions.map((q) => (

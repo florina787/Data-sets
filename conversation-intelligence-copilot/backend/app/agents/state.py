@@ -29,6 +29,7 @@ class AnalysisState(TypedDict, total=False):
     verified_metrics: dict
     explanation: dict
     explanation_source: str
+    groundedness: dict
     visualizations: list
     graphs: list
     dashboard: dict | None

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import re
 
-from app.agents.intent_rules import NO_MATCH, POLICY_REFUSAL
+from app.agents.intent_rules import ALWAYS_REFUSE, NO_MATCH, POLICY_REFUSAL
 from app.llm.structured_output import IntentOutput
 
 MODES = ("auto", "analytics_only", "hybrid_ai")
@@ -48,7 +48,10 @@ def decide(question: str, requested: str, rules_intent: IntentOutput, llm_availa
         return out("hybrid_ai", "HYBRID AI selected: the model interprets the question and explains the verified results.", ["intent", "explanation"])
     # AUTO
     if rules_intent.reasoning == POLICY_REFUSAL:
-        return out("analytics_only", "Policy refusal is deterministic; no model is needed to decline.", [])
+        if ALWAYS_REFUSE.search(question):
+            return out("analytics_only", "Policy refusal is deterministic; no model is needed to decline.", [])
+        return out("hybrid_ai", "The dataset does not contain what this asks for; the model writes a general-knowledge answer, "
+                                "labelled as not from the dataset.", ["explanation"])
     if unresolved:
         return out("hybrid_ai", "Rules and semantic matching could not route the question with high precision, so the model interprets it.",
                    ["intent", "explanation"])

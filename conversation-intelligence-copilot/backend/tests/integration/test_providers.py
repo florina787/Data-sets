@@ -107,5 +107,5 @@ def test_model_choice_needing_a_missing_entity_is_rejected(env):
 
     fake = FakeLlama(json.dumps({"category": "agent_profile"}))
     gemini_client.set_llm(LocalLlamaClient(get_settings(), llama=fake))
-    intent, _, meta = resolve_intent("Anything odd with the support desk recently", None, [], "t")
+    intent, _, meta = resolve_intent("Anything odd in the conversations recently", None, [], "t")
     assert meta["routing"]["method"] == "clarify" and "needs an entity" in meta["routing"]["llm"]["rejected"]

@@ -45,6 +45,7 @@ class ChatResponse(BaseModel):
     dashboard: dict[str, Any] | None = None
     evidence_review: dict[str, Any] | None = None
     quality_status: dict[str, Any] = {}
+    groundedness: dict[str, Any] | None = None
     governance: list[dict[str, Any]] = []
     human_review_required: bool = False
     errors: list[dict[str, Any]] = []

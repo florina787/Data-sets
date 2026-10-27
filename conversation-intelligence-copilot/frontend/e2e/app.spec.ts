@@ -68,7 +68,8 @@ test("unsupported question is refused without charts", async ({ page }) => {
   await fresh(page);
   await page.getByRole("textbox").fill("What is the revenue impact of these complaints?");
   await page.keyboard.press("Enter");
-  await expect(page.getByText("I can't answer that reliably from this dataset.")).toBeVisible({ timeout: 60_000 });
+  // Without a model this is a refusal; with one it is the model's own answer, clearly labelled as not from the dataset.
+  await expect(page.getByText("I can't answer that reliably from this dataset.").or(page.getByTestId("general-answer-banner"))).toBeVisible({ timeout: 120_000 });
   await expect(page.locator(".recharts-surface")).toHaveCount(0);
 });
 

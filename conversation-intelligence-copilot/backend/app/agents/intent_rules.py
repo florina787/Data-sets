@@ -37,6 +37,7 @@ PRODUCT_RE = re.compile(r"\b(" + "|".join(re.escape(p) for p in sorted(PRODUCT_D
 # Policy refusals: data the dataset does not contain, or personnel decisions. Always win, whatever else matches.
 UNSUPPORTED = re.compile(
     r"revenue|profit|churn|lifetime value|\bltv\b|\bcsat\b|\bnps\b|satisfaction survey|survey (score|result)|handle time|\baht\b|"
+    r"satisfaction score|customer satisfaction|first[- ]contact resolution|industry (average|benchmark)|benchmarks?\b|"
     r"salary|salaries|cost per|cost (of|to) (the )?business|cost of .{1,40} to the business|(money|dollars?|\$) (do |did )?we (lose|lost)|lose money|how much money|"
     r"resolution time|time to resolve|how long do (calls|chats|conversations) take|(average|mean) (call|chat) (length|duration)|"
     r"\bgender\b|\bage\b|older (customers|people)|younger (customers|people)|ethnic|\brace\b|religio|nationality|"
@@ -48,6 +49,13 @@ UNSUPPORTED = re.compile(
 NON_ANALYTICAL = re.compile(r"\bpoem\b|\bjoke\b|\bsong\b|\bstory\b|recipe|api[ _-]?key|system prompt|password|credential|"
                             r"drop table|delete (the )?(table|data)|\bsql\b|reveal your|print your", re.I)
 
+
+# Never answered at all, not even with a labelled general-knowledge answer: personnel decisions, protected
+# attributes, insults about staff, and requests for secrets or to subvert the tools.
+ALWAYS_REFUSE = re.compile(
+    r"\bfir(e|ed|ing)\b|terminat|dismiss|disciplin|\bsack(ed)?\b|let (them |him |her )?go\b|punish|demot|"
+    r"\blaz(y|iest)\b|\bstupid|worst employee|\bidiot|\bgender\b|\bage\b|older (customers|people)|younger (customers|people)|ethnic|\brace\b|"
+    r"religio|nationality|api[ _-]?key|system prompt|password|credential|drop table|delete (the )?(table|data)|\bsql\b|reveal your|print your", re.I)
 
 POLICY_REFUSAL = "The question needs data the dataset does not contain or asks for a personnel decision."
 NO_MATCH = "The question did not match a supported analysis."

@@ -145,3 +145,70 @@ def test_gemini_outage_mid_request_falls_back(env):
     gemini_client.set_llm(client)
     r = run_chat(Q4 + " (outage run)")
     assert r["status"] == "completed" and r["model_metadata"]["intent_source"] == "rules"
+
+
+GENERAL = {"headline": "Hello! I can help you analyse these support conversations.",
+           "answer": "I can rank negative topics, review coaching signals, trace a conversation's sentiment and prioritise concerns.",
+           "key_points": [], "follow_up_questions": ["Which recurring customer concerns should leadership review first?"]}
+
+
+def test_general_question_gets_a_labelled_model_answer(env):
+    """A question no analysis can answer gets the model's own answer, labelled as not from the dataset."""
+    client, models = fake_gemini([router(general=GENERAL)] * 3)
+    gemini_client.set_llm(client)
+    r = run_chat("hello there")
+    assert r["model_metadata"]["explanation_source"] == "general_knowledge"
+    assert r["answer"].startswith("Model's own answer, not from the dataset.")
+    assert r["headline"] == GENERAL["headline"] and r["charts"] == []
+    assert r["groundedness"]["basis"] == "general_knowledge" and r["groundedness"]["score"] is None
+    assert r["groundedness"]["risk"] == "high" and "Not from dataset" in r["groundedness"]["label"]
+    assert any(c["check"] == "general_answer_labelled" and c["passed"] for c in r["quality_status"]["checks"])
+    # The relevance gate recognises it as off-topic without a model, so the only model call writes the labelled answer.
+    assert r["token_usage"]["model_calls"] == 1 and r["routing"]["intent_precheck"]["method"] in ("off_topic", "clarify")
+
+
+def test_personnel_decisions_never_get_a_general_answer(env):
+    """Personnel decisions stay deterministic refusals, with no model call, even when a model is available."""
+    client, models = fake_gemini([router(general=GENERAL)] * 3)
+    gemini_client.set_llm(client)
+    r = run_chat("Which agent should we fire for bad empathy?")
+    assert r["status"] == "unsupported" and r["model_metadata"]["explanation_source"] == "deterministic"
+    assert r["headline"] == "I can't answer that reliably from this dataset." and models.calls == []
+
+
+def test_data_the_dataset_lacks_gets_a_labelled_general_answer(env):
+    client, models = fake_gemini([router(general=GENERAL)] * 3)
+    gemini_client.set_llm(client)
+    r = run_chat("What is the revenue impact of these complaints?")
+    assert r["model_metadata"]["explanation_source"] == "general_knowledge" and r["answer"].startswith("Model's own answer")
+
+
+def test_ambiguous_question_without_a_model_asks_which_analysis(env):
+    r = run_chat("Is it bad?")
+    assert r["headline"] == "Which analysis did you mean?" and r["groundedness"]["basis"] == "no_analysis"
+    assert not qa_failures(r) and r["follow_up_questions"]
+
+
+def test_off_topic_question_is_gated_without_any_model(env):
+    client, models = fake_gemini([router(general=GENERAL)] * 3)
+    gemini_client.set_llm(client)
+    r = run_chat("how was the sales today?", analysis_mode="analytics_only")
+    assert r["headline"] == "That question is outside this dataset." and models.calls == []
+    assert r["routing"]["intent_precheck"]["method"] == "off_topic" and r["follow_up_questions"]
+
+
+def test_dataset_answer_reports_full_groundedness(env):
+    r = run_chat(Q1)
+    g = r["groundedness"]
+    assert g["basis"] == "dataset" and g["score"] == 100 and g["risk"] == "low"
+    assert any("trace to computed results" in x for x in g["reasons"])
+
+
+def test_model_explanation_is_scored_as_model_explained(env):
+    explanation = {"headline": "Duplicate charge leads negative sentiment in February 2025.",
+                   "answer": "4 of 7 conversations were negative; Duplicate charge had 2 of them.", "key_points": [], "follow_up_questions": []}
+    client, _ = fake_gemini([router({"category": "negative_topics", "time_window": {"type": "last_month"}, "top_n": 5}, explanation)] * 2)
+    gemini_client.set_llm(client)
+    r = run_chat(Q1 + " (groundedness run)", analysis_mode="hybrid_ai")
+    g = r["groundedness"]
+    assert r["model_metadata"]["explanation_source"] == "llm" and g["basis"] == "model_explained" and g["score"] == 100
