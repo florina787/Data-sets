@@ -37,7 +37,7 @@ PRODUCT_RE = re.compile(r"\b(" + "|".join(re.escape(p) for p in sorted(PRODUCT_D
 # Policy refusals: data the dataset does not contain, or personnel decisions. Always win, whatever else matches.
 UNSUPPORTED = re.compile(
     r"revenue|profit|churn|lifetime value|\bltv\b|\bcsat\b|\bnps\b|satisfaction survey|survey (score|result)|handle time|\baht\b|"
-    r"satisfaction score|customer satisfaction|first[- ]contact resolution|industry (average|benchmark)|benchmarks?\b|"
+    r"satisfaction score|customer satisfaction|first[- ]contact resolution|industry (average|benchmark)|benchmarks?\b|best[- ]practices?|"
     r"salary|salaries|cost per|cost (of|to) (the )?business|cost of .{1,40} to the business|(money|dollars?|\$) (do |did )?we (lose|lost)|lose money|how much money|"
     r"resolution time|time to resolve|how long do (calls|chats|conversations) take|(average|mean) (call|chat) (length|duration)|"
     r"\bgender\b|\bage\b|older (customers|people)|younger (customers|people)|ethnic|\brace\b|religio|nationality|"
@@ -177,6 +177,25 @@ def match_rules(question: str, has_previous: bool = False, previous_category: st
         return out("explain_previous", "explain_previous", is_follow_up=has_previous)
 
     # 4. analyses with specific vocabulary ------------------------------------------------------
+    # What customers actually said, by polarity: "top 5 positive statements", "the angriest comments", "most negative feedback".
+    statement_noun = re.search(r"\b(statements?|comments?|messages?|quotes?|remarks?|phrases?|feedback|sayings?)\b|"
+                               r"things (customers|users|people|they) (said|say|wrote)|what (customers|users|people) (said|say|wrote)", ql)
+    neg_cue = re.search(r"negative|angr|worst|\bbad\b|rude|unhappy|upset|frustrat|complain", ql)
+    pos_cue = re.search(r"positive|happ(y|ier|iest)|nice|kind(est)?\b|prais|compliment|appreciat|thank|\bbest\b|\bgood\b|pleased", ql)
+    if statement_noun and (neg_cue or pos_cue) and not re.search(r"\bagents?\b|\breps?\b|\bstaff\b", ql):
+        strength = bool(re.search(r"\b(most|strongest|angriest|happiest|harshest|nicest|kindest|worst|best)\b", ql)) and not re.search(r"most (common|frequent)|top \d|top (five|ten|three)", ql)
+        singular = not top_n and re.search(r"\b(statement|comment|message|quote|remark|phrase)\b", ql) and not re.search(r"(statement|comment|message|quote|remark|phrase)s\b", ql)
+        return out("top_statements", "statements", polarity="negative" if neg_cue else "positive", statement_rank="strength" if strength else "frequency",
+                   top_n=top_n or (1 if singular else 5), needs_evidence=True)
+    # Complaint categories: "top 5 customer complaints", "most common complaints".
+    if (re.search(r"\bcomplaints?\b", ql) and re.search(r"\btop\b|main|biggest|most (common|frequent)|frequent|common|leading|key|\d|what are", ql)) \
+            or re.search(r"\bcomplain(ing|ed)? (about|of) (the )?most\b|what do (customers|people|users) (\w+ )?complain about|"
+                         r"what (are|were) (customers|people|users) complaining about", ql):
+        return out("negative_topics", "complaints", reasoning="Complaints are ranked as issue categories by number of negative conversations.")
+    # Month-over-month sentiment: "compare this month's sentiment with last month".
+    if re.search(r"(this|current|latest) month.{0,60}(last|previous|prior) month|(last|previous|prior) month.{0,60}(this|current|latest) month|"
+                 r"month[- ](over|on)[- ]month|compare .{0,40}\bmonths?\b", ql) and re.search(SENTIMENT_WORDS + r"|negativ|positiv|complain", ql):
+        return out("sentiment_trend", "month_comparison")
     if re.search(r"root[- ]?cause|underlying cause|what (causes|is causing|drives|is driving)|what('s| is) behind|drivers? (of|behind)|"
                  r"why (are|is|do|does) .*(negative|unhappy|frustrat|complain|angry|upset|dissatisf)|investigate|"
                  r"explains? .{0,40}(unhappy|negative|frustrat|complain|dissatisf)|factors? .{0,40}(negative|unhappy|dissatisf)", ql):
@@ -208,7 +227,7 @@ def match_rules(question: str, has_previous: bool = False, previous_category: st
     if re.search(r"resolution|closing action|resolved|fix rate|right (fix|action|remedy)|correct (fix|remedy|action)|fix appropriate|"
                  r"appropriate (fix|resolution|remedy)|go to the right cases|remed", ql):
         return out("resolution_quality", "resolution")
-    if re.search(r"(list|show)( me)?( all| only| the)? (\w+ ){0,3}(conversations|chats)\b|which conversations|list (of|the) (\w+ )?(conversations|chats)|"
+    if not re.search(r"distribution|breakdown|sentiment mix", ql) and re.search(r"(list|show)( me)?( all| only| the)? (\w+ ){0,3}(conversations|chats)\b|which conversations|list (of|the) (\w+ )?(conversations|chats)|"
                  r"give me the list", ql) and not re.search(r"similar|a few|some|examples?|cases", ql):
         return out("conversation_list", "conversation_list", is_follow_up=has_previous and not (topics or products))
     if re.search(r"example|chats? where|conversations? where|cases\b|find (\w+ ){0,2}(conversations|chats|cases)|search (for|conversations)|look for conversations", ql) \

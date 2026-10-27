@@ -18,6 +18,7 @@ from pydantic import BaseModel, ValidationError
 
 from app.config import Settings, get_settings
 from app.llm.cache import ResponseCache, cache_key
+from app.llm.budget import DeadlineExceeded
 from app.llm.resilience import RETRYABLE_CODES, CircuitBreaker, RateLimiter, backoff_delay, retry_after_seconds
 from app.llm.usage import Usage, aggregate_stream_usage, estimate_cost, usage_from_metadata
 from app.observability.store import get_telemetry
@@ -147,6 +148,8 @@ class GeminiClient:
                 self.breaker.success()
                 self.last_success = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
                 return text, usage, retries
+            except DeadlineExceeded as e:  # the caller's time budget, not a provider fault: no retry, circuit untouched
+                raise LLMUnavailable(f"{self.label}: {e}") from e
             except Exception as e:  # noqa: BLE001 - classified below
                 code = getattr(e, "code", None)
                 msg = f"{type(e).__name__} {code or ''}: {str(e)[:300]}"

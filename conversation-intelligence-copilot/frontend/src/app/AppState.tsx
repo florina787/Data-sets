@@ -15,6 +15,8 @@ export interface Turn {
   error?: string;
   retryable?: boolean;
   startedAt: number;
+  /** Partial model explanation while it streams; replaced by the checked answer when the response arrives. */
+  draft?: string;
 }
 
 interface ModelStatus { available?: boolean; mode?: string; model?: string; provider?: string; reason?: string | null; circuit?: string }
@@ -92,8 +94,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       } else if (e.type === "node_end" && e.node) {
         update(turnId, (t) => ({ ...t, nodes: { ...t.nodes, [e.node!]: { status: e.status ?? "completed", label: e.label, duration_ms: e.duration_ms,
           summary: e.output_summary, error: e.error } } }));
+      } else if (e.type === "explanation_draft" && e.text) {
+        update(turnId, (t) => ({ ...t, draft: e.text }));
       } else if (e.type === "final" && e.response) {
-        update(turnId, (t) => ({ ...t, status: "done", response: e.response }));
+        update(turnId, (t) => ({ ...t, status: "done", response: e.response, draft: undefined }));
         abortRef.current = null;
         refreshModel();
       } else if (e.type === "error") {
@@ -125,7 +129,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const retry = useCallback((turnId: string) => {
     const t = turns.find((x) => x.id === turnId);
     if (!t || abortRef.current) return;
-    update(turnId, (x) => ({ ...x, status: "streaming", error: undefined, nodes: {}, order: [], startedAt: Date.now() }));
+    update(turnId, (x) => ({ ...x, status: "streaming", error: undefined, draft: undefined, nodes: {}, order: [], startedAt: Date.now() }));
     run(turnId, t.question);
   }, [turns, run]);
 

@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
+import re
 import time
 
 from app.agents import narrative
-from app.agents.evidence_challenger import challenge
+from app.agents.evidence_challenger import challenge, claim_constraints
 from app.agents.governance_agent import review as governance_review
 from app.agents.grounding import allowed_numbers, ungrounded_numbers
 from app.agents.groundedness import score as groundedness_score
@@ -16,12 +17,13 @@ from app.agents.intent_router import route_intent
 from app.agents.router import decide as route_decision
 from app.agents.qa_agent import run_qa
 from app.agents.supervisor import build_plan, ranking_refs
-from app.agents.tracing import traced
+from app.agents.tracing import _emit, traced
 from app.analytics.db import get_db
 from app.analytics.query_registry import OperationError, run_operation
 from app.config import get_settings
 from app.governance.prompt_injection import MAX_QUESTION_CHARS, sanitize_question, scan
 from app.labeling.taxonomy import TOPICS
+from app.llm.budget import model_budget
 from app.llm.gemini_client import LLMUnavailable, get_llm
 from app.llm.structured_output import ExplanationOutput
 from app.memory.store import get_memory
@@ -229,6 +231,54 @@ def _facts(tool_results: dict) -> dict:
     return facts
 
 
+# Columns the explanation never needs: interval bounds, internal keys and codes, evidence ID lists (evidence is passed separately).
+_PROMPT_SKIP = re.compile(r"(^|_)ci(_|$)|_low$|_high$|^key$|^role$|^factor$|precedence_checked|^evidence")
+PROMPT_FACTS_MAX_CHARS = 3000
+
+
+def _prompt_facts(tool_results: dict, primary_op: str | None) -> str:
+    """Compact, always-valid JSON of what the explanation needs: headline metrics and the top rows of the main result.
+    The full facts still go to QA and the numeric grounding check, so the model can only use numbers that were verified."""
+    def row(r: dict) -> dict:
+        return {k: round(v, 3) if isinstance(v, float) else v for k, v in r.items()
+                if v is not None and not isinstance(v, (list, dict)) and not _PROMPT_SKIP.search(k)}
+
+    ops = ([primary_op] if primary_op in tool_results else []) + [o for o in tool_results if o != primary_op]
+    text = "{}"
+    for n_ops, n_rows in ((2, 5), (2, 3), (1, 3), (1, 1)):
+        facts: dict = {}
+        for op in ops[:n_ops]:
+            r = tool_results[op]
+            facts[op] = {
+                "window": r["scope"]["window"]["label"],
+                "metrics": [{k: (round(m[k], 4) if isinstance(m[k], float) else m[k]) for k in ("label", "value", "numerator", "denominator")
+                             if m.get(k) is not None} for m in r["metrics"][:8]],
+                "top_rows": [row(x) for x in (r.get("table") or {}).get("rows", [])[:n_rows]],
+            }
+            recs = r.get("series", {}).get("recommendations", {}).get("rows", [])
+            if recs:
+                facts[op]["recommendations"] = [row(x) for x in recs[:min(3, n_rows)]]
+        text = json.dumps(facts, separators=(",", ":"), default=str)
+        if len(text) <= PROMPT_FACTS_MAX_CHARS:
+            break
+    return text
+
+
+def _draft_writer(request_id: str):
+    """Stream a readable preview of the explanation while the model writes it (throttled)."""
+    last = [0.0]
+
+    def write(text: str) -> None:
+        now = time.perf_counter()
+        if now - last[0] < 0.25:
+            return
+        last[0] = now
+        preview = re.sub(r'"(headline|answer|key_points|follow_up_questions)"\s*:\s*', "", text)
+        preview = re.sub(r'[{}\[\]"]+', " ", preview)
+        _emit({"type": "explanation_draft", "request_id": request_id, "text": " ".join(preview.split())[-400:]})
+    return write
+
+
 GENERAL_LABEL = "Model's own answer, not from the dataset."
 
 
@@ -245,8 +295,9 @@ def _general_answer(state: dict, llm, det: dict, facts: dict) -> dict | None:
 
     prompt = get_prompt("general_answer")
     try:
-        res = llm.generate_json(prompt, prompt.render(capabilities=UNSUPPORTED_HELP, question=state["user_question"]), ExplanationOutput,
-                                request_id=state["request_id"], purpose="general_answer")
+        with model_budget(get_settings().explanation_timeout_seconds, _draft_writer(state["request_id"])):
+            res = llm.generate_json(prompt, prompt.render(capabilities=UNSUPPORTED_HELP, question=state["user_question"]), ExplanationOutput,
+                                    request_id=state["request_id"], purpose="general_answer")
     except LLMUnavailable:
         return None
     out = res.parsed.model_dump()  # type: ignore[union-attr]
@@ -279,16 +330,31 @@ def explanation(state: dict) -> dict:
         reason = ("unsupported question" if plan.get("unsupported_reason") else "router: analytics only" if routed_out
                   else "model unavailable" if not llm.available() else "time budget")
         return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts}, "_meta": {"reason": reason}}
+    # The Evidence Challenger reviews the compact results first; the writer only runs when there is something it may claim.
+    constraints = claim_constraints(tool_results, state.get("evidence", []))
+    if not constraints["ready"]:
+        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts},
+                "_meta": {"reason": "evidence pre-check: results incomplete", "constraints": constraints}}
     prompt = get_prompt("grounded_explanation")
-    unc = [n for r in tool_results.values() for n in r.get("uncertainty_notes", [])][:6]
-    ev = [{"conversation_id": e["conversation_id"], "excerpts": [x["text"] for x in e["excerpts"][:3]]} for e in state.get("evidence", [])[:4]]
+    unc = [n[:220] for r in tool_results.values() for n in r.get("uncertainty_notes", [])][:3]
+    ev = [{"conversation_id": e["conversation_id"], "excerpts": [x["text"][:160] for x in e["excerpts"][:2]]} for e in state.get("evidence", [])[:3]]
+    timeout = get_settings().explanation_timeout_seconds
     try:
-        res = llm.generate_json(prompt, prompt.render(audience=plan.get("audience", "analyst"), question=state["user_question"],
-                                                      facts=json.dumps(facts, default=str)[:12000], uncertainty=json.dumps(unc),
-                                                      evidence=json.dumps(ev, ensure_ascii=False)[:3000]),
-                                ExplanationOutput, request_id=state["request_id"], purpose="explanation")
+        with model_budget(timeout, _draft_writer(state["request_id"])):
+            res = llm.generate_json(prompt, prompt.render(audience=plan.get("audience", "analyst"), question=state["user_question"],
+                                                          facts=_prompt_facts(tool_results, plan["steps"][0]["op"] if plan.get("steps") else None),
+                                                          constraints=json.dumps({k: constraints[k] for k in ("may_name", "must_not_name", "rules")},
+                                                                                 ensure_ascii=False),
+                                                          uncertainty=json.dumps(unc, ensure_ascii=False), evidence=json.dumps(ev, ensure_ascii=False)),
+                                    ExplanationOutput, request_id=state["request_id"], purpose="explanation")
     except LLMUnavailable as e:
-        return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts}, "_meta": {"reason": str(e)[:200]}}
+        out = {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts},
+               "_meta": {"reason": str(e)[:200], "perf": getattr(llm, "last_perf", {})}}
+        if "budget" in str(e):  # over the latency budget: the evidence-backed narrative keeps every citation and governance check
+            out["governance_findings"] = state.get("governance_findings", []) + [{
+                "policy": "latency_budget", "outcome": "deterministic_fallback",
+                "detail": f"The model explanation did not fit the {timeout:g}s budget ({str(e)[:160]}); the deterministic, evidence-backed narrative was used."}]
+        return out
     out = res.parsed.model_dump()  # type: ignore[union-attr]
     text = " ".join([out["headline"], out["answer"], *out["key_points"]])
     bad = ungrounded_numbers(text, allowed_numbers(facts))
@@ -296,11 +362,12 @@ def explanation(state: dict) -> dict:
         return {"explanation": det, "explanation_source": "deterministic", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts},
                 "governance_findings": state.get("governance_findings", []) + [{"policy": "numeric_grounding", "outcome": "rejected_model_output",
                                                                                 "detail": f"Model explanation contained ungrounded numbers {bad[:5]}; deterministic narrative used."}],
-                "_meta": {"reason": "grounding check failed", "ungrounded": bad[:5], "tokens": res.usage.total_tokens}}
+                "_meta": {"reason": "grounding check failed", "ungrounded": bad[:5], "tokens": res.usage.total_tokens, "perf": getattr(llm, "last_perf", {})}}
     out["key_points"] = out["key_points"] or det["key_points"]
     out["follow_up_questions"] = out["follow_up_questions"] or det["follow_up_questions"]
     return {"explanation": out, "explanation_source": "llm", "verified_metrics": {**state.get("verified_metrics", {}), "facts": facts, "baseline": det},
-            "_meta": {"tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "retries": res.retries}}
+            "_meta": {"tokens": res.usage.total_tokens, "cache_hit": res.cache_hit, "retries": res.retries, "perf": getattr(llm, "last_perf", {}),
+                      "constraints": {k: constraints[k] for k in ("may_name", "must_not_name")}}}
 
 
 @traced("visualization", summarize_output=lambda u: {"charts": [c["chart_id"] for c in u.get("visualizations", [])], "graphs": len(u.get("graphs", [])),
@@ -378,7 +445,7 @@ def response(state: dict) -> dict:
     expl = state.get("explanation", {})
     metrics = [m for r in tool_results.values() for m in r.get("metrics", []) if m.get("unit") != "p"][:12]
     rankings = []
-    for op in ("leadership_priorities", "rank_negative_topics", "topic_frequency"):
+    for op in ("top_statements", "leadership_priorities", "rank_negative_topics", "topic_frequency"):
         if op in tool_results and tool_results[op].get("table"):
             rankings = tool_results[op]["table"]["rows"]
             break

@@ -29,6 +29,7 @@ SPECIALIST = {
     "leadership_priorities": "leadership_agent", "resolution_quality": "leadership_agent",
     "dataset_overview": "analytics_agent", "conversation_detail": "analytics_agent", "conversation_list": "analytics_agent",
     "explain_previous": "analytics_agent", "conversation_xray": "sentiment_agent", "root_cause": "leadership_agent", "uncertainty_review": "analytics_agent", "leadership_summary": "analytics_agent",
+    "top_statements": "sentiment_agent",
 }
 UNSUPPORTED_HELP = ("I can analyse sentiment, topics, products, agents' observable communication, conversation trajectories, "
                     "resolution fit and recurring concerns in the supplied conversations. The dataset has no revenue, cost, churn, "
@@ -154,6 +155,9 @@ def build_plan(intent: IntentOutput, previous: dict | None, dataset_mode: str, s
         step("sentiment_distribution", "Sentiment mix", group_by=intent.group_by)
     elif category == "sentiment_trend":
         step("sentiment_trend", "Monthly negative-sentiment trend")
+    elif category == "top_statements":
+        step("top_statements", "Rank real customer statements of the requested polarity", polarity=intent.polarity or "positive",
+             top_n=min(top_n, 20), rank_by=intent.statement_rank)
     elif category == "sentiment_trajectory":
         step("sentiment_trajectory", "Turn-by-turn customer sentiment", conversation_id=conversation_id)
         if conversation_id:

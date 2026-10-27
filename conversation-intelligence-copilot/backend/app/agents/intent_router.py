@@ -51,8 +51,16 @@ FOLLOW_UP_CUES = re.compile(r"\b(it|that|this|those|these|them|more|previous|sam
 OFF_TOPIC_TEXT = ("This question isn't about the customer-support conversations in this dataset, so no analysis here can answer it.")
 
 
+GENERAL_KNOWLEDGE_CUE = re.compile(r"^\s*(what (is|are)|explain|define|tell me about|how (does|do)|who (is|was)|why (is|does|do))\b", re.I)
+OFF_TOPIC_MAX_SIM_GK = 0.60  # a "what is X / explain X" question about nothing in the dataset is general knowledge
+
+
 def is_off_topic(question: str, similarity: float) -> bool:
-    return similarity < OFF_TOPIC_MAX_SIM or (similarity < OFF_TOPIC_MAX_SIM_NO_TERMS and not DATASET_TERMS.search(question))
+    if DATASET_TERMS.search(question):
+        return similarity < OFF_TOPIC_MAX_SIM
+    if GENERAL_KNOWLEDGE_CUE.search(question):
+        return similarity < OFF_TOPIC_MAX_SIM_GK
+    return similarity < OFF_TOPIC_MAX_SIM_NO_TERMS
 LABELS = {
     "negative_topics": "the most negative topics", "topic_frequency": "topic volumes", "sentiment_distribution": "the sentiment mix",
     "sentiment_trend": "the sentiment trend", "compare_topics": "a topic comparison", "root_cause": "a root-cause investigation",
@@ -131,6 +139,9 @@ def route_intent(question: str, previous: dict | None = None, allow_llm: bool = 
     stripped = re.sub(r"\b(app|account|order|payment)s?\b", " ", stripped, flags=re.I)  # topic heads left behind
     content = [w for w in re.findall(r"[a-z0-9]+", stripped.lower()) if w not in FILLER]
     if len(content) < MIN_CONTENT_WORDS and not (rules_intent.conversation_ids or rules_intent.agents or previous):
+        if GENERAL_KNOWLEDGE_CUE.search(question) and not DATASET_TERMS.search(question):  # "What is LangGraph?"
+            return done("clarify", as_category("unsupported", OFF_TOPIC_TEXT), "off_topic",
+                        "A general-knowledge question about nothing in the dataset; no model was asked to classify it.", semantic=sem_meta)
         return done("clarify", as_category("unsupported", _clarify_text([c for c, _ in sem.candidates])), "clarify",
                     f"Too vague to route ({len(content)} content word(s)); asking instead of guessing.", semantic=sem_meta)
 

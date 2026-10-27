@@ -20,14 +20,15 @@ export function RoutingStrip({ r }: { r: ChatResponse }) {
   const tu = r.token_usage;
   const ir = r.model_metadata?.intent_routing as { method?: string; reason?: string; rule?: string } | undefined;
   if (!rt) return null;
-  const zero = rt.route === "analytics_only";
+  const fast = rt.route === "fast_path";
+  const zero = rt.route === "analytics_only" || fast;
   return (
     <div data-testid="routing-strip" className="flex flex-wrap items-start gap-x-4 gap-y-2 rounded-xl border border-line bg-white/[0.02] px-3.5 py-2.5 text-[11px]">
       <div className="flex min-w-0 flex-1 items-start gap-2">
         {zero ? <Calculator className="mt-0.5 h-3.5 w-3.5 shrink-0 text-pos" aria-hidden /> : <BrainCircuit className="mt-0.5 h-3.5 w-3.5 shrink-0 text-violet" aria-hidden />}
         <div className="min-w-0">
           <p className="text-ink">
-            <span className="font-semibold">{zero ? "Zero-LLM route" : "Hybrid AI route"}</span>
+            <span className="font-semibold">{fast ? "Fast path (no agents or model)" : zero ? "Zero-LLM route" : "Hybrid AI route"}</span>
             <span className="text-faint"> · mode {MODE_LABEL[rt.requested_mode] ?? rt.requested_mode}</span>
           </p>
           <p className="mt-0.5 leading-relaxed text-muted">{rt.reason}</p>

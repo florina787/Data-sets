@@ -10,7 +10,7 @@ IntentCategory = Literal[
     "negative_topics", "agent_coaching", "sentiment_trajectory", "leadership_priorities", "sentiment_distribution",
     "sentiment_trend", "topic_frequency", "compare_topics", "agent_profile", "conversation_detail", "similar_conversations",
     "dataset_overview", "resolution_quality", "conversation_list", "explain_previous", "uncertainty_review", "leadership_summary",
-    "conversation_xray", "root_cause", "unsupported",
+    "conversation_xray", "root_cause", "top_statements", "unsupported",
 ]
 TopicId = Literal["duplicate_charge", "payment_not_reflected", "coupon_not_applied", "not_received", "app_crash",
                   "account_locked", "service_malfunction", "general_help", "other"]
@@ -54,6 +54,8 @@ class IntentOutput(BaseModel):
     reference_ranks: list[int] = Field(default_factory=list, description="1-based ranks from the previous ranking the user refers to")
     audience: Literal["analyst", "leadership"] = "analyst"
     needs_evidence: bool = False
+    polarity: Literal["positive", "negative"] | None = None  # top_statements: which statements
+    statement_rank: Literal["frequency", "strength"] = "frequency"  # top_statements: most common, or strongest sentiment
     reasoning: str = Field("", description="One short sentence explaining the interpretation")
 
 

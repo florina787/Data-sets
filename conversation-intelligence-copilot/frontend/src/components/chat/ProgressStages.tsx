@@ -34,6 +34,11 @@ export function ProgressStages({ turn, compact }: { turn: Turn; compact?: boolea
           })}
         </AnimatePresence>
       </ol>
+      {turn.status === "streaming" && turn.draft && (
+        <p className="max-w-3xl rounded-lg border border-dashed border-violet/30 bg-violet/[0.04] px-3 py-2 text-xs leading-relaxed text-muted" data-testid="explanation-draft">
+          <span className="font-medium text-violet">Draft from the language model, not yet checked: </span>{turn.draft}
+        </p>
+      )}
     </div>
   );
 }

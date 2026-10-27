@@ -92,8 +92,14 @@ def sentiment_distribution(r: dict, extra: dict) -> dict:
 
 def sentiment_trend(r: dict, extra: dict) -> dict:
     rows = r["table"]["rows"]
+    if len(rows) >= 2:  # lead with the latest month against the one before it: what "this month vs last month" asks
+        cur, prev = rows[-1], rows[-2]
+        move = "up from" if cur["negative_rate"] > prev["negative_rate"] else "down from" if cur["negative_rate"] < prev["negative_rate"] else "unchanged from"
+        head = f"Negative sentiment was {pct(cur['negative_rate'])} in {cur['month']}, {move} {pct(prev['negative_rate'])} in {prev['month']}."
+    else:
+        head = f"Negative sentiment was {pct(rows[0]['negative_rate'])} in {rows[0]['month']}."
     return {
-        "headline": f"Negative sentiment was {pct(rows[0]['negative_rate'])} in {rows[0]['month']} and {pct(rows[-1]['negative_rate'])} in {rows[-1]['month']}.",
+        "headline": head,
         "answer": "Monthly negative rate: " + "; ".join(f"{row['month']} {pct(row['negative_rate'])} of {int(row['conversations'])}" for row in rows) + ".",
         "key_points": [f"{row['month']}: {pct(row['negative_rate'])} (95% CI {pct(row['rate_ci_low'])}–{pct(row['rate_ci_high'])})" for row in rows],
         "follow_up_questions": ["Which topics drove negative sentiment last month?", "Compare the top two topics."],
@@ -295,12 +301,33 @@ def similar(results: list[dict], meta: dict) -> dict:
     }
 
 
+def top_statements(r: dict, extra: dict) -> dict:
+    p, rows = r["params"], r["table"]["rows"]
+    pol, n, want = p["polarity"], len(rows), p["top_n"]
+    kind = "most common" if p["rank_by"] == "frequency" else "strongest"
+    if n < want:
+        head = f"Only {n} distinct {pol} statement{'s' if n != 1 else ''} appear in customer messages in {_window(r)}."
+    else:
+        head = (f"The {kind} {pol} statement customers made in {_window(r)}." if n == 1
+                else f"The {n} {kind} {pol} statements customers made in {_window(r)}.")
+    items = " ".join(f"{row['rank']}. “{row['statement']}” ({int(row['mentions'])} mentions in {int(row['conversations'])} conversations)." for row in rows)
+    share = _m(r, "polarity_share")
+    return {
+        "headline": head,
+        "answer": f"{items} Overall, {pct(share)} of customer messages are {pol}." + (" " + r["uncertainty_notes"][0] if n < want else ""),
+        "key_points": [f"#{row['rank']} “{row['statement']}”: {int(row['mentions'])} mentions, mean score {row['mean_score']}" for row in rows],
+        "follow_up_questions": [f"What are the top 5 {'negative' if pol == 'positive' else 'positive'} statements from users?",
+                                "What were the top 5 topics most associated with negative sentiment last month?",
+                                "What is the overall sentiment mix across conversations?"],
+    }
+
+
 BY_OPERATION = {
     "rank_negative_topics": negative_topics, "topic_frequency": topic_frequency, "compare_topics": compare_topics,
     "sentiment_distribution": sentiment_distribution, "sentiment_trend": sentiment_trend, "sentiment_trajectory": sentiment_trajectory,
     "agent_coaching_review": agent_coaching, "agent_profile": agent_profile, "leadership_priorities": leadership,
     "resolution_quality": resolution_quality, "dataset_overview": dataset_overview, "conversation_detail": conversation_detail,
-    "list_conversations": conversation_list, "conversation_xray": conversation_xray, "root_cause_investigation": root_cause,
+    "list_conversations": conversation_list, "conversation_xray": conversation_xray, "root_cause_investigation": root_cause, "top_statements": top_statements,
 }
 
 

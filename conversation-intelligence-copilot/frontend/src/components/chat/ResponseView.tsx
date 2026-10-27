@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import {
-  AlertTriangle, BookOpen, BrainCircuit, Gauge, CalendarDays, CheckCircle2, ChevronDown, CircleHelp, Clock, FileSearch, Lightbulb, Network, Quote, ShieldCheck, Sparkles, UserCheck,
+  AlertTriangle, BookOpen, BrainCircuit, Gauge, CalendarDays, CheckCircle2, ChevronDown, CircleHelp, Clock, FileSearch, Lightbulb, Network, Quote, ShieldCheck, Sparkles, UserCheck, Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -20,6 +20,47 @@ import { cn } from "@/lib/utils";
 import type { ChatResponse, Evidence, Recommendation } from "@/types/api";
 
 const FULL_WIDTH = new Set(["timeline", "heatmap", "table"]);
+
+/** Top-N statements: each row is a real customer statement with its count and the conversations that contain it. */
+function StatementsTable({ r }: { r: ChatResponse }) {
+  const { openConversation } = useEvidence();
+  const rows = r.rankings as { rank: number; statement: string; mentions: number; conversations: number; mean_score: number;
+    share_of_polarity: number; example_conversation_ids?: string[]; example_message_ids?: string[] }[];
+  if (!rows.length) return null;
+  return (
+    <Card>
+      <CardHeader title="Statements, ranked" icon={<Quote className="h-4 w-4" />} />
+      <div className="overflow-x-auto px-2 pb-3">
+        <table className="w-full min-w-[520px] text-left text-xs" data-testid="statements-table">
+          <thead className="text-faint"><tr>
+            <th className="px-3 py-2 font-medium">#</th><th className="px-3 py-2 font-medium">Statement</th>
+            <th className="px-3 py-2 text-right font-medium">Mentions</th><th className="px-3 py-2 text-right font-medium">Conversations</th>
+            <th className="px-3 py-2 text-right font-medium">Share</th><th className="px-3 py-2 font-medium">Examples</th>
+          </tr></thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.rank} className="border-t border-line align-top">
+                <td className="num px-3 py-2 text-faint">{row.rank}</td>
+                <td className="px-3 py-2 text-ink">“{row.statement}”</td>
+                <td className="num px-3 py-2 text-right">{row.mentions.toLocaleString()}</td>
+                <td className="num px-3 py-2 text-right">{row.conversations.toLocaleString()}</td>
+                <td className="num px-3 py-2 text-right">{(row.share_of_polarity * 100).toFixed(1)}%</td>
+                <td className="px-3 py-2">
+                  <div className="flex flex-wrap gap-1">
+                    {(row.example_conversation_ids ?? []).map((cid, i) => (
+                      <button key={`${cid}-${i}`} onClick={() => openConversation(cid, row.example_message_ids?.[i] ? [row.example_message_ids[i]] : [])}
+                        className="focus-ring num rounded border border-line px-1.5 py-0.5 text-[10px] text-cyan hover:border-cyan/50">{cid}</button>
+                    ))}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
 
 export function EvidenceCard({ e, i }: { e: Evidence; i: number }) {
   const { openConversation } = useEvidence();
@@ -105,6 +146,24 @@ export function ResponseView({ r }: { r: ChatResponse }) {
   const categoryLabel = r.plan.category !== "unsupported" ? humanize(r.plan.category)
     : general ? "Outside the dataset" : r.headline === "Which analysis did you mean?" ? "Needs clarification" : "Unsupported";
   const statusLabel = general ? "Model's own answer" : categoryLabel === "Needs clarification" ? "Clarify" : humanize(r.status);
+  if (r.routing?.route === "fast_path") {
+    return (
+      <div className="space-y-3" data-testid="small-talk">
+        <p className="text-sm leading-relaxed text-ink"><span className="font-semibold">{r.headline}</span> <span className="text-ink/80">{r.answer}</span></p>
+        <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+          <Tip content={r.routing.reason}><span><Badge><Zap className="h-3 w-3" />Fast path · no model</Badge></span></Tip>
+          <Badge><Clock className="h-3 w-3" />{ms(r.latency_ms)}</Badge>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {r.follow_up_questions.map((q) => (
+            <button key={q} disabled={busy} onClick={() => ask(q)} className="focus-ring rounded-full border border-indigo/25 bg-indigo/[0.07] px-3 py-1.5 text-xs text-ink transition hover:border-indigo/50 hover:bg-indigo/15 disabled:opacity-40">
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
@@ -165,6 +224,7 @@ export function ResponseView({ r }: { r: ChatResponse }) {
         </div>
       )}
 
+      {r.plan.category === "top_statements" && <StatementsTable r={r} />}
       {r.root_cause && <RootCausePanel panel={r.root_cause} />}
       {r.xray && <XRayPanel panel={r.xray} />}
 

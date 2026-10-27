@@ -6,7 +6,9 @@ from app.agents.grounding import allowed_numbers, ungrounded_numbers
 from app.analytics.query_registry import OPERATIONS
 
 CRITICAL = {"registered_operations", "denominators", "ranking_consistency", "chart_consistency", "explanation_grounded", "proportions_valid",
-            "excerpt_fidelity"}
+            "excerpt_fidelity", "answer_item_count", "answer_items_present", "intent_operation_agreement", "statement_provenance"}
+# The primary operation each list-style category must run, so a statements question can never be answered by, say, root cause.
+EXPECTED_PRIMARY = {"top_statements": "top_statements", "negative_topics": "rank_negative_topics"}
 
 
 def _check(name: str, passed: bool, detail: str) -> dict:
@@ -99,6 +101,25 @@ def run_qa(plan: dict, tool_results: dict, charts: list[dict], evidence: list[di
         r = tool_results["agent_coaching_review"]
         checks.append(_check("coaching_sample_size_gate", r["params"]["min_conversations"] >= 1 and any("Decision support" in n for n in r["uncertainty_notes"]),
                              f"Minimum {r['params']['min_conversations']} conversations per agent enforced; safeguard attached"))
+    # Answer contracts for top-N lists: the right analysis ran, the item count is honest, and every item is in the answer.
+    cat = plan.get("category")
+    if cat in EXPECTED_PRIMARY and not plan.get("unsupported_reason"):
+        agree = bool(ops) and ops[0] == EXPECTED_PRIMARY[cat] and (cat != "top_statements" or ops == ["top_statements"])
+        checks.append(_check("intent_operation_agreement", agree, f"Intent {cat} answered by {ops or 'no operation'}"))
+    st = tool_results.get("top_statements")
+    if st and st.get("status") == "ok":
+        rows = st["table"]["rows"]
+        asked = int(st["params"]["top_n"])
+        distinct = int(next(m["value"] for m in st["metrics"] if m["id"] == "distinct_statements"))
+        expected = min(asked, distinct)
+        shortfall_stated = expected == asked or any(f"Only {distinct}" in n for n in st["uncertainty_notes"])
+        checks.append(_check("answer_item_count", len(rows) == expected and shortfall_stated,
+                             f"{len(rows)} of {asked} requested statements returned; {distinct} distinct exist"
+                             + ("" if expected == asked else " (shortfall stated)" if shortfall_stated else " (shortfall NOT stated)")))
+        text = " ".join([explanation.get("headline", ""), explanation.get("answer", "")])
+        missing = [r["statement"] for r in rows if r["statement"] not in text]
+        checks.append(_check("answer_items_present", not missing, f"All {len(rows)} statements quoted in the answer" if not missing
+                             else f"{len(missing)} statement(s) missing from the answer: {missing[:3]}"))
     # Evidence Challenger results count as QA checks (a qualified causal claim is a warning, a mismatched quote is critical).
     for c in (evidence_review or {}).get("checks", []):
         if c["check"] == "counter_evidence":

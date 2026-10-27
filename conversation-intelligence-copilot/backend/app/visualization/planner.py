@@ -56,6 +56,17 @@ def plan_charts(tool_results: dict, retrieval: list[dict], request_id: str) -> t
                   sorted(allg, key=lambda x: -x["negative_rate"])],
             value_format="percent", error_low_field="rate_ci_low", error_high_field="rate_ci_high", source_analysis_id=rid, drilldown=drill,
             accessibility_summary="; ".join(f"{row['name']}: {row['negative_rate']:.1%}" for row in allg)))
+    if (r := tool_results.get("top_statements")) and r["status"] == "ok":
+        pol = r["params"]["polarity"]
+        rows = r["table"]["rows"]
+        charts.append(_kpis(r, ["statements_returned", "distinct_statements", "polarity_messages", "polarity_share"], f"{rid}_stmt"))
+        charts.append(ChartSpec(
+            chart_id="statement_mentions", chart_type="horizontal_bar", title=f"Top {pol} customer statements · {r['scope']['window']['label']}",
+            description="How often customers wrote each statement (identical messages grouped)", x_field="statement",
+            series=[Series(key="mentions", label="Mentions", color="positive" if pol == "positive" else "negative")],
+            data=[{"statement": row["statement"][:80], "mentions": row["mentions"], "conversations": row["conversations"]} for row in rows],
+            filters=r["scope"], source_analysis_id=rid, evidence_ids=r["evidence_refs"], uncertainty_note=_note(r),
+            accessibility_summary="; ".join(f"{row['statement'][:60]}: {int(row['mentions'])} mentions" for row in rows)))
     if (r := tool_results.get("sentiment_distribution")) and r["status"] == "ok":
         if r["series"].get("by_group"):
             rows = r["series"]["by_group"]["rows"]

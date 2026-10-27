@@ -12,7 +12,7 @@ from typing import Callable, Literal
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app.analytics import coaching, metrics, prioritization, sentiment, topics, root_cause, trajectories, xray
+from app.analytics import coaching, metrics, prioritization, sentiment, statements, topics, root_cause, trajectories, xray
 from app.analytics.db import AnalyticsDB
 from app.schemas.analysis import AnalysisResult, Scope
 
@@ -67,6 +67,12 @@ class LeadershipPriorities(BaseModel):
     weights: dict[str, float] | None = None
 
 
+class TopStatements(BaseModel):
+    polarity: Literal["positive", "negative"] = "positive"
+    top_n: int = Field(5, ge=1, le=20)
+    rank_by: Literal["frequency", "strength"] = "frequency"
+
+
 class RootCause(BaseModel):
     topic: str | None = Field(None, max_length=40, pattern=r"^[a-z_]+$")
     top_n: int = Field(6, ge=1, le=10)
@@ -100,6 +106,8 @@ OPERATIONS: dict[str, Operation] = {
         Operation("conversation_xray", "Message-level X-Ray: escalation signals, repeated concerns and communication gaps, each citing message IDs.",
                   ConversationRequired, xray.conversation_xray),
         Operation("conversation_detail", "Full transcript and labels for one conversation.", ConversationRequired, metrics.conversation_detail),
+        Operation("top_statements", "Top-N real customer statements of a sentiment polarity, ranked by frequency or strength, with message evidence.",
+                  TopStatements, statements.top_statements),
     ]
 }
 

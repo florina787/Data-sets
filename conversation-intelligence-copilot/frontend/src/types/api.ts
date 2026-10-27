@@ -115,7 +115,7 @@ export type AnalysisMode = "auto" | "analytics_only" | "hybrid_ai";
 
 export interface Routing {
   requested_mode: AnalysisMode;
-  route: "analytics_only" | "hybrid_ai";
+  route: "analytics_only" | "hybrid_ai" | "fast_path";
   reason: string;
   llm_available: boolean;
   llm_steps: string[];
@@ -239,7 +239,8 @@ export interface ChatResponse {
 export type NodeStatus = "pending" | "running" | "completed" | "failed" | "skipped" | "cancelled";
 
 export interface StreamEvent {
-  type: "accepted" | "node_start" | "node_end" | "final" | "error";
+  type: "accepted" | "node_start" | "node_end" | "explanation_draft" | "final" | "error";
+  text?: string;
   node?: string;
   label?: string;
   status?: NodeStatus;

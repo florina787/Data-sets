@@ -70,6 +70,28 @@ def qualify(text: str) -> str:
     return text
 
 
+def claim_constraints(tool_results: dict, evidence: list[dict]) -> dict:
+    """Pre-generation review: what a narrative may and may not claim, decided from the compact results before any model runs.
+
+    The same rules are checked again on the generated text by challenge(); handing them to the writer first means the
+    model is told which factors it may name instead of being rejected afterwards for naming the wrong ones.
+    """
+    rules = ["Describe associations, never causes: avoid 'caused by', 'driven by', 'due to', 'leads to', 'because of'.",
+             "Quote only the evidence excerpts given; do not paraphrase them as new findings."]
+    may, must_not = [], []
+    rc = tool_results.get("root_cause_investigation")
+    if rc and rc.get("status") == "ok":
+        rows = rc["series"]["all_factors"]["rows"]
+        may = [h["description"] for h in rows if h["strength"] in SUPPORTED and h["role"] != "customer_reaction"]
+        must_not = [h["description"] for h in rows if h["strength"] not in SUPPORTED and h["role"] != "customer_reaction"]
+        rules.append("Name ONLY the factors in MAY_NAME as associated with the outcome, in the headline and the answer. "
+                     "Do not name any factor in MUST_NOT_NAME as a driver or association; you may say it was tested and not supported.")
+        if not may:
+            rules.append("No agent or context factor was supported: say so plainly rather than offering a likely reason.")
+    ready = bool(tool_results) and all(r.get("status") in ("ok", "insufficient_data") for r in tool_results.values())
+    return {"ready": ready, "may_name": may, "must_not_name": must_not, "rules": rules, "evidence_conversations": len(evidence)}
+
+
 def challenge(db: AnalyticsDB, plan: dict, tool_results: dict, evidence: list[dict], explanation: dict, explanation_source: str) -> tuple[dict, dict]:
     """Return (review, explanation); the explanation is only changed to qualify causal wording or drop unsupported claims."""
     checks: list[dict] = []
@@ -172,6 +194,19 @@ def challenge(db: AnalyticsDB, plan: dict, tool_results: dict, evidence: list[di
         if unsupported:
             challenges.append(f"The explanation named {', '.join(u.replace('_', ' ') for u in unsupported)} as a driver, but the tests do not support it.")
             replaced = explanation_source == "llm"
+
+    # 8. statement provenance (top statements) ---------------------------------------------------
+    st = tool_results.get("top_statements")
+    if st and st.get("status") == "ok":
+        pol = st["params"]["polarity"]
+        claimed = {mid: r["statement"] for r in st["table"]["rows"] for mid in r["example_message_ids"]}
+        src = db.query(f"""SELECT m.message_id, m.masked_text, m.speaker_role, l.sentiment FROM messages m JOIN message_labels l USING (message_id)
+                           WHERE m.message_id IN ({','.join('?' * len(claimed))})""", list(claimed))
+        ok = {r.message_id for r in src.itertuples() if r.masked_text == claimed[r.message_id] and r.speaker_role == "customer" and r.sentiment == pol}
+        bad = sorted(set(claimed) - ok)
+        checks.append(_check("statement_provenance", "fail" if bad else "pass",
+                             f"{len(ok)}/{len(claimed)} example messages re-read: customer-authored, labelled {pol}, text matches" if not bad
+                             else f"{len(bad)} example message(s) do not match the claimed statement, speaker or polarity", bad))
 
     statuses = [c["status"] for c in checks]
     verdict = "challenged" if "fail" in statuses else "partially supported" if statuses.count("warn") >= 2 else "supported"

@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     local_n_ctx: int = 8192
     local_threads: int = 4
     local_max_output_tokens: int = 600
+    local_n_gpu_layers: int = -1  # -1 = offload every layer when the llama.cpp build supports a GPU; 0 = CPU only
+    local_preload: bool = True  # load the local model in the background at API start-up, so the first question is warm
+    # Time budget for model-written explanations; past it, the evidence-backed deterministic narrative is used.
+    explanation_timeout_seconds: float = 20.0
 
     # --- Groq (OpenAI-compatible) ---------------------------------------------
     groq_api_key: str | None = Field(default=None, repr=False)

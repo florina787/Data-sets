@@ -21,7 +21,7 @@ from functools import lru_cache
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 
-from app.agents import nodes
+from app.agents import fast_path, nodes
 from app.agents.state import AnalysisState
 from app.agents.tracing import NODE_INFO
 from app.config import get_settings
@@ -116,6 +116,22 @@ def _finish(state: dict, request_id: str, session_id: str, question: str, starte
     return fr or {}
 
 
+def _finish_fast(fr: dict, events: list[dict], request_id: str, session_id: str, question: str, started: float) -> Iterator[dict]:
+    """Record a fast-path reply like any other request: node events, request row, memory turn, audit entry."""
+    from app.memory.store import get_memory
+
+    for ev in events:
+        yield {"type": "node_start", "node": ev["node"], "label": ev["label"], "at": ev["started_at"]}
+        yield {"type": "node_end", **{k: ev[k] for k in ("node", "label", "status", "duration_ms", "error", "output_summary", "meta")}}
+    state = {"execution_trace": events, "resolved_intent": fr["resolved_intent"], "analytical_plan": {"steps": []}, "final_response": fr}
+    fr = _finish(state, request_id, session_id, question, started)
+    # status "small_talk" keeps the turn out of follow-up context (only completed analyses are resolved against)
+    get_memory().add_turn(session_id, request_id, question, fr["resolved_intent"], fr["dataset_scope"], fr["plan"], {}, fr["headline"], "small_talk")
+    get_telemetry().audit("request", "answered", {"category": "general_chat", "status": fr["status"], "qa": "pass", "route": "fast_path"},
+                          request_id, session_id)
+    yield {"type": "final", "response": fr}
+
+
 def run_chat(question: str, session_id: str | None = None, dataset_mode: str = "original", selected_conversation_id: str | None = None,
              analysis_mode: str = "auto") -> dict:
     """Synchronous run; returns the final response."""
@@ -135,6 +151,11 @@ def stream_chat(question: str, session_id: str | None = None, dataset_mode: str 
     graph = get_graph()
     config = {"configurable": {"thread_id": request_id}}
     yield {"type": "accepted", "request_id": request_id, "session_id": sid}
+    fast = fast_path.respond(question, request_id, sid, dataset_mode)
+    if fast is not None:
+        fr, events = fast
+        yield from _finish_fast(fr, events, request_id, sid, question, started)
+        return
     error = None
     try:
         for mode, chunk in graph.stream(_initial_state(question, sid, request_id, dataset_mode, selected_conversation_id, analysis_mode), config,
