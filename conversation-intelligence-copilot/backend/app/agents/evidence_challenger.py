@@ -141,6 +141,8 @@ def challenge(db: AnalyticsDB, plan: dict, tool_results: dict, evidence: list[di
         for m in r.get("metrics", []):
             if m.get("denominator") is not None and 0 < m["denominator"] < SMALL_N:
                 small.append(f"{m['label']} (n={int(m['denominator'])})")
+        if op == "top_statements":
+            continue  # a statement's mention count is the answer itself, not the denominator of a rate
         for row in ((r.get("table") or {}).get("rows") or [])[:10]:
             n = row.get("conversations") or row.get("with_factor")
             if isinstance(n, (int, float)) and 0 < n < SMALL_N:

@@ -428,7 +428,7 @@ Details and limitations: **[docs/ENHANCEMENTS.md](docs/ENHANCEMENTS.md)** · ful
 
 <sub>The negative rate rises from 32.0% to 35.2%, but the 95% intervals overlap, so the app does not call it a trend.</sub>
 
-Methods, failures and caveats: **[EVALUATION.md](EVALUATION.md)** · routing protocol: **[INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)** · requirement-by-requirement audit: **[compliance audit](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md)**.
+Methods, failures and caveats: **[EVALUATION.md](EVALUATION.md)** · routing protocol: **[INTENT_ROUTING.md](docs/evaluation/INTENT_ROUTING.md)** · latency before/after: **[LATENCY_REPORT.md](docs/evaluation/LATENCY_REPORT.md)** · requirement-by-requirement audit: **[compliance audit](docs/VERINT_REQUIREMENT_COMPLIANCE_AUDIT.md)**.
 
 ---
 

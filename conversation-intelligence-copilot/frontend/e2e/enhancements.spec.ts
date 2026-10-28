@@ -98,3 +98,24 @@ test("System metrics shows token accounting and both retrieval backends", async 
   await expect(page.getByTestId("retrieval-backends")).toContainText("Dense (MiniLM)");
   await expect(page.getByTestId("retrieval-backends")).toContainText("Sparse (LSA)");
 });
+
+test("Fast path: a greeting gets a light reply with no agents or model", async ({ page }) => {
+  await fresh(page);
+  await page.locator("#composer").fill("Hi");
+  await page.keyboard.press("Enter");
+  const reply = page.getByTestId("small-talk").last();
+  await expect(reply).toBeVisible({ timeout: 10_000 });
+  await expect(reply).toContainText("Hello!");
+  await expect(reply).toContainText("Fast path · no model");
+});
+
+test("Top statements: a ranked table of real customer statements, shortfall stated", async ({ page }) => {
+  await fresh(page);
+  await ask(page, "What are the top 5 positive statements from users?");
+  await expect(page.locator("h2").last()).toContainText("Only 2 distinct positive statements");
+  const table = page.getByTestId("statements-table").last();
+  await expect(table.locator("tbody tr")).toHaveCount(2);
+  await expect(table).toContainText("Thanks, that helps.");
+  await table.locator("tbody tr").first().getByRole("button").first().click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+});
