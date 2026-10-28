@@ -5,9 +5,12 @@ START → input_validation → session_context → router → intent → supervi
       → [retrieval after analysis, when the query depends on the result]
       → evidence → explanation → visualization → qa → governance → response → memory_telemetry → END
 
-Checkpointing: each request runs on its own LangGraph thread (thread_id =
-request_id) in a SQLite checkpointer, so every intermediate state is persisted
-for audit/replay. Cross-turn memory lives in the session store (memory/store.py).
+Checkpointing: each request runs on its own LangGraph thread (thread_id = request_id). By default the
+checkpointer is in memory and the thread is dropped once the request is recorded: the audit trail (every
+node's status, timing, inputs/outputs summary and the final response) is kept in telemetry, so writing the
+full state to disk after every node added ~130 ms per request for nothing that is read back. Set
+CHECKPOINT_BACKEND=sqlite to persist every intermediate state for debugging. Cross-turn memory lives in the
+session store (memory/store.py).
 """
 
 from __future__ import annotations
@@ -18,6 +21,7 @@ import uuid
 from collections.abc import Iterator
 from functools import lru_cache
 
+from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import END, START, StateGraph
 
@@ -67,10 +71,18 @@ def build_graph(checkpointer=None):
 
 @lru_cache
 def get_graph():
-    path = get_settings().checkpoint_database_path
-    path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path, check_same_thread=False)
+    s = get_settings()
+    if s.checkpoint_backend == "memory":
+        return build_graph(InMemorySaver())
+    s.checkpoint_database_path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(s.checkpoint_database_path, check_same_thread=False)
     return build_graph(SqliteSaver(conn))
+
+
+def _release(graph, request_id: str) -> None:
+    """Drop an in-memory request thread once its state has been recorded, so memory does not grow per request."""
+    if isinstance(graph.checkpointer, InMemorySaver):
+        graph.checkpointer.delete_thread(request_id)
 
 
 def graph_definition() -> dict:
@@ -164,11 +176,13 @@ def stream_chat(question: str, session_id: str | None = None, dataset_mode: str 
                 yield chunk
     except GeneratorExit:
         _finish(graph.get_state(config).values, request_id, sid, question, started, error="cancelled")
+        _release(graph, request_id)
         get_telemetry().audit("request", "cancelled", {"question": question[:200]}, request_id, sid)
         raise
     except Exception as e:  # noqa: BLE001
         error = f"{type(e).__name__}: {str(e)[:300]}"
     state = graph.get_state(config).values
+    _release(graph, request_id)
     fr = _finish(state, request_id, sid, question, started, error=error.split(":")[0] if error else None)
     get_telemetry().audit("request", "answered" if not error else "failed",
                           {"category": (state.get("resolved_intent") or {}).get("category"), "status": fr.get("status"),

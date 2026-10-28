@@ -48,17 +48,21 @@ def _conversation_signals(db: AnalyticsDB, scope: Scope) -> pd.DataFrame:
 
 
 def _agent_table(df: pd.DataFrame) -> pd.DataFrame:
+    # Vectorised sums instead of per-agent lambdas (~3,000 agents): same counts, a fraction of the time.
+    df = df.assign(_irrelevant=df["irrelevant_resolution"].fillna(0).astype(float),
+                   _assessable=df["irrelevant_resolution"].notna().astype(int))
     g = df.groupby("agent_id").agg(
         conversations=("conversation_id", "count"),
         negative_turns=("negative_turns_with_reply", "sum"),
         empathic_replies=("empathic_replies", "sum"),
         empathy_turns=("empathy_turns", "sum"),
         agent_turns=("agent_turns", "sum"),
-        irrelevant_resolutions=("irrelevant_resolution", lambda s: int(s.fillna(0).sum())),
-        assessable_resolutions=("irrelevant_resolution", lambda s: int(s.notna().sum())),
+        irrelevant_resolutions=("_irrelevant", "sum"),
+        assessable_resolutions=("_assessable", "sum"),
         ends_negative=("ends_negative", "sum"),
         mean_review_score=("review_score", "mean"),
     ).reset_index()
+    g["irrelevant_resolutions"] = g["irrelevant_resolutions"].astype(int)
     g["empathy_response_rate"] = g["empathic_replies"] / g["negative_turns"].where(g["negative_turns"] > 0)
     g["empathy_rate"] = g["empathy_turns"] / g["agent_turns"]
     g["irrelevant_resolution_rate"] = g["irrelevant_resolutions"] / g["assessable_resolutions"].where(g["assessable_resolutions"] > 0)

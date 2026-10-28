@@ -53,7 +53,11 @@ def _factors(df: pd.DataFrame, topic: str) -> list[tuple[str, str, str, pd.Serie
 
 
 def _precedence(db: AnalyticsDB, ids: list[str], topic: str) -> dict[str, dict[str, bool]]:
-    """Per conversation: does each agent behaviour occur before the customer's last negative message?"""
+    """Per conversation: does each agent behaviour occur before the customer's last negative message?
+
+    One pass over plain row tuples (no per-conversation DataFrame slicing): this runs on every root-cause
+    question, and the row-by-row pandas version took most of the request's time.
+    """
     if not ids:
         return {}
     m = db.frame(
@@ -61,30 +65,39 @@ def _precedence(db: AnalyticsDB, ids: list[str], topic: str) -> dict[str, dict[s
             FROM messages m JOIN message_labels l USING (message_id)
             WHERE m.conversation_id IN ({','.join('?' * len(ids))}) ORDER BY m.conversation_id, m.turn_index""", ids)
     fitting = RELEVANT_RESOLUTIONS.get(topic) or set()
+    rows: dict[str, list[tuple]] = {}
+    for cid, turn, role, text, sentiment, empathy, resolution in zip(
+            m["conversation_id"].tolist(), m["turn_index"].tolist(), m["speaker_role"].tolist(), m["clean_text"].tolist(),
+            m["sentiment"].tolist(), m["empathy"].tolist(), m["resolution"].tolist()):
+        rows.setdefault(cid, []).append((int(turn), role, text, sentiment, empathy, resolution))
     out: dict[str, dict[str, bool]] = {}
-    for cid, g in m.groupby("conversation_id", sort=False):
-        neg_c = g[(g["speaker_role"] == "customer") & (g["sentiment"] == "negative")]["turn_index"]
-        last_neg = int(neg_c.max()) if len(neg_c) else -1
-        agent = g[g["speaker_role"] == "agent"]
+    for cid, g in rows.items():
+        neg_c = [t for t, role, _, sent, _, _ in g if role == "customer" and sent == "negative"]
+        last_neg = max(neg_c) if neg_c else -1
+        agent = [r for r in g if r[1] == "agent"]
         first: dict[str, int] = {}
         for t in neg_c:
-            reply = agent[agent["turn_index"] > t].head(1)
-            if len(reply) and not bool(reply["empathy"].iloc[0]):
-                first["low_empathy"] = int(reply["turn_index"].iloc[0])
+            reply = next((r for r in agent if r[0] > t), None)
+            if reply is not None and not bool(reply[4]):
+                first["low_empathy"] = reply[0]
                 break
-        seen: set[str] = set()
-        for _, a in agent.iterrows():
-            if a["clean_text"] in seen and not a["resolution"]:
-                first.setdefault("scripted_repeats", int(a["turn_index"]))
-            seen.add(a["clean_text"])
-        res = agent[agent["resolution"].notna()]
-        if len(res) and fitting and res["resolution"].iloc[-1] not in fitting:
-            first["resolution_mismatch"] = int(res["turn_index"].iloc[-1])
-        hin = agent[agent["clean_text"].fillna("").map(lambda t: bool(HINGLISH_MARKERS.search(t)))]
-        if len(hin):
-            first["hinglish_agent"] = int(hin["turn_index"].iloc[0])
+        seen: set = set()
+        for t, _, text, _, _, resolution in agent:
+            if text in seen and not resolution:
+                first.setdefault("scripted_repeats", t)
+            seen.add(text)
+        res = [r for r in agent if not _missing(r[5])]
+        if res and fitting and res[-1][5] not in fitting:
+            first["resolution_mismatch"] = res[-1][0]
+        hin = next((r for r in agent if HINGLISH_MARKERS.search(r[2] if isinstance(r[2], str) else "")), None)
+        if hin is not None:
+            first["hinglish_agent"] = hin[0]
         out[cid] = {k: v < last_neg for k, v in first.items()}
     return out
+
+
+def _missing(v) -> bool:
+    return v is None or (isinstance(v, float) and v != v)
 
 
 def _strength(p: float | None, rd: float, n_with: int, n_without: int) -> str:

@@ -40,11 +40,15 @@ class MemoryStore:
         self.path = path
         self._lock = threading.Lock()
         with self._conn() as c:
+            c.execute("PRAGMA journal_mode=WAL")  # persistent: readers never block the writer
             c.executescript(SCHEMA)
 
     def _conn(self) -> sqlite3.Connection:
         conn = sqlite3.connect(self.path, timeout=10)
         conn.row_factory = sqlite3.Row
+        # With WAL, NORMAL syncs at checkpoints instead of on every commit: the store stays consistent, and a
+        # power cut can lose at most the last few rows. Full syncs cost tens of ms per request on many small writes.
+        conn.execute("PRAGMA synchronous=NORMAL")
         return conn
 
     def ensure_session(self, session_id: str | None, dataset_mode: str, title: str) -> str:

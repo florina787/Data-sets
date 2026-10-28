@@ -88,6 +88,7 @@ class Settings(BaseSettings):
     synthetic_dataset_path: Path = PROJECT_ROOT / "data" / "synthetic" / "synthetic_conversations.csv"
     database_path: Path = PROJECT_ROOT / "data" / "processed" / "analytics.duckdb"
     memory_database_path: Path = PROJECT_ROOT / "data" / "processed" / "memory.sqlite"
+    checkpoint_backend: Literal["memory", "sqlite"] = "memory"  # sqlite persists every intermediate graph state (debugging)
     checkpoint_database_path: Path = PROJECT_ROOT / "data" / "processed" / "checkpoints.sqlite"
     faiss_index_path: Path = PROJECT_ROOT / "data" / "indexes" / "conversations.faiss"
     manifests_dir: Path = PROJECT_ROOT / "data" / "manifests"
