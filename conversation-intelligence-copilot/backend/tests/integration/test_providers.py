@@ -66,3 +66,22 @@ def test_model_choice_needing_a_missing_entity_is_rejected(env):
     gemini_client.set_llm(LocalLlamaClient(get_settings(), llama=fake))
     intent, _, meta = resolve_intent("Anything odd in the conversations recently", None, [], "t")
     assert meta["routing"]["method"] == "clarify" and "needs an entity" in meta["routing"]["llm"]["rejected"]
+
+
+def test_local_provider_without_llama_cpp_says_how_to_install(env, monkeypatch):
+    import importlib.util
+
+    from app.llm import gemini_client
+
+    real = importlib.util.find_spec
+    monkeypatch.setattr(importlib.util, "find_spec", lambda name, *a: None if name == "llama_cpp" else real(name, *a))
+    monkeypatch.setenv("LLM_PROVIDER", "local")
+    monkeypatch.setenv("LLM_ENABLED", "true")
+    get_settings.cache_clear()
+    gemini_client.set_llm(None)
+    try:
+        st = gemini_client.get_llm().status()
+        assert st["available"] is False and "llama-cpp-python is not installed" in st["reason"] and "--extra local-llm" in st["reason"]
+    finally:
+        get_settings.cache_clear()
+        gemini_client.set_llm(None)

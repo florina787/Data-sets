@@ -1,10 +1,10 @@
 .PHONY: install install-local-llm prepare llm-download label synthetic index dev backend frontend test test-backend test-frontend e2e evaluate screenshots report docker-up package clean
 
-install:            ## Install backend (uv) and frontend (npm) dependencies
-	cd backend && uv sync --extra transformers
+install:            ## Install backend (uv, including the local LLM binding) and frontend (npm) dependencies
+	cd backend && uv sync --extra transformers --extra local-llm
 	cd frontend && npm ci
 
-install-local-llm:  ## Optional: also install llama.cpp bindings for the free local LLM (then `make llm-download`)
+install-local-llm:  ## Install the llama.cpp binding for the local LLM (prebuilt wheels; then `make llm-download`)
 	cd backend && uv sync --extra transformers --extra local-llm
 
 prepare:            ## Ingest, validate, label and build data/processed/analytics.duckdb

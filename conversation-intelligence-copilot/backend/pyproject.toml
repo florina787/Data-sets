@@ -33,9 +33,19 @@ dev = [
 [project.optional-dependencies]
 # Optional: local transformer embeddings. Requires downloading weights from Hugging Face.
 transformers = ["sentence-transformers>=3.0"]
-# Optional: free local LLM (Qwen2.5-1.5B-Instruct GGUF via llama.cpp, CPU). Builds from source where no wheel exists
-# (needs a C/C++ toolchain and CMake). Weights are downloaded separately with `make llm-download`.
+# Local LLM (Qwen2.5-1.5B-Instruct GGUF via llama.cpp, CPU), installed from prebuilt wheels (see [tool.uv.sources]).
+# Weights are downloaded separately with `make llm-download`.
 local-llm = ["llama-cpp-python>=0.3.36", "huggingface-hub>=0.24"]
+
+# llama-cpp-python from its prebuilt CPU wheels (Windows, macOS, Linux), so installing the local model needs no
+# C/C++ compiler. Only this package uses the index.
+[tool.uv.sources]
+llama-cpp-python = { index = "llama-cpp-cpu" }
+
+[[tool.uv.index]]
+name = "llama-cpp-cpu"
+url = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
+explicit = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

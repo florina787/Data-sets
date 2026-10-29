@@ -254,7 +254,15 @@ def get_llm() -> LLMClient:
         return DisabledLLM(reason, s.local_model_file.removesuffix(".gguf"))
     try:
         if provider == "local":
+            import importlib.util
+
             from app.llm.local_client import LocalLlamaClient
+
+            # Say exactly what is missing, so "deterministic mode" is never a mystery: the model file and the
+            # llama.cpp binding are installed separately.
+            if importlib.util.find_spec("llama_cpp") is None:
+                return DisabledLLM("Local model selected, but llama-cpp-python is not installed. In backend/, run: "
+                                   "uv sync --extra transformers --extra local-llm", s.local_model_file.removesuffix(".gguf"))
 
             return LocalLlamaClient(s)
         if not s.gemini_api_key:
