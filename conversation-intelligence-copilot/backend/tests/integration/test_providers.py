@@ -81,7 +81,7 @@ def test_local_provider_without_llama_cpp_says_how_to_install(env, monkeypatch):
     gemini_client.set_llm(None)
     try:
         st = gemini_client.get_llm().status()
-        assert st["available"] is False and "llama-cpp-python is not installed" in st["reason"] and "--extra local-llm" in st["reason"]
+        assert st["available"] is False and st["provider"] == "local" and "llama-cpp-python is not installed" in st["reason"] and "--extra local-llm" in st["reason"]
     finally:
         get_settings.cache_clear()
         gemini_client.set_llm(None)

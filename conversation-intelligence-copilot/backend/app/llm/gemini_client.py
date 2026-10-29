@@ -60,15 +60,16 @@ class DisabledLLM:
 
     name = "disabled"
 
-    def __init__(self, reason: str, model: str = "none"):
+    def __init__(self, reason: str, model: str = "none", provider: str = "none"):
         self.reason = reason
         self.model = model
+        self.provider = provider  # the provider that was selected but cannot run, so status never names the wrong one
 
     def available(self) -> bool:
         return False
 
     def status(self) -> dict:
-        return {"provider": "gemini", "mode": "deterministic", "available": False, "model": self.model, "reason": self.reason, "circuit": "n/a"}
+        return {"provider": self.provider, "mode": "deterministic", "available": False, "model": self.model, "reason": self.reason, "circuit": "n/a"}
 
     def generate_json(self, *a, **k) -> LLMResult:
         raise LLMUnavailable(self.reason)
@@ -262,11 +263,11 @@ def get_llm() -> LLMClient:
             # llama.cpp binding are installed separately.
             if importlib.util.find_spec("llama_cpp") is None:
                 return DisabledLLM("Local model selected, but llama-cpp-python is not installed. In backend/, run: "
-                                   "uv sync --extra transformers --extra local-llm", s.local_model_file.removesuffix(".gguf"))
+                                   "uv sync --extra transformers --extra local-llm", s.local_model_file.removesuffix(".gguf"), "local")
 
             return LocalLlamaClient(s)
         if not s.gemini_api_key:
-            return DisabledLLM("GEMINI_API_KEY is not set", s.gemini_model)
+            return DisabledLLM("GEMINI_API_KEY is not set", s.gemini_model, "gemini")
         return GeminiClient(s)
     except Exception as e:  # noqa: BLE001
-        return DisabledLLM(f"{provider} client could not be created: {e}", s.local_model_file.removesuffix(".gguf"))
+        return DisabledLLM(f"{provider} client could not be created: {e}", s.local_model_file.removesuffix(".gguf"), provider)
