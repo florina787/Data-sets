@@ -170,7 +170,7 @@ def architecture_figure() -> Path:
         arrow(69.3, 36.3 - i * 6.2, 74.7, 38.5)
     arrow(69.3, 4.3, 74.7, 37.5)
     ax.text(2, 22, "DuckDB: registered,\nparameterised operations\n(no model-written SQL)", fontsize=7, color=MUTED)
-    ax.text(2, 12, "Optional LLM (local Qwen, Groq\nor Gemini): interpretation only;\nnumbers are never generated", fontsize=7, color=MUTED)
+    ax.text(2, 12, "Optional LLM (local Qwen, or\nGemini): interpretation only;\nnumbers are never generated", fontsize=7, color=MUTED)
     fig.tight_layout()
     p = FIG / "architecture.png"
     fig.savefig(p, dpi=180)
@@ -280,7 +280,7 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
 
     h("4. Model and tool choices")
     table([
-        ["Optional LLM: local Qwen2.5-1.5B (llama.cpp, no key), Groq, or Gemini", "Used only when needed: category-only intent classification when rules are unsure, grounded explanation for interpretive questions, optional batch labelling (Gemini). One client interface: constrained JSON, cache, one repair, rate limit, retries, circuit breaker; tokens recorded (unknown, never zero). No key is needed to run the app."],
+        ["Optional LLM: local Qwen2.5-1.5B (llama.cpp, no key), or Gemini", "Used only when needed: category-only intent classification when rules are unsure, grounded explanation for interpretive questions, optional batch labelling (Gemini). One client interface: constrained JSON, cache, one repair, rate limit, retries, circuit breaker; tokens recorded (unknown, never zero). No key is needed to run the app."],
         ["LangGraph", "Explicit, testable routing, parallel branches, checkpointing, observable nodes."],
         ["DuckDB", "All numbers: registered, parameterised operations; Wilson intervals, chi-square and z-tests for uncertainty."],
         ["FAISS + MiniLM + LSA", "Two exact-cosine indexes with metadata filters, fused by weighted reciprocal rank fusion (hybrid search)."],
@@ -328,7 +328,7 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
         "Specialised LLM agent (intent classification):",
         "  • What it is: a local Qwen2.5-1.5B-Instruct model (llama.cpp, free, CPU) used as a constrained classifier. It returns one intent category from a "
         "closed list (JSON-schema grammar), with definitions and 15 hard examples in the prompt.",
-        "  • Why chosen: a hosted model was unavailable (Gemini key blocked, no Groq key). Classification of questions, not generation of facts, is where a "
+        "  • Why chosen: it runs on the laptop with no key or per-call cost, and the Gemini key was blocked. Classification of questions, not generation of facts, is where a "
         "small model is safe, because every entity and number still comes from deterministic code.",
         "  • How it fits: the router calls it only when rules and semantic matching cannot route a question with high precision (6.9% of test questions).",
         f"  • Usefulness, on the held-out test split scored once: router with the model {rr['router']['accuracy']:.1%} vs {rr['no_llm']['accuracy']:.1%} without it, "
@@ -355,12 +355,12 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
         ["Automated tests", "138 backend · 8 Vitest · 17 Playwright — passing"],
     ], ["Measure", "Result"])
     para("End-to-end results are for the default AUTO path, where the four assignment questions need no model. Intent routing was measured with the local "
-         "Qwen2.5-1.5B model (docs/evaluation/INTENT_ROUTING.md). Hosted models (Gemini, Groq) were not evaluated live: the Gemini credential in the "
-         "development environment returned 401 API_KEY_SERVICE_BLOCKED and no Groq key was available.")
+         "Qwen2.5-1.5B model (docs/evaluation/INTENT_ROUTING.md). Gemini was not evaluated live: the Gemini credential in the "
+         "development environment returned 401 API_KEY_SERVICE_BLOCKED.")
 
     h("8. Limitations")
     bullets([
-        "Live hosted-model behaviour (Gemini/Groq intent, explanations, labels, latency, tokens) is unmeasured; the local model is slow on CPU.",
+        "Live hosted-model behaviour (Gemini intent, explanations, labels, latency, tokens) is unmeasured; the local model is slow on CPU.",
         "Sentiment/empathy mappings are developer judgements; human-agreement metrics await labels from the in-app blind review.",
         "Intent routing reaches 95.9% on 73 held-out questions written by the rules' author; three known misroutes are documented, unfixed. The semantic routing stage is disabled by its own calibration.",
         "Root cause findings are associational and depend on template-level labels; X-Ray signals are pointers for review, not a verdict.",
@@ -371,7 +371,7 @@ def docx_report(d: dict, figs: dict[str, Path]) -> Path:
 
     h("9. Next improvements")
     bullets([
-        "Enable a hosted model (Groq or Gemini); run labelling and the routing/explanation evaluation live; compare with rules and human labels.",
+        "Enable Gemini or a larger local model; run labelling and the routing/explanation evaluation live; compare with rules and human labels.",
         "A held-out retrieval query set to validate the hybrid weight; a fresh routing test set to measure the three proposed rule fixes.",
         "Collect a few hundred human labels for calibrated sentiment/empathy evaluation.",
         "SSO/RBAC, managed storage, OpenTelemetry/LangSmith, CI evaluation gates.",
@@ -449,7 +449,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
 
     story.append(Paragraph("Executive summary", h1))
     P("The copilot answers contact-centre questions through a supervised LangGraph workflow over deterministic DuckDB analytics, FAISS retrieval and "
-      "session memory. A Zero-LLM router answers fact questions without a model; an optional LLM (local Qwen2.5-1.5B, Groq or Gemini) handles intent the rules "
+      "session memory. A Zero-LLM router answers fact questions without a model; an optional LLM (local Qwen2.5-1.5B, or Gemini) handles intent the rules "
       "cannot route and explanations for interpretive questions. All four assignment questions and the three bonus extensions work end to end "
       "in the API and the UI; every answer carries evidence linked to source rows, uncertainty notes and a QA result.")
     T([["Measure", "Result"],
@@ -459,7 +459,7 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
        ["Intent routing (benchmark v2 test)", routing_text()],
        [f"Retrieval topic P@5 ({rt['embedding_backend'].split('/')[-1]})", f"{rt['topic_precision@5']:.1%} (random {rt['random_baseline_topic_precision']:.1%})"],
        ["Latency p50 / p95 (deterministic)", f"{ev['latency_p50_ms']:.0f} / {ev['latency_p95_ms']:.0f} ms"],
-       ["LLM providers", "local Qwen2.5-1.5B verified live; Groq not run (no key); Gemini not reachable (401 API_KEY_SERVICE_BLOCKED)"]], [6 * cm, W - 6 * cm])
+       ["LLM providers", "local Qwen2.5-1.5B verified live; Gemini not reachable (401 API_KEY_SERVICE_BLOCKED)"]], [6 * cm, W - 6 * cm])
 
     story.append(Paragraph("1. Requirements", h1))
     P("Requirement IDs (FR, NFR, GOV, EVAL) are mapped to modules and tests in docs/requirements/REQUIREMENTS_MATRIX.md; per-feature status in docs/IMPLEMENTATION_MATRIX.md. "
@@ -494,9 +494,9 @@ def pdf_report(d: dict, figs: dict[str, Path]) -> Path:
       f"κ {lb['lexicon_fallback_vs_templates']['cohen_kappa']}. Human review: {lb['human_review'].get('status')}. Gemini labels: not run (model unavailable).")
 
     story.append(Paragraph("5. LLM integration", h1))
-    P("One client interface with three providers: a local Qwen2.5-1.5B-Instruct model through llama.cpp (no key; JSON-schema grammar guarantees valid "
-      "output; ≈1 s per warm call on CPU), Groq through its OpenAI-compatible API, and Gemini through google-genai. LLM_PROVIDER=auto picks Groq, then Gemini, "
-      "then the local model, then none. All share the response cache, one bounded schema repair, rate limiting, retries, the circuit breaker and token "
+    P("One client interface with two providers: a local Qwen2.5-1.5B-Instruct model through llama.cpp (no key; JSON-schema grammar guarantees valid "
+      "output; ≈1 s per warm call on CPU) and Gemini through google-genai. LLM_PROVIDER=auto picks the local model, then Gemini, "
+      "then none. All share the response cache, one bounded schema repair, rate limiting, retries, the circuit breaker and token "
       "accounting (missing usage metadata is recorded as unknown, never as zero). The Gemini path in detail: google-genai client with response_schema (Pydantic, closed enums), temperature ≤ 0.2, thinking budget 0; one repair attempt with the validation error; "
       "sliding-window RPM limiter and concurrency cap; retries only for 408/429/5xx/timeouts with full-jitter backoff or the server's retryDelay; permanent auth errors open the circuit; "
       "response cache keyed by model, prompt id+version, system, user, schema and config; per-call usage (streamed usage treated as cumulative), latency, retries, cache hits, cost estimate. "

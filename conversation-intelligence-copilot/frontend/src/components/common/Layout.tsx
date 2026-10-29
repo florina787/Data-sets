@@ -21,7 +21,7 @@ export const NAV = [
   { to: "/governance", label: "Governance", icon: ShieldCheck },
 ];
 
-const PROVIDER: Record<string, string> = { gemini: "Gemini", "vertex-ai": "Vertex AI", groq: "Groq", local: "Local LLM" };
+const PROVIDER: Record<string, string> = { gemini: "Gemini", "vertex-ai": "Vertex AI", local: "Local LLM" };
 
 function ModelIndicator() {
   const { model, refreshModel } = useApp();

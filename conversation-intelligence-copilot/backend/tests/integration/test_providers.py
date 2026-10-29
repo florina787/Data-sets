@@ -1,13 +1,10 @@
-"""Groq (OpenAI-compatible HTTP) and local llama.cpp providers, without network or model files."""
+"""Local llama.cpp provider, without network or model files."""
 
 import json
 
-import httpx
 import pytest
 
 from app.config import get_settings
-from app.llm.gemini_client import LLMUnavailable
-from app.llm.groq_client import GroqClient
 from app.llm.local_client import LocalLlamaClient
 from app.llm.structured_output import IntentOutput
 from app.prompts.registry import get_prompt
@@ -15,48 +12,8 @@ from app.prompts.registry import get_prompt
 GOOD = {"category": "leadership_priorities"}
 
 
-def groq(handler, **overrides):
-    s = get_settings().model_copy(update={"groq_api_key": "test", "gemini_max_retries": 2, **overrides})
-    http = httpx.Client(base_url="https://groq.test/openai/v1", transport=httpx.MockTransport(handler))
-    return GroqClient(s, http_client=http, sleep=lambda _: None)
-
-
-def ok(content, usage=(100, 20)):
-    return httpx.Response(200, json={"choices": [{"message": {"content": content}}],
-                                     "usage": {"prompt_tokens": usage[0], "completion_tokens": usage[1], "total_tokens": sum(usage)}})
-
-
 def call(client, user):
     return client.generate_json(get_prompt("intent_understanding"), user, IntentOutput, purpose="test")
-
-
-def test_groq_json_mode_schema_and_usage(env):
-    seen = {}
-
-    def handler(req):
-        seen.update(json.loads(req.content))
-        return ok(json.dumps(GOOD))
-
-    r = call(groq(handler), "groq-1")
-    assert r.parsed.category == "leadership_priorities" and r.usage.total_tokens == 120
-    assert seen["response_format"] == {"type": "json_object"} and "JSON Schema" in seen["messages"][0]["content"]
-    assert seen["model"] == get_settings().groq_model
-
-
-def test_groq_429_retry_after_then_success(env):
-    replies = iter([httpx.Response(429, headers={"retry-after": "3"}, json={"error": {"message": "rate limited"}}), ok(json.dumps(GOOD))])
-    slept = []
-    c = groq(lambda req: next(replies))
-    c._sleep = slept.append
-    r = call(c, "groq-429")
-    assert r.retries == 1 and slept == [3.0]
-
-
-def test_groq_auth_error_opens_circuit(env):
-    c = groq(lambda req: httpx.Response(401, json={"error": {"message": "Invalid API Key"}}))
-    with pytest.raises(LLMUnavailable, match="Groq call failed"):
-        call(c, "groq-401")
-    assert c.status()["circuit"] == "open" and c.status()["provider"] == "groq"
 
 
 class FakeLlama:

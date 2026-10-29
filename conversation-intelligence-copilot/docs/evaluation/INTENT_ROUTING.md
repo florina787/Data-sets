@@ -113,7 +113,7 @@ Applying these would make a re-score on the same test split optimistic. A fresh 
 
 ## Hosted models
 
-Hosted model-first routing (Groq or Gemini) was **not evaluated**. No Groq key is configured, and the Gemini key in this environment is blocked (`API_KEY_SERVICE_BLOCKED`). The router uses the same category-only prompt for any provider. To measure a hosted model, run `scripts/evaluate_intent_routing.py` with `GROQ_API_KEY` set.
+Hosted model-first routing (Gemini) was **not evaluated**: the Gemini key in this environment is blocked (`API_KEY_SERVICE_BLOCKED`). The router uses the same category-only prompt for any provider. To measure Gemini, run `scripts/evaluate_intent_routing.py` with `LLM_PROVIDER=gemini` and `GEMINI_API_KEY` set.
 
 ## Reproduce
 

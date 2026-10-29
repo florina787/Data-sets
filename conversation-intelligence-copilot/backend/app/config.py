@@ -24,9 +24,9 @@ class Settings(BaseSettings):
     )
 
     # --- LLM provider ---------------------------------------------------------
-    # auto = Groq if GROQ_API_KEY is set, else Gemini if GEMINI_API_KEY is set, else the local model if it
-    # has been downloaded, else deterministic mode. "none" forces deterministic mode.
-    llm_provider: Literal["auto", "groq", "gemini", "local", "none"] = "auto"
+    # auto = the local model (Qwen via llama.cpp) if it has been downloaded, else Gemini if GEMINI_API_KEY is set,
+    # else deterministic mode. "none" forces deterministic mode.
+    llm_provider: Literal["auto", "gemini", "local", "none"] = "auto"
 
     # Intent routing is confidence-aware for every provider (app/agents/intent_router.py): policy -> high-precision
     # rules -> calibrated semantic match -> model -> broad rules -> clarify.
@@ -42,14 +42,6 @@ class Settings(BaseSettings):
     local_preload: bool = True  # load the local model in the background at API start-up, so the first question is warm
     # Time budget for model-written explanations; past it, the evidence-backed deterministic narrative is used.
     explanation_timeout_seconds: float = 20.0
-
-    # --- Groq (OpenAI-compatible) ---------------------------------------------
-    groq_api_key: str | None = Field(default=None, repr=False)
-    groq_model: str = "llama-3.3-70b-versatile"
-    groq_base_url: str = "https://api.groq.com/openai/v1"
-    # USD per 1M tokens for cost *estimates* (paid-tier list price; free tier costs nothing).
-    groq_input_cost_per_mtok: float = 0.59
-    groq_output_cost_per_mtok: float = 0.79
 
     # --- Gemini -----------------------------------------------------------
     gemini_api_key: str | None = Field(default=None, repr=False)
@@ -113,12 +105,10 @@ class Settings(BaseSettings):
 
     @property
     def resolved_llm_provider(self) -> str | None:
-        if self.llm_provider == "groq" or (self.llm_provider == "auto" and self.groq_api_key):
-            return "groq"
-        if self.llm_provider == "gemini" or (self.llm_provider == "auto" and self.gemini_api_key):
-            return "gemini"
         if self.llm_provider == "local" or (self.llm_provider == "auto" and (self.local_model_dir / self.local_model_file).exists()):
             return "local"
+        if self.llm_provider == "gemini" or (self.llm_provider == "auto" and self.gemini_api_key):
+            return "gemini"
         return None
 
 

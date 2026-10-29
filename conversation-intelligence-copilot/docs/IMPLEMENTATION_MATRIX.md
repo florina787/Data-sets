@@ -19,7 +19,7 @@ Status vocabulary: **Implemented and verified** (code integrated, reachable, tes
 | AI Decision Replay | Implemented and verified | replay panel, `/api/replay/{id}` | replay + sanitiser tests, e2e | Depends on telemetry retention |
 | Analytical Evidence Challenger | Implemented and verified | Evidence review section, QA checks | challenger tests, e2e | Causal rewriting is pattern-based |
 | Hybrid retrieval (MiniLM + LSA, weighted RRF) with per-method ranks in the UI | Implemented and verified | evidence cards, Explorer switch, Metrics | retrieval eval, e2e | LSA weight tuned on the evaluation queries |
-| Local LLM (Qwen2.5-1.5B, llama.cpp) and Groq providers | Implemented and verified (local); Groq implemented but not fully verified | `llm/local_client.py`, `llm/groq_client.py` | `test_providers.py` | Groq not run live (no key); local model slow on CPU |
+| Local LLM (Qwen2.5-1.5B, llama.cpp) | Implemented and verified | `llm/local_client.py` | `test_providers.py` | Local model slow on CPU (see docs/evaluation/LATENCY_REPORT.md) |
 | LangGraph orchestration, conditional + parallel routing, checkpointing | Implemented and verified | `agents/graph.py` | stream/graph tests | — |
 | Gemini adapter (structured output, repair, rate limit, retries, circuit, cache, tokens/cost) | Implemented but not fully verified | `llm/*` | scripted-SDK tests | Live API never reached (key blocked) |
 | Gemini intent and grounded explanation | Implemented but not fully verified | `intent_agent.py`, `nodes.explanation` | scripted tests incl. grounding rejection | Not run live |

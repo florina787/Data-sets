@@ -247,24 +247,18 @@ def get_llm() -> LLMClient:
         return _override
     s = get_settings()
     if not s.llm_enabled:
-        return DisabledLLM("Model calls disabled (LLM_ENABLED=false)", s.groq_model)
+        return DisabledLLM("Model calls disabled (LLM_ENABLED=false)", s.local_model_file.removesuffix(".gguf"))
     provider = s.resolved_llm_provider
     if provider is None:
-        reason = "LLM_PROVIDER=none" if s.llm_provider == "none" else "No LLM configured (GROQ_API_KEY, GEMINI_API_KEY, or `make llm-download` for the local model)"
-        return DisabledLLM(reason, s.groq_model)
+        reason = "LLM_PROVIDER=none" if s.llm_provider == "none" else "No LLM configured (run `make llm-download` for the local model, or set GEMINI_API_KEY)"
+        return DisabledLLM(reason, s.local_model_file.removesuffix(".gguf"))
     try:
         if provider == "local":
             from app.llm.local_client import LocalLlamaClient
 
             return LocalLlamaClient(s)
-        if provider == "groq":
-            from app.llm.groq_client import GroqClient
-
-            if not s.groq_api_key:
-                return DisabledLLM("GROQ_API_KEY is not set", s.groq_model)
-            return GroqClient(s)
         if not s.gemini_api_key:
             return DisabledLLM("GEMINI_API_KEY is not set", s.gemini_model)
         return GeminiClient(s)
     except Exception as e:  # noqa: BLE001
-        return DisabledLLM(f"{provider} client could not be created: {e}", s.groq_model)
+        return DisabledLLM(f"{provider} client could not be created: {e}", s.local_model_file.removesuffix(".gguf"))

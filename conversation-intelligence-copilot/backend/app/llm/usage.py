@@ -48,7 +48,7 @@ def aggregate_stream_usage(chunk_metadata: list) -> Usage:
 
 
 def usage_from_openai(u: dict | None) -> Usage:
-    """OpenAI-style `usage` block (Groq, llama.cpp); missing block -> unreported."""
+    """OpenAI-style `usage` block (llama.cpp); missing block -> unreported."""
     if not u:
         return Usage(reported=False)
     inp, out = int(u.get("prompt_tokens") or 0), int(u.get("completion_tokens") or 0)
