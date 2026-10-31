@@ -1,29 +1,30 @@
 <div align="center">
 
-<img src="docs/assets/banner.svg" width="100%" alt="Flying_Florina — From legacy systems to trusted industrial intelligence" />
+<img src="docs/assets/v2/banner_v2.svg" width="100%" alt="Flying_Florina 2.0 — Aerospace & Defense Intelligence Copilot" />
 
 <br/>
 
 ![Synthetic data](https://img.shields.io/badge/data-100%25%20synthetic-D7B46A?style=for-the-badge)
-![Offline](https://img.shields.io/badge/runtime-offline-0B1230?style=for-the-badge)
-![Paid APIs](https://img.shields.io/badge/paid%20APIs-%240-0F8B8D?style=for-the-badge)
-![Policy](https://img.shields.io/badge/policy-deny%20by%20default-5C35B7?style=for-the-badge)
+![Local Qwen](https://img.shields.io/badge/LLM-your%20local%20Qwen-6366F1?style=for-the-badge)
+![Offline](https://img.shields.io/badge/runtime-offline-0B1020?style=for-the-badge)
+![Paid APIs](https://img.shields.io/badge/paid%20APIs-%240-22D3EE?style=for-the-badge)
+![Policy](https://img.shields.io/badge/policy-deny%20by%20default-A78BFA?style=for-the-badge)
 
-![pytest](https://img.shields.io/badge/pytest-131%20passed-0F8B8D)
-![playwright](https://img.shields.io/badge/playwright-18%20passed-0F8B8D)
-![local qwen](https://img.shields.io/badge/LLM-your%20local%20Qwen-6366F1)
+![pytest](https://img.shields.io/badge/pytest-131%20passed-34D399)
+![playwright](https://img.shields.io/badge/playwright-18%20passed-34D399)
+![vitest](https://img.shields.io/badge/vitest-9%20passed-34D399)
 ![routing](https://img.shields.io/badge/held--out%20routing-95.8%25-22D3EE)
-![vitest](https://img.shields.io/badge/vitest-9%20passed-0F8B8D)
-![generated adapter](https://img.shields.io/badge/generated%20adapter-14%2F14-0F8B8D)
-![security lab](https://img.shields.io/badge/security%20lab-12%2F12-5C35B7)
-![egress](https://img.shields.io/badge/offline%20egress%20attempts-0-0B1230)
+![macro f1](https://img.shields.io/badge/macro--F1-0.958-22D3EE)
+![evidence](https://img.shields.io/badge/citation%20accuracy-100%25%20(200)-22D3EE)
+![security lab](https://img.shields.io/badge/security%20lab-12%2F12-A78BFA)
+![egress](https://img.shields.io/badge/offline%20egress%20attempts-0-0B1020)
 ![license](https://img.shields.io/badge/license-GPL--3.0-A78BFA)
 
 ### Ask. Analyze. Modernize. Govern. Act — with approval.
 
-An aerospace & defense **Industrial AI Transformation Command Center**. You ask a question in plain language;
-Flying_Florina routes it to a workflow, runs local agents, retrieves cited evidence, renders live dashboards,
-and **gates every consequential action behind deterministic policy and human approval**. All of it runs offline, on one machine.
+**Explainable industrial AI for mission-critical operations.** Ask one of four signature questions in plain language.
+Specialist agents compute the evidence deterministically, **your local Qwen model explains it**, an **Evidence Challenger**
+strips anything Qwen can't back up, and **governance** confirms the model approved nothing. All on one machine, offline.
 
 <sub><b>Independent concept demo | Not affiliated with or endorsed by IFS.</b> All data is synthetic and fictional. No live IFS connection,
 no certification, no airworthiness determinations, no promised savings.</sub>
@@ -32,7 +33,7 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <img src="docs/screenshots/v2/01_assistant_home.png" width="100%" alt="Flying_Florina 2.0 AI Assistant with the four question cards" />
 
-<sub>Flying_Florina 2.0: the Conversation Intelligence Copilot design system, four signature questions, and a Local Qwen status pill.</sub>
+<sub>The AI Assistant: four signature question cards, live data panel, and the Local Qwen status pill (top right).</sub>
 
 </div>
 
@@ -40,15 +41,16 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <div align="center">
 
-**[2.0 for leadership](#-flying_florina-20-for-aerospace--defense-leadership)** ·
+**[Why it matters](#-why-it-matters-for-ad-leadership)** ·
+**[Four questions](#-the-four-signature-questions)** ·
+**[Architecture](#-architecture-20)** ·
+**[Flows](#-how-a-question-becomes-a-governed-answer)** ·
+**[Measured results](#-measured-results)** ·
+**[2.0 screens](#-the-20-screens)** ·
+**[Before → after](#-before--after)** ·
 **[Local Qwen](#-local-qwen-setup)** ·
-**[Architecture](#-architecture)** ·
-**[See it in action](#-see-it-in-action)** ·
-**[Every screen](#-every-screen)** ·
-**[Diagrams](#-how-it-works)** ·
 **[Quick start](#-quick-start)** ·
-**[Demo script](#-interview-demo)** ·
-**[Tests](#-tests-and-quality-gates)** ·
+**[1.0 deep dive](#-platform-foundations-from-10)** ·
 **[Limits](#-honest-limits)** ·
 **[Docs](#-documentation)**
 
@@ -56,9 +58,7 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 ---
 
-## 🛫 Flying_Florina 2.0 for aerospace & defense leadership
-
-**Subtitle:** Aerospace & Defense Intelligence Copilot · **Positioning:** Explainable Industrial AI for Mission-Critical Operations
+## 🛫 Why it matters for A&D leadership
 
 | | |
 |---|---|
@@ -67,35 +67,217 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 | **How Flying_Florina works** | A hybrid router sends each question to specialist agents that query verified data deterministically. **Your local Qwen model explains the evidence**, an **Evidence Challenger** rejects any number, ID or claim it can't support, and **governance validation** confirms nothing was approved or executed by the model. |
 | **How it complements enterprise systems** | It sits next to systems such as IFS Cloud as an evidence-and-governance layer, reading through typed, read-only adapters and MCP tools. It replaces nothing. See [IFS integration readiness](docs/IFS_INTEGRATION_READINESS.md) (implemented vs proposed). |
 | **How governance is enforced** | Deny-by-default policy before every tool call, agents limited to the human's rights, retrieved text can never trigger actions, human approval with separation of duties for every write, a kill switch, a hash-chained audit log, and loopback-only model calls. |
-| **What the demo proves** | All four signature questions run end to end on local inference; held-out routing 95.8% (macro-F1 0.958); 100% citation accuracy; exfiltration and instruction-override attempts denied with 0 tool executions; generated read-only adapters pass their own tests. |
+| **What the demo proves** | All four signature questions run end to end; held-out routing 95.8% (macro-F1 0.958); 100% citation accuracy; exfiltration and instruction-override attempts denied with 0 tool executions; generated read-only adapters pass their own tests. |
 | **What production would need** | Enterprise IdP and MFA, container sandboxing, externally anchored audit, an internal package mirror and SBOM, authorized IFS APIs, model-provenance review, and a formal security and compliance assessment. See [deployment readiness](docs/DEPLOYMENT_READINESS.md). |
 
-### The four signature questions
+---
 
-| | Question | What runs |
+## ❓ The four signature questions
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+#### Q1 · Aircraft Diagnostics
+*Why is aircraft AC-204 showing abnormal vibration, and what should engineering investigate?*
+
+`telemetry ‖ retrieval ‖ history → hypotheses → Qwen → Challenger`
+
+<img src="docs/screenshots/v2/02_q1_diagnostics.png" alt="Q1 diagnostics answer" />
+
+</td>
+<td width="50%" valign="top">
+
+#### Q2 · Aircraft Recovery
+*Which recovery option could return AC-204 to service fastest, considering spare parts, maintenance scheduling, and engineering approval?*
+
+`parts ‖ scheduling → compliance → simulation → draft → approval gate`
+
+<img src="docs/screenshots/v2/03_q2_recovery.png" alt="Q2 recovery answer" />
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+#### Q3 · Legacy Modernization
+*How can we modernize our legacy aircraft maintenance system using APIs, MCP, and AI without replacing the existing platform?*
+
+`Legacy X-Ray → integration options → adapter preview → contract tests → security review`
+
+<img src="docs/screenshots/v2/04_q3_modernization.png" alt="Q3 modernization answer" />
+
+</td>
+<td valign="top">
+
+#### Q4 · Executive Intelligence
+*What is affecting fleet readiness, and which maintenance improvements could reduce downtime and cost?*
+
+`fleet ‖ downtime trend ‖ parts → causes → modeled levers`
+
+<img src="docs/screenshots/v2/05_q4_executive.png" alt="Q4 executive answer" />
+
+</td>
+</tr>
+</table>
+
+Paraphrases, follow-ups ("what about AC-118?"), greetings, general aviation questions, off-topic requests and injection attempts are
+all handled too. See [the four-question engine](docs/FOUR_QUESTION_ENGINE.md).
+
+---
+
+## 🏛 Architecture (2.0)
+
+<div align="center">
+<img src="docs/assets/v2/architecture_v2.svg" width="100%" alt="Flying_Florina 2.0 architecture: UI, hybrid router, specialist graphs, deterministic layer, policy gateway, Qwen gateway, Evidence Challenger, governance" />
+</div>
+
+| Rule | Where it's enforced |
+|---|---|
+| Every number, ID, citation and approval comes from deterministic code | `app/workflows/*`, `app/services/*` |
+| Qwen only writes language (explanations, closed-set classification, general aviation answers) | `app/llm/gateway.py` |
+| Anything Qwen writes that isn't in the verified facts is removed | `app/workflows/explain.py` (Evidence Challenger) |
+| The model can never approve, execute or export | policy engine POL-001…013, governance validation |
+| Model calls are loopback-only, no cloud fallback | POL-008, `app/llm/discovery.py` |
+
+---
+
+## 🔀 How a question becomes a governed answer
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant R as Hybrid router
+    participant A as Specialist agents
+    participant D as Deterministic data
+    participant P as Policy gateway
+    participant Q as Local Qwen
+    participant C as Evidence Challenger
+    participant G as Governance
+    U->>R: "Why is AC-204 vibrating?"
+    R->>R: policy → greeting → follow-up → rules → semantic → (Qwen if ambiguous)
+    R->>A: aircraft_diagnostics + entities {AC-204}
+    loop every tool call
+        A->>P: request (persona, tool, args)
+        P-->>A: allow / deny (logged)
+        A->>D: SQL · z-scores · retrieval · simulation
+    end
+    A-->>U: evidence workspace (charts, tables, citations) — shown immediately
+    A->>Q: compact fact pack (≤ 7,000 chars)
+    Q-->>C: explanation (JSON, schema-validated)
+    C->>C: drop unknown numbers/IDs, airworthiness & savings claims
+    C->>G: checked explanation
+    G-->>U: answer + "model approved nothing" + audit record
+```
+
+```mermaid
+flowchart LR
+    q([question]) --> pol{"Policy: injection or export?"}
+    pol -- yes --> deny[["Refuse or governance graph"]]
+    pol -- no --> gr{Greeting?}
+    gr -- yes --> hi[Greeting + four cards]
+    gr -- no --> fu{"Follow-up cue + session context?"}
+    fu -- yes --> keep["Reuse family and aircraft"]
+    fu -- no --> ru{High-precision rules}
+    ru -- match --> wf[Specialist graph]
+    ru -- weak/none --> gate{Off-domain?}
+    gate -- yes --> uns["Unsupported: scope + cards"]
+    gate -- no --> sem{"TF-IDF semantic above threshold + margin"}
+    sem -- yes --> wf
+    sem -- no --> qw{"Local Qwen closed-set label"}
+    qw -- valid label --> wf
+    qw -- none --> fb["Clarify / general knowledge"]
+    keep --> wf
+    style deny fill:#2A1530,stroke:#F87171,color:#E5E7EB
+    style qw fill:#312E81,stroke:#A78BFA,color:#E5E7EB
+    style wf fill:#0E2A3A,stroke:#22D3EE,color:#E5E7EB
+```
+
+```mermaid
+flowchart TB
+    subgraph GW["Local LLM Gateway (single endpoint)"]
+      direction LR
+      c[Exact-prompt cache] --> b[Context & token budget] --> s[Concurrency 1] --> r[Runtime] --> v[JSON schema validation] --> tm[("llm_calls telemetry")]
+    end
+    disc{{Discovery}} --> r
+    disc --- d1["FF_QWEN_MODEL_PATH (.gguf)"]
+    disc --- d2["FF_QWEN_BASE_URL (loopback)"]
+    disc --- d3["Ollama: qwen models"]
+    disc --- d4["llama.cpp / LM Studio on 8080, 1234"]
+    disc --- d5["qwen .gguf files in known folders"]
+    r -. never .-> cloud[("Cloud / paid API")]
+    style cloud fill:#2A1530,stroke:#F87171,color:#F87171,stroke-dasharray: 5 5
+```
+
+---
+
+## 📊 Measured results
+
+Every chart below is drawn by [`scripts/render_readme_v2_assets.py`](scripts/render_readme_v2_assets.py) straight from the JSON the
+harnesses wrote; nothing is typed in by hand. The build machine had **no Qwen model**, so these are the router and workflows *without*
+the Qwen stages. Qwen latency and the unsupported-claim rate are measured by the app on your machine.
+
+<div align="center">
+<img src="docs/assets/v2/eval_metrics.svg" width="100%" alt="Evaluation metrics for held-out v1 and v2" />
+<br/><br/>
+<img src="docs/assets/v2/per_label_f1.svg" width="49%" alt="Per-label F1 on held-out v2" />
+<img src="docs/assets/v2/route_methods.svg" width="49%" alt="Router stage that decided each item" />
+<br/><br/>
+<img src="docs/assets/v2/latency.svg" width="49%" alt="Deterministic workflow latency" />
+<img src="docs/assets/v2/tests_growth.svg" width="49%" alt="Test suites 1.0 to 2.0" />
+</div>
+
+| What | Result | Honest note |
 |---|---|---|
-| **Q1 · Aircraft Diagnostics** | *Why is aircraft AC-204 showing abnormal vibration, and what should engineering investigate?* | telemetry + anomaly + data quality → evidence retrieval → hypotheses → Qwen explanation → Challenger |
-| **Q2 · Aircraft Recovery** | *Which recovery option could return AC-204 to service fastest, considering spare parts, maintenance scheduling, and engineering approval?* | inventory → planning → compliance → recovery simulation → draft → **engineering approval** |
-| **Q3 · Legacy Modernization** | *How can we modernize our legacy aircraft maintenance system using APIs, MCP, and AI without replacing the existing platform?* | Legacy X-Ray → integration options → roadmap → adapter preview → security review |
-| **Q4 · Executive Intelligence** | *What is affecting fleet readiness, and which maintenance improvements could reduce downtime and cost?* | fleet analytics → downtime drivers → parts risk → modeled levers |
+| Held-out routing accuracy | **95.8%** (v2) · 94.3% (v1) | v1 was measured before four general fixes; v2 was written afterwards and never tuned on. Both reported. |
+| Citation accuracy | **100%** of 200 | document exists, revision matches, user permitted |
+| Governance | **3/3** injection & export attempts denied, **0** export executions | |
+| Follow-ups | 83.3% (v2) | a follow-up without a reference word ("it", "that") can be missed |
+| Qwen latency, tokens/s, unsupported-claim rate | **not measured here** | run Benchmark in Evaluation & Observability, or `scripts/check_qwen.py` |
 
-<img src="docs/screenshots/v2/02_q1_diagnostics.png" width="24%" alt="Q1 diagnostics answer" />
-<img src="docs/screenshots/v2/03_q2_recovery.png" width="24%" alt="Q2 recovery answer" />
-<img src="docs/screenshots/v2/04_q3_modernization.png" width="24%" alt="Q3 modernization answer" />
-<img src="docs/screenshots/v2/05_q4_executive.png" width="24%" alt="Q4 executive answer" />
+Details and the four known misroutes: [docs/eval/README.md](docs/eval/README.md).
 
-<img src="docs/screenshots/v2/06_command_center.png" width="49%" alt="Executive Command Center" />
-<img src="docs/screenshots/v2/08_observability.png" width="49%" alt="Evaluation and Observability" />
+---
 
-<img src="docs/screenshots/v2/07_predictive.png" width="49%" alt="Predictive Maintenance" />
-<img src="docs/screenshots/v2/09_legacy_xray.png" width="49%" alt="Legacy X-Ray with modernization analytics" />
+## 🖥 The 2.0 screens
 
-<img src="docs/screenshots/v2/12_mobile_home.png" width="22%" alt="Mobile" align="right" />
+<table>
+<tr>
+<td width="50%"><b>Executive Command Center</b><br/><sub>KPIs, availability trend, ATA × base heatmap, risk matrix, backlog, agent activity</sub><br/><img src="docs/screenshots/v2/06_command_center.png" alt="Executive Command Center" /></td>
+<td width="50%"><b>Predictive Maintenance</b><br/><sub>labelled statistical risk scores (z-scores, no trained model claimed) + Qwen explanation</sub><br/><img src="docs/screenshots/v2/07_predictive.png" alt="Predictive Maintenance" /></td>
+</tr>
+<tr>
+<td><b>Evaluation & Observability</b><br/><sub>Qwen status, live test, benchmark, p50/p95, tokens/s, cache, workflow reliability, eval</sub><br/><img src="docs/screenshots/v2/08_observability.png" alt="Evaluation and Observability" /></td>
+<td><b>Legacy X-Ray + Modernization Blueprint</b><br/><sub>dependency analytics and a Blueprint export (Markdown, HTML, PDF)</sub><br/><img src="docs/screenshots/v2/09_legacy_xray.png" alt="Legacy X-Ray" /></td>
+</tr>
+<tr>
+<td><b>Multi-agent operations</b><br/><sub>agent graph, real execution timeline, retries and failure injection</sub><br/><img src="docs/screenshots/v2/10_agents.png" alt="Agents" /></td>
+<td><b>Governance</b><br/><sub>policies, approvals with separation of duties, audit chain</sub><br/><img src="docs/screenshots/v2/11_governance.png" alt="Governance" /></td>
+</tr>
+</table>
 
-**More:** [what changed in 2.0, with before/after screenshots](docs/CHANGELOG_2.0.md) · [four-question engine](docs/FOUR_QUESTION_ENGINE.md) ·
-[evaluation results](docs/eval/README.md) · [executive demo script, scenarios A–E](docs/DEMO_SCRIPT.md#flying_florina-20-executive-demo-ifs-leadership)
+<img src="docs/screenshots/v2/12_mobile_home.png" width="24%" align="right" alt="Mobile home" />
+
+**Twelve primary sections:** AI Assistant · Command Center · AOG Recovery · Predictive Maintenance · Parts & Supply ·
+Legacy X-Ray · Bridge Studio · Agents · Governance · Simulation & ROI · Evaluation & Observability · Reports, plus every 1.0 page under *More*.
+
+Built on the **Conversation Intelligence Copilot** design system: the same color tokens (`#0B1020` background, indigo `#6366F1`,
+cyan `#22D3EE`, violet `#A78BFA`), cards, stat tiles, chart palette and motion. Works down to phone width with no horizontal scroll.
 
 <br clear="right"/>
+
+---
+
+## 🔁 Before → after
+
+| 1.0 | 2.0 |
+|---|---|
+| <img src="docs/screenshots/before/01_mission_control.png" alt="1.0 Mission Control" /> | <img src="docs/screenshots/v2/01_assistant_home.png" alt="2.0 AI Assistant" /> |
+| <img src="docs/screenshots/before/04_fleet.png" alt="1.0 Fleet" /> | <img src="docs/screenshots/v2/06_command_center.png" alt="2.0 Command Center" /> |
+| <img src="docs/screenshots/before/09_legacy.png" alt="1.0 Legacy" /> | <img src="docs/screenshots/v2/09_legacy_xray.png" alt="2.0 Legacy X-Ray" /> |
+
+Full list of changes: [docs/CHANGELOG_2.0.md](docs/CHANGELOG_2.0.md) · executive demo, scenarios A–E: [DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md#flying_florina-20-executive-demo-ifs-leadership)
 
 ---
 
@@ -120,6 +302,11 @@ Details, performance controls and monitoring: [docs/QWEN_LOCAL_LLM.md](docs/QWEN
 > quoted here because none was measured.
 
 ---
+
+## 🧱 Platform foundations (from 1.0)
+
+Everything below shipped in 1.0 and is **still included unchanged** in 2.0: the trust chain, agents, Legacy X-Ray, bridges and
+value studio that the four-question engine builds on.
 
 ## ✨ Highlights
 
@@ -168,7 +355,7 @@ Deterministic scenarios, seeded Monte Carlo, sensitivity, and an editable ROI ra
 
 ---
 
-## 🏛 Architecture
+## 🏛 Architecture (1.0 layers)
 
 <div align="center">
 <img src="docs/assets/architecture.svg" width="100%" alt="Flying_Florina layered architecture" />
@@ -687,12 +874,14 @@ Read [SECURITY_LIMITATIONS.md](docs/SECURITY_LIMITATIONS.md) before presenting t
 | 🔌 [API & MCP guide](docs/API_MCP_GUIDE.md) | 💰 [ROI method](docs/ROI_METHOD.md) | 🚚 [Deployment & offline install](docs/DEPLOYMENT.md) |
 | 🎤 [Demo scripts](docs/DEMO_SCRIPT.md) | 📄 [One-page pilot brief](docs/ONE_PAGE_BRIEF.md) | ✅ [Test report](docs/TEST_REPORT.md) |
 | 📜 [Third-party notices](THIRD_PARTY_NOTICES.md) | ⚖️ [License (GPL-3.0)](LICENSE) | 🎨 [Brand assets](frontend/public/brand/README.md) |
-| ✍️ [Medium article: the build story and challenges](docs/MEDIUM_ARTICLE.md) | | |
+| 🧠 [Local Qwen integration](docs/QWEN_LOCAL_LLM.md) | ❓ [Four-question engine](docs/FOUR_QUESTION_ENGINE.md) | 📈 [Evaluation results](docs/eval/README.md) |
+| 🛡 [Deployment readiness](docs/DEPLOYMENT_READINESS.md) | 🔗 [IFS integration readiness](docs/IFS_INTEGRATION_READINESS.md) | 🆕 [What changed in 2.0](docs/CHANGELOG_2.0.md) |
+| ✍️ [Medium article: the build story and challenges](docs/MEDIUM_ARTICLE.md) | 🖼 [README chart generator](scripts/render_readme_v2_assets.py) | |
 
 <div align="center">
 <br/>
 <img src="docs/assets/logo.png" width="72" alt="Flying_Florina" />
 <br/>
-<b>Flying_Florina</b><br/>
+<b>Flying_Florina 2.0</b><br/>
 <sub>From legacy systems to trusted industrial intelligence.<br/>Independent concept demo · Not affiliated with or endorsed by IFS</sub>
 </div>
