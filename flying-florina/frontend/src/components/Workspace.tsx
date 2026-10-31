@@ -9,6 +9,7 @@ import { ApprovalQueue } from "./Approvals";
 import { Chart } from "./Chart";
 import { DataTable } from "./DataTable";
 import { DependencyGraph } from "./DependencyGraph";
+import { FourQuestionCards, QwenAnswerCard, QwenStatusCard, type QwenAnswer, type QwenStatus } from "./QwenBlocks";
 import { Badge, Card, ErrorBox, Kpi } from "./ui";
 
 export function Markdown({ text }: { text: string }) {
@@ -239,10 +240,14 @@ export function Workspace({ blocks, onQuery, runId }: { blocks: Block[]; onQuery
   return (
     <div className="space-y-3" data-testid="workspace">
       {blocks.map((b, i) => {
+        const anyB = b as unknown as { type: string };
+        if (anyB.type === "qwen_answer") return <QwenAnswerCard key={i} b={b as unknown as QwenAnswer} />;
+        if (anyB.type === "qwen_status") return <QwenStatusCard key={i} b={b as unknown as QwenStatus} />;
+        if (anyB.type === "four_questions") return <FourQuestionCards key={i} onAsk={(q) => onQuery?.(q)} />;
         switch (b.type) {
           case "answer":
             return (
-              <Card key={i} className="border-l-4 !border-l-purple">
+              <Card key={i} className="border-l-4 !border-l-indigo" title={blocks.some((x) => (x as { type: string }).type === "qwen_answer") ? "Evidence summary (deterministic, verified)" : undefined}>
                 <Markdown text={b.markdown} />
               </Card>
             );

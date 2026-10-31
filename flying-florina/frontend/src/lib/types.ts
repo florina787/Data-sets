@@ -12,11 +12,14 @@ export type Actor = { id: string; display_name: string; role: string; org: strin
 export type Persona = { user_id: string; persona: string; role: string; focus: string; default_page: string };
 
 export type ChartSpec = {
-  kind: "line" | "bar" | "pie";
+  kind: "line" | "bar" | "pie" | "heatmap" | "scatter";
   x: (string | number)[];
-  series: { name: string; data: (number | null)[] }[];
+  y?: (string | number)[];
+  cells?: (string | number)[][];
+  series: { name: string; data: (number | null)[]; points?: (string | number)[][] }[];
   markLine?: { y: number; label: string } | null;
   yLabel?: string;
+  xLabel?: string;
 };
 
 export type Block =

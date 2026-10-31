@@ -1,37 +1,63 @@
 import { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts/core";
-import { BarChart, LineChart, PieChart } from "echarts/charts";
-import { AriaComponent, DataZoomComponent, GridComponent, LegendComponent, MarkLineComponent, TitleComponent, TooltipComponent } from "echarts/components";
+import { BarChart, HeatmapChart, LineChart, PieChart, ScatterChart } from "echarts/charts";
+import { AriaComponent, DataZoomComponent, GridComponent, LegendComponent, MarkLineComponent, TitleComponent, TooltipComponent, VisualMapComponent } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import type { ChartSpec } from "@/lib/types";
 import { useSession } from "@/lib/store";
 import { fmt } from "@/lib/format";
 
-echarts.use([LineChart, BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TitleComponent, AriaComponent, DataZoomComponent, CanvasRenderer]);
+echarts.use([LineChart, BarChart, PieChart, ScatterChart, HeatmapChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TitleComponent,
+  AriaComponent, DataZoomComponent, VisualMapComponent, CanvasRenderer]);
 
-const PALETTE = ["#5C35B7", "#0F8B8D", "#D7B46A", "#A78BFA", "#B7791F", "#3B6FB6", "#C53030"];
+/** Conversation Intelligence Copilot chart palette (indigo, cyan, violet, positive, warning, mixed, negative). */
+export const PALETTE = ["#6366F1", "#22D3EE", "#A78BFA", "#34D399", "#F59E0B", "#FBBF24", "#F87171"];
 
 export function buildOption(spec: ChartSpec, dark: boolean): echarts.EChartsCoreOption {
-  const text = dark ? "#EEF0FA" : "#0B1230";
-  const grid = dark ? "#2B3566" : "#E4E1F0";
+  const text = dark ? "#94A3B8" : "#475569";
+  const grid = dark ? "rgba(148,163,184,0.08)" : "rgba(15,23,42,0.08)";
+  const tooltip = { backgroundColor: dark ? "#17233C" : "#FFFFFF", borderColor: "rgba(148,163,184,0.2)", textStyle: { color: dark ? "#F8FAFC" : "#0B1020", fontSize: 12 }, extraCssText: "border-radius:12px;" };
+  if (spec.kind === "heatmap") {
+    const max = Math.max(1, ...(spec.cells ?? []).map((c) => Number(c[2]) || 0));
+    return {
+      aria: { enabled: true }, tooltip: { ...tooltip, position: "top" },
+      grid: { left: 70, right: 16, top: 16, bottom: 56, containLabel: true },
+      xAxis: { type: "category", data: spec.x, axisLabel: { color: text, rotate: spec.x.length > 6 ? 30 : 0 }, splitArea: { show: true } },
+      yAxis: { type: "category", data: spec.y ?? [], axisLabel: { color: text } },
+      visualMap: { min: 0, max, calculable: true, orient: "horizontal", left: "center", bottom: 0, textStyle: { color: text },
+        inRange: { color: ["rgba(99,102,241,0.08)", "#6366F1", "#A78BFA", "#F87171"] } },
+      series: [{ type: "heatmap", data: spec.cells ?? [], label: { show: (spec.cells ?? []).length <= 60, color: dark ? "#F8FAFC" : "#0B1020", fontSize: 10 },
+        emphasis: { itemStyle: { borderColor: "#22D3EE", borderWidth: 1 } } }],
+    };
+  }
+  if (spec.kind === "scatter") {
+    return {
+      color: PALETTE, aria: { enabled: true }, tooltip: { ...tooltip, trigger: "item", formatter: (p: { data: (string | number)[] }) => `${p.data[2] ?? ""}<br/>${spec.xLabel ?? "x"}: ${p.data[0]}<br/>${spec.yLabel ?? "y"}: ${p.data[1]}` },
+      grid: { left: 48, right: 16, top: 24, bottom: 40, containLabel: true },
+      xAxis: { type: "value", name: spec.xLabel, nameTextStyle: { color: text }, axisLabel: { color: text }, splitLine: { lineStyle: { color: grid } } },
+      yAxis: { type: "value", name: spec.yLabel, nameTextStyle: { color: text }, axisLabel: { color: text }, splitLine: { lineStyle: { color: grid } } },
+      series: spec.series.map((s) => ({ name: s.name, type: "scatter", data: s.points ?? [], symbolSize: 12, itemStyle: { opacity: 0.85 } })),
+    };
+  }
   if (spec.kind === "pie") {
     return {
       color: PALETTE,
       aria: { enabled: true },
-      tooltip: { trigger: "item" },
+      tooltip: { ...tooltip, trigger: "item" },
       legend: { bottom: 0, textStyle: { color: text } },
-      series: [{ type: "pie", radius: ["40%", "70%"], data: spec.x.map((x, i) => ({ name: String(x), value: spec.series[0]?.data[i] ?? 0 })), label: { color: text } }],
+      series: [{ type: "pie", radius: ["48%", "72%"], itemStyle: { borderColor: dark ? "#111827" : "#FFFFFF", borderWidth: 2, borderRadius: 6 },
+        data: spec.x.map((x, i) => ({ name: String(x), value: spec.series[0]?.data[i] ?? 0 })), label: { show: false }, emphasis: { label: { show: true, color: text } } }],
     };
   }
   const longX = spec.x.length > 40;
   return {
     color: PALETTE,
     aria: { enabled: true },
-    tooltip: { trigger: "axis" },
-    legend: { top: 0, textStyle: { color: text } },
+    tooltip: { ...tooltip, trigger: "axis", axisPointer: { type: spec.kind === "bar" ? "shadow" : "line", shadowStyle: { color: "rgba(148,163,184,0.06)" } } },
+    legend: { top: 0, textStyle: { color: text }, icon: "roundRect" },
     grid: { left: 48, right: 16, top: 32, bottom: longX ? 56 : 40, containLabel: true },
     xAxis: { type: "category", data: spec.x, axisLabel: { color: text, hideOverlap: true, rotate: spec.kind === "bar" && spec.x.length > 4 ? 20 : 0 }, axisLine: { lineStyle: { color: grid } } },
-    yAxis: { type: "value", name: spec.yLabel, nameTextStyle: { color: text }, axisLabel: { color: text }, splitLine: { lineStyle: { color: grid } } },
+    yAxis: { type: "value", scale: spec.kind === "line", name: spec.yLabel, nameTextStyle: { color: text }, axisLabel: { color: text }, splitLine: { lineStyle: { color: grid } } },
     dataZoom: longX ? [{ type: "inside" }, { type: "slider", height: 16, bottom: 8 }] : undefined,
     series: spec.series.map((s, i) => ({
       name: s.name,
@@ -39,17 +65,20 @@ export function buildOption(spec: ChartSpec, dark: boolean): echarts.EChartsCore
       data: s.data,
       connectNulls: false,
       showSymbol: false,
-      smooth: false,
-      barMaxWidth: 36,
+      smooth: spec.kind === "line" && spec.x.length < 40,
+      barMaxWidth: 28,
+      itemStyle: spec.kind === "bar" ? { borderRadius: [6, 6, 0, 0] } : undefined,
+      lineStyle: spec.kind === "line" ? { width: i === 0 ? 2.5 : 1.5, type: i === 0 ? "solid" : "dashed" } : undefined,
+      areaStyle: spec.kind === "line" && i === 0 && spec.series.length === 1 ? { opacity: 0.12 } : undefined,
       markLine:
         i === 0 && spec.markLine
-          ? { symbol: "none", lineStyle: { type: "dashed", color: "#C53030" }, label: { formatter: spec.markLine.label, color: "#C53030" }, data: [{ yAxis: spec.markLine.y }] }
+          ? { symbol: "none", lineStyle: { type: "dashed", color: "#F87171" }, label: { formatter: spec.markLine.label, color: "#F87171" }, data: [{ yAxis: spec.markLine.y }] }
           : undefined,
     })),
   };
 }
 
-export function Chart({ spec, title, height = 280 }: { spec: ChartSpec; title: string; height?: number }) {
+export function Chart({ spec, title, height = 280, onSelect }: { spec: ChartSpec; title: string; height?: number; onSelect?: (p: { name: string; value: unknown; data: unknown }) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const theme = useSession((s) => s.theme);
   const [showData, setShowData] = useState(false);
@@ -57,13 +86,14 @@ export function Chart({ spec, title, height = 280 }: { spec: ChartSpec; title: s
     if (!ref.current) return;
     const chart = echarts.init(ref.current, undefined, { renderer: "canvas" });
     chart.setOption(buildOption(spec, theme === "dark"));
+    if (onSelect) chart.on("click", (p: { name: string; value: unknown; data: unknown }) => onSelect(p));
     const ro = new ResizeObserver(() => chart.resize());
     ro.observe(ref.current);
     return () => {
       ro.disconnect();
       chart.dispose();
     };
-  }, [spec, theme]);
+  }, [spec, theme, onSelect]);
   return (
     <div>
       <div ref={ref} role="img" aria-label={`Chart: ${title}`} style={{ height }} data-testid="chart" />
@@ -82,7 +112,7 @@ export function Chart({ spec, title, height = 280 }: { spec: ChartSpec; title: s
               </tr>
             </thead>
             <tbody>
-              {spec.x.map((x, i) => (
+              {(spec.kind === "heatmap" || spec.kind === "scatter" ? [] : spec.x).map((x, i) => (
                 <tr key={String(x) + i}>
                   <td>{String(x)}</td>
                   {spec.series.map((s) => (

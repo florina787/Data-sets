@@ -8,7 +8,7 @@ import { datetime } from "@/lib/format";
 import { useApi } from "@/lib/hooks";
 
 const KINDS: Record<string, string[]> = {
-  executive_brief: ["pdf", "md", "html"], one_page_brief: ["pdf", "md"], architecture: ["md"], work_orders: ["csv"], audit_packet: ["json"], demo_script: ["md"],
+  executive_brief: ["pdf", "md", "html"], one_page_brief: ["pdf", "md"], modernization_blueprint: ["pdf", "md", "html"], architecture: ["md"], work_orders: ["csv"], audit_packet: ["json"], demo_script: ["md"],
 };
 
 export function ReportsPage() {

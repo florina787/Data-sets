@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import path from "node:path";
 import { boot, switchPersona } from "./helpers";
 
-const PAGES = ["/fleet", "/aog", "/maintenance", "/parts", "/quality", "/legacy", "/bridge", "/agents", "/trust", "/compliance", "/simulator", "/executive", "/reports", "/settings"];
+const PAGES = ["/command", "/predictive", "/observability", "/fleet", "/aog", "/maintenance", "/parts", "/quality", "/legacy", "/bridge", "/agents", "/trust", "/compliance", "/simulator", "/executive", "/reports", "/settings"];
 
 test("every page renders without errors and every nav link works", async ({ page }) => {
   const { errors, external } = await boot(page, "sec.ines");
@@ -11,7 +11,7 @@ test("every page renders without errors and every nav link works", async ({ page
     await expect(page.locator("main h1")).toBeVisible();
     await page.waitForTimeout(400);
   }
-  for (const label of ["Fleet & Asset Health", "Defense Trust Center", "Mission Control"]) {
+  for (const label of ["Fleet Readiness", "Governance & Compliance", "Flying_Florina AI Assistant", "Executive Command Center"]) {
     await page.getByRole("navigation", { name: undefined }).getByRole("link", { name: label, exact: true }).click();
     await expect(page.locator("main")).toBeVisible();
   }
@@ -84,9 +84,37 @@ test.describe("responsive", () => {
   test("mobile layout has a working menu and no horizontal scroll", async ({ page }) => {
     await boot(page);
     await page.getByRole("button", { name: "Open navigation" }).click();
-    await page.getByRole("link", { name: "Parts & Supply Chain" }).click();
+    await page.getByRole("link", { name: "Spare Parts Intelligence" }).click();
     await expect(page.locator("main h1")).toHaveText("Parts & Supply Chain");
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(2);
   });
+});
+
+test("executive command center: computed KPIs, filters and drill-down", async ({ page }) => {
+  await boot(page);
+  await page.goto("/command");
+  await expect(page.getByTestId("command-kpis")).toContainText("150");
+  await page.getByLabel("Filter by Base").selectOption("MAIN-HUB");
+  await expect(page.getByTestId("command-kpis").getByRole("button").first()).not.toContainText("150", { timeout: 10_000 });
+  await expect(page.getByTestId("chart").first()).toBeVisible();
+  await page.getByRole("button", { name: /AOG cases/i }).click();
+  await expect(page).toHaveURL(/\/aog$/);
+});
+
+test("predictive maintenance labels its method and explains without inventing", async ({ page }) => {
+  await boot(page);
+  await page.goto("/predictive");
+  await expect(page.getByText(/no trained model/i).first()).toBeVisible();
+  await expect(page.getByText(/No accuracy, precision or recall is reported/)).toBeVisible();
+  await page.getByTestId("explain-pm").click();
+  await expect(page.getByTestId("qwen-status").or(page.getByTestId("qwen-answer")).first()).toBeVisible({ timeout: 45_000 });
+});
+
+test("observability shows the local Qwen status and measured evaluation", async ({ page }) => {
+  await boot(page);
+  await page.goto("/observability");
+  await expect(page.getByTestId("qwen-status-panel")).toBeVisible();
+  await expect(page.getByText("none (by design)")).toBeVisible();
+  await expect(page.getByTestId("eval-results")).toContainText("test_v2");
 });

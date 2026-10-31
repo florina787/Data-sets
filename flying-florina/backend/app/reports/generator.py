@@ -30,6 +30,7 @@ KINDS = {
     "work_orders": ("Open work orders", {"csv"}),
     "workspace": ("Workspace export", {"md", "html", "json", "pdf"}),
     "demo_script": ("Demo video script", {"md"}),
+    "modernization_blueprint": ("Modernization Blueprint (proposal)", {"md", "pdf", "html"}),
 }
 
 LABEL = {"audit_packet": "RESTRICTED", "work_orders": "INTERNAL"}
@@ -67,6 +68,35 @@ def _sections(kind: str, ctx: dict[str, Any]) -> list[tuple[str, list[str]]]:
         if kind == "one_page_brief":
             return secs[:2] + secs[-3:-1]
         return secs
+    if kind == "modernization_blueprint":
+        b = ctx.get("blueprint") or {}
+        recs = b.get("recommendations", [])
+        applicable = [r for r in recs if r["applies"]]
+        return [
+            ("Status", ["PROPOSAL. Generated from parsed metadata of fictional fixtures and uploads; every mapping, contract and estimate must be validated "
+                        "by system owners, security and engineering before implementation. No IFS or customer system was accessed."]),
+            ("Current-state architecture", [f"{s['label']} ({s.get('kind')}, criticality {s.get('criticality')}, auth: {s.get('auth')})" for s in b.get("systems", [])]
+             + [f"Findings: {b.get('summary', {}).get('high', 0)} high, {b.get('summary', {}).get('medium', 0)} medium; {b.get('summary', {}).get('unknowns', 0)} open unknowns."]),
+            ("Proposed target architecture", b.get("target_layers", [])),
+            ("Integration recommendations", [f"{r['id']} {r['title']}: {r['why']} (risk {r['migration_risk']}, confidence {int(r['confidence'] * 100)}%)" for r in applicable]
+             + [f"Conditional: {r['id']} {r['title']} ({'; '.join(r['prerequisites'])})" for r in recs if not r["applies"]]),
+            ("Candidate API contracts (proposal)", ["GET /v1/parts/{part_number}/availability (read-only, scope inventory.read, regex-validated, paginated list max 50)",
+                                                    "GET /v1/parts?limit&offset (read-only)", "MCP tool get_part_availability(part_number) over the same adapter",
+                                                    "Write operations (create/close work order) are out of scope until an approval-bound write path is designed and reviewed"]),
+            ("Security considerations", ["User tokens verified at the facade and never forwarded upstream; service credentials per adapter",
+                                         "Firewall and retire the Java ERP /admin/sql endpoint before exposing anything", "Allowlist callback URLs (SSRF) on the supplier portal",
+                                         "Pin MCP tools by name, version and schema hash; deny-by-default policy before every tool call",
+                                         "Classify documents before indexing; RESTRICTED data never leaves the owning organization"]),
+            ("Data migration assumptions", ["No data is migrated in phase 1: adapters read through approved read-only views",
+                                            "Nightly CSV stays the physical-count source until U4 (system of record) is answered",
+                                            "CDC only after DBA/vendor approval (U2) and primary keys on captured tables"]),
+            ("Test strategy", sorted({t for r in applicable for t in r["test_plan"]})),
+            ("Rollback considerations", [f"{r['id']}: {r['rollback']}" for r in applicable]),
+            ("Phased roadmap", [f"{p['phase']} (owner {p['owner']}): {'; '.join(p['items'])}. Exit: {p['exit']}" for p in b.get("roadmap", [])]),
+            ("Open unknowns", [f"{u['id']}: {u['question']} ({u['why']})" for u in b.get("unknowns", [])]),
+            ("Human review requirements", sorted({d for r in recs for d in r["human_decisions"]}) + ["Security review of every generated adapter before deployment",
+                                                                                                      "Engineering sign-off for any write path"]),
+        ]
     if kind == "architecture":
         return [("Trust chain", ["User -> UI -> FastAPI (identity, envelope) -> intent router -> workflow engine -> tool gateway (policy deny-by-default) -> tools / MCP -> typed adapters -> synthetic systems",
                                  "Policy engine is deterministic Python; no model participates in decisions.",

@@ -5,7 +5,8 @@ import { DataTable } from "@/components/DataTable";
 import { DependencyGraph } from "@/components/DependencyGraph";
 import { Badge, Card, ErrorBox, Kpi, Loading, PageHeader, Tabs } from "@/components/ui";
 import { BridgeTestRunner, Roadmap, Workspace } from "@/components/Workspace";
-import { post, upload } from "@/lib/api";
+import { Chart } from "@/components/Chart";
+import { download, post, upload } from "@/lib/api";
 import { useApi } from "@/lib/hooks";
 import type { GraphEdge, GraphNode, Recommendation, RoadmapPhase } from "@/lib/types";
 
@@ -58,6 +59,10 @@ export function LegacyPage() {
             <input ref={fileRef} type="file" className="hidden" accept=".sql,.json,.yaml,.yml,.csv,.xml,.zip" onChange={(e) => onUpload(e.target.files?.[0])} data-testid="legacy-upload" />
             <button className="btn btn-ghost" onClick={() => fileRef.current?.click()}><Upload className="h-4 w-4" /> Import metadata</button>
             <button className="btn btn-ghost" onClick={() => rec.mutate()} disabled={rec.isPending} data-testid="recommend">Recommend modernization path</button>
+            <button className="btn btn-ghost" data-testid="export-blueprint" onClick={async () => {
+              try { const r = await post<{ download: string }>("/api/reports/generate", { kind: "modernization_blueprint", fmt: "pdf" }); await download(r.data.download, "modernization_blueprint.pdf"); }
+              catch (e) { setUploadErr(e); }
+            }}>Export Modernization Blueprint</button>
             <button className="btn btn-primary" onClick={() => { gen.mutate(); setTab("adapter"); }} disabled={gen.isPending} data-testid="generate-bridge">
               <ShieldCheck className="h-4 w-4" /> Generate safe read-only bridge
             </button>
@@ -87,6 +92,7 @@ export function LegacyPage() {
               <div className="mt-1 text-xs"><b>Stale documentation:</b> {ls.data.stale_docs.map((s) => `${s.name} (${s.last_doc_update})`).join("; ")}</div>
             </Card>
           </div>
+          <AnalyticsCharts ls={ls.data} recs={r?.recommendations} onNeedRecs={() => !r && !rec.isPending && rec.mutate()} />
           <Card title="Findings"><DataTable label="Findings" columns={[{ key: "severity", label: "Severity" }, { key: "kind", label: "Kind" }, { key: "object", label: "Object" }, { key: "detail", label: "Detail" }, { key: "source", label: "Source" }]} rows={ls.data.findings} /></Card>
           <Card title="Unknowns to resolve with system owners"><DataTable columns={[{ key: "id", label: "ID" }, { key: "question", label: "Question" }, { key: "why", label: "Why it matters" }]} rows={ls.data.unknowns} /></Card>
           <Card title="Parsed sources"><DataTable columns={[{ key: "source", label: "Source" }, { key: "kind", label: "Kind" }, { key: "summary", label: "Summary" }]} rows={ls.data.sources} /></Card>
@@ -135,6 +141,41 @@ export function LegacyPage() {
           ) : <div className="muted text-xs">Generate a bridge first; static checks run without executing code, runtime tests run on request.</div>)}
           {r && tab === "brief" && <div className="text-sm leading-relaxed">{r.executive_brief}</div>}
         </div>
+      </Card>
+    </div>
+  );
+}
+
+const RISK: Record<string, number> = { low: 1, medium: 2, high: 3 };
+
+function effortWeeks(e: string): number {
+  const m = /([\d.]+)\s*-\s*([\d.]+)/.exec(e);
+  return m ? (Number(m[1]) + Number(m[2])) / 2 : Number((/([\d.]+)/.exec(e) ?? [0, 0])[1]);
+}
+
+function AnalyticsCharts({ ls, recs, onNeedRecs }: { ls: Landscape; recs?: Recommendation[]; onNeedRecs: () => void }) {
+  const kinds: Record<string, number> = {};
+  ls.findings.forEach((f) => { const k = String(f.kind); kinds[k] = (kinds[k] ?? 0) + 1; });
+  const apis = ls.nodes.filter((n) => n.type === "api" || n.type === "system");
+  const readiness = apis.map((n) => {
+    const fs = ls.findings.filter((f) => String(f.source ?? "").toLowerCase().includes(String(n.label).split(" ")[0].toLowerCase()));
+    const high = fs.filter((f) => f.severity === "high").length;
+    return { system: n.label, type: n.type, auth: Array.isArray((n as unknown as { auth?: unknown }).auth) ? ((n as unknown as { auth: string[] }).auth).join(", ") : String((n as unknown as { auth?: string }).auth ?? "-"),
+      findings: fs.length, high, readiness: n.type === "api" ? (high ? "blocked: fix high findings" : fs.length ? "needs facade" : "ready (read-only)") : "wrap via adapter" };
+  });
+  return (
+    <div className="grid gap-4 xl:grid-cols-3">
+      <Card title="Technical debt distribution" subtitle="Findings by kind (parsed metadata)">
+        <Chart title="Technical debt" spec={{ kind: "bar", x: Object.keys(kinds).map((k) => k.replace(/_/g, " ")), series: [{ name: "Findings", data: Object.values(kinds) }] }} height={260} />
+      </Card>
+      <Card title="Migration risk vs effort" subtitle="Per recommendation; effort is an assumption range midpoint" actions={!recs ? <button className="btn btn-ghost !py-1 text-xs" onClick={onNeedRecs}>Compute</button> : undefined}>
+        {recs ? (
+          <Chart title="Risk vs effort" spec={{ kind: "scatter", x: [], xLabel: "Effort (engineer-weeks, assumption)", yLabel: "Migration risk (1 low – 3 high)",
+            series: [{ name: "Recommendations", data: [], points: recs.map((r) => [effortWeeks(r.effort_assumption), RISK[r.migration_risk] ?? 2, `${r.id} ${r.title}`]) }] }} height={260} />
+        ) : <p className="muted p-6 text-center text-xs">Run “Recommend modernization path” to plot recommendations.</p>}
+      </Card>
+      <Card title="API readiness matrix" subtitle="Derived from declared auth and findings per system/API">
+        <DataTable label="API readiness" maxHeight={260} columns={[{ key: "system", label: "System / API" }, { key: "auth", label: "Auth (metadata)" }, { key: "findings", label: "Findings" }, { key: "readiness", label: "Readiness" }]} rows={readiness} />
       </Card>
     </div>
   );

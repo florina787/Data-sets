@@ -16,8 +16,10 @@ const SAMPLES: [string, string][] = [
 
 test("fresh start shows homepage, indicators and sample questions", async ({ page }) => {
   const { errors, external } = await boot(page);
-  await expect(page.getByText("Ask Flying_Florina")).toBeVisible();
-  for (const b of ["SYNTHETIC DATA", "DEMO MODE", "NO LIVE IFS CONNECTION", "LOCAL RULES ENGINE"]) await expect(page.getByText(b).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What should we understand about our fleet?" })).toBeVisible();
+  for (const b of ["SYNTHETIC DATA", "DEMO MODE", "NO LIVE IFS CONNECTION"]) await expect(page.getByText(b).first()).toBeVisible();
+  await expect(page.getByTestId("qwen-indicator")).toContainText("Local Qwen");
+  await expect(page.getByTestId("four-questions").getByRole("button")).toHaveCount(4);
   await expect(page.getByTestId("samples").getByRole("button")).toHaveCount(10);
   await expect(page.getByText("Not affiliated with or endorsed by IFS")).toBeVisible();
   expect(errors).toEqual([]);
@@ -80,4 +82,28 @@ test("approval: separation of duties, approve as other persona, execute, replay 
   await expect(page.getByTestId("approval-queue").getByRole("status")).toContainText("execute succeeded");
   await page.getByTestId("approval-queue").getByRole("button", { name: /Replay write/ }).first().click();
   await expect(page.getByTestId("approval-queue").getByRole("status")).toContainText("POL-005");
+});
+
+test("the four question cards run their real workflows", async ({ page }) => {
+  test.setTimeout(180_000);
+  await boot(page);
+  const expected: Record<string, string> = { diagnostics: "aircraft_diagnostics", recovery: "aircraft_recovery", modernization: "legacy_assessment", executive: "executive_readiness" };
+  for (const [family, wf] of Object.entries(expected)) {
+    await page.goto("/");
+    await page.locator(`[data-family=${family}]`).click();
+    const card = page.getByTestId("run-card").first();
+    await expect(card.getByTestId("workspace")).toBeVisible({ timeout: 45_000 });
+    await expect(card).toHaveAttribute("data-workflow", wf);
+    await expect(card.getByTestId("timeline")).toBeVisible();
+    // Without a local Qwen in CI the answer says so instead of faking a model response.
+    await expect(card.getByTestId("qwen-status").or(card.getByTestId("qwen-answer")).first()).toBeVisible({ timeout: 45_000 });
+  }
+});
+
+test("typed follow-up keeps the conversation context", async ({ page }) => {
+  await boot(page);
+  await ask(page, "Why is aircraft AC-204 showing abnormal vibration, and what should engineering investigate?");
+  const second = await ask(page, "And how fast can we recover it?");
+  await expect(second).toHaveAttribute("data-workflow", "aircraft_recovery");
+  await expect(second).toContainText("follow-up");
 });

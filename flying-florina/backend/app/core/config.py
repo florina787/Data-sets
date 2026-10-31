@@ -18,6 +18,22 @@ GENERATED_DIR = REPO_ROOT / "generated_adapters"
 MCP_SERVERS_DIR = REPO_ROOT / "mcp_servers"
 
 SEED = 20261024
+
+
+def _load_dotenv() -> None:
+    """Read KEY=VALUE lines from flying-florina/.env and backend/.env. Real environment variables win."""
+    for path in (REPO_ROOT / ".env", BACKEND_DIR / ".env"):
+        if not path.is_file():
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
 APP_VERSION = "0.1.0"
 
 
@@ -29,12 +45,12 @@ def _flag(name: str, default: bool) -> bool:
 
 
 def _llm_mode() -> str:
-    raw = os.environ.get("LLM_ENABLED", "auto").strip().lower()
+    raw = os.environ.get("LLM_ENABLED", "on").strip().lower()
     if raw in {"0", "false", "no", "off", "none"}:
         return "off"
-    if raw in {"1", "true", "yes", "on"}:
-        return "on"
-    return "auto"
+    if raw == "auto":
+        return "auto"
+    return "on"
 
 
 def _secret(data_dir: Path) -> str:
@@ -62,9 +78,10 @@ def _secret(data_dir: Path) -> str:
 class Settings:
     demo_mode: bool = field(default_factory=lambda: _flag("DEMO_MODE", True))
     offline_mode: bool = field(default_factory=lambda: _flag("OFFLINE_MODE", True))
-    # Local Qwen inference. "auto" (default): use the user's existing local Qwen model when it is found,
-    # otherwise run the deterministic engine and say so. "on": same, but report Qwen missing as an error.
-    # "off": never call a model. There is never an external or paid fallback.
+    # Local Qwen inference. "on" (default): the user's existing local Qwen model is REQUIRED; if it cannot be
+    # reached the UI shows an error with the fix (evidence is still computed deterministically, never invented).
+    # "auto": use Qwen when found, without flagging its absence as an error. "off": never call a model.
+    # There is never an external or paid fallback.
     llm_mode: str = field(default_factory=lambda: _llm_mode())
     llm_url: str = field(default_factory=lambda: os.environ.get("LLM_URL", "http://127.0.0.1:11434"))
     llm_model: str = field(default_factory=lambda: os.environ.get("LLM_MODEL", ""))

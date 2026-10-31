@@ -12,7 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import routes_core, routes_llm, routes_trust
+from app.api import routes_core, routes_insights, routes_llm, routes_trust
 from app.core import egress
 from app.core.config import APP_VERSION, get_settings
 from app.core.util import redact
@@ -133,3 +133,4 @@ async def unhandled(request: Request, exc: Exception):
 app.include_router(routes_core.router)
 app.include_router(routes_trust.router)
 app.include_router(routes_llm.router)
+app.include_router(routes_insights.router)

@@ -268,6 +268,7 @@ class LocalLLMGateway:
             "available": self.available(), "mode": get_settings().llm_mode, "discovery": d.as_dict(),
             "runtime_info": rt.info() if rt else {}, "last_error": self.last_error,
             "label": (f"Local Qwen · {d.model}" if d.found else "Local Qwen · not found"),
+            "required": get_settings().llm_mode == "on",
             "external_fallback": False,
         }
 

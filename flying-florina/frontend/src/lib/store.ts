@@ -10,7 +10,7 @@ function readTheme(): Theme {
   } catch {
     /* storage unavailable */
   }
-  return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark"; // the Conversation Intelligence Copilot design system is dark-first
 }
 
 type SessionState = {

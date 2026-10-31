@@ -353,6 +353,15 @@ def generate_report(request: Request, body: ReportBody, actor: Actor = Depends(c
     ctx: dict[str, Any] = {}
     if body.run_id:
         ctx = _owned_run(body.run_id, actor)["state"]
+    elif body.kind == "modernization_blueprint":
+        from app.integrations.legacy import xray
+
+        ls = xray.landscape()
+        ctx = {"blueprint": {"systems": [n for n in ls["nodes"] if n["type"] == "system"], "summary": ls["summary"], "unknowns": ls["unknowns"],
+                             "recommendations": xray.recommendations(ls), "roadmap": xray.roadmap(),
+                             "target_layers": ["Agents (Flying_Florina workflows, local Qwen explanations)", "MCP tools (pinned, read-only first)",
+                                               "Policy gateway (deny-by-default)", "API gateway + typed facades / anti-corruption layer",
+                                               "Validated batch bridge + (conditional) CDC events", "Legacy core unchanged"]}}
     elif body.kind in ("executive_brief", "one_page_brief"):
         from app.integrations.legacy import xray
         from app.simulation.engine import RoiInputs, roi as roi_fn

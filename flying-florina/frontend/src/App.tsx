@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout, useLogin } from "@/components/Layout";
 import { ErrorBox, Loading } from "@/components/ui";
 import { rememberedUser, useSession } from "@/lib/store";
@@ -18,6 +18,9 @@ import { SimulatorPage } from "@/features/simulator/SimulatorPage";
 import { ExecutivePage } from "@/features/executive/ExecutivePage";
 import { ReportsPage } from "@/features/reports/ReportsPage";
 import { SettingsPage } from "@/features/settings/SettingsPage";
+import { CommandCenter } from "@/features/command/CommandCenter";
+import { PredictiveMaintenance } from "@/features/predictive/PredictiveMaintenance";
+import { Observability } from "@/features/observability/Observability";
 
 export function App() {
   const token = useSession((s) => s.token);
@@ -52,6 +55,14 @@ export function App() {
         <Route path="/executive" element={<ExecutivePage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/command" element={<CommandCenter />} />
+        <Route path="/predictive" element={<PredictiveMaintenance />} />
+        <Route path="/observability" element={<Observability />} />
+        {/* 2.0 aliases for the section names; every pre-2.0 route above still works */}
+        <Route path="/assistant" element={<Navigate to="/" replace />} />
+        <Route path="/recovery" element={<Navigate to="/aog" replace />} />
+        <Route path="/governance" element={<Navigate to="/trust" replace />} />
+        <Route path="/integrations" element={<Navigate to="/bridge" replace />} />
         <Route path="*" element={<div className="p-8">Page not found.</div>} />
       </Routes>
     </Layout>
