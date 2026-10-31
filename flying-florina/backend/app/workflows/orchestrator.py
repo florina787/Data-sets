@@ -12,7 +12,8 @@ from app.core.util import new_id, now_iso
 from app.workflows import compose as composer
 from app.workflows.engine import CaseState, _event, checkpoint, run_graph
 from app.workflows.graphs import GRAPHS
-from app.workflows.intent import classify
+from app.workflows import conversation, explain
+from app.workflows.router import CONVERSATIONAL, route
 
 
 def ensure_session(actor: Actor, session_id: str | None, title: str) -> str:
@@ -31,28 +32,38 @@ def ensure_session(actor: Actor, session_id: str | None, title: str) -> str:
 def start(actor: Actor, query: str, persona: str | None = None, session_id: str | None = None,
           options: dict[str, Any] | None = None, wait: bool = True, replay_of: str | None = None) -> CaseState:
     options = options or {}
-    intent = classify(query)
-    workflow = options.get("force_workflow") if options.get("force_workflow") in GRAPHS else intent["workflow"]
     sid = ensure_session(actor, session_id, query)
+    r = route(query, conversation.get_context(sid) if session_id else None, use_model=not options.get("rules_only"))
+    forced = options.get("force_workflow") if options.get("force_workflow") in GRAPHS else None
+    workflow = forced or r.workflow
+    intent = {**r.intent, "workflow": workflow, "family": r.family, "route_method": r.method, "confidence": r.intent.get("confidence", 0.0),
+              "reason": r.reason}
     run_id = new_id("RUN")
     state = CaseState(session_id=sid, run_id=run_id, query=query, persona=persona or actor.persona, actor=actor.as_dict(),
-                      workflow=workflow, intent=intent, status="queued")
+                      workflow=workflow, intent=intent, status="queued", route=r.as_dict())
     with db.session(write=True) as conn:
         conn.execute("INSERT INTO workflow_runs VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                      (run_id, sid, actor.id, state.persona, query, workflow, "queued", now_iso(), now_iso(),
                       state.model_dump_json(), db.jdump(options), replay_of))
         state.audit_event_ids.append(audit.append(actor.id, "workflow.started", f"{workflow}: {query[:120]}",
                                                   {"run_id": run_id, "intent": {k: intent[k] for k in ("workflow", "confidence")}}, conn))
+    fam = f" · family {r.family}" if r.family else ""
     _event(run_id, "intake", "Intake & Intent Agent", "completed", 1, 0.0,
-           f"Routed to '{workflow}' (confidence {intent['confidence']}). {intent['reason']}", {"scores": intent.get("scores", {}), "entities": intent.get("entities", {})})
+           f"Routed to '{workflow}' by {r.method}{fam}{' (follow-up)' if r.follow_up else ''}. {r.reason}",
+           {"scores": intent.get("scores", {}), "family_scores": r.family_scores, "semantic": r.semantic, "entities": intent.get("entities", {}),
+            "secondary": r.secondary})
+    conversation.save_context(sid, r, query)
 
-    if workflow == "clarify":
-        state.status = "needs_clarification"
-        state.answer = ("I could not map this request to a workflow with enough confidence. "
-                        + (f"Did you mean **{intent['candidate'].replace('_', ' ')}**? " if intent.get("candidate") else "")
-                        + "Pick a suggestion or rephrase with an aircraft, part, system or goal.")
-        state.workspace = [composer.md(state.answer), {"type": "clarify", "suggestions": intent.get("suggestions", [])}]
-        checkpoint(state)
+    if not forced and r.label in CONVERSATIONAL and r.label != "data_export":
+        def talk() -> None:
+            conversation.answer(state, r, actor)
+            checkpoint(state)
+
+        if wait:
+            talk()
+        else:
+            checkpoint(state)
+            threading.Thread(target=talk, name=f"chat-{run_id}", daemon=True).start()
         return state
 
     def work() -> None:
@@ -66,6 +77,17 @@ def start(actor: Actor, query: str, persona: str | None = None, session_id: str 
             final.errors.append({"step": "compose_workspace", "error": str(err)})
             final.workspace = [composer.md(f"Workspace could not be composed: {err}")]
             _event(run_id, "compose_workspace", "Reporting Agent", "failed", 1, (time.perf_counter() - t0) * 1000, str(err))
+        if r.secondary and r.secondary != r.family:
+            final.workspace.append({"type": "actions", "items": [{"label": f"Also answer the {r.secondary} part", "kind": "query",
+                                                                  "target": next(q["question"] for q in conversation.FOUR_QUESTIONS if q["family"] == r.secondary)}]})
+        # Publish the deterministic, evidence-backed workspace first; the Qwen explanation is added when ready.
+        final.pending_explanation = True
+        checkpoint(final)
+        try:
+            explain.run(final, actor.id)
+        except Exception as err:  # noqa: BLE001 - an explanation failure must never lose the evidence
+            final.errors.append({"step": "qwen_explanation", "error": str(err)})
+        final.pending_explanation = False
         checkpoint(final)
 
     if wait:

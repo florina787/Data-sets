@@ -67,11 +67,21 @@ def test_no_self_escalation():
     assert evaluate(a("sec.ines"), PolicyRequest(action="policy_change")).policy_id == "POL-007"
 
 
-def test_model_calls_must_be_local_and_enabled():
+def test_model_calls_must_be_local_and_enabled(monkeypatch):
+    from app.core.config import reset_settings
+
     d = evaluate(a("planner.marco"), PolicyRequest(action="model_call", model_target="https://api.example.com"))
     assert d.policy_id == "POL-008" and not d.allowed
     d = evaluate(a("planner.marco"), PolicyRequest(action="model_call", model_target="http://127.0.0.1:11434"))
-    assert d.policy_id == "POL-008" and not d.allowed  # LLM disabled by default
+    assert d.policy_id == "POL-008" and not d.allowed  # switched off in the test environment
+    monkeypatch.setenv("LLM_ENABLED", "auto")
+    reset_settings()
+    try:
+        d = evaluate(a("planner.marco"), PolicyRequest(action="model_call", model_target="http://127.0.0.1:11434"))
+        assert d.allowed, d.reason  # loopback Qwen is allowed when model calls are enabled (the default)
+    finally:
+        monkeypatch.undo()
+        reset_settings()
 
 
 def test_kill_switch_blocks_and_releases():

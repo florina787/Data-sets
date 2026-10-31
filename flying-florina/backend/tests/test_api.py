@@ -85,7 +85,9 @@ def test_async_query_polling_and_events(client, planner):
         time.sleep(0.05)
     assert w["finished"] and w["status"] == "completed"
     ev = client.get(f"/api/workflows/{r['run_id']}/events?after=0", headers=planner).json()["data"]["events"]
-    assert ev[0]["step"] == "intake" and ev[-1]["step"] == "compose_workspace"
+    steps = [e["step"] for e in ev]
+    assert steps[0] == "intake" and "compose_workspace" in steps
+    assert steps[-1] == "qwen_explanation" and ev[-1]["status"] == "skipped"  # Qwen is off in tests: explicitly skipped, never faked
 
 
 def test_replay_reports_reproducibility(client, planner):

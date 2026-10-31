@@ -83,7 +83,8 @@ def telemetry(state: CaseState, ctx: StepContext) -> dict[str, Any]:
     }
     band = {r["day"]: r["mean"] for r in res["fleet_band"]}
     with ctx.lock:
-        state.inputs["telemetry_series"] = [{"day": d, "vibration_index": v, "fleet_mean": round(band.get(d) or 0, 3)} for d, v in vib]
+        state.inputs["telemetry_series"] = [{"day": r["day"], "vibration_index": r["vibration_index"], "fleet_mean": round(band.get(r["day"]) or 0, 3),
+                                             "egt_delta_c": r["egt_delta_c"], "oil_pressure_index": r["oil_pressure_index"]} for r in series]
         state.inputs["telemetry_stats"] = stats
     quality = f"{len(missing)} missing day(s) flagged as data-quality gaps" if missing else "no missing readings"
     return {"summary": f"7-day vibration mean {stats['recent_7d_mean']} vs baseline {stats['baseline_mean']} "

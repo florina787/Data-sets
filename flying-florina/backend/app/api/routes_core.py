@@ -40,7 +40,8 @@ def config(request: Request) -> dict[str, Any]:
         "app": "Flying_Florina", "version": APP_VERSION, "tagline": "From legacy systems to trusted industrial intelligence.",
         "demo_mode": s.demo_mode, "offline_mode": s.offline_mode, "llm_enabled": s.llm_enabled,
         "brand_assets_authorized": s.brand_assets_authorized, "seed": SEED, "demo_today": DEMO_TODAY,
-        "inference": "local rules engine" + (" + optional local LLM" if s.llm_enabled else ""),
+        "inference": "local Qwen + deterministic engine" if s.llm_enabled else "deterministic engine (Qwen switched off)",
+        "llm_mode": s.llm_mode,
         "disclaimer": "Independent concept demo | Not affiliated with or endorsed by IFS",
     })
 
@@ -118,7 +119,7 @@ class QueryBody(BaseModel):
     options: dict[str, Any] = Field(default_factory=dict)
 
 
-ALLOWED_OPTIONS = {"inject_failure", "inject_failure_permanent", "step_delay_ms", "inject_tool_timeout", "simulation", "roi", "force_workflow"}
+ALLOWED_OPTIONS = {"inject_failure", "inject_failure_permanent", "step_delay_ms", "inject_tool_timeout", "simulation", "roi", "force_workflow", "rules_only"}
 
 
 @router.post("/api/chat/query")
@@ -133,7 +134,7 @@ def chat_query(request: Request, body: QueryBody, actor: Actor = Depends(current
 
 def _run_view(run: dict[str, Any]) -> dict[str, Any]:
     st = run["state"]
-    finished = bool(st.get("workspace")) and run["status"] not in ("queued", "running")
+    finished = bool(st.get("workspace")) and run["status"] not in ("queued", "running") and not st.get("pending_explanation")
     return {"run_id": run["id"], "session_id": run["session_id"], "workflow": run["workflow"], "status": run["status"], "query": run["query"],
             "finished": finished, "state": st, "graph": GRAPHS[run["workflow"]]().describe() if run["workflow"] in GRAPHS else None,
             "events": engine.events(run["id"]), "replay_of": run.get("replay_of"), "options": run.get("options", {})}
@@ -165,7 +166,7 @@ def get_workflow(request: Request, run_id: str, actor: Actor = Depends(current_a
 @router.get("/api/workflows/{run_id}/events")
 def workflow_events(request: Request, run_id: str, after: int = Query(0, ge=0), actor: Actor = Depends(current_actor)) -> dict[str, Any]:
     run = _owned_run(run_id, actor)
-    return envelope(request, {"status": run["status"], "finished": bool(run["state"].get("workspace")), "events": engine.events(run_id, after)})
+    return envelope(request, {"status": run["status"], "finished": bool(run["state"].get("workspace")) and not run["state"].get("pending_explanation"), "events": engine.events(run_id, after)})
 
 
 @router.get("/api/workflows/{run_id}/stream")

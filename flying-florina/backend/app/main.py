@@ -12,7 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import routes_core, routes_trust
+from app.api import routes_core, routes_llm, routes_trust
 from app.core import egress
 from app.core.config import APP_VERSION, get_settings
 from app.core.util import redact
@@ -28,11 +28,40 @@ async def lifespan(_: FastAPI):
     if settings.offline_mode:
         egress.install()
     ensure_seeded()
+    from app.core import db
+
+    with db.session(write=True) as conn:
+        db.init_schema(conn)  # idempotent: adds tables introduced after the database was seeded
     from app.services.tools import registry
 
     registry()  # fail fast if a tool does not match its pin
+    _start_qwen(settings)
     log.info("Flying_Florina %s ready (demo=%s offline=%s)", APP_VERSION, settings.demo_mode, settings.offline_mode)
     yield
+
+
+def _start_qwen(settings) -> None:
+    """Discover the user's existing Qwen model and (optionally) load it in the background so the first answer is warm."""
+    import threading
+
+    from app.llm.gateway import gateway
+
+    def warm() -> None:
+        g = gateway()
+        d = g.refresh()
+        if not d.found:
+            log.warning("Local Qwen not found: %s", d.reason)
+            return
+        log.info("Local Qwen found: %s (%s, %s) via %s", d.model, d.quantization, d.path or d.base_url, d.runtime)
+        if settings.qwen_preload:
+            try:
+                g.generate(agent="Startup", task="warmup", system="Reply with OK.", user="OK", max_tokens=4, use_cache=False)
+                log.info("Local Qwen warm-up complete")
+            except Exception as err:  # noqa: BLE001
+                log.warning("Local Qwen warm-up failed: %s", err)
+
+    if settings.llm_mode != "off":
+        threading.Thread(target=warm, name="qwen-warmup", daemon=True).start()
 
 
 app = FastAPI(
@@ -103,3 +132,4 @@ async def unhandled(request: Request, exc: Exception):
 
 app.include_router(routes_core.router)
 app.include_router(routes_trust.router)
+app.include_router(routes_llm.router)

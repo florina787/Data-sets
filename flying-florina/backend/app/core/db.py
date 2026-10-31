@@ -131,6 +131,13 @@ CREATE TABLE IF NOT EXISTS write_log (
   idempotency_key TEXT PRIMARY KEY, ts TEXT, actor TEXT, approval_id TEXT, target TEXT, result_json TEXT);
 
 CREATE TABLE IF NOT EXISTS governance_state (key TEXT PRIMARY KEY, value TEXT);
+
+CREATE TABLE IF NOT EXISTS llm_calls (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT, agent TEXT, task TEXT, model TEXT, runtime TEXT, ok INTEGER, cached INTEGER,
+  prompt_tokens INTEGER, completion_tokens INTEGER, latency_ms REAL, first_token_ms REAL, tokens_per_s REAL, error TEXT);
+
+CREATE TABLE IF NOT EXISTS conversation_context (
+  session_id TEXT PRIMARY KEY, family TEXT, workflow TEXT, entities_json TEXT, last_query TEXT, updated TEXT);
 """
 
 

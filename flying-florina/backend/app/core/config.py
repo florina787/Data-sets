@@ -28,6 +28,15 @@ def _flag(name: str, default: bool) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _llm_mode() -> str:
+    raw = os.environ.get("LLM_ENABLED", "auto").strip().lower()
+    if raw in {"0", "false", "no", "off", "none"}:
+        return "off"
+    if raw in {"1", "true", "yes", "on"}:
+        return "on"
+    return "auto"
+
+
 def _secret(data_dir: Path) -> str:
     """Session-signing secret: env var, else a random value kept in the local data dir.
 
@@ -53,9 +62,26 @@ def _secret(data_dir: Path) -> str:
 class Settings:
     demo_mode: bool = field(default_factory=lambda: _flag("DEMO_MODE", True))
     offline_mode: bool = field(default_factory=lambda: _flag("OFFLINE_MODE", True))
-    llm_enabled: bool = field(default_factory=lambda: _flag("LLM_ENABLED", False))
+    # Local Qwen inference. "auto" (default): use the user's existing local Qwen model when it is found,
+    # otherwise run the deterministic engine and say so. "on": same, but report Qwen missing as an error.
+    # "off": never call a model. There is never an external or paid fallback.
+    llm_mode: str = field(default_factory=lambda: _llm_mode())
     llm_url: str = field(default_factory=lambda: os.environ.get("LLM_URL", "http://127.0.0.1:11434"))
     llm_model: str = field(default_factory=lambda: os.environ.get("LLM_MODEL", ""))
+    qwen_model_path: str = field(default_factory=lambda: os.environ.get("FF_QWEN_MODEL_PATH", ""))
+    qwen_base_url: str = field(default_factory=lambda: os.environ.get("FF_QWEN_BASE_URL", ""))
+    qwen_runtime: str = field(default_factory=lambda: os.environ.get("FF_QWEN_RUNTIME", "auto"))
+    qwen_n_ctx: int = field(default_factory=lambda: int(os.environ.get("FF_QWEN_N_CTX", "4096")))
+    qwen_threads: int = field(default_factory=lambda: int(os.environ.get("FF_QWEN_THREADS", str(max(1, (os.cpu_count() or 4) - 1)))))
+    qwen_gpu_layers: int = field(default_factory=lambda: int(os.environ.get("FF_QWEN_GPU_LAYERS", "-1")))
+    qwen_max_output_tokens: int = field(default_factory=lambda: int(os.environ.get("FF_QWEN_MAX_TOKENS", "320")))
+    qwen_timeout_s: float = field(default_factory=lambda: float(os.environ.get("FF_QWEN_TIMEOUT_S", "45")))
+    qwen_concurrency: int = field(default_factory=lambda: int(os.environ.get("FF_QWEN_CONCURRENCY", "1")))
+    qwen_preload: bool = field(default_factory=lambda: _flag("FF_QWEN_PRELOAD", True))
+
+    @property
+    def llm_enabled(self) -> bool:
+        return self.llm_mode != "off"
     brand_assets_authorized: bool = field(default_factory=lambda: _flag("BRAND_ASSETS_AUTHORIZED", False))
     data_dir: Path = field(default_factory=lambda: Path(os.environ.get("FF_DATA_DIR", str(BACKEND_DIR / "data"))))
     cors_origins: list[str] = field(

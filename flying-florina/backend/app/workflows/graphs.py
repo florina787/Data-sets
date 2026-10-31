@@ -125,7 +125,41 @@ def quality_graph() -> Graph:
     ])
 
 
+def diagnostics_graph() -> Graph:
+    """Q1 Aircraft Diagnostics: telemetry + anomaly + data quality, evidence retrieval, history, hypotheses."""
+    g = maintenance_graph()
+    keep = ("intake", "policy_precheck", "telemetry", "retrieval", "history", "diagnostics")
+    return Graph("aircraft_diagnostics", [s for s in g.steps if s.name in keep])
+
+
+def aircraft_recovery_graph() -> Graph:
+    """Q2 Aircraft Recovery: inventory, planning, compliance, recovery simulation, draft and human approval."""
+    g = maintenance_graph()
+    steps = [s for s in g.steps if s.name not in ("draft_plan", "approval_gate")]
+    return Graph("aircraft_recovery", steps + [
+        Step("scenario_inputs", "Scenario Simulator Agent", an.scenario_inputs, ["compliance"], description="Recovery delay scenarios"),
+        Step("scenario_run", "Scenario Simulator Agent", an.scenario_run, ["scenario_inputs"], description="Deterministic + seeded Monte Carlo"),
+        Step("draft_plan", "Maintenance Planner Agent", mx.draft_plan, ["compliance"], description="Dry-run recovery work order"),
+        Step("approval_gate", SEC, mx.approval_gate, ["draft_plan", "scenario_run"], retries=0, description="Engineering approval request"),
+    ])
+
+
+def readiness_graph() -> Graph:
+    """Q4 Executive Intelligence: fleet analytics, downtime drivers, parts risk, modeled improvement levers."""
+    return Graph("executive_readiness", [
+        Step("policy_precheck", SEC, an.precheck("query"), description="Identity and policy precheck"),
+        Step("fleet", "Asset Telemetry Agent", an.fleet_summary, ["policy_precheck"], description="Fleet readiness read model"),
+        Step("trend", "Asset Telemetry Agent", an.downtime_trend, ["policy_precheck"], description="Downtime per aircraft-day by month"),
+        Step("parts", "Parts Agent", an.parts_overview, ["policy_precheck"], description="Critical stock and supplier reliability"),
+        Step("causes", "Diagnostic Evidence Agent", an.downtime_causes, ["trend"], description="Downtime cause decomposition"),
+        Step("levers", "Scenario Simulator Agent", an.readiness_levers, ["causes", "fleet", "parts"], description="Modeled improvement levers (assumptions)"),
+    ])
+
+
 GRAPHS = {
+    "aircraft_diagnostics": diagnostics_graph,
+    "aircraft_recovery": aircraft_recovery_graph,
+    "executive_readiness": readiness_graph,
     "maintenance_investigation": maintenance_graph,
     "recovery_options": recovery_graph,
     "scenario_compare": scenario_graph,

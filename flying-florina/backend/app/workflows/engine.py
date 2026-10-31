@@ -50,6 +50,9 @@ class CaseState(BaseModel):
     simulation: bool = True
     workspace: list[dict[str, Any]] = Field(default_factory=list)
     answer: str = ""
+    answer_model: str = ""  # Qwen explanation that passed the Evidence Challenger (empty if none)
+    route: dict[str, Any] = Field(default_factory=dict)
+    pending_explanation: bool = False
     assumptions: list[str] = Field(default_factory=list)
 
 

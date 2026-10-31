@@ -30,19 +30,19 @@ LABELS = ["PUBLIC", "INTERNAL", "RESTRICTED", "UNKNOWN"]
 HOME_ORG = "FF-Demo-MRO"
 
 ROLE_ACTIONS: dict[str, set[str]] = {
-    "guest": {"read", "search", "query"},
-    "executive": {"read", "search", "query", "export", "simulate"},
-    "maintenance_planner": {"read", "search", "query", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
-    "technician": {"read", "search", "query", "draft_write", "tool_call", "simulate"},
-    "reliability_engineer": {"read", "search", "query", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
-    "enterprise_architect": {"read", "search", "query", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
-    "security_officer": {"read", "search", "query", "admin_kill_switch", "approve", "audit_verify", "audit_export",
+    "guest": {"read", "search", "query", "model_call"},
+    "executive": {"read", "search", "query", "model_call", "export", "simulate"},
+    "maintenance_planner": {"read", "search", "query", "model_call", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
+    "technician": {"read", "search", "query", "model_call", "draft_write", "tool_call", "simulate"},
+    "reliability_engineer": {"read", "search", "query", "model_call", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
+    "enterprise_architect": {"read", "search", "query", "model_call", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
+    "security_officer": {"read", "search", "query", "model_call", "admin_kill_switch", "approve", "audit_verify", "audit_export",
                          "run_sandbox_tests", "export", "tool_call", "role_change"},
-    "auditor": {"read", "search", "query", "audit_verify", "audit_export", "export"},
-    "fde": {"read", "search", "query", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
+    "auditor": {"read", "search", "query", "model_call", "audit_verify", "audit_export", "export"},
+    "fde": {"read", "search", "query", "model_call", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
     # Agents act on behalf of a human; their effective rights are the
     # intersection of this set and the requesting human's set.
-    "agent": {"read", "search", "query", "tool_call", "draft_write", "simulate"},
+    "agent": {"read", "search", "query", "model_call", "tool_call", "draft_write", "simulate"},
 }
 
 RESTRICTED_ROLES = {"maintenance_planner", "technician", "reliability_engineer", "security_officer", "auditor"}
@@ -236,8 +236,8 @@ def evaluate(actor: Actor, req: PolicyRequest, record: bool = True, on_behalf_of
         if not local:
             return deny("POL-008", "Local models only", f"Model endpoint '{target}' is not a loopback address.")
         if not settings.llm_enabled:
-            return deny("POL-008", "Local models only", "Optional local LLM is disabled (LLM_ENABLED=false).")
-        ok("POL-008", "Local models only", "Loopback model endpoint and LLM enabled.")
+            return deny("POL-008", "Local models only", "Local Qwen inference is switched off (LLM_ENABLED=false).")
+        ok("POL-008", "Local models only", "Loopback (or in-process) Qwen endpoint and model calls enabled.")
 
     # POL-004 exfiltration
     if req.action == "export":

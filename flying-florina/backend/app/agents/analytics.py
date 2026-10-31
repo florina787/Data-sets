@@ -304,3 +304,43 @@ def quality_ncr(state: CaseState, ctx: StepContext) -> dict[str, Any]:
         state.inputs["quality"] = {"supplier": worst, "docs": res["results"] if res else []}
         state.retrieved_docs = res["results"] if res else []
     return {"summary": f"NCR candidate: supplier {worst['id']} on-time {worst['on_time_pct']}%, recent slip {worst['recent_avg_slip_days']} d. CAPA draft requires quality approval."}
+
+
+# ---------------------------------------------------------------- executive readiness (Q4)
+
+LEVERS = {
+    "parts_delay": ("Supplier and stock-transfer recovery for critical parts", 0.25),
+    "inspection_campaign": ("Bundle campaign inspections into planned slots", 0.20),
+    "unscheduled_component": ("Earlier trend review of component telemetry", 0.10),
+    "documentation_hold": ("Digital evidence packets to clear documentation holds", 0.40),
+    "structural_finding": ("Earlier structural inspection planning", 0.10),
+    "avionics_fault": ("Avionics spares positioning at bases", 0.15),
+    "scheduled_inspection": ("Slot optimization for scheduled inspections", 0.05),
+}
+DOWNTIME_COST_PER_HOUR_ASSUMPTION = 6500  # fictional planning assumption, same as the ROI model default
+
+
+def readiness_levers(state: CaseState, ctx: StepContext) -> dict[str, Any]:
+    """Model what each lever *could* change, using measured excess downtime x an explicit assumption."""
+    rows = state.inputs.get("cause_rows", [])
+    days = state.inputs["target"]["days_observed"]
+    levers = []
+    for r in rows:
+        if r["cause"] not in LEVERS:
+            continue
+        title, reduction = LEVERS[r["cause"]]
+        hours_month = round(r["hours_per_day"] * 30, 1)
+        saved = round(hours_month * reduction, 1)
+        levers.append({"cause": r["cause"], "lever": title, "current_hours_per_month": hours_month,
+                       "excess_vs_baseline_per_day": r["delta_per_day"], "assumed_reduction_pct": int(reduction * 100),
+                       "modeled_hours_saved_per_month": saved, "modeled_cost_avoided_per_month_usd": round(saved * DOWNTIME_COST_PER_HOUR_ASSUMPTION)})
+    levers.sort(key=lambda x: -x["modeled_hours_saved_per_month"])
+    with ctx.lock:
+        state.inputs["levers"] = levers[:5]
+        state.assumptions = list(dict.fromkeys(state.assumptions + [
+            f"Lever impact = current monthly downtime for the cause x an assumed reduction (shown per lever); cost uses a fictional ${DOWNTIME_COST_PER_HOUR_ASSUMPTION:,}/h planning rate.",
+            f"Current month normalized from {days} observed days.", "Modeled figures are not measured outcomes and must be validated in a pilot."]))
+    top = levers[0] if levers else None
+    return {"summary": (f"{len(levers)} levers modeled; largest: {top['lever']} (~{top['modeled_hours_saved_per_month']} h/month under a "
+                        f"{top['assumed_reduction_pct']}% assumption)." if top else "No modelable levers."),
+            "evidence": [{"kind": "simulation", "ref": "readiness_levers", "detail": "measured cause hours x stated assumption"}]}

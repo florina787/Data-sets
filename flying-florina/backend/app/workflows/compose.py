@@ -365,7 +365,109 @@ def _quality(state: CaseState) -> list[dict[str, Any]]:
                 {"field": "Approver", "value": "Quality approver (human)"}])]
 
 
+def _diagnostics(state: CaseState) -> list[dict[str, Any]]:
+    """Q1: observed facts first, then hypotheses, then what engineering should investigate."""
+    i = state.inputs
+    ac = i.get("aircraft_id", "?")
+    s = i.get("telemetry_stats")
+    hyps = i.get("hypotheses", [])
+    docs = {d["doc_id"]: d for d in state.retrieved_docs}
+    if not s:
+        state.answer = f"**{ac}: telemetry was withheld for this persona**, so no diagnostic evidence can be shown."
+        return [md(state.answer)]
+    facts = [f"Vibration index 7-day mean **{s['recent_7d_mean']}** vs this aircraft's 90-day baseline {s['baseline_mean']} (z = {s['recent_z']}).",
+             f"Rising for **{s['days_rising']}** consecutive days; {s['days_over_demo_threshold']} day(s) at or above the fictional demo threshold {DEMO_VIBRATION_THRESHOLD}.",
+             f"EGT delta moved from {s['egt_delta_baseline']} to {s['egt_delta_recent']} C over the same window.",
+             f"{len(s['missing_days'])} missing reading(s) ({', '.join(s['missing_days'][-3:]) or 'none'}) and {s['isolated_spikes_outside_trend']} isolated spike(s) outside the trend."]
+    checks = []
+    for h in hyps:
+        ref = h["reference_required"].split()[0]
+        d = docs.get(ref)
+        checks.append({"priority": len(checks) + 1, "hypothesis": h["hypothesis"], "likelihood": h["likelihood"],
+                       "investigate": h["reference_required"], "reference_available": bool(d and d["authoritative"]),
+                       "reference": f"{ref} rev {d['revision']}" if d else "not retrieved / not permitted"})
+    state.answer = "\n".join([f"**{ac} ({i.get('aircraft_type', '')}, {i.get('base', '')}): observed facts (synthetic telemetry).**", ""]
+                              + [f"- {f}" for f in facts] + ["",
+                              "**Hypotheses, not a diagnosis:** " + "; ".join(f"{h['id']} {h['hypothesis']} ({h['likelihood']})" for h in hyps) + ".",
+                              "**Engineering should investigate** in priority order: " + "; ".join(f"{c['priority']}. {c['investigate']}" for c in checks) + ".",
+                              "Confirmation requires physical inspection by qualified staff; software does not determine airworthiness."])
+    state.assumptions = list(dict.fromkeys(state.assumptions + ["Thresholds and procedures are fictional demo values.",
+                                                                "Hypothesis ranking is qualitative, from permitted synthetic evidence only."]))
+    ser = i.get("telemetry_series", [])
+    return [md(state.answer),
+            kpis([{"label": "Vibration 7d mean", "value": s["recent_7d_mean"], "tone": "red" if s["recent_7d_mean"] >= DEMO_VIBRATION_THRESHOLD else "amber"},
+                  {"label": "z vs own baseline", "value": s["recent_z"]}, {"label": "Days rising", "value": s["days_rising"]},
+                  {"label": "Missing readings", "value": len(s["missing_days"]), "tone": "amber" if s["missing_days"] else "teal"},
+                  {"label": "EGT delta (recent)", "value": s["egt_delta_recent"]}]),
+            chart("vibration", f"{ac} vibration index vs fleet mean (90 days)", "line", [r["day"] for r in ser],
+                  [{"name": ac, "data": [r["vibration_index"] for r in ser]}, {"name": "Fleet mean", "data": [r["fleet_mean"] for r in ser]}],
+                  caption="Gaps are missing readings. Dashed line: fictional demo threshold.", source="sensor_readings (synthetic)",
+                  mark_line={"y": DEMO_VIBRATION_THRESHOLD, "label": "Demo threshold"}, y_label="index"),
+            chart("egt", f"{ac} EGT delta (C)", "line", [r["day"] for r in ser], [{"name": "EGT delta", "data": [r.get("egt_delta_c") for r in ser]}],
+                  caption="Moves with vibration in the recent window: evidence for H2.", source="sensor_readings (synthetic)", y_label="C"),
+            chart("sensor_quality", "Sensor data quality timeline", "bar", [r["day"] for r in ser],
+                  [{"name": "Reading present (1) / missing (0)", "data": [0 if r["vibration_index"] is None else 1 for r in ser]}],
+                  caption="Each missing day is a data-quality gap, not a component finding.", source="sensor_readings (synthetic)"),
+            table("Hypotheses (evidence, not conclusions)", [("id", "ID"), ("hypothesis", "Hypothesis"), ("likelihood", "Relative likelihood"),
+                                                              ("supporting", "Supporting"), ("contradicting", "Contradicting")],
+                  [{**h, "supporting": "; ".join(h["supporting"]) or "-", "contradicting": "; ".join(h["contradicting"]) or "-"} for h in hyps]),
+            table("What engineering should investigate", [("priority", "#"), ("investigate", "Inspection / review"), ("hypothesis", "Tests hypothesis"),
+                                                          ("reference", "Authoritative reference"), ("reference_available", "Reference available")], checks,
+                  caption="References are the synthetic task cards actually retrieved for your role; none are invented."),
+            actions([{"label": "Compare recovery options", "kind": "query", "target": f"Which recovery option could return {ac} to service fastest?"},
+                     {"label": "Open Predictive Maintenance", "kind": "navigate", "target": "/predictive"}])]
+
+
+def _readiness(state: CaseState) -> list[dict[str, Any]]:
+    """Q4: what affects readiness (measured) and what could reduce downtime and cost (modeled)."""
+    i = state.inputs
+    f = i.get("fleet", {})
+    t = i.get("target", {})
+    prior = i.get("prior", [])
+    rows = i.get("cause_rows", [])
+    levers = i.get("levers", [])
+    crit = i.get("critical", [])
+    sup = i.get("suppliers_rel", [])
+    base = sum(m["hours_per_aircraft_day"] for m in prior) / len(prior) if prior else 0
+    top = [r for r in rows if r["delta_per_day"] > 0][:3]
+    worst_sup = min(sup, key=lambda x: x["on_time_pct"] or 100) if sup else None
+    state.answer = "\n".join([
+        f"**Fleet readiness: {f.get('available_pct')}% of {f.get('total_aircraft')} aircraft in service; {f.get('aog_count')} AOG; {f.get('open_work_orders')} open work orders (synthetic).**", "",
+        f"- Downtime is {t.get('hours_per_aircraft_day', 0):.3f} h per aircraft-day in {t.get('month')}, {((t.get('hours_per_aircraft_day', 0) / base - 1) * 100) if base else 0:+.0f}% vs the trailing 12-month mean ({base:.3f}).",
+        "- Largest measured increases: " + "; ".join(f"{r['cause'].replace('_', ' ')} {r['delta_per_day']:+.1f} h/day" for r in top) + ".",
+        f"- {len(crit)} critical/high parts have 2 or fewer verified units" + (f"; least reliable supplier {worst_sup['id']} on-time {worst_sup['on_time_pct']}%." if worst_sup else "."),
+        "- Improvement levers below are **modeled from stated assumptions**, not measured savings."])
+    months = i.get("months", [])
+    out = [md(state.answer),
+           kpis([{"label": "Fleet in service", "value": f"{f.get('available_pct')}%"}, {"label": "AOG", "value": f.get("aog_count"), "tone": "red"},
+                 {"label": "Open work orders", "value": f.get("open_work_orders")}, {"label": "Downtime h/aircraft-day", "value": round(t.get("hours_per_aircraft_day", 0), 3), "tone": "amber"},
+                 {"label": "Critical parts at risk", "value": len(crit), "tone": "amber"}])]
+    if months:
+        out.append(chart("readiness_downtime", "Downtime per aircraft-day by month", "line", [m["month"] for m in months],
+                         [{"name": "h per aircraft-day", "data": [m["hours_per_aircraft_day"] for m in months]}], source="maintenance_events (synthetic)"))
+    if rows:
+        out.append(chart("readiness_causes", f"Downtime causes vs baseline ({t.get('month')})", "bar", [r["cause"].replace("_", " ") for r in rows],
+                         [{"name": "This month h/day", "data": [r["hours_per_day"] for r in rows]}, {"name": "Baseline h/day", "data": [r["baseline_hours_per_day"] for r in rows]}],
+                         source="maintenance_events.cause_category"))
+    if f.get("by_status"):
+        out.append(chart("readiness_status", "Fleet by status", "pie", list(f["by_status"].keys()), [{"name": "Aircraft", "data": list(f["by_status"].values())}], source="aircraft"))
+    if levers:
+        out.append(chart("levers", "Modeled downtime hours saved per month by lever", "bar", [x["lever"] for x in levers],
+                         [{"name": "Modeled h saved / month", "data": [x["modeled_hours_saved_per_month"] for x in levers]}], caption="Simulation: measured cause hours x assumed reduction."))
+        out.append(table("Improvement levers (modeled, assumption-driven)", [("lever", "Lever"), ("cause", "Addresses"), ("current_hours_per_month", "Current h/month"),
+                                                                             ("assumed_reduction_pct", "Assumed reduction %"), ("modeled_hours_saved_per_month", "Modeled h saved/month"),
+                                                                             ("modeled_cost_avoided_per_month_usd", "Modeled cost avoided $/month")], levers))
+    if sup:
+        out.append(chart("readiness_suppliers", "Supplier on-time % (synthetic history)", "bar", [x["id"] for x in sup], [{"name": "On-time %", "data": [x["on_time_pct"] for x in sup]}], source="supplier_deliveries"))
+    out.append(actions([{"label": "Open Executive Command Center", "kind": "navigate", "target": "/command"},
+                        {"label": "Run the ROI simulator", "kind": "navigate", "target": "/simulator"}]))
+    return out
+
+
 COMPOSERS = {
+    "aircraft_diagnostics": _diagnostics,
+    "aircraft_recovery": _maintenance,
+    "executive_readiness": _readiness,
     "maintenance_investigation": _maintenance,
     "recovery_options": _maintenance,
     "scenario_compare": _scenario,

@@ -1,0 +1,6 @@
+# Runtime for your EXISTING local Qwen .gguf file (in-process llama.cpp).
+# Installs the inference library only; no model is downloaded.
+# Skip this if you serve Qwen with Ollama or a llama.cpp/LM Studio server instead.
+# CPU wheel (avoids compiling C++):
+#   pip install -r requirements-llm.txt --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+llama-cpp-python>=0.3.2

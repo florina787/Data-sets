@@ -79,17 +79,23 @@ INTEGRATION_MATRIX = [
 
 
 def connectors() -> list[dict[str, Any]]:
-    s = get_settings()
-    llm = {"status": "disabled", "detail": "LLM_ENABLED=false. Deterministic rules engine is used."}
-    if s.llm_enabled:
-        llm = detect_llm()
+    from app.llm.gateway import gateway
+
+    st = gateway().status()
+    d = st["discovery"]
+    if st["mode"] == "off":
+        llm = {"status": "disabled", "detail": "LLM_ENABLED=false. Deterministic engine answers."}
+    elif d["found"]:
+        llm = {"status": "local", "detail": f"{d['model']} ({d.get('quantization') or 'quantization n/a'}) via {d['runtime']} at {d.get('path') or d.get('base_url')}"}
+    else:
+        llm = {"status": "not_detected", "detail": d["reason"]}
     apps = db.query("SELECT id, name, kind FROM applications ORDER BY id")
     out = [{"id": a["id"], "name": a["name"], "kind": a["kind"], "status": "simulated", "detail": "Synthetic fixture; no live system."} for a in apps]
     out += [
         {"id": "IFS-CLOUD", "name": "IFS Cloud (customer instance)", "kind": "erp", "status": "not_connected",
          "detail": "Planned. Requires customer-provided access to documented, licensed REST/OData projections. Never assumed."},
         {"id": "MCP-DEMO", "name": "Demo maintenance MCP server (stdio)", "kind": "mcp", "status": "local", "detail": "mcp_servers/demo_maintenance; test via Bridge Studio."},
-        {"id": "LLM", "name": "Optional local LLM (Ollama/llama.cpp)", "kind": "llm", **llm},
+        {"id": "LLM", "name": "Local Qwen (your existing model)", "kind": "llm", **llm},
         {"id": "POSTGRES", "name": "PostgreSQL (optional)", "kind": "database", "status": "planned", "detail": "SQLite is used; PostgreSQL profile not implemented."},
     ]
     return out
