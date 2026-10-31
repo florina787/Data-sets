@@ -19,7 +19,9 @@
 | Simulation / ROI | **Working** | Deterministic, seeded; all money values are editable assumptions |
 | Reports | **Working** | ReportLab PDF; no charts embedded in PDFs |
 | Offline mode | **Working** | Process egress guard + test; host firewall still recommended |
-| Optional local LLM | **Detection only** | `LLM_ENABLED` + loopback check (POL-008); no generation step is wired into answers |
+| Local Qwen (2.0) | **Working, required by default** | Gateway discovers your existing Qwen; explanations, ambiguous routing, general knowledge and predictive explanations use it; Evidence Challenger checks every output. Tested with a test-only fake server; real Qwen latency measured on the user's machine only |
+| Four-question engine (2.0) | **Working** | Held-out v2 routing 95.8% without Qwen; Qwen stage measured on the user's machine |
+| Predictive maintenance (2.0) | **Statistical scores** | Deterministic z-scores vs own baseline; no trained model, no accuracy claim |
 | PostgreSQL, Alembic | **Not built** | SQLite only, idempotent DDL |
 | SSE streaming | **Implemented, unused by UI** | `/api/workflows/{id}/stream`; UI uses polling |
 | 3D visualization, plugin gallery | **Not built** | P2 |

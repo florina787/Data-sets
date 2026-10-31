@@ -1,60 +1,102 @@
 {
  "machine": {
   "python": "3.13.17",
-  "platform": "Linux-6.18.44-fc-v153-x86_64-with-glibc2.39",
+  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
   "cpus": 4
  },
- "startup_incl_seed_s": 1.06,
+ "startup_incl_seed_s": 1.07,
+ "qwen": {
+  "found": false,
+  "model": null,
+  "runtime": null,
+  "quantization": null,
+  "reason": "No local Qwen model was found. Set FF_QWEN_MODEL_PATH to your .gguf file, or start Ollama / llama.cpp server with your Qwen model. Flying_Florina never downloads a model and never calls an external API."
+ },
+ "note": "Local Qwen not found on this machine: deterministic workflow time only (explanation step skipped).",
  "queries": [
   {
-   "workflow": "maintenance_investigation",
-   "cold_ms": 287,
-   "warm_median_ms": 247
+   "workflow": "aircraft_diagnostics",
+   "cold_ms": 151,
+   "warm_median_ms": 163,
+   "warm_max_ms": 164
   },
   {
-   "workflow": "scenario_compare",
-   "cold_ms": 94,
-   "warm_median_ms": 107
-  },
-  {
-   "workflow": "downtime_analysis",
-   "cold_ms": 1029,
-   "warm_median_ms": 968
+   "workflow": "aircraft_recovery",
+   "cold_ms": 369,
+   "warm_median_ms": 323,
+   "warm_max_ms": 353
   },
   {
    "workflow": "legacy_assessment",
-   "cold_ms": 181,
-   "warm_median_ms": 197
+   "cold_ms": 235,
+   "warm_median_ms": 196,
+   "warm_max_ms": 209
+  },
+  {
+   "workflow": "executive_readiness",
+   "cold_ms": 187,
+   "warm_median_ms": 177,
+   "warm_max_ms": 186
+  },
+  {
+   "workflow": "maintenance_investigation",
+   "cold_ms": 297,
+   "warm_median_ms": 256,
+   "warm_max_ms": 271
+  },
+  {
+   "workflow": "scenario_compare",
+   "cold_ms": 113,
+   "warm_median_ms": 108,
+   "warm_max_ms": 116
+  },
+  {
+   "workflow": "downtime_analysis",
+   "cold_ms": 885,
+   "warm_median_ms": 919,
+   "warm_max_ms": 927
+  },
+  {
+   "workflow": "legacy_assessment",
+   "cold_ms": 213,
+   "warm_median_ms": 196,
+   "warm_max_ms": 230
   },
   {
    "workflow": "bridge_generation",
-   "cold_ms": 106,
-   "warm_median_ms": 115
+   "cold_ms": 97,
+   "warm_median_ms": 104,
+   "warm_max_ms": 106
   },
   {
    "workflow": "governance_review",
-   "cold_ms": 83,
-   "warm_median_ms": 95
+   "cold_ms": 84,
+   "warm_median_ms": 86,
+   "warm_max_ms": 91
   },
   {
    "workflow": "executive_pitch",
-   "cold_ms": 275,
-   "warm_median_ms": 163
+   "cold_ms": 252,
+   "warm_median_ms": 162,
+   "warm_max_ms": 169
   },
   {
    "workflow": "document_freshness",
-   "cold_ms": 61,
-   "warm_median_ms": 59
+   "cold_ms": 79,
+   "warm_median_ms": 73,
+   "warm_max_ms": 76
   },
   {
    "workflow": "recovery_options",
-   "cold_ms": 287,
-   "warm_median_ms": 276
+   "cold_ms": 290,
+   "warm_median_ms": 313,
+   "warm_max_ms": 345
   },
   {
    "workflow": "data_export",
-   "cold_ms": 56,
-   "warm_median_ms": 58
+   "cold_ms": 54,
+   "warm_median_ms": 58,
+   "warm_max_ms": 59
   }
  ]
 }

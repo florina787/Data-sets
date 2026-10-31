@@ -9,8 +9,10 @@
 ![Paid APIs](https://img.shields.io/badge/paid%20APIs-%240-0F8B8D?style=for-the-badge)
 ![Policy](https://img.shields.io/badge/policy-deny%20by%20default-5C35B7?style=for-the-badge)
 
-![pytest](https://img.shields.io/badge/pytest-102%20passed-0F8B8D)
-![playwright](https://img.shields.io/badge/playwright-13%20passed-0F8B8D)
+![pytest](https://img.shields.io/badge/pytest-131%20passed-0F8B8D)
+![playwright](https://img.shields.io/badge/playwright-18%20passed-0F8B8D)
+![local qwen](https://img.shields.io/badge/LLM-your%20local%20Qwen-6366F1)
+![routing](https://img.shields.io/badge/held--out%20routing-95.8%25-22D3EE)
 ![vitest](https://img.shields.io/badge/vitest-9%20passed-0F8B8D)
 ![generated adapter](https://img.shields.io/badge/generated%20adapter-14%2F14-0F8B8D)
 ![security lab](https://img.shields.io/badge/security%20lab-12%2F12-5C35B7)
@@ -28,10 +30,9 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <br/><br/>
 
-<img src="docs/screenshots/01_mission_control.png" width="49%" alt="Mission Control, light theme" />
-<img src="docs/screenshots/highlights/dark_mission_control.png" width="49%" alt="Mission Control, dark theme" />
+<img src="docs/screenshots/v2/01_assistant_home.png" width="100%" alt="Flying_Florina 2.0 AI Assistant with the four question cards" />
 
-<sub>Mission Control in light and dark themes: one prompt, ten working sample questions, live session history.</sub>
+<sub>Flying_Florina 2.0: the Conversation Intelligence Copilot design system, four signature questions, and a Local Qwen status pill.</sub>
 
 </div>
 
@@ -39,6 +40,8 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <div align="center">
 
+**[2.0 for leadership](#-flying_florina-20-for-aerospace--defense-leadership)** ·
+**[Local Qwen](#-local-qwen-setup)** ·
 **[Architecture](#-architecture)** ·
 **[See it in action](#-see-it-in-action)** ·
 **[Every screen](#-every-screen)** ·
@@ -50,6 +53,71 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 **[Docs](#-documentation)**
 
 </div>
+
+---
+
+## 🛫 Flying_Florina 2.0 for aerospace & defense leadership
+
+**Subtitle:** Aerospace & Defense Intelligence Copilot · **Positioning:** Explainable Industrial AI for Mission-Critical Operations
+
+| | |
+|---|---|
+| **The customer problem** | Decisions about a grounded or degrading aircraft depend on evidence scattered across ERP, MRO, legacy databases, nightly files and document libraries that disagree. Engineers spend hours assembling it, and AI assistants that can act create new governance risk. |
+| **Why it matters in A&D** | Every hour of AOG has an operational and financial cost; safety-critical decisions need traceable evidence; export-control and security rules forbid casual data movement; legacy platforms can't simply be replaced. |
+| **How Flying_Florina works** | A hybrid router sends each question to specialist agents that query verified data deterministically. **Your local Qwen model explains the evidence**, an **Evidence Challenger** rejects any number, ID or claim it can't support, and **governance validation** confirms nothing was approved or executed by the model. |
+| **How it complements enterprise systems** | It sits next to systems such as IFS Cloud as an evidence-and-governance layer, reading through typed, read-only adapters and MCP tools. It replaces nothing. See [IFS integration readiness](docs/IFS_INTEGRATION_READINESS.md) (implemented vs proposed). |
+| **How governance is enforced** | Deny-by-default policy before every tool call, agents limited to the human's rights, retrieved text can never trigger actions, human approval with separation of duties for every write, a kill switch, a hash-chained audit log, and loopback-only model calls. |
+| **What the demo proves** | All four signature questions run end to end on local inference; held-out routing 95.8% (macro-F1 0.958); 100% citation accuracy; exfiltration and instruction-override attempts denied with 0 tool executions; generated read-only adapters pass their own tests. |
+| **What production would need** | Enterprise IdP and MFA, container sandboxing, externally anchored audit, an internal package mirror and SBOM, authorized IFS APIs, model-provenance review, and a formal security and compliance assessment. See [deployment readiness](docs/DEPLOYMENT_READINESS.md). |
+
+### The four signature questions
+
+| | Question | What runs |
+|---|---|---|
+| **Q1 · Aircraft Diagnostics** | *Why is aircraft AC-204 showing abnormal vibration, and what should engineering investigate?* | telemetry + anomaly + data quality → evidence retrieval → hypotheses → Qwen explanation → Challenger |
+| **Q2 · Aircraft Recovery** | *Which recovery option could return AC-204 to service fastest, considering spare parts, maintenance scheduling, and engineering approval?* | inventory → planning → compliance → recovery simulation → draft → **engineering approval** |
+| **Q3 · Legacy Modernization** | *How can we modernize our legacy aircraft maintenance system using APIs, MCP, and AI without replacing the existing platform?* | Legacy X-Ray → integration options → roadmap → adapter preview → security review |
+| **Q4 · Executive Intelligence** | *What is affecting fleet readiness, and which maintenance improvements could reduce downtime and cost?* | fleet analytics → downtime drivers → parts risk → modeled levers |
+
+<img src="docs/screenshots/v2/02_q1_diagnostics.png" width="24%" alt="Q1 diagnostics answer" />
+<img src="docs/screenshots/v2/03_q2_recovery.png" width="24%" alt="Q2 recovery answer" />
+<img src="docs/screenshots/v2/04_q3_modernization.png" width="24%" alt="Q3 modernization answer" />
+<img src="docs/screenshots/v2/05_q4_executive.png" width="24%" alt="Q4 executive answer" />
+
+<img src="docs/screenshots/v2/06_command_center.png" width="49%" alt="Executive Command Center" />
+<img src="docs/screenshots/v2/08_observability.png" width="49%" alt="Evaluation and Observability" />
+
+<img src="docs/screenshots/v2/07_predictive.png" width="49%" alt="Predictive Maintenance" />
+<img src="docs/screenshots/v2/09_legacy_xray.png" width="49%" alt="Legacy X-Ray with modernization analytics" />
+
+<img src="docs/screenshots/v2/12_mobile_home.png" width="22%" alt="Mobile" align="right" />
+
+**More:** [what changed in 2.0, with before/after screenshots](docs/CHANGELOG_2.0.md) · [four-question engine](docs/FOUR_QUESTION_ENGINE.md) ·
+[evaluation results](docs/eval/README.md) · [executive demo script, scenarios A–E](docs/DEMO_SCRIPT.md#flying_florina-20-executive-demo-ifs-leadership)
+
+<br clear="right"/>
+
+---
+
+## 🧠 Local Qwen setup
+
+Flying_Florina uses **the Qwen model already on your machine**. It never downloads a model and never calls a cloud or paid API.
+
+```bash
+cd flying-florina
+sh scripts/setup.sh                                  # packages + llama.cpp runtime (your model is reused) + Qwen check
+backend/.venv/bin/python scripts/check_qwen.py       # must print QWEN VERIFIED with latency and tokens/s
+make demo                                            # http://127.0.0.1:5173 (green "Local Qwen" pill)
+```
+
+Discovery order: `FF_QWEN_MODEL_PATH` → `FF_QWEN_BASE_URL` → Ollama (`qwen*`) → llama.cpp/LM Studio server → `*qwen*.gguf` files,
+including `../conversation-intelligence-copilot/data/models/qwen2.5-1.5b-instruct-q4_k_m.gguf`. Running it through **GitHub Copilot**?
+Use the prompt in [`.github/prompts/run-flying-florina-with-local-qwen.prompt.md`](../.github/prompts/run-flying-florina-with-local-qwen.prompt.md).
+Details, performance controls and monitoring: [docs/QWEN_LOCAL_LLM.md](docs/QWEN_LOCAL_LLM.md).
+
+> Honest note: this repository was built in a cloud container that does not have your Qwen model. The Qwen code paths are tested
+> against a test-only fake server, and real Qwen latency/tokens-per-second are measured by the app on your machine. No Qwen benchmark is
+> quoted here because none was measured.
 
 ---
 
@@ -557,9 +625,9 @@ Full 3-minute and 8-minute scripts, plus the questions to expect, are in **[docs
 
 | Command | What it covers | Result |
 |---|---|---|
-| `make test-backend` | routing, policies, export blocking, retrieval filtering, citations, approvals, replay, audit chain, workflows, failure injection, cancel, simulation determinism, upload safety, bridge generation **and execution**, MCP stdio | **102 passed** |
+| `make test-backend` | routing, policies, export blocking, retrieval filtering, citations, approvals, replay, audit chain, workflows, failure injection, cancel, simulation determinism, upload safety, bridge generation **and execution**, MCP stdio, **local Qwen gateway, four-question engine, Evidence Challenger** | **131 passed** |
 | `npm test` (Vitest) | XSS-safe markdown, chart mapping, table sorting, workspace rendering | **9 passed** |
-| `make test-e2e` (Playwright) | fresh start, personas, all 10 prompts, charts, agent graph, legacy upload, adapter tests, denial, approvals, PDF download, guest denials, offline interception, mobile | **13 passed** |
+| `make test-e2e` (Playwright) | fresh start, personas, all 10 prompts, **four question cards, follow-ups, Command Center, Predictive, Observability**, charts, agent graph, legacy upload, adapter tests, denial, approvals, PDF download, guest denials, offline interception, mobile | **18 passed** |
 | `make offline` | every workflow + reports with the egress guard on, no LLM | **0 egress attempts** |
 | Generated bundle `pytest` | contract 6 · security 6 · MCP stdio 2 | **14 passed** |
 | `make lint` · `npm run typecheck` · `npm run build` | ruff (incl. bandit rules) · strict TypeScript · production build | **clean** |
@@ -598,7 +666,7 @@ flying-florina/
 
 | ✅ Real | 🟡 Simulated / demo-grade | ⛔ Not built |
 |---|---|---|
-| Policy engine, approvals, audit chain, retrieval filtering, workflows, parsers, generated adapter + MCP, reports, offline guard | Persona login (no IdP/MFA), approved writes (demo DB only), ERP data (fictional "IFS-like" fixtures), prompt-injection patterns, process-level egress guard, subprocess test sandbox | Live IFS connection, PostgreSQL/Alembic, OPA, embeddings, local-LLM rephrasing (detection only), 3D views, connector gallery |
+| Policy engine, approvals, audit chain, retrieval filtering, workflows, parsers, generated adapter + MCP, reports, offline guard, local Qwen gateway + Evidence Challenger, four-question router | Qwen benchmarks (measured on your machine, not in this repo), persona login (no IdP/MFA), approved writes (demo DB only), ERP data (fictional "IFS-like" fixtures), prompt-injection patterns, process-level egress guard, subprocess test sandbox | Live IFS connection, PostgreSQL/Alembic, OPA, embeddings, trained predictive model (scores are statistics), 3D views, connector gallery |
 
 **Cost:** no paid APIs, hosted inference, cloud services or accounts, so incremental software spend is **$0**. You provide the hardware and electricity. Claude Code, which was used to build this, may need its own subscription.
 
