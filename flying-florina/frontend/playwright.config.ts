@@ -16,11 +16,12 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } } }],
   webServer: [
     {
-      command: `../backend/.venv/bin/python -m uvicorn app.main:app --app-dir ../backend --host 127.0.0.1 --port ${API_PORT}`,
+      // Fit the forecasting models before the server starts (as setup.sh does), so tests never race model fitting for CPU.
+      command: `cd ../backend && .venv/bin/python -m app.global_intel.prefit && .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port ${API_PORT}`,
       url: `http://127.0.0.1:${API_PORT}/health`,
       env: { FF_DATA_DIR: dataDir, FF_GENERATED_DIR: `${dataDir}/generated`, OFFLINE_MODE: "true", DEMO_MODE: "true", FF_CORS_ORIGINS: `http://127.0.0.1:${UI_PORT}` },
       reuseExistingServer: false,
-      timeout: 60_000,
+      timeout: 240_000,
     },
     {
       command: `npx vite --port ${UI_PORT} --strictPort`,

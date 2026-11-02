@@ -1,0 +1,35 @@
+# Deny by default, then allow only: ingress controller -> frontend/backend, frontend -> backend. The backend gets NO egress at all
+# (its model runs in-process or in a same-pod sidecar on loopback), matching the application's offline guard.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: flying-florina }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: backend-ingress, namespace: flying-florina }
+spec:
+  podSelector: { matchLabels: { app: ff-backend } }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: { matchLabels: { app: ff-frontend } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: ingress-nginx } }
+      ports: [{ port: 8000 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: frontend-policy, namespace: flying-florina }
+spec:
+  podSelector: { matchLabels: { app: ff-frontend } }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: ingress-nginx } } }]
+      ports: [{ port: 4173 }]
+  egress:
+    - to: [{ podSelector: { matchLabels: { app: ff-backend } } }]
+      ports: [{ port: 8000 }]
+    - to: [{ namespaceSelector: {}, podSelector: { matchLabels: { k8s-app: kube-dns } } }]
+      ports: [{ port: 53, protocol: UDP }]

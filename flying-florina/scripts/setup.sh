@@ -18,6 +18,8 @@ else
 fi
 .venv/bin/python -m app.seed.generator > /dev/null
 echo "Backend ready (synthetic DB seeded)."
+echo "Fitting the 3.0 forecasting models once (cached in the data folder; about 10-20 s)..."
+.venv/bin/python -m app.global_intel.prefit
 .venv/bin/python ../scripts/check_qwen.py || echo "See the reason above; set FF_QWEN_MODEL_PATH to your .gguf file if it lives elsewhere."
 cd "$ROOT/frontend"
 npm ci --no-audit --no-fund || npm install --no-audit --no-fund

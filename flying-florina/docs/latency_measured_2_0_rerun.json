@@ -1,0 +1,102 @@
+{
+ "machine": {
+  "python": "3.13.17",
+  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+  "cpus": 4
+ },
+ "startup_incl_seed_s": 1.73,
+ "qwen": {
+  "found": false,
+  "model": null,
+  "runtime": null,
+  "quantization": null,
+  "reason": "No local Qwen model was found. Set FF_QWEN_MODEL_PATH to your .gguf file, or start Ollama / llama.cpp server with your Qwen model. Flying_Florina never downloads a model and never calls an external API."
+ },
+ "note": "Local Qwen not found on this machine: deterministic workflow time only (explanation step skipped).",
+ "queries": [
+  {
+   "workflow": "aircraft_diagnostics",
+   "cold_ms": 260,
+   "warm_median_ms": 217,
+   "warm_max_ms": 231
+  },
+  {
+   "workflow": "aircraft_recovery",
+   "cold_ms": 455,
+   "warm_median_ms": 472,
+   "warm_max_ms": 489
+  },
+  {
+   "workflow": "legacy_assessment",
+   "cold_ms": 306,
+   "warm_median_ms": 261,
+   "warm_max_ms": 310
+  },
+  {
+   "workflow": "executive_readiness",
+   "cold_ms": 245,
+   "warm_median_ms": 212,
+   "warm_max_ms": 246
+  },
+  {
+   "workflow": "maintenance_investigation",
+   "cold_ms": 407,
+   "warm_median_ms": 415,
+   "warm_max_ms": 418
+  },
+  {
+   "workflow": "scenario_compare",
+   "cold_ms": 147,
+   "warm_median_ms": 155,
+   "warm_max_ms": 187
+  },
+  {
+   "workflow": "downtime_analysis",
+   "cold_ms": 1544,
+   "warm_median_ms": 1191,
+   "warm_max_ms": 1703
+  },
+  {
+   "workflow": "legacy_assessment",
+   "cold_ms": 277,
+   "warm_median_ms": 287,
+   "warm_max_ms": 299
+  },
+  {
+   "workflow": "bridge_generation",
+   "cold_ms": 150,
+   "warm_median_ms": 142,
+   "warm_max_ms": 149
+  },
+  {
+   "workflow": "governance_review",
+   "cold_ms": 113,
+   "warm_median_ms": 113,
+   "warm_max_ms": 147
+  },
+  {
+   "workflow": "executive_pitch",
+   "cold_ms": 347,
+   "warm_median_ms": 237,
+   "warm_max_ms": 263
+  },
+  {
+   "workflow": "document_freshness",
+   "cold_ms": 107,
+   "warm_median_ms": 101,
+   "warm_max_ms": 109
+  },
+  {
+   "workflow": "recovery_options",
+   "cold_ms": 380,
+   "warm_median_ms": 410,
+   "warm_max_ms": 472
+  },
+  {
+   "workflow": "data_export",
+   "cold_ms": 83,
+   "warm_median_ms": 71,
+   "warm_max_ms": 92
+  }
+ ]
+}

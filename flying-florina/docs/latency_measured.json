@@ -4,7 +4,7 @@
   "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
   "cpus": 4
  },
- "startup_incl_seed_s": 1.07,
+ "startup_incl_seed_s": 2.29,
  "qwen": {
   "found": false,
   "model": null,
@@ -16,87 +16,87 @@
  "queries": [
   {
    "workflow": "aircraft_diagnostics",
-   "cold_ms": 151,
-   "warm_median_ms": 163,
-   "warm_max_ms": 164
+   "cold_ms": 256,
+   "warm_median_ms": 243,
+   "warm_max_ms": 257
   },
   {
    "workflow": "aircraft_recovery",
-   "cold_ms": 369,
-   "warm_median_ms": 323,
-   "warm_max_ms": 353
+   "cold_ms": 449,
+   "warm_median_ms": 421,
+   "warm_max_ms": 464
   },
   {
    "workflow": "legacy_assessment",
-   "cold_ms": 235,
-   "warm_median_ms": 196,
-   "warm_max_ms": 209
+   "cold_ms": 308,
+   "warm_median_ms": 324,
+   "warm_max_ms": 337
   },
   {
    "workflow": "executive_readiness",
-   "cold_ms": 187,
-   "warm_median_ms": 177,
-   "warm_max_ms": 186
+   "cold_ms": 235,
+   "warm_median_ms": 265,
+   "warm_max_ms": 293
   },
   {
    "workflow": "maintenance_investigation",
-   "cold_ms": 297,
-   "warm_median_ms": 256,
-   "warm_max_ms": 271
+   "cold_ms": 373,
+   "warm_median_ms": 402,
+   "warm_max_ms": 480
   },
   {
    "workflow": "scenario_compare",
-   "cold_ms": 113,
-   "warm_median_ms": 108,
-   "warm_max_ms": 116
+   "cold_ms": 207,
+   "warm_median_ms": 207,
+   "warm_max_ms": 241
   },
   {
    "workflow": "downtime_analysis",
-   "cold_ms": 885,
-   "warm_median_ms": 919,
-   "warm_max_ms": 927
+   "cold_ms": 1382,
+   "warm_median_ms": 1431,
+   "warm_max_ms": 1478
   },
   {
    "workflow": "legacy_assessment",
-   "cold_ms": 213,
-   "warm_median_ms": 196,
-   "warm_max_ms": 230
+   "cold_ms": 456,
+   "warm_median_ms": 339,
+   "warm_max_ms": 343
   },
   {
    "workflow": "bridge_generation",
-   "cold_ms": 97,
-   "warm_median_ms": 104,
-   "warm_max_ms": 106
+   "cold_ms": 174,
+   "warm_median_ms": 175,
+   "warm_max_ms": 192
   },
   {
    "workflow": "governance_review",
-   "cold_ms": 84,
-   "warm_median_ms": 86,
-   "warm_max_ms": 91
+   "cold_ms": 188,
+   "warm_median_ms": 155,
+   "warm_max_ms": 167
   },
   {
    "workflow": "executive_pitch",
-   "cold_ms": 252,
-   "warm_median_ms": 162,
-   "warm_max_ms": 169
+   "cold_ms": 398,
+   "warm_median_ms": 274,
+   "warm_max_ms": 308
   },
   {
    "workflow": "document_freshness",
-   "cold_ms": 79,
-   "warm_median_ms": 73,
-   "warm_max_ms": 76
+   "cold_ms": 134,
+   "warm_median_ms": 125,
+   "warm_max_ms": 147
   },
   {
    "workflow": "recovery_options",
-   "cold_ms": 290,
-   "warm_median_ms": 313,
-   "warm_max_ms": 345
+   "cold_ms": 431,
+   "warm_median_ms": 487,
+   "warm_max_ms": 495
   },
   {
    "workflow": "data_export",
-   "cold_ms": 54,
-   "warm_median_ms": 58,
-   "warm_max_ms": 59
+   "cold_ms": 105,
+   "warm_median_ms": 89,
+   "warm_max_ms": 98
   }
  ]
 }

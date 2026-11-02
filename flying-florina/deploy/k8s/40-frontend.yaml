@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ff-frontend
+  namespace: flying-florina
+  labels: { app: ff-frontend, app.kubernetes.io/part-of: flying-florina }
+spec:
+  replicas: 2                       # stateless
+  selector: { matchLabels: { app: ff-frontend } }
+  template:
+    metadata: { labels: { app: ff-frontend } }
+    spec:
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 1000, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: frontend
+          image: flying-florina-frontend:3.0.0
+          ports: [{ containerPort: 4173, name: http }]
+          env: [{ name: FF_BACKEND_URL, value: "http://ff-backend:8000" }]
+          resources: { requests: { cpu: 100m, memory: 128Mi }, limits: { cpu: 500m, memory: 512Mi } }
+          readinessProbe: { httpGet: { path: /, port: http }, periodSeconds: 10 }
+          livenessProbe: { httpGet: { path: /, port: http }, periodSeconds: 20 }
+          securityContext: { allowPrivilegeEscalation: false, capabilities: { drop: [ALL] } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: ff-frontend, namespace: flying-florina }
+spec:
+  selector: { app: ff-frontend }
+  ports: [{ name: http, port: 4173, targetPort: http }]
+---
+# API gateway: one internal hostname; /api, /health and /ready go to the backend, everything else to the UI.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ff-gateway
+  namespace: flying-florina
+  annotations: { nginx.ingress.kubernetes.io/proxy-body-size: 20m }
+spec:
+  ingressClassName: nginx
+  tls: [{ hosts: [flying-florina.example.internal], secretName: ff-tls }]
+  rules:
+    - host: flying-florina.example.internal
+      http:
+        paths:
+          - { path: /api, pathType: Prefix, backend: { service: { name: ff-backend, port: { name: http } } } }
+          - { path: /ready, pathType: Exact, backend: { service: { name: ff-backend, port: { name: http } } } }
+          - { path: /, pathType: Prefix, backend: { service: { name: ff-frontend, port: { name: http } } } }

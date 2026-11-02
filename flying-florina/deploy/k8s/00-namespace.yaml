@@ -1,0 +1,8 @@
+# Mode C — Kubernetes REFERENCE deployment for enterprise evaluation. Not validated against a live cluster in this repository.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flying-florina
+  labels:
+    app.kubernetes.io/part-of: flying-florina
+    pod-security.kubernetes.io/enforce: restricted

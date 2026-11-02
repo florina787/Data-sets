@@ -1,0 +1,68 @@
+{
+ "split": "ff3_intents_test",
+ "items": 62,
+ "routing_accuracy": 0.9032,
+ "follow_up_accuracy_with_slots": 0.75,
+ "follow_up_turns": 4,
+ "errors": [
+  {
+   "query": "Where are we going to run short of components globally?",
+   "gold": "global_shortages",
+   "pred": "unsupported",
+   "method": "relevance_gate",
+   "correct": false
+  },
+  {
+   "query": "How many engine temperature sensors do we expect to replace in 14 days?",
+   "gold": "demand_forecast",
+   "pred": "clarify",
+   "method": "fallback",
+   "correct": false
+  },
+  {
+   "query": "If Veltrion Hydraulics slips by 21 days, what happens to our maintenance?",
+   "gold": "supply_delay_impact",
+   "pred": "clarify",
+   "method": "fallback",
+   "correct": false
+  },
+  {
+   "query": "Consequences for maintenance if Meridane Power Systems delivers 14 days late",
+   "gold": "supply_delay_impact",
+   "pred": "clarify",
+   "method": "fallback",
+   "correct": false
+  },
+  {
+   "query": "What could break if the /api/global/map API changes?",
+   "gold": "change_impact",
+   "pred": "general_knowledge",
+   "method": "semantic",
+   "correct": false
+  },
+  {
+   "query": "What drives our maintenance cost and how do supplier delays play into it?",
+   "gold": "executive",
+   "pred": "parts_status",
+   "method": "rules_weak",
+   "correct": false
+  }
+ ],
+ "follow_up_errors": [
+  {
+   "query": "What about a 30-day delay instead?",
+   "gold": "supply_delay_impact",
+   "pred": "supply_delay_impact",
+   "slots": {
+    "supplier_id": null,
+    "delay_days": 30
+   },
+   "expect": {
+    "supplier_id": "S8",
+    "delay_days": 30
+   },
+   "correct": false
+  }
+ ],
+ "note": "Rules-only (no Qwen). Held-out: written before the rules were run on it; scored once."
+}

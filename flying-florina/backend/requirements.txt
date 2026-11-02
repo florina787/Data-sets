@@ -6,3 +6,6 @@ PyYAML==6.0.3
 reportlab==5.0.1
 httpx>=0.28
 mcp==2.3.0
+numpy>=2.1
+scikit-learn==1.7.2
+Pillow>=11

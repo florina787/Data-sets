@@ -1,0 +1,16 @@
+# SQLite is a single-writer database: ONE backend replica, ReadWriteOnce volume, never shared network storage between writers.
+# Horizontal scaling requires migrating to PostgreSQL first (docs/DEPLOYMENT.md, "PostgreSQL migration path").
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: ff-data, namespace: flying-florina }
+spec:
+  accessModes: [ReadWriteOnce]
+  resources: { requests: { storage: 5Gi } }
+---
+# Your EXISTING Qwen model file, provisioned by an administrator (copy the .gguf onto this volume once). Mounted read-only.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: ff-models, namespace: flying-florina }
+spec:
+  accessModes: [ReadOnlyMany]
+  resources: { requests: { storage: 4Gi } }

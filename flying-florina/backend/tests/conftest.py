@@ -11,6 +11,7 @@ os.environ.setdefault("DEMO_MODE", "true")
 os.environ.setdefault("OFFLINE_MODE", "true")
 # Tests are deterministic: real Qwen calls are off unless a test turns them on against a test-only fake server.
 os.environ["LLM_ENABLED"] = "false"
+os.environ["FF_FORECAST_PRELOAD"] = "false"
 os.environ["FF_SESSION_SECRET"] = "test-secret"  # noqa: S105 - test-only value
 
 from app.core.config import reset_settings  # noqa: E402

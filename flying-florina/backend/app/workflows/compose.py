@@ -18,7 +18,7 @@ from app.workflows.intent import SUGGESTIONS
 def compose(state: CaseState) -> None:
     fn = COMPOSERS.get(state.workflow, _generic)
     blocks: list[dict[str, Any]] = []
-    if state.status in ("denied", "needs_clarification") and state.workflow != "data_export":
+    if state.status in ("denied", "needs_clarification", "budget_exceeded") and state.workflow != "data_export":
         reason = next((e["error"] for e in state.errors), "") or (state.warnings[-1] if state.warnings else "")
         halted = [d for d in state.policy_decisions if d["decision"] == "DENY"]
         state.answer = (f"**Request stopped: {state.status.replace('_', ' ')}.** "
@@ -482,3 +482,8 @@ COMPOSERS = {
     "fleet_overview": _fleet,
     "quality_investigation": _quality,
 }
+
+
+from app.harness.workflows import HARNESS_COMPOSERS  # noqa: E402
+
+COMPOSERS.update(HARNESS_COMPOSERS)

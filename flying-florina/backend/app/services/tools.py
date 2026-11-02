@@ -97,11 +97,17 @@ def tool_specs() -> list[ToolSpec]:
     ]
 
 
+def all_specs() -> list[ToolSpec]:
+    from app.harness.tools import specs as harness_specs
+
+    return tool_specs() + harness_specs()
+
+
 def registry() -> Registry:
     global _registry
     if _registry is None:
         reg = Registry()
-        for spec in tool_specs():
+        for spec in all_specs():
             reg.register(spec)
         _registry = reg
     return _registry

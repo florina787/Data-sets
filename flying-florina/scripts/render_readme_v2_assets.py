@@ -256,10 +256,10 @@ def architecture():
             + body + "</svg>")
 
 
-def banner():
+def banner(chips_override=None):
     w, h = 1280, 380
     lines = "".join(f'<path d="M{x} {h} L{x+360} 0" stroke="{VIOLET}" stroke-opacity="0.06"/>' for x in range(-100, 1400, 110))
-    chips = [("Q1 Diagnostics", CYAN), ("Q2 Recovery", INDIGO), ("Q3 Modernization", VIOLET), ("Q4 Executive", POS)]
+    chips = chips_override or [("Q1 Diagnostics", CYAN), ("Q2 Recovery", INDIGO), ("Q3 Modernization", VIOLET), ("Q4 Executive", POS)]
     cx, cs = 252, ""
     for name, col in chips:
         cw = 14 + len(name) * 8.6
@@ -309,3 +309,70 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ---------------------------------------------------------------- 3.0 assets (data: docs/eval/forecast_metrics_3_0.json, ff3_intents_test_rules_only.json)
+def v3_forecast_mae(m):
+    d = m["metrics"]["demand"]["by_horizon"]
+    hs = list(d)
+    w, h = 1200, 500
+    x0, y0, x1, y1 = 120, 120, 1150, 400
+    mx = max(max(v["mae"], v["baseline_moving_average"]["mae"], v["baseline_seasonal_naive"]["mae"]) for v in d.values()) * 1.15
+    body = [t(x0, 98, "■ model", 12, 700, CYAN), t(x0 + 90, 98, "■ moving average", 12, 700, VIOLET), t(x0 + 240, 98, "■ seasonal naive", 12, 700, MUTED)]
+    gw = (x1 - x0) / len(hs)
+    for i, k in enumerate(hs):
+        v = d[k]
+        for j, (val, col) in enumerate(((v["mae"], CYAN), (v["baseline_moving_average"]["mae"], VIOLET), (v["baseline_seasonal_naive"]["mae"], MUTED))):
+            bh = (y1 - y0) * val / mx
+            bx = x0 + i * gw + 30 + j * 46
+            body.append(f'<rect x="{bx:.1f}" y="{y1 - bh:.1f}" width="40" height="{bh:.1f}" rx="5" fill="{col}" opacity="0.92"/>')
+            body.append(t(bx + 20, y1 - bh - 6, f"{val:.2f}", 11, 700, col, "middle"))
+        body.append(t(x0 + i * gw + 99, y1 + 22, f"+{k}", 14, 700, TEXT, "middle"))
+        body.append(t(x0 + i * gw + 99, y1 + 42, f"coverage {v['coverage_80'] * 100:.0f}%", 11, 400, WARN if v["coverage_80"] < 0.75 else MUTED, "middle"))
+    body.append(f'<line x1="{x0}" y1="{y1}" x2="{x1}" y2="{y1}" stroke="{BORDER}"/>')
+    return frame(w, h, "3.0 demand forecast: held-out MAE vs baselines (lower is better)",
+                 "HistGradientBoosting (Poisson) + split-conformal 80% intervals · temporal split · synthetic dataset; amber = interval coverage below 75%",
+                 "".join(body), "Source: docs/eval/forecast_metrics_3_0.json (GET /api/forecast/evaluation)")
+
+
+def v3_model_vs_baseline(m):
+    mm = m["metrics"]
+    rows = [("Failure within 30 days (F1)", mm["failure_risk_30d"]["model_at_0.5"]["f1"], mm["failure_risk_30d"]["baseline_health_below_0.35"]["f1"], "RandomForest", "health rule"),
+            ("Anomaly detection (F1)", mm["anomaly"]["isolation_forest"]["f1"], mm["anomaly"]["baseline_zscore_gt3"]["f1"], "IsolationForest", "z-score rule"),
+            ("Lead time (1 - MAE/30d)", 1 - mm["lead_time"]["mae"] / 30, 1 - mm["lead_time"]["baseline_supplier_median"]["mae"] / 30, "quantile GBM", "supplier median"),
+            ("RUL (1 - MAE/52w)", 1 - mm["rul"]["health_trend"]["mae"] / 52, 1 - mm["rul"]["survival"]["mae"] / 52, "health trend", "survival only")]
+    w, h = 1200, 120 + 70 * len(rows)
+    x0, x1, y = 330, 900, 110
+    body = []
+    for name, a, b, an, bn in rows:
+        body.append(t(x0 - 14, y + 26, name, 14, 700, TEXT, "end"))
+        for i, (v, col, lab) in enumerate(((a, CYAN, an), (b, VIOLET, bn))):
+            bw = (x1 - x0) * max(v, 0)
+            body.append(f'<rect x="{x0}" y="{y + 6 + i * 24}" width="{bw:.1f}" height="18" rx="4" fill="{col}"/>')
+            body.append(t(x0 + bw + 8, y + 20 + i * 24, f"{v:.3f} {lab}", 12, 700, col))
+        if b > a:
+            body.append(t(x1 + 200, y + 26, "← baseline wins", 12, 800, WARN, "middle"))
+        y += 70
+    return frame(w, h, "3.0 models vs simpler baselines (held-out, higher is better)",
+                 "Where the simpler method is better, the UI and docs say so", "".join(body), "Source: docs/eval/forecast_metrics_3_0.json")
+
+
+def v3_banner():
+    s = banner([("Global map", CYAN), ("Forecasting", INDIGO), ("Digital twin", VIOLET), ("Agent harness", POS), ("Local Qwen", GOLD)])
+    s = s.replace(">2.0<", ">3.0<").replace("Aerospace &amp; Defense Intelligence Copilot", "Global Aerospace Predictive Intelligence &amp; Resilience")
+    s = s.replace("Explainable industrial AI for mission-critical operations · your local Qwen · deny-by-default governance",
+                  "Forecasting · global map · digital twins · supply chain · resilience · governed agent harness · local Qwen")
+    s = s.replace("FOUR SIGNATURE QUESTIONS", "TEN SECTIONS · ONE GOVERNED HARNESS")
+    return s
+
+
+def main_v3():
+    m = load("docs/eval/forecast_metrics_3_0.json")
+    files = {"banner_v3.svg": v3_banner(), "forecast_mae_v3.svg": v3_forecast_mae(m), "models_vs_baselines_v3.svg": v3_model_vs_baseline(m)}
+    for name, svg in files.items():
+        (OUT / name).write_text(svg, encoding="utf-8")
+        print("wrote", (OUT / name).relative_to(ROOT))
+
+
+if __name__ == "__main__":
+    main_v3()

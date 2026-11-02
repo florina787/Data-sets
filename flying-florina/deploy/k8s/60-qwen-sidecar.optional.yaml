@@ -1,0 +1,18 @@
+# OPTIONAL alternative to in-process llama.cpp: run Ollama as a SIDECAR in the backend pod so the model stays on loopback
+# (127.0.0.1:11434), which keeps policy POL-008 unchanged. Apply as a strategic-merge patch:
+#   kubectl -n flying-florina patch deployment ff-backend --patch-file deploy/k8s/60-qwen-sidecar.optional.yaml
+# The volume must already contain your pulled Qwen model (Ollama's models directory). Nothing is pulled at runtime.
+spec:
+  template:
+    spec:
+      containers:
+        - name: backend
+          env:
+            - { name: FF_QWEN_MODEL_PATH, value: "" }
+            - { name: LLM_URL, value: "http://127.0.0.1:11434" }
+        - name: qwen
+          image: ollama/ollama:0.5.7
+          env: [{ name: OLLAMA_HOST, value: "127.0.0.1:11434" }, { name: OLLAMA_NUM_PARALLEL, value: "1" }]
+          resources: { requests: { cpu: "1", memory: 2Gi }, limits: { cpu: "4", memory: 4Gi } }
+          volumeMounts: [{ name: models, mountPath: /root/.ollama }]
+          securityContext: { allowPrivilegeEscalation: false, capabilities: { drop: [ALL] } }

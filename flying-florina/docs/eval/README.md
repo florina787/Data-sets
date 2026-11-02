@@ -50,3 +50,28 @@ backend/.venv/bin/python scripts/eval_four_questions.py --split test_v2 --no-qwe
 
 With Qwen available the run also reports the unsupported-claim rate, Qwen latency and the Qwen-routed share. No number in this
 document was estimated; every figure comes from the JSON written by the harness.
+
+## Flying Florina 3.0 additions
+
+**3.0 intents (fresh held-out set).** `fixtures/eval/ff3_intents_test.json`: 62 questions (paraphrases of the 12 suggested 3.0
+questions, 2.0 control questions, greeting, injection, off-topic) + 4 follow-up conversations with expected slots. Written after the 3.0
+rules and before they were run on it; scored once (`scripts/eval_ff3_intents.py`, results in `ff3_intents_test_rules_only.json`):
+
+| Metric | Result |
+|---|---|
+| Routing accuracy (rules only, no Qwen) | **90.3%** (56/62) — below the 95% target |
+| Follow-up turns with correct intent and slots | 3/4 |
+
+Known misses (not tuned away): a supplier named without the word "supplier" ("If Veltrion Hydraulics slips by 21 days…") is not
+recognised (3 misses, including the follow-up), "run short of components globally" falls to the relevance gate, "/api/global/map
+API changes" goes to general knowledge, and one mixed cost/supplier executive question goes to parts status. These are the ambiguous
+cases the local Qwen classification stage is meant to resolve; it could not run here.
+
+**2.0 sets after 3.0.** The 3.0 rules initially captured four 2.0 questions about supplier reliability or readiness cost; narrow guards
+were added. To check this regression I inspected which held-out v1/v2 items were captured, so those sets are no longer fully clean
+for 3.0 work. Current results (rules only): dev 109/109; held-out v2 **95.8% / macro-F1 0.958, unchanged from 2.0**. The original v1
+result file (94.3%) is kept as measured before the 2.0 fixes.
+
+**Forecasting models.** Held-out metrics for every model task: [`forecast_metrics_3_0.json`](forecast_metrics_3_0.json); summary in
+[../FORECASTING_ENGINE.md](../FORECASTING_ENGINE.md). Visual-lab baseline evaluation: `GET /api/visual/evaluation` (precision 0.70,
+recall 0.79, F1 0.75 on 58 synthetic labelled frames; classical image processing, not AI).

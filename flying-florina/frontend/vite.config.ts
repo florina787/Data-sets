@@ -26,6 +26,7 @@ export default defineConfig({
     proxy: { "/api": backend, "/health": backend },
   },
   preview: { host: "127.0.0.1", port: 4173, proxy: { "/api": backend, "/health": backend } },
+  worker: { format: "es" },
   build: {
     chunkSizeWarningLimit: 1600,
     rollupOptions: { output: { manualChunks: { echarts: ["echarts"], flow: ["@xyflow/react"] } } },

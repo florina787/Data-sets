@@ -168,6 +168,9 @@ def session(write: bool = False) -> Iterator[sqlite3.Connection]:
 
 def init_schema(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA)
+    from app.core import migrations
+
+    migrations.apply(conn)
 
 
 def rows(conn: sqlite3.Connection, sql: str, params: tuple | list = ()) -> list[dict[str, Any]]:

@@ -12,7 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import routes_core, routes_insights, routes_llm, routes_trust
+from app.api import routes_core, routes_global, routes_harness, routes_insights, routes_llm, routes_trust
 from app.core import egress
 from app.core.config import APP_VERSION, get_settings
 from app.core.util import redact
@@ -36,8 +36,29 @@ async def lifespan(_: FastAPI):
 
     registry()  # fail fast if a tool does not match its pin
     _start_qwen(settings)
+    _start_forecasts()
     log.info("Flying_Florina %s ready (demo=%s offline=%s)", APP_VERSION, settings.demo_mode, settings.offline_mode)
     yield
+
+
+def _start_forecasts() -> None:
+    """Fit the 3.0 forecasting models in the background (about 10 s on 4 CPUs) so the first map request is fast."""
+    import os
+    import threading
+
+    if os.environ.get("FF_FORECAST_PRELOAD", "true").lower() in ("0", "false", "no", "off"):
+        return
+
+    def build() -> None:
+        from app.global_intel.forecast import engine
+
+        try:
+            e = engine()
+            log.info("Forecasting models ready in %.0f ms (%s)", e.build_ms, e.data_hash)
+        except Exception:  # noqa: BLE001
+            log.exception("Forecast build failed")
+
+    threading.Thread(target=build, name="forecast-build", daemon=True).start()
 
 
 def _start_qwen(settings) -> None:
@@ -134,3 +155,5 @@ app.include_router(routes_core.router)
 app.include_router(routes_trust.router)
 app.include_router(routes_llm.router)
 app.include_router(routes_insights.router)
+app.include_router(routes_global.router)
+app.include_router(routes_harness.router)

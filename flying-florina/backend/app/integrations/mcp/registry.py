@@ -31,6 +31,7 @@ from app.core.security import Actor
 from app.core.util import new_id, now_iso, redact_obj, sha256_json
 
 ALLOWLIST_PATH = FIXTURES_DIR / "policies" / "tool_allowlist.yaml"
+_ALLOWLIST_CACHE: dict[str, Any] = {}
 
 
 class UntrustedToolError(Exception):
@@ -96,9 +97,14 @@ class Registry:
 
     @staticmethod
     def allowlist() -> dict[str, dict[str, str]]:
-        with open(ALLOWLIST_PATH, encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
-        return {t["name"]: t for t in data.get("tools", [])}
+        """Parsed pins, cached by file modification time and size: any edit to the file is re-read and re-checked at the next call."""
+        st = ALLOWLIST_PATH.stat()
+        key = (st.st_mtime_ns, st.st_size)
+        if _ALLOWLIST_CACHE.get("key") != key:
+            with open(ALLOWLIST_PATH, encoding="utf-8") as fh:
+                data = yaml.safe_load(fh) or {}
+            _ALLOWLIST_CACHE.update(key=key, pins={t["name"]: t for t in data.get("tools", [])})
+        return dict(_ALLOWLIST_CACHE["pins"])
 
     def register(self, spec: ToolSpec) -> None:
         pins = self.allowlist()

@@ -2,7 +2,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Activity, Bot, Boxes, BrainCircuit, Building2, Cable, FileBarChart, FileCheck2, FlaskConical, Gauge, Gauge as GaugeIcon, LayoutDashboard, Menu, Moon,
-  Plane, Radar, ScanSearch, Settings, ShieldCheck, Sparkles, Sun, Wrench, X,
+  Plane, Radar, ScanSearch, Settings, ShieldCheck, Sparkles, Sun, Wrench, X, Globe2, LineChart as LineChartIcon, Cpu, ScanEye, Network,
+  LifeBuoy, TowerControl, GitBranch,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -12,22 +13,30 @@ import type { Actor, Persona } from "@/lib/types";
 import { BrandMark } from "./Brand";
 import { Badge } from "./ui";
 
-/** Twelve primary sections (Flying_Florina 2.0). Every pre-2.0 route still works and is listed under Workspace. */
+/** Flying Florina 3.0: ten primary sections. Every 1.0 / 2.0 page still exists and is listed under "Workspace". */
 export const NAV = [
-  { to: "/command", label: "Executive Command Center", icon: LayoutDashboard },
-  { to: "/", label: "Flying_Florina AI Assistant", icon: Sparkles },
-  { to: "/aog", label: "Aircraft Recovery Intelligence", icon: Activity },
+  { to: "/global", label: "Global Intelligence", icon: Globe2 },
+  { to: "/forecasting", label: "Component Forecasting", icon: LineChartIcon },
+  { to: "/twin", label: "Aerospace Digital Twin", icon: Cpu },
+  { to: "/airspace", label: "Airspace Safety Lab", icon: ScanEye },
+  { to: "/supply", label: "Supply Chain Intelligence", icon: Network },
   { to: "/predictive", label: "Predictive Maintenance", icon: Radar },
+  { to: "/resilience", label: "Operational Resilience", icon: LifeBuoy },
+  { to: "/control-tower", label: "Agent Harness Control Tower", icon: TowerControl },
+  { to: "/trust", label: "AI Governance", icon: ShieldCheck },
+  { to: "/", label: "Flying Florina Chat", icon: Sparkles },
+];
+export const NAV_MORE = [
+  { to: "/command", label: "Executive Command Center", icon: LayoutDashboard },
+  { to: "/aog", label: "Aircraft Recovery Intelligence", icon: Activity },
   { to: "/fleet", label: "Fleet Readiness", icon: Plane },
   { to: "/parts", label: "Spare Parts Intelligence", icon: Boxes },
   { to: "/legacy", label: "Legacy X-Ray", icon: ScanSearch },
+  { to: "/change-impact", label: "Software Change Impact", icon: GitBranch },
   { to: "/agents", label: "Multi-Agent Operations", icon: Bot },
-  { to: "/trust", label: "Governance & Compliance", icon: ShieldCheck },
   { to: "/simulator", label: "Simulation & ROI", icon: FlaskConical },
   { to: "/bridge", label: "Integrations & MCP", icon: Cable },
   { to: "/observability", label: "Evaluation & Observability", icon: GaugeIcon },
-];
-export const NAV_MORE = [
   { to: "/maintenance", label: "Maintenance & MRO", icon: Wrench },
   { to: "/quality", label: "Engineering Quality", icon: Gauge },
   { to: "/compliance", label: "Compliance Evidence", icon: FileCheck2 },
@@ -88,7 +97,7 @@ function NavItem({ to, label, icon: Icon, onClick }: { to: string; label: string
       className={({ isActive }) => `relative flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors ${isActive ? "text-[var(--text)]" : "muted hover:bg-white/[0.03] hover:text-[var(--text)]"}`}>
       {({ isActive }) => (
         <>
-          {isActive && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-xl border border-indigo/25 bg-gradient-to-r from-indigo/15 to-transparent"
+          {isActive && <motion.span layoutId="nav-active" className="absolute inset-0 rounded-xl border border-cyan/25 bg-gradient-to-r from-cyan/15 to-transparent shadow-[inset_2px_0_0_#22D3EE]"
             transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
           <Icon className={`relative h-4 w-4 shrink-0 ${isActive ? "text-cyan" : ""}`} aria-hidden />
           <span className="relative">{label}</span>
@@ -120,8 +129,8 @@ export function Layout({ children }: { children: ReactNode }) {
             <NavLink to="/" className="flex items-center gap-2.5 rounded-lg">
               <BrandMark size={30} />
               <div className="leading-tight">
-                <p className="text-sm font-semibold tracking-tight">Flying_Florina</p>
-                <p className="hidden text-[10px] uppercase tracking-[0.14em] text-faint sm:block">Aerospace &amp; Defense Intelligence Copilot</p>
+                <p className="text-sm font-semibold tracking-tight">Flying Florina <span className="text-cyan">3.0</span></p>
+                <p className="hidden text-[10px] uppercase tracking-[0.14em] text-faint sm:block">Global Aerospace Predictive Intelligence</p>
               </div>
             </NavLink>
             <div className="ml-4 hidden flex-wrap items-center gap-1.5 xl:flex" aria-label="Environment indicators">

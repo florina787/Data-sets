@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: ff-config, namespace: flying-florina }
+data:
+  DEMO_MODE: "true"
+  OFFLINE_MODE: "true"
+  LLM_ENABLED: "on"                 # required: your local Qwen (see QWEN_MODEL_FILE); "auto" to run without it
+  FF_QWEN_MODEL_PATH: /models/qwen2.5-1.5b-instruct-q4_k_m.gguf
+  FF_QWEN_THREADS: "3"
+  FF_QWEN_CONCURRENCY: "1"          # one generation at a time per pod (llama.cpp contexts are not thread-safe)
+  FF_FORECAST_PRELOAD: "true"
+  FF_DATA_DIR: /srv/data
+  FF_GENERATED_DIR: /srv/data/generated
+  FF_CORS_ORIGINS: https://flying-florina.example.internal
+  PYTHONDONTWRITEBYTECODE: "1"
+---
+# Example only. Create the real secret from your secrets manager (External Secrets / Sealed Secrets / Vault):
+#   kubectl -n flying-florina create secret generic ff-secrets --from-literal=FF_SESSION_SECRET=$(openssl rand -hex 32)
+apiVersion: v1
+kind: Secret
+metadata: { name: ff-secrets, namespace: flying-florina }
+type: Opaque
+stringData:
+  FF_SESSION_SECRET: "REPLACE-ME-FROM-SECRETS-MANAGER"

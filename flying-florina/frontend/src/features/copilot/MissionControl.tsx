@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Ban, BrainCircuit, History, Loader2, MessageSquareText, Paperclip, Plus, RotateCcw, Send, Settings2, Sparkles } from "lucide-react";
+import { Ban, BrainCircuit, History, Loader2, Paperclip, Plus, RotateCcw, Send, Settings2, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AgentGraph } from "@/components/AgentGraph";
 import { AgentTimeline } from "@/components/AgentTimeline";
@@ -9,7 +9,6 @@ import { FourQuestionCards } from "@/components/QwenBlocks";
 import { Badge, Card, ErrorBox, Skeleton, statusTone } from "@/components/ui";
 import { Workspace } from "@/components/Workspace";
 import { get, post, upload } from "@/lib/api";
-import { time } from "@/lib/format";
 import { useSession } from "@/lib/store";
 import type { RunView } from "@/lib/types";
 
@@ -25,6 +24,54 @@ export const SAMPLES = [
   "Compare aircraft maintenance recovery options using verified inventory availability.",
   "Export restricted maintenance records to my personal email.",
 ];
+
+/** Flying Florina 3.0 suggested questions: each runs a real, planned harness workflow. */
+export const SUGGESTED_3 = [
+  "Show global component shortages.",
+  "Which components have the highest predicted maintenance demand?",
+  "Forecast hydraulic pump demand for the next 90 days.",
+  "Show supplier delays on the global map.",
+  "Explain this component's degradation trend.",
+  "Compare two maintenance planning scenarios.",
+  "What evidence supports this forecast?",
+  "Show the agent execution graph.",
+  "What happened in my previous investigation?",
+  "Analyze this prerecorded drone video.",
+  "Show historical forecast accuracy.",
+  "Which software dependencies could be affected by this change?",
+];
+
+type Conversation = { id: string; title: string; updated: string; summary: string | null; turns: number | null };
+
+function MemoryPanel({ onOpen }: { onOpen: (id: string) => void }) {
+  const qc = useQueryClient();
+  const convs = useQuery({ queryKey: ["memory-convs"], queryFn: () => get<Conversation[]>("/api/memory/conversations") });
+  const del = async (id: string) => {
+    await post(`/api/memory/conversations/${id}/delete`);
+    qc.invalidateQueries({ queryKey: ["memory-convs"] });
+    qc.invalidateQueries({ queryKey: ["sessions"] });
+  };
+  const rows = convs.data?.data ?? [];
+  return (
+    <div className="panel p-4" data-testid="memory-panel">
+      <p className="label mb-1 flex items-center gap-1.5"><History className="h-3 w-3" />Recent sessions · saved memory</p>
+      <p className="mb-2 text-[11px] text-faint">Stored locally in SQLite; survives restarts. Only a bounded summary is sent to Qwen.</p>
+      {!rows.length ? <p className="text-xs text-faint">No sessions yet.</p> : (
+        <ul className="max-h-56 space-y-1 overflow-y-auto">
+          {rows.slice(0, 12).map((c) => (
+            <li key={c.id} className="flex items-start gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-white/[0.04]">
+              <button className="min-w-0 flex-1 text-left" onClick={() => onOpen(c.id)} title={c.summary ?? ""}>
+                <span className="block truncate">{c.title}</span>
+                <span className="block truncate text-faint">{c.summary ?? ""}</span>
+              </button>
+              <button className="shrink-0 text-faint hover:text-neg" onClick={() => del(c.id)} aria-label={`Delete conversation ${c.title}`}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export function useRunPolling(runId: string | null) {
   return useQuery({
@@ -178,7 +225,7 @@ export function MissionControl() {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col items-center text-center">
             <BrandMark size={64} />
             <Badge tone="purple"><Sparkles className="h-3 w-3" />Agentic · evidence-backed · local Qwen · human-approved</Badge>
-            <h1 className="gradient-title mt-4 text-3xl font-semibold tracking-tight sm:text-5xl">What should we understand about our fleet?</h1>
+            <h1 className="gradient-title mt-4 text-3xl font-semibold tracking-tight sm:text-5xl">What should we understand about our aerospace operations?</h1>
             <p className="muted mx-auto mt-3 max-w-2xl text-sm sm:text-base">
               Ask in plain language. Specialist agents query verified synthetic data, your local Qwen model explains the evidence, an Evidence Challenger checks every number, and humans approve every consequential action.
             </p>
@@ -186,7 +233,7 @@ export function MissionControl() {
         </div>
       ) : (
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold">Flying_Florina AI Assistant</h1>
+          <h1 className="text-lg font-semibold">Flying Florina Chat</h1>
           <button className="btn btn-ghost !py-1 text-xs" onClick={resetRuns}><Plus className="h-3.5 w-3.5" />New session</button>
         </div>
       )}
@@ -203,7 +250,7 @@ export function MissionControl() {
           data-testid="prompt"
           rows={runIds.length ? 2 : 3}
           className="w-full resize-y bg-transparent p-2 text-[15px] outline-none"
-          placeholder="Ask about aircraft health, recovery options, legacy modernization, fleet readiness…"
+          placeholder="Ask about component shortages, forecasts, suppliers, digital twins, aircraft health, recovery, modernization…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
@@ -243,6 +290,15 @@ export function MissionControl() {
 
       {runIds.length === 0 && (
         <>
+          <div>
+            <p className="label mb-2 text-center">Flying Florina 3.0 · predictive intelligence</p>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3" data-testid="suggested-3">
+              {SUGGESTED_3.map((q) => (
+                <button key={q} onClick={() => ask(q)} disabled={busy} className="glass edge-glow px-3 py-2.5 text-left text-xs transition hover:border-cyan/50">{q}</button>
+              ))}
+            </div>
+          </div>
+          <p className="label -mb-3 text-center">Four signature questions (2.0)</p>
           <FourQuestionCards onAsk={ask} disabled={busy} />
           <div className="flex flex-wrap justify-center gap-2" data-testid="samples">
             {SAMPLES.map((q) => (
@@ -261,23 +317,7 @@ export function MissionControl() {
                 </div>
               ) : <p className="text-xs text-faint">Fleet data is withheld for this persona (PUBLIC only).</p>}
             </div>
-            <div className="panel p-4">
-              <p className="label mb-3 flex items-center gap-1.5"><History className="h-3 w-3" />Recent sessions</p>
-              {!(sessions.data?.data ?? []).length ? <p className="text-xs text-faint">No sessions yet.</p> : (
-                <ul className="space-y-1">
-                  {(sessions.data?.data ?? []).slice(0, 4).map((se) => (
-                    <li key={se.id}>
-                      <button onClick={() => { resetRuns(); setSession(se.id); se.runs.forEach((r) => pushRun(r.id)); }}
-                        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs hover:bg-white/[0.04]">
-                        <MessageSquareText className="h-3.5 w-3.5 shrink-0 text-faint" />
-                        <span className="min-w-0 flex-1 truncate">{se.title}</span>
-                        <span className="shrink-0 text-faint">{se.runs.length} · {time(se.updated)}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <MemoryPanel onOpen={(id) => { const se = (sessions.data?.data ?? []).find((x) => x.id === id); resetRuns(); setSession(id); se?.runs.forEach((r) => pushRun(r.id)); }} />
           </div>
         </>
       )}

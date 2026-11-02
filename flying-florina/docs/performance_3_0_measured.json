@@ -1,0 +1,176 @@
+{
+ "machine": {
+  "python": "3.13.17",
+  "platform": "Linux-6.18.44-fc-v185-x86_64-with-glibc2.39",
+  "cpus": 4
+ },
+ "note": "Measured on this machine by scripts/benchmark_3.py. Qwen explanation time is included only if a local Qwen model was found.",
+ "startup_cold": {
+  "to_health_s": 2.14,
+  "to_ready_s": 0.14
+ },
+ "forecast_models": {
+  "fit_ms_reported": 16833.1,
+  "first_map_request_s": 16.24,
+  "loaded_from_cache": false
+ },
+ "qwen": {
+  "available": false,
+  "model": null,
+  "reason": "No local Qwen model was found. Set FF_QWEN_MODEL_PATH to your .gguf file, or start Ollama / llama.cpp server with your Qwen model. Flying_Florina never downloads a model and never calls an external API."
+ },
+ "chat_latency_ms": {
+  "three_point_zero": {
+   "p50": 251.1,
+   "p95": 1514.9,
+   "max": 1694.4
+  },
+  "two_point_zero_four_questions": {
+   "p50": 408.3,
+   "max": 588.0
+  },
+  "rows": [
+   {
+    "query": "Show global component shortages.",
+    "workflow": "global_shortages",
+    "status": "completed",
+    "ms": 257.2
+   },
+   {
+    "query": "Which components have the highest predicted maintenance demand?",
+    "workflow": "demand_forecast",
+    "status": "completed",
+    "ms": 251.1
+   },
+   {
+    "query": "Forecast hydraulic pump demand for the next 90 days.",
+    "workflow": "demand_forecast",
+    "status": "completed",
+    "ms": 215.0
+   },
+   {
+    "query": "Show supplier delays on the global map.",
+    "workflow": "supplier_delays",
+    "status": "completed",
+    "ms": 206.2
+   },
+   {
+    "query": "Explain this component's degradation trend.",
+    "workflow": "component_degradation",
+    "status": "completed",
+    "ms": 218.5
+   },
+   {
+    "query": "Compare two maintenance planning scenarios.",
+    "workflow": "resilience_scenario",
+    "status": "completed",
+    "ms": 1694.4
+   },
+   {
+    "query": "What evidence supports this forecast?",
+    "workflow": "forecast_evidence",
+    "status": "completed",
+    "ms": 242.9
+   },
+   {
+    "query": "Show the agent execution graph.",
+    "workflow": "agent_trace",
+    "status": "completed",
+    "ms": 261.6
+   },
+   {
+    "query": "What happened in my previous investigation?",
+    "workflow": "memory_recall",
+    "status": "completed",
+    "ms": 221.4
+   },
+   {
+    "query": "Analyze this prerecorded drone video.",
+    "workflow": "visual_analysis",
+    "status": "completed",
+    "ms": 1514.9
+   },
+   {
+    "query": "Show historical forecast accuracy.",
+    "workflow": "forecast_accuracy",
+    "status": "completed",
+    "ms": 204.6
+   },
+   {
+    "query": "Which software dependencies could be affected by this change?",
+    "workflow": "change_impact",
+    "status": "completed",
+    "ms": 800.8
+   },
+   {
+    "query": "Why is aircraft AC-204 showing abnormal vibration, and what should engineering investigate?",
+    "workflow": "aircraft_diagnostics",
+    "status": "completed",
+    "ms": 258.5
+   },
+   {
+    "query": "Which recovery option could return AC-204 to service fastest, considering spare parts, maintenance scheduling, and engineering approval?",
+    "workflow": "aircraft_recovery",
+    "status": "awaiting_approval",
+    "ms": 588.0
+   },
+   {
+    "query": "How can we modernize our legacy aircraft maintenance system using APIs, MCP, and AI without replacing the existing platform?",
+    "workflow": "legacy_assessment",
+    "status": "completed",
+    "ms": 408.3
+   },
+   {
+    "query": "What is affecting fleet readiness, and which maintenance improvements could reduce downtime and cost?",
+    "workflow": "executive_readiness",
+    "status": "completed",
+    "ms": 283.1
+   }
+  ]
+ },
+ "endpoints": {
+  "/api/global/map?horizon=60": {
+   "sequential_p50_ms": 15.8,
+   "concurrent8_p50_ms": 110.0,
+   "concurrent8_p95_ms": 151.1,
+   "throughput_rps": 67.4
+  },
+  "/api/forecast/components?horizon=90": {
+   "sequential_p50_ms": 16.5,
+   "concurrent8_p50_ms": 109.5,
+   "concurrent8_p95_ms": 135.3,
+   "throughput_rps": 72.5
+  },
+  "/api/global/timeline": {
+   "sequential_p50_ms": 40.3,
+   "concurrent8_p50_ms": 280.2,
+   "concurrent8_p95_ms": 327.8,
+   "throughput_rps": 27.3
+  },
+  "/api/harness/control-tower": {
+   "sequential_p50_ms": 31.8,
+   "concurrent8_p50_ms": 231.0,
+   "concurrent8_p95_ms": 267.9,
+   "throughput_rps": 33.8
+  }
+ },
+ "backend_process": {
+  "rss_mb_after_run": 220.3,
+  "cpu_seconds_total": 57.1,
+  "wall_seconds": 30.9
+ },
+ "startup_warm": {
+  "to_ready_s": 1.08,
+  "first_map_request_s": 0.03,
+  "loaded_from_cache": true,
+  "conversations_restored": 1,
+  "rss_mb": 76.5
+ },
+ "map_render": {
+  "globe_ms_to_data_and_map": 3815,
+  "globe_horizon_switch_ms": 1990,
+  "lite_ms_to_data_and_map": 3999,
+  "lite_horizon_switch_ms": 367,
+  "note": "Headless Chromium with software WebGL (SwiftShader); a GPU is faster. Requires Vite on :5173."
+ }
+}

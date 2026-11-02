@@ -32,14 +32,14 @@ HOME_ORG = "FF-Demo-MRO"
 ROLE_ACTIONS: dict[str, set[str]] = {
     "guest": {"read", "search", "query", "model_call"},
     "executive": {"read", "search", "query", "model_call", "export", "simulate"},
-    "maintenance_planner": {"read", "search", "query", "model_call", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
-    "technician": {"read", "search", "query", "model_call", "draft_write", "tool_call", "simulate"},
-    "reliability_engineer": {"read", "search", "query", "model_call", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
-    "enterprise_architect": {"read", "search", "query", "model_call", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
-    "security_officer": {"read", "search", "query", "model_call", "admin_kill_switch", "approve", "audit_verify", "audit_export",
+    "maintenance_planner": {"read", "search", "query", "model_call", "analyze_media", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
+    "technician": {"read", "search", "query", "model_call", "analyze_media", "draft_write", "tool_call", "simulate"},
+    "reliability_engineer": {"read", "search", "query", "model_call", "analyze_media", "draft_write", "write", "approve", "export", "simulate", "tool_call"},
+    "enterprise_architect": {"read", "search", "query", "model_call", "analyze_media", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
+    "security_officer": {"read", "search", "query", "model_call", "analyze_media", "admin_kill_switch", "approve", "audit_verify", "audit_export",
                          "run_sandbox_tests", "export", "tool_call", "role_change"},
     "auditor": {"read", "search", "query", "model_call", "audit_verify", "audit_export", "export"},
-    "fde": {"read", "search", "query", "model_call", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
+    "fde": {"read", "search", "query", "model_call", "analyze_media", "import", "generate_code", "run_sandbox_tests", "tool_call", "export", "simulate"},
     # Agents act on behalf of a human; their effective rights are the
     # intersection of this set and the requesting human's set.
     "agent": {"read", "search", "query", "model_call", "tool_call", "draft_write", "simulate"},

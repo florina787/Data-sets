@@ -16,7 +16,8 @@ const SAMPLES: [string, string][] = [
 
 test("fresh start shows homepage, indicators and sample questions", async ({ page }) => {
   const { errors, external } = await boot(page);
-  await expect(page.getByRole("heading", { name: "What should we understand about our fleet?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What should we understand about our aerospace operations?" })).toBeVisible();
+  await expect(page.getByTestId("suggested-3").getByRole("button")).toHaveCount(12);
   for (const b of ["SYNTHETIC DATA", "DEMO MODE", "NO LIVE IFS CONNECTION"]) await expect(page.getByText(b).first()).toBeVisible();
   await expect(page.getByTestId("qwen-indicator")).toContainText("Local Qwen");
   await expect(page.getByTestId("four-questions").getByRole("button")).toHaveCount(4);

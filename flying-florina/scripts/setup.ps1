@@ -16,6 +16,8 @@ else {
   $ErrorActionPreference = "Stop"
 }
 .\.venv\Scripts\python -m app.seed.generator | Out-Null
+Write-Host "Fitting the 3.0 forecasting models once (cached in the data folder)..."
+.\.venv\Scripts\python -m app.global_intel.prefit
 Write-Host "Backend ready (synthetic DB seeded)."
 .\.venv\Scripts\python ..\scripts\check_qwen.py
 Set-Location "$Root\frontend"

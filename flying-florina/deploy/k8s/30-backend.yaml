@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ff-backend
+  namespace: flying-florina
+  labels: { app: ff-backend, app.kubernetes.io/part-of: flying-florina }
+spec:
+  replicas: 1                       # SQLite single writer: do not scale
+  strategy: { type: Recreate }      # never two writers during a rollout
+  selector: { matchLabels: { app: ff-backend } }
+  template:
+    metadata: { labels: { app: ff-backend } }
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext: { runAsNonRoot: true, runAsUser: 65534, fsGroup: 65534, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: backend
+          image: flying-florina-backend:3.0.0   # build with INSTALL_LLAMA=true for in-process Qwen; push to your internal registry
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8000, name: http }]
+          envFrom: [{ configMapRef: { name: ff-config } }, { secretRef: { name: ff-secrets } }]
+          resources:
+            requests: { cpu: "1", memory: 1536Mi }
+            limits: { cpu: "4", memory: 6Gi }    # Qwen 1.5B Q4 + forecasting models; size from docs/PERFORMANCE_BENCHMARKS.md on your hardware
+          startupProbe: { httpGet: { path: /health, port: http }, periodSeconds: 5, failureThreshold: 36 }
+          readinessProbe: { httpGet: { path: /ready, port: http }, periodSeconds: 10, timeoutSeconds: 3 }
+          livenessProbe: { httpGet: { path: /health, port: http }, periodSeconds: 20, timeoutSeconds: 3, failureThreshold: 3 }
+          lifecycle: { preStop: { exec: { command: ["sh", "-c", "sleep 5"] } } }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          volumeMounts:
+            - { name: data, mountPath: /srv/data }
+            - { name: models, mountPath: /models, readOnly: true }
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: data, persistentVolumeClaim: { claimName: ff-data } }
+        - { name: models, persistentVolumeClaim: { claimName: ff-models, readOnly: true } }
+        - { name: tmp, emptyDir: { sizeLimit: 512Mi } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: ff-backend, namespace: flying-florina }
+spec:
+  selector: { app: ff-backend }
+  ports: [{ name: http, port: 8000, targetPort: http }]

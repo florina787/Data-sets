@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import path from "node:path";
 import { boot, switchPersona } from "./helpers";
 
-const PAGES = ["/command", "/predictive", "/observability", "/fleet", "/aog", "/maintenance", "/parts", "/quality", "/legacy", "/bridge", "/agents", "/trust", "/compliance", "/simulator", "/executive", "/reports", "/settings"];
+const PAGES = ["/global", "/forecasting", "/twin", "/airspace", "/supply", "/resilience", "/control-tower", "/change-impact", "/command", "/predictive", "/observability", "/fleet", "/aog", "/maintenance", "/parts", "/quality", "/legacy", "/bridge", "/agents", "/trust", "/compliance", "/simulator", "/executive", "/reports", "/settings"];
 
 test("every page renders without errors and every nav link works", async ({ page }) => {
   const { errors, external } = await boot(page, "sec.ines");
@@ -11,7 +11,7 @@ test("every page renders without errors and every nav link works", async ({ page
     await expect(page.locator("main h1")).toBeVisible();
     await page.waitForTimeout(400);
   }
-  for (const label of ["Fleet Readiness", "Governance & Compliance", "Flying_Florina AI Assistant", "Executive Command Center"]) {
+  for (const label of ["Global Intelligence", "Fleet Readiness", "AI Governance", "Flying Florina Chat", "Executive Command Center"]) {
     await page.getByRole("navigation", { name: undefined }).getByRole("link", { name: label, exact: true }).click();
     await expect(page.locator("main")).toBeVisible();
   }

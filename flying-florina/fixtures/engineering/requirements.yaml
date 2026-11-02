@@ -1,0 +1,55 @@
+# SYNTHETIC requirement set for the Software Change Impact demo. Requirement IDs and wording are invented for this
+# demonstration and map onto THIS repository's real modules and tests. Not a certification artefact (no DO-178C / ED-12C claim).
+# REQ-SIM-001 and REQ-RPT-001 deliberately cite verification files that do not exist yet, so the missing-evidence check has
+# something real to find.
+project: Flying Florina maintenance-intelligence platform (demo)
+requirements:
+- id: REQ-GOV-001
+  title: Every agent tool call is authorised by a deterministic deny-by-default policy before execution
+  level: safety-related (demo)
+  modules: [app.core.policy, app.integrations.mcp.registry]
+  verification: [tests/test_policy.py, tests/test_harness.py]
+- id: REQ-GOV-002
+  title: Consequential writes require approval by a different authorised human
+  modules: [app.services.approvals, app.core.policy]
+  verification: [tests/test_api.py]
+- id: REQ-AUD-001
+  title: Audit events form a verifiable hash chain
+  modules: [app.core.audit]
+  verification: [tests/test_audit_retrieval.py]
+- id: REQ-NET-001
+  title: No network egress outside loopback in offline mode
+  modules: [app.core.egress, app.llm.discovery]
+  verification: [tests/test_api.py, tests/test_llm_gateway.py]
+- id: REQ-LLM-001
+  title: Model output is checked against verified facts before display
+  modules: [app.workflows.explain, app.llm.gateway]
+  verification: [tests/test_four_questions.py, tests/test_llm_gateway.py]
+- id: REQ-FC-001
+  title: Forecast evaluation uses a temporal split with no future data in training
+  modules: [app.global_intel.forecast]
+  verification: [tests/test_global_forecast.py]
+- id: REQ-FC-002
+  title: Forecasts publish prediction intervals and data freshness
+  modules: [app.global_intel.forecast, app.api.routes_global]
+  verification: [tests/test_global_forecast.py]
+- id: REQ-MEM-001
+  title: Conversation history persists across restarts and can be deleted by its owner
+  modules: [app.harness.memory]
+  verification: [tests/test_harness.py]
+- id: REQ-HAR-001
+  title: Agent workflows stop when their execution budget is exhausted
+  modules: [app.harness.core]
+  verification: [tests/test_harness.py]
+- id: REQ-VIS-001
+  title: The visual-analysis lab reports which analysis method actually ran and never presents a baseline as AI
+  modules: [app.visual.lab]
+  verification: [tests/test_visual_lab.py]
+- id: REQ-SIM-001
+  title: Scenario simulations are reproducible for identical inputs
+  modules: [app.simulation.engine, app.global_intel.simulate]
+  verification: [tests/test_simulation.py, tests/test_global_forecast.py]
+- id: REQ-RPT-001
+  title: Exported reports carry classification and synthetic-data banners
+  modules: [app.reports.generator]
+  verification: [tests/test_reports.py]

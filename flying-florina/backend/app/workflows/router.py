@@ -193,7 +193,15 @@ def route(query: str, context: dict[str, Any] | None = None, use_model: bool = T
     # 2. greeting
     if GREETING.match(q):
         return _label_to_route("greeting", "greeting", "Greeting.", intent, fs, [])
-    # 3. follow-up (needs session context)
+    # 3a. Flying Florina 3.0 intents (global forecasting, supply chain, twin, harness, memory, visual lab, change impact)
+    from app.harness.intents import detect
+
+    h = detect(q, context)
+    if h:
+        label, sl, why, fu = h
+        intent = {**intent, "entities": {**{k: v for k, v in intent.get("entities", {}).items() if v}, **sl}}
+        return _label_to_route(label, "follow_up" if fu else "rules", why, intent, fs, [], follow_up=fu)
+    # 3b. follow-up (needs session context)
     if context and context.get("family") and len(q.split()) <= 12 and FOLLOW_UP.search(q):
         ents = dict(context.get("entities") or {})
         new = intent.get("entities", {})
@@ -271,7 +279,8 @@ def _family_specific_cue(q: str, fam: str | None) -> bool:
     return False
 
 
-LABELS = list(FAMILIES) + sorted(OTHER_WORKFLOWS - {"legacy_assessment", "recovery_options"}) + ["general_knowledge", "unsupported", "clarify"]
+LABELS = list(FAMILIES) + sorted(OTHER_WORKFLOWS - {"legacy_assessment", "recovery_options"}) + ["general_knowledge", "unsupported", "clarify",
+    "global_shortages", "demand_forecast", "supplier_delays", "supply_delay_impact", "component_degradation", "resilience_scenario", "forecast_accuracy"]
 
 
 def _qwen_route(q: str, intent: dict[str, Any], fs: dict[str, float], sem: list) -> Route | None:
@@ -283,7 +292,10 @@ def _qwen_route(q: str, intent: dict[str, Any], fs: dict[str, float], sem: list)
     system = ("You route questions for Flying_Florina, an aerospace maintenance intelligence assistant. Choose exactly one label from: "
               + ", ".join(LABELS) + ". diagnostics = why an aircraft behaves abnormally; recovery = fastest way back to service; "
               "modernization = legacy systems, APIs, MCP; executive = fleet readiness, downtime and cost drivers; general_knowledge = "
-              "aviation concepts not about this fleet's data; unsupported = off-topic; clarify = too vague. Reply as JSON {\"label\": ..., \"reason\": ...}.")
+              "aviation concepts not about this fleet's data; global_shortages = component stock shortages by region; demand_forecast = predicted "
+              "component removals/demand; supplier_delays = supplier lateness; supply_delay_impact = effect of a supplier delay; component_degradation = "
+              "one component's health trend; resilience_scenario = disruption simulation; forecast_accuracy = how accurate forecasts were; "
+              "unsupported = off-topic; clarify = too vague. Reply as JSON {\"label\": ..., \"reason\": ...}.")
     try:
         r = g.generate(agent="Intake & Intent Agent", task="intent_classification", system=system, user=q, schema=QwenLabel, max_tokens=60)
     except (LLMError, LLMUnavailable):
@@ -291,4 +303,8 @@ def _qwen_route(q: str, intent: dict[str, Any], fs: dict[str, float], sem: list)
     label = (r.data or {}).get("label", "")
     if label not in LABELS:
         return None
+    from app.harness.intents import INTENTS, slots
+
+    if label in INTENTS:
+        intent = {**intent, "entities": {**intent.get("entities", {}), **slots(q)}}
     return _label_to_route(label, "qwen", f"Local Qwen closed-set classification ({r.latency_ms} ms): {(r.data or {}).get('reason', '')[:160]}", intent, fs, sem)

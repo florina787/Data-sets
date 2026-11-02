@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { download, post } from "@/lib/api";
 import { fmt, miniMarkdown } from "@/lib/format";
-import type { Block, Citation, Decision, Recommendation, RoadmapPhase } from "@/lib/types";
+import type { Block, Citation, Decision, Recommendation, RoadmapPhase, WorkflowEvent } from "@/lib/types";
+import { AgentGraph } from "./AgentGraph";
+import { AgentTimeline } from "./AgentTimeline";
 import { ApprovalQueue } from "./Approvals";
 import { Chart } from "./Chart";
 import { DataTable } from "./DataTable";
@@ -378,6 +380,13 @@ export function Workspace({ blocks, onQuery, runId }: { blocks: Block[]; onQuery
             return (
               <Card key={i} title={b.title} subtitle="Nodes and edges come from parsed metadata. Dashed nodes are unknowns.">
                 <DependencyGraph nodes={b.nodes} edges={b.edges} height={380} />
+              </Card>
+            );
+          case "agent_trace":
+            return (
+              <Card key={i} title="Agent execution graph (recorded events)" subtitle={`Run ${b.run_id}`}>
+                {b.graph ? <AgentGraph graph={b.graph} events={b.events.map((e, k) => ({ ...e, id: k, run_id: b.run_id, summary: "", detail: {} }) as WorkflowEvent)} height={300} /> : null}
+                <div className="mt-3"><AgentTimeline events={b.events.map((e, k) => ({ ...e, id: k, run_id: b.run_id, summary: e.summary ?? "", detail: {} }) as WorkflowEvent)} compact /></div>
               </Card>
             );
           case "recommendations":

@@ -50,3 +50,69 @@ tools:
   action: export
   reviewed_by: sec.ines (synthetic)
   reviewed_on: '2026-10-01'
+- name: forecast.components
+  version: 1.0.0
+  schema_sha256: 5bde9f45d8a4dd47288f1abd0fd7136538e5202b753246346519dc2bde2432ec
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: forecast.series
+  version: 1.0.0
+  schema_sha256: 70a1a7f39850d5880d8061432f032bfa680108075b6d141581bf8f89f459cc36
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: forecast.evaluation
+  version: 1.0.0
+  schema_sha256: ecfa458b8c185d71e6284a26ff0aba93e29857847b61925122ae7c7250849386
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: global.map_state
+  version: 1.0.0
+  schema_sha256: 00e3d56de7cd8285d225b06eb3ef6a7f0f0bfbe6d70bc5f51ea4d42f87c5c8c2
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: twin.unit
+  version: 1.0.0
+  schema_sha256: d6cd1c7beadba5fd46725f1b241109d751f491a0ad1042a20802e04040cd5af5
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: supply.delay_impact
+  version: 1.0.0
+  schema_sha256: 65ce5cc1864fbb7719e5b98a3f58529ea20df1b6759db8095549718ef72172fb
+  action: simulate
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: resilience.simulate
+  version: 1.0.0
+  schema_sha256: d6de6f59d1c614b56a739d10561f7e8139a4f000e6bf141eb8240c3858c87a20
+  action: simulate
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: memory.recall
+  version: 1.0.0
+  schema_sha256: ea772f39838d393298e842de33f5a1f7f3ccd13b5b558cd21727760d689dac71
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: changeimpact.analyze
+  version: 1.0.0
+  schema_sha256: e65a4ec537ef327ca2154b67ac559f76684402a1a64401ee2234359e310f01ce
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: visual.capabilities
+  version: 1.0.0
+  schema_sha256: 930a8c683bc5856491bc804610ad5bf2a052a61ba647e2f986d9bf6d1bf6aef0
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'
+- name: harness.trace
+  version: 1.0.0
+  schema_sha256: 87eefc1be6f1a27769796c7eac50c79d039a073aa2f82ab722761c3f52f4f7ce
+  action: read
+  reviewed_by: sec.ines (synthetic)
+  reviewed_on: '2026-11-02'

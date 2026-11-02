@@ -397,6 +397,12 @@ def reset_database() -> dict[str, int]:
         db.init_schema(conn)
         counts = generate(conn)
         seed_historic_governance(conn)
+        from app.global_intel import dataset as global_dataset
+
+        counts.update({f"global_{k}": v for k, v in global_dataset.generate(conn).items()})
+    from app.global_intel.forecast import reset_engine
+
+    reset_engine()
     return counts
 
 

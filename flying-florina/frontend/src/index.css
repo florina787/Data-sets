@@ -2,32 +2,32 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Design tokens: the Conversation Intelligence Copilot design system (dark enterprise), shared by Flying_Florina.
+/* Design tokens: Flying Florina 3.0 aerospace intelligence theme (deep navy, electric cyan, teal, emerald, amber, red), built on the Conversation Intelligence Copilot component system.
    Legacy token names (purple, teal, amber, blocked, gold, navy, lavender) map onto the Copilot palette so
    every existing component adopts the new look without a rewrite. */
 @theme {
-  --color-bg: #0B1020;
-  --color-surface: #111827;
-  --color-elevated: #17233C;
-  --color-indigo: #6366F1;
+  --color-bg: #050B18;
+  --color-surface: #0A1628;
+  --color-elevated: #10213A;
+  --color-indigo: #14B8A6;
   --color-cyan: #22D3EE;
-  --color-violet: #A78BFA;
+  --color-violet: #38BDF8;
   --color-ink: #F8FAFC;
   --color-faint: #64748B;
-  --color-pos: #34D399;
-  --color-neg: #F87171;
+  --color-pos: #10B981;
+  --color-neg: #EF4444;
   --color-warn: #F59E0B;
   --color-mix: #FBBF24;
-  --color-navy: #0B1020;
-  --color-navy-2: #111827;
-  --color-purple: #6366F1;
-  --color-purple-2: #4F46E5;
-  --color-lavender: #A78BFA;
+  --color-navy: #050B18;
+  --color-navy-2: #0A1628;
+  --color-purple: #14B8A6;
+  --color-purple-2: #0D9488;
+  --color-lavender: #38BDF8;
   --color-gold: #22D3EE;
   --color-offwhite: #F8FAFC;
-  --color-teal: #34D399;
+  --color-teal: #10B981;
   --color-amber: #F59E0B;
-  --color-blocked: #F87171;
+  --color-blocked: #EF4444;
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --animate-shimmer: shimmer 1.6s infinite;
@@ -41,21 +41,21 @@
   --text: #0B1020;
   --muted: #475569;
   --border: rgba(15, 23, 42, 0.10);
-  --accent: #6366F1;
+  --accent: #14B8A6;
   --accent-text: #FFFFFF;
   --tooltip: #FFFFFF;
   color-scheme: light;
 }
 .dark {
-  --bg: #0B1020;
-  --panel: rgba(17, 24, 39, 0.80);
-  --panel-2: #17233C;
+  --bg: #050B18;
+  --panel: rgba(10, 22, 40, 0.72);
+  --panel-2: #10213A;
   --text: #F8FAFC;
   --muted: #94A3B8;
   --border: rgba(148, 163, 184, 0.14);
-  --accent: #6366F1;
+  --accent: #14B8A6;
   --accent-text: #FFFFFF;
-  --tooltip: #17233C;
+  --tooltip: #10213A;
   color-scheme: dark;
 }
 
@@ -64,18 +64,18 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-sans);
 .app-bg { background: var(--bg); }
 .dark .app-bg {
   background:
-    radial-gradient(1200px 600px at 15% -10%, rgba(99, 102, 241, 0.16), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(34, 211, 238, 0.08), transparent 55%),
-    #0B1020;
+    radial-gradient(1200px 600px at 15% -10%, rgba(20, 184, 166, 0.14), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(34, 211, 238, 0.10), transparent 55%),
+    #050B18;
   background-attachment: fixed;
 }
 
 .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; min-width: 0; max-width: 100%;
   box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 10px 30px -12px rgba(2,6,23,0.35); backdrop-filter: blur(16px); }
-.dark .panel { box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 10px 30px -12px rgba(2,6,23,0.6); }
+.dark .panel { border-color: rgba(34, 211, 238, 0.13); box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 0 0 1px rgba(34,211,238,0.03), 0 10px 30px -12px rgba(0,0,0,0.7); }
 .label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 .num { font-variant-numeric: tabular-nums; }
-.glow { box-shadow: 0 0 0 1px rgba(99,102,241,0.35), 0 12px 40px -12px rgba(99,102,241,0.45); }
+.glow { box-shadow: 0 0 0 1px rgba(34,211,238,0.35), 0 12px 40px -12px rgba(34,211,238,0.40); }
 .gradient-title { background: linear-gradient(135deg, var(--text) 30%, #94A3B8); -webkit-background-clip: text; background-clip: text; color: transparent; }
 /* grid/flex children must be allowed to shrink so wide tables scroll inside their card */
 main .grid > *, main .space-y-4 > *, main .space-y-3 > * { min-width: 0; }
@@ -84,14 +84,14 @@ main .grid > *, main .space-y-4 > *, main .space-y-3 > * { min-width: 0; }
 .border-token { border-color: var(--border); }
 .btn { display: inline-flex; align-items: center; gap: .4rem; border-radius: 12px; padding: .45rem .85rem; font-size: .875rem; font-weight: 500; transition: background .15s, opacity .15s, filter .15s; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-primary { background: linear-gradient(90deg, #6366F1, #A78BFA); color: #fff; box-shadow: 0 0 0 1px rgba(99,102,241,0.35), 0 12px 40px -12px rgba(99,102,241,0.45); }
+.btn-primary { background: linear-gradient(90deg, #0D9488, #0891B2); color: #fff; box-shadow: 0 0 0 1px rgba(34,211,238,0.35), 0 12px 40px -12px rgba(34,211,238,0.40); }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 .btn-ghost:hover:not(:disabled) { background: rgba(148,163,184,0.08); }
 .btn-danger { background: rgba(248,113,113,0.15); color: #F87171; border: 1px solid rgba(248,113,113,0.3); }
 .input { background: rgba(148,163,184,0.04); border: 1px solid var(--border); border-radius: 12px; padding: .5rem .75rem; color: var(--text); font-size: .9rem; }
-.dark .input option { background: #111827; }
-.input:focus, .btn:focus-visible, a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #6366F1; outline-offset: 2px; }
+.dark .input option { background: #0A1628; }
+.input:focus, .btn:focus-visible, a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid #22D3EE; outline-offset: 2px; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.18); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -108,3 +108,11 @@ table.ff td { border-bottom: 1px solid var(--border); padding: .4rem .5rem; vert
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 .react-flow__attribution { display: none; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* 3.0: thin illuminated borders and map chrome */
+.glass { background: rgba(10, 22, 40, 0.62); border: 1px solid rgba(34, 211, 238, 0.18); backdrop-filter: blur(14px); border-radius: 14px; }
+.edge-glow { box-shadow: inset 0 1px 0 rgba(34, 211, 238, 0.18); }
+.maplibregl-ctrl-attrib { display: none; }
+.maplibregl-popup-content { background: #0A1628 !important; color: #E2E8F0; border: 1px solid rgba(34,211,238,.25); border-radius: 12px !important; font-size: 12px; }
+.maplibregl-popup-tip { border-top-color: #0A1628 !important; border-bottom-color: #0A1628 !important; }
+input[type=range].timeline { accent-color: #22D3EE; }

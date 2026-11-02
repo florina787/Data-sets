@@ -1,15 +1,50 @@
-# Optional. `python -m uvicorn` + `npm run dev` work without Docker.
-# Offline use: build once while connected, then `docker save` the images (see docs/DEPLOYMENT.md).
+# Mode B — Docker Compose: the complete local demonstration.
+#   docker compose up --build                      # UI http://127.0.0.1:4173, API http://127.0.0.1:8000
+# With YOUR existing Qwen .gguf (in-process llama.cpp, read-only mount, nothing downloaded):
+#   QWEN_MODEL_DIR=/path/to/models FF_QWEN_MODEL_FILE=qwen2.5-1.5b-instruct-q4_k_m.gguf INSTALL_LLAMA=true docker compose up --build
+# Offline hosts: build once while connected, then `docker save` / `docker load` (docs/DEPLOYMENT.md).
+# SQLite is single-writer: run exactly one backend container against the data volume.
 services:
   backend:
-    build: { context: ., dockerfile: backend/Dockerfile }
-    environment: [DEMO_MODE=true, OFFLINE_MODE=true, "FF_CORS_ORIGINS=http://localhost:4173,http://127.0.0.1:4173"]
-    volumes: [ffdata:/srv/data]
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args: { INSTALL_LLAMA: "${INSTALL_LLAMA:-false}" }
+    environment:
+      DEMO_MODE: "true"
+      OFFLINE_MODE: "true"
+      FF_CORS_ORIGINS: "http://localhost:4173,http://127.0.0.1:4173"
+      LLM_ENABLED: "${LLM_ENABLED:-auto}"
+      FF_QWEN_MODEL_PATH: "${FF_QWEN_MODEL_FILE:+/models/${FF_QWEN_MODEL_FILE}}"
+      FF_QWEN_THREADS: "${FF_QWEN_THREADS:-3}"
+      FF_QWEN_CONCURRENCY: "1"
+      FF_GENERATED_DIR: /srv/data/generated
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - ffdata:/srv/data
+      - "${QWEN_MODEL_DIR:-./models}:/models:ro"
     ports: ["127.0.0.1:8000:8000"]
     tmpfs: [/tmp]
+    read_only: true
+    stop_grace_period: 25s
+    deploy:
+      resources:
+        limits: { cpus: "4", memory: 6g }
+        reservations: { memory: 1g }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2).status == 200 else 1)"]
+      interval: 20s
+      timeout: 3s
+      start_period: 30s
+      retries: 3
   frontend:
     build: { context: ., dockerfile: frontend/Dockerfile }
-    depends_on: [backend]
+    depends_on:
+      backend: { condition: service_healthy }
+    environment: { FF_BACKEND_URL: "http://backend:8000" }
     ports: ["127.0.0.1:4173:4173"]
+    deploy:
+      resources:
+        limits: { cpus: "1", memory: 512m }
 volumes:
   ffdata: {}

@@ -46,12 +46,14 @@ def get_context(session_id: str | None) -> dict[str, Any] | None:
 
 
 def save_context(session_id: str, r: Route, query: str) -> None:
-    if not r.family:
+    from app.harness.intents import INTENTS
+
+    if not r.family and r.workflow not in INTENTS:
         return
     with db.session(write=True) as conn:
         conn.execute("INSERT INTO conversation_context VALUES (?,?,?,?,?,?) ON CONFLICT(session_id) DO UPDATE SET family=excluded.family, "
                      "workflow=excluded.workflow, entities_json=excluded.entities_json, last_query=excluded.last_query, updated=excluded.updated",
-                     (session_id, r.family, r.workflow, db.jdump(r.entities), query[:500], now_iso()))
+                     (session_id, r.family or "", r.workflow, db.jdump(r.entities), query[:500], now_iso()))
 
 
 def _md(text: str) -> dict[str, Any]:

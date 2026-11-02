@@ -1,39 +1,39 @@
 <div align="center">
 
-<img src="docs/assets/v2/banner_v2.svg" width="100%" alt="Flying_Florina 2.0 — Aerospace & Defense Intelligence Copilot" />
+<img src="docs/assets/v2/banner_v3.svg" width="100%" alt="Flying Florina 3.0 — Global Aerospace Predictive Intelligence & Resilience Platform" />
 
 <br/>
 
 ![Synthetic data](https://img.shields.io/badge/data-100%25%20synthetic-D7B46A?style=for-the-badge)
-![Local Qwen](https://img.shields.io/badge/LLM-your%20local%20Qwen-6366F1?style=for-the-badge)
-![Offline](https://img.shields.io/badge/runtime-offline-0B1020?style=for-the-badge)
+![Local Qwen](https://img.shields.io/badge/LLM-your%20local%20Qwen-14B8A6?style=for-the-badge)
+![Offline](https://img.shields.io/badge/runtime-offline-050B18?style=for-the-badge)
 ![Paid APIs](https://img.shields.io/badge/paid%20APIs-%240-22D3EE?style=for-the-badge)
-![Policy](https://img.shields.io/badge/policy-deny%20by%20default-A78BFA?style=for-the-badge)
+![Policy](https://img.shields.io/badge/policy-deny%20by%20default-10B981?style=for-the-badge)
 
-![pytest](https://img.shields.io/badge/pytest-131%20passed-34D399)
-![playwright](https://img.shields.io/badge/playwright-18%20passed-34D399)
-![vitest](https://img.shields.io/badge/vitest-9%20passed-34D399)
-![routing](https://img.shields.io/badge/held--out%20routing-95.8%25-22D3EE)
-![macro f1](https://img.shields.io/badge/macro--F1-0.958-22D3EE)
-![evidence](https://img.shields.io/badge/citation%20accuracy-100%25%20(200)-22D3EE)
-![security lab](https://img.shields.io/badge/security%20lab-12%2F12-A78BFA)
-![egress](https://img.shields.io/badge/offline%20egress%20attempts-0-0B1020)
-![license](https://img.shields.io/badge/license-GPL--3.0-A78BFA)
+![pytest](https://img.shields.io/badge/pytest-160%20passed-10B981)
+![playwright](https://img.shields.io/badge/playwright-22%20passed-10B981)
+![vitest](https://img.shields.io/badge/vitest-9%20passed-10B981)
+![forecast](https://img.shields.io/badge/90--day%20demand%20MAE-2.86%20vs%204.03%20baseline-22D3EE)
+![routing 2.0](https://img.shields.io/badge/2.0%20held--out%20routing-95.8%25-22D3EE)
+![routing 3.0](https://img.shields.io/badge/3.0%20held--out%20routing-90.3%25-F59E0B)
+![egress](https://img.shields.io/badge/offline%20egress%20attempts-0-050B18)
+![license](https://img.shields.io/badge/license-GPL--3.0-14B8A6)
 
-### Ask. Analyze. Modernize. Govern. Act — with approval.
+### Forecast. Map. Simulate. Explain. Govern.
 
-**Explainable industrial AI for mission-critical operations.** Ask one of four signature questions in plain language.
-Specialist agents compute the evidence deterministically, **your local Qwen model explains it**, an **Evidence Challenger**
-strips anything Qwen can't back up, and **governance** confirms the model approved nothing. All on one machine, offline.
+**Flying Florina 3.0** is a global aerospace predictive-intelligence and resilience platform: component forecasting, a global
+interactive map with a +90-day timeline, maintenance digital twins, supply-chain and resilience simulation, a civilian airspace-safety
+lab, software change-impact analysis and persistent conversational memory, all driven by a **governed agent harness**. Models and
+simulations produce every number; **your local Qwen** explains; deterministic policy decides; humans approve.
 
-<sub><b>Independent concept demo | Not affiliated with or endorsed by IFS.</b> All data is synthetic and fictional. No live IFS connection,
+<sub><b>Independent concept demo | Not affiliated with or endorsed by IFS.</b> All operational data is synthetic and fictional. No live IFS connection,
 no certification, no airworthiness determinations, no promised savings.</sub>
 
 <br/><br/>
 
-<img src="docs/screenshots/v2/01_assistant_home.png" width="100%" alt="Flying_Florina 2.0 AI Assistant with the four question cards" />
+<img src="docs/screenshots/v3/02_global_map.png" width="100%" alt="Flying Florina 3.0 Global Intelligence map" />
 
-<sub>The AI Assistant: four signature question cards, live data panel, and the Local Qwen status pill (top right).</sub>
+<sub>Global Intelligence: MapLibre globe with inventory-forecast layer, predictive timeline, KPIs, region comparison and freshness. No tile service, no network.</sub>
 
 </div>
 
@@ -41,22 +41,132 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <div align="center">
 
-**[Why it matters](#-why-it-matters-for-ad-leadership)** ·
-**[Four questions](#-the-four-signature-questions)** ·
-**[Architecture](#-architecture-20)** ·
-**[Flows](#-how-a-question-becomes-a-governed-answer)** ·
-**[Measured results](#-measured-results)** ·
-**[2.0 screens](#-the-20-screens)** ·
-**[Before → after](#-before--after)** ·
+**[3.0 overview](#-flying-florina-30)** ·
+**[3.0 screens](#-the-30-screens)** ·
+**[Harness](#-the-governed-agent-harness)** ·
+**[Measured](#-30-measured-results)** ·
+**[Deploy](#-deployment-modes)** ·
+**[2.0: four questions](#-the-four-signature-questions)** ·
 **[Local Qwen](#-local-qwen-setup)** ·
 **[Quick start](#-quick-start)** ·
 **[1.0 deep dive](#-platform-foundations-from-10)** ·
-**[Limits](#-honest-limits)** ·
 **[Docs](#-documentation)**
 
 </div>
 
 ---
+
+## 🌍 Flying Florina 3.0
+
+| # | Section | What it does | Route |
+|---|---|---|---|
+| 1 | **Global Intelligence** | Globe / 2D / lite map, 6 layers (facilities, component health, supply chain, inventory forecast, disruptions, recovery), TODAY→+90 d timeline, search, filters, region comparison, report export | `/global` |
+| 2 | **Component Forecasting** | Demand P10/P50/P90, inventory depletion curves, demand heatmap, health gauges, RUL distribution, failure-risk comparison, historical accuracy vs baselines | `/forecasting` |
+| 3 | **Aerospace Digital Twin** | Unit history, telemetry, why it was flagged, uncertainty over time, work orders, replacements, documents to review (advisory only) | `/twin` |
+| 4 | **Airspace Safety Lab** | Capability-honest analysis of prerecorded footage; labelled evaluation with FP/FN; civilian scope only | `/airspace` |
+| 5 | **Supply Chain Intelligence** | Supplier trends, lead-time distributions, concentration, repair capacity, dependency graph, delay-impact simulator | `/supply` |
+| 6 | **Predictive Maintenance** | 2.0 statistical risk view + Qwen explanation | `/predictive` |
+| 7 | **Operational Resilience** | 8 scenarios: baseline vs disruption vs recovery, backlog uncertainty, recovery time, cost | `/resilience` |
+| 8 | **Agent Harness Control Tower** | Graph, timeline, governance, model performance, evaluation, recovery — from recorded events only | `/control-tower` |
+| 9 | **AI Governance** | Policies, approvals, audit chain, security lab (2.0) | `/trust` |
+| 10 | **Flying Florina Chat** | 12 suggested 3.0 questions + the four 2.0 questions; memory that survives restarts | `/` |
+
+Every 2.0 page (Command Center, AOG recovery, Legacy X-Ray, Bridge Studio, Observability, …) is still there under *Workspace*, plus
+the new **Software Change Impact** page (`/change-impact`).
+
+```mermaid
+flowchart LR
+  U([Question]) --> R{Hybrid router<br/>policy first}
+  R -->|3.0 intent + slots| PL[Planner<br/>agents · tools · budget]
+  PL --> S[Supervisor DAG]
+  S --> A1[Geospatial] & A2[Prognostics] & A3[Supply chain] & A4[Twin] & A5[Resilience] & A6[Evaluation]
+  A1 & A2 & A3 & A4 & A5 & A6 --> G[[Policy gateway<br/>pinned tools]]
+  G --> M[(Models · simulation · SQLite)]
+  S --> EV[Evidence validation] --> C[Composer] --> Q[Local Qwen] --> CH[Evidence Challenger] --> AU[(Audit)]
+  style G fill:#2A1530,stroke:#EF4444,color:#E5E7EB
+  style Q fill:#0E2A3A,stroke:#22D3EE,color:#E5E7EB
+```
+
+## 🖥 The 3.0 screens
+
+<table>
+<tr>
+<td width="50%"><b>Component Forecasting</b><br/><img src="docs/screenshots/v3/03_forecasting.png" alt="Component Forecasting" /></td>
+<td width="50%"><b>Historical forecast accuracy</b><br/><img src="docs/screenshots/v3/04_forecast_accuracy.png" alt="Forecast accuracy" /></td>
+</tr>
+<tr>
+<td><b>Aerospace Digital Twin</b><br/><img src="docs/screenshots/v3/05_digital_twin.png" alt="Digital twin" /></td>
+<td><b>Supply Chain: 14-day supplier delay simulated</b><br/><img src="docs/screenshots/v3/06_supply_chain.png" alt="Supply chain" /></td>
+</tr>
+<tr>
+<td><b>Operational Resilience</b><br/><img src="docs/screenshots/v3/07_resilience.png" alt="Resilience simulator" /></td>
+<td><b>Agent Harness Control Tower (recorded run)</b><br/><img src="docs/screenshots/v3/08_control_tower.png" alt="Control Tower" /></td>
+</tr>
+<tr>
+<td><b>Airspace Safety Lab (capability-honest)</b><br/><img src="docs/screenshots/v3/09_airspace_lab.png" alt="Airspace Safety Lab" /></td>
+<td><b>Software Change Impact</b><br/><img src="docs/screenshots/v3/10_change_impact.png" alt="Change impact" /></td>
+</tr>
+<tr>
+<td><b>Chat: follow-up from memory ("What about the next 60 days?")</b><br/><img src="docs/screenshots/v3/11_chat_followup_memory.png" alt="Follow-up from memory" /></td>
+<td><b>Global map: supply-chain layer at +60 days</b><br/><img src="docs/screenshots/v3/15_global_supply_layer.png" alt="Supply layer" /></td>
+</tr>
+</table>
+
+<img src="docs/screenshots/v3/16_mobile_global.png" width="24%" alt="Mobile global map (lite)" />
+<img src="docs/screenshots/v3/17_mobile_forecasting.png" width="24%" alt="Mobile forecasting" />
+<img src="docs/screenshots/v3/18_mobile_control_tower.png" width="24%" alt="Mobile Control Tower" />
+
+## 🧭 The governed agent harness
+
+USER REQUEST → authentication → intent classification → **policy engine** → **task planner** → supervisor → 12 **specialist agents**
+(each with its own tool allowlist) → **11 pinned, typed tools** through the deny-by-default gateway → **evidence validation** → human
+approval when required → response generation (deterministic composer, then local Qwen + Evidence Challenger) → **hash-chained audit**.
+Budgets are enforced atomically; simple questions use one specialist, complex ones several. Tests prove unauthorized tools are blocked,
+budgets halt runs, failures are safe, missing evidence is reported, approvals cannot be bypassed, memory survives restarts and traces
+match real executions. → [docs/AGENT_HARNESS.md](docs/AGENT_HARNESS.md)
+
+## 📊 3.0 measured results
+
+<div align="center">
+<img src="docs/assets/v2/forecast_mae_v3.svg" width="100%" alt="Demand forecast MAE vs baselines by horizon" />
+<br/><br/>
+<img src="docs/assets/v2/models_vs_baselines_v3.svg" width="100%" alt="Models vs simpler baselines" />
+</div>
+
+| What | Result (held-out, synthetic) | Honest note |
+|---|---|---|
+| Demand forecast, 7–90 days | beats moving average and seasonal naive at every horizon (90 d MAE 2.86 vs 4.03) | 80% intervals under-cover at long horizons (66.7% at 90 d) |
+| Failure within 30 days | F1 0.855 vs 0.541 health rule; ECE 0.006 | — |
+| Anomaly detection | IsolationForest F1 0.869 | **the simple z-score rule wins (0.974)** and the UI says so |
+| Remaining useful life | health-trend MAE 9.5 weeks | survival-only 36.7 weeks; evaluation favours early failures |
+| 3.0 intent routing (fresh held-out) | 90.3% (56/62), follow-ups 3/4 | below the 95% target; supplier names without "supplier" are missed |
+| 2.0 routing after 3.0 | held-out v2 95.8% (unchanged) | — |
+| Visual-lab baseline (not AI) | precision 0.70, recall 0.79 on 58 labelled frames | no vision model installed; aircraft are its false positives |
+| Latency | 3.0 chat p50 251 ms; map API p50 16 ms; warm restart 1.1 s | 2.0 workflows ~1.2× slower than the 2.0 code measured the same day |
+
+Details: [FORECASTING_ENGINE.md](docs/FORECASTING_ENGINE.md) · [PERFORMANCE_BENCHMARKS.md](docs/PERFORMANCE_BENCHMARKS.md) ·
+[eval/README.md](docs/eval/README.md) · [CHANGELOG_3.0.md](docs/CHANGELOG_3.0.md)
+
+## 🚢 Deployment modes
+
+| Mode | Command | Status |
+|---|---|---|
+| A — Local | `make demo` | verified |
+| B — Docker Compose | `docker compose up --build` (add `QWEN_MODEL_DIR`, `FF_QWEN_MODEL_FILE`, `INSTALL_LLAMA=true` for your Qwen) | config validated; images not built here (no Docker daemon) |
+| C — Kubernetes reference | `kubectl apply -k deploy/k8s` | manifests parsed; not applied to a cluster; single-writer SQLite backend |
+
+→ [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) (including the PostgreSQL migration path for horizontal scaling)
+
+**3.0 docs:** [Architecture](docs/FLYING_FLORINA_3_ARCHITECTURE.md) · [Audit](docs/FLYING_FLORINA_3_ARCHITECTURE_AUDIT.md) ·
+[Agent harness](docs/AGENT_HARNESS.md) · [Forecasting engine](docs/FORECASTING_ENGINE.md) · [Global map](docs/GLOBAL_MAP.md) ·
+[Qwen integration](docs/QWEN_INTEGRATION.md) · [Security & governance](docs/SECURITY_GOVERNANCE.md) · [Deployment](docs/DEPLOYMENT.md) ·
+[Demo walkthrough](docs/DEMO_WALKTHROUGH.md) · [Performance](docs/PERFORMANCE_BENCHMARKS.md)
+
+---
+
+## 🛩 Flying_Florina 2.0 (still included)
+
+<img src="docs/assets/v2/banner_v2.svg" width="100%" alt="Flying_Florina 2.0" />
 
 ## 🛫 Why it matters for A&D leadership
 
@@ -876,12 +986,15 @@ Read [SECURITY_LIMITATIONS.md](docs/SECURITY_LIMITATIONS.md) before presenting t
 | 📜 [Third-party notices](THIRD_PARTY_NOTICES.md) | ⚖️ [License (GPL-3.0)](LICENSE) | 🎨 [Brand assets](frontend/public/brand/README.md) |
 | 🧠 [Local Qwen integration](docs/QWEN_LOCAL_LLM.md) | ❓ [Four-question engine](docs/FOUR_QUESTION_ENGINE.md) | 📈 [Evaluation results](docs/eval/README.md) |
 | 🛡 [Deployment readiness](docs/DEPLOYMENT_READINESS.md) | 🔗 [IFS integration readiness](docs/IFS_INTEGRATION_READINESS.md) | 🆕 [What changed in 2.0](docs/CHANGELOG_2.0.md) |
-| ✍️ [Medium article: the build story and challenges](docs/MEDIUM_ARTICLE.md) | 🖼 [README chart generator](scripts/render_readme_v2_assets.py) | |
+| ✍️ [Medium article: the build story and challenges](docs/MEDIUM_ARTICLE.md) | 🖼 [README chart generator](scripts/render_readme_v2_assets.py) | 🆕 [What changed in 3.0](docs/CHANGELOG_3.0.md) |
+| 🌍 [3.0 architecture](docs/FLYING_FLORINA_3_ARCHITECTURE.md) | 🧭 [Agent harness](docs/AGENT_HARNESS.md) | 📈 [Forecasting engine](docs/FORECASTING_ENGINE.md) |
+| 🗺 [Global map](docs/GLOBAL_MAP.md) | 🛡 [Security & governance](docs/SECURITY_GOVERNANCE.md) | ⏱ [Performance benchmarks](docs/PERFORMANCE_BENCHMARKS.md) |
+| 🎬 [3.0 demo walkthrough](docs/DEMO_WALKTHROUGH.md) | 🧠 [Qwen integration (3.0)](docs/QWEN_INTEGRATION.md) | 🔎 [3.0 audit](docs/FLYING_FLORINA_3_ARCHITECTURE_AUDIT.md) |
 
 <div align="center">
 <br/>
 <img src="docs/assets/logo.png" width="72" alt="Flying_Florina" />
 <br/>
-<b>Flying_Florina 2.0</b><br/>
+<b>Flying Florina 3.0</b><br/>
 <sub>From legacy systems to trusted industrial intelligence.<br/>Independent concept demo · Not affiliated with or endorsed by IFS</sub>
 </div>

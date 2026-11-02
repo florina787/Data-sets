@@ -43,7 +43,8 @@ export type Block =
   | { type: "roi_controls"; inputs: Record<string, unknown> }
   | { type: "code"; title: string; language: string; code: string }
   | { type: "bridge_test"; bundle_id: string }
-  | { type: "decision_trace"; decision: Decision; identity: Actor; classification: string; destination: string };
+  | { type: "decision_trace"; decision: Decision; identity: Actor; classification: string; destination: string }
+  | { type: "agent_trace"; graph: NonNullable<RunView["graph"]> | null; events: WorkflowEvent[]; run_id: string; plan?: Record<string, unknown> | null };
 
 export type Citation = {
   doc_id: string; title: string; revision: string; effective_date: string; review_due: string; classification: string;

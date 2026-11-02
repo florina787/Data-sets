@@ -174,3 +174,9 @@ GRAPHS = {
     "fleet_overview": fleet_graph,
     "quality_investigation": quality_graph,
 }
+
+
+# Flying Florina 3.0 harness workflows (planned, budgeted specialist graphs)
+from app.harness.workflows import HARNESS_GRAPHS  # noqa: E402
+
+GRAPHS.update(HARNESS_GRAPHS)

@@ -10,13 +10,13 @@ import { fmt } from "@/lib/format";
 echarts.use([LineChart, BarChart, PieChart, ScatterChart, HeatmapChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TitleComponent,
   AriaComponent, DataZoomComponent, VisualMapComponent, CanvasRenderer]);
 
-/** Conversation Intelligence Copilot chart palette (indigo, cyan, violet, positive, warning, mixed, negative). */
-export const PALETTE = ["#6366F1", "#22D3EE", "#A78BFA", "#34D399", "#F59E0B", "#FBBF24", "#F87171"];
+/** Flying Florina 3.0 chart palette (cyan, teal, sky, emerald, amber, gold, red). */
+export const PALETTE = ["#22D3EE", "#14B8A6", "#38BDF8", "#10B981", "#F59E0B", "#FBBF24", "#EF4444"];
 
 export function buildOption(spec: ChartSpec, dark: boolean): echarts.EChartsCoreOption {
   const text = dark ? "#94A3B8" : "#475569";
   const grid = dark ? "rgba(148,163,184,0.08)" : "rgba(15,23,42,0.08)";
-  const tooltip = { backgroundColor: dark ? "#17233C" : "#FFFFFF", borderColor: "rgba(148,163,184,0.2)", textStyle: { color: dark ? "#F8FAFC" : "#0B1020", fontSize: 12 }, extraCssText: "border-radius:12px;" };
+  const tooltip = { backgroundColor: dark ? "#10213A" : "#FFFFFF", borderColor: "rgba(148,163,184,0.2)", textStyle: { color: dark ? "#F8FAFC" : "#0B1020", fontSize: 12 }, extraCssText: "border-radius:12px;" };
   if (spec.kind === "heatmap") {
     const max = Math.max(1, ...(spec.cells ?? []).map((c) => Number(c[2]) || 0));
     return {
@@ -25,7 +25,7 @@ export function buildOption(spec: ChartSpec, dark: boolean): echarts.EChartsCore
       xAxis: { type: "category", data: spec.x, axisLabel: { color: text, rotate: spec.x.length > 6 ? 30 : 0 }, splitArea: { show: true } },
       yAxis: { type: "category", data: spec.y ?? [], axisLabel: { color: text } },
       visualMap: { min: 0, max, calculable: true, orient: "horizontal", left: "center", bottom: 0, textStyle: { color: text },
-        inRange: { color: ["rgba(99,102,241,0.08)", "#6366F1", "#A78BFA", "#F87171"] } },
+        inRange: { color: ["rgba(20,184,166,0.08)", "#14B8A6", "#22D3EE", "#F59E0B", "#EF4444"] } },
       series: [{ type: "heatmap", data: spec.cells ?? [], label: { show: (spec.cells ?? []).length <= 60, color: dark ? "#F8FAFC" : "#0B1020", fontSize: 10 },
         emphasis: { itemStyle: { borderColor: "#22D3EE", borderWidth: 1 } } }],
     };
@@ -45,7 +45,7 @@ export function buildOption(spec: ChartSpec, dark: boolean): echarts.EChartsCore
       aria: { enabled: true },
       tooltip: { ...tooltip, trigger: "item" },
       legend: { bottom: 0, textStyle: { color: text } },
-      series: [{ type: "pie", radius: ["48%", "72%"], itemStyle: { borderColor: dark ? "#111827" : "#FFFFFF", borderWidth: 2, borderRadius: 6 },
+      series: [{ type: "pie", radius: ["48%", "72%"], itemStyle: { borderColor: dark ? "#0A1628" : "#FFFFFF", borderWidth: 2, borderRadius: 6 },
         data: spec.x.map((x, i) => ({ name: String(x), value: spec.series[0]?.data[i] ?? 0 })), label: { show: false }, emphasis: { label: { show: true, color: text } } }],
     };
   }

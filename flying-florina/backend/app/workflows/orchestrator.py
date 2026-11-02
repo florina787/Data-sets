@@ -14,6 +14,9 @@ from app.workflows.engine import CaseState, _event, checkpoint, run_graph
 from app.workflows.graphs import GRAPHS
 from app.workflows import conversation, explain
 from app.workflows.router import CONVERSATIONAL, route
+from app.harness import memory
+
+MEMORY_SLOTS = ("category", "family", "region", "horizon_days", "supplier_id", "delay_days", "unit_id", "target", "aircraft")
 
 
 def ensure_session(actor: Actor, session_id: str | None, title: str) -> str:
@@ -53,11 +56,13 @@ def start(actor: Actor, query: str, persona: str | None = None, session_id: str 
            {"scores": intent.get("scores", {}), "family_scores": r.family_scores, "semantic": r.semantic, "entities": intent.get("entities", {}),
             "secondary": r.secondary})
     conversation.save_context(sid, r, query)
+    memory.add(sid, actor.id, "user", query, run_id, r.label, {k: v for k, v in r.entities.items() if k in MEMORY_SLOTS and v})
 
     if not forced and r.label in CONVERSATIONAL and r.label != "data_export":
         def talk() -> None:
             conversation.answer(state, r, actor)
             checkpoint(state)
+            memory.add(sid, actor.id, "assistant", state.answer, run_id, r.label)
 
         if wait:
             talk()
@@ -89,6 +94,7 @@ def start(actor: Actor, query: str, persona: str | None = None, session_id: str 
             final.errors.append({"step": "qwen_explanation", "error": str(err)})
         final.pending_explanation = False
         checkpoint(final)
+        memory.add(sid, actor.id, "assistant", final.answer_model or final.answer, run_id, r.label)
 
     if wait:
         work()
