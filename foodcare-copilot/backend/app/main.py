@@ -4,13 +4,15 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import warnings
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, Query, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -30,6 +32,7 @@ from app.records import PROVENANCE, audit, list_activity
 from app.services import delivery, demo, incidents, system, views
 from app.tools import inventory_sim, telemetry, traffic, workspace
 from app.tools.retrieval import get_index
+from app.vision import service as vision
 
 warnings.filterwarnings("ignore", message=".*allowed_objects.*")
 
@@ -460,6 +463,100 @@ def copilot_delete_all(user: User = Depends(current_user)) -> dict:
 @app.get("/api/copilot/search")
 def copilot_search(q: str = Query(min_length=1, max_length=200), user: User = Depends(current_user)) -> dict:
     return {"query": q, "results": get_store().search(user.username, q)}
+
+
+# --- potato inspection ----------------------------------------------------------------
+
+class BatchBody(BaseModel):
+    title: str = Field(default="Inspection", max_length=120)
+    supplier: str | None = Field(default=None, max_length=80)
+    lot_code: str | None = Field(default=None, max_length=40)
+    mm_per_px: float | None = Field(default=None, gt=0, le=10)
+    thresholds: dict[str, float] | None = None
+    conversation_id: str | None = Field(default=None, max_length=20)
+
+
+class ThresholdBody(BaseModel):
+    thresholds: dict[str, float]
+
+
+@app.get("/api/inspections")
+def inspections(user: User = Depends(current_user)) -> dict:
+    return {"batches": vision.list_batches(user.username), "detector": vision.detector_status(),
+            "default_thresholds": vision.analyse.default_thresholds(), "queue": vision.gate().status()}
+
+
+@app.post("/api/inspections")
+def inspection_create(body: BatchBody, user: User = Depends(current_user)) -> dict:
+    return vision.create_batch(user.username, body.title, body.supplier, body.lot_code, body.mm_per_px,
+                               body.thresholds, body.conversation_id)
+
+
+@app.post("/api/inspections/sample")
+async def inspection_sample(user: User = Depends(current_user)) -> dict:
+    """A rendered SYNTHETIC image (drawn shapes, not a photo) for trying the studio without a photo."""
+    from app.vision import synthetic
+
+    png, _ = synthetic.render(seed=int(time.time()) % 1000)
+    batch = vision.create_batch(user.username, "Synthetic sample (rendered shapes, not a photo)",
+                                supplier="Synthetic demo supplier", lot_code="SYN-001")
+    return await run_in_threadpool(vision.add_image, batch["id"], user.username, png, "synthetic-sample.png")
+
+
+@app.get("/api/inspections/{batch_id}")
+def inspection_get(batch_id: str, user: User = Depends(current_user)) -> dict:
+    return vision.get_batch(batch_id, user.username)
+
+
+@app.delete("/api/inspections/{batch_id}")
+def inspection_delete(batch_id: str, user: User = Depends(current_user)) -> dict:
+    vision.delete_batch(batch_id, user.username)
+    audit(user.username, "inspection.delete", entity_type="inspection", entity_id=batch_id)
+    return {"deleted": batch_id}
+
+
+@app.post("/api/inspections/{batch_id}/images")
+async def inspection_upload(batch_id: str, request: Request, filename: str | None = None,
+                            user: User = Depends(current_user)) -> dict:
+    """Raw image body (Content-Type image/jpeg, image/png or image/webp); no multipart dependency."""
+    limit = int(get_settings().vision_max_upload_mb * 1024 * 1024)
+    data = bytearray()
+    async for chunk in request.stream():
+        data.extend(chunk)
+        if len(data) > limit:
+            raise PlatformError(f"Image is larger than {get_settings().vision_max_upload_mb:g} MB")
+    if not data:
+        raise PlatformError("Send the image bytes as the request body")
+    return await run_in_threadpool(vision.add_image, batch_id, user.username, bytes(data), filename)
+
+
+@app.put("/api/inspections/{batch_id}/thresholds")
+def inspection_thresholds(batch_id: str, body: ThresholdBody, user: User = Depends(current_user)) -> dict:
+    vision.regrade(batch_id, user.username, body.thresholds)
+    return vision.get_batch(batch_id, user.username)
+
+
+@app.get("/api/inspections/{batch_id}/images/{item_id}")
+def inspection_image(batch_id: str, item_id: str, annotated: bool = True,
+                     user: User = Depends(current_user)) -> FileResponse:
+    return FileResponse(vision.image_path(batch_id, user.username, item_id, annotated))
+
+
+@app.get("/api/inspections/{batch_id}/potatoes/{potato_no}/image")
+def inspection_potato_image(batch_id: str, potato_no: int, user: User = Depends(current_user)) -> Response:
+    return Response(vision.potato_crop(batch_id, user.username, potato_no), media_type="image/png")
+
+
+@app.get("/api/inspections/{batch_id}/report.csv")
+def inspection_report_csv(batch_id: str, user: User = Depends(current_user)) -> Response:
+    return Response(vision.report_csv(batch_id, user.username), media_type="text/csv",
+                    headers={"Content-Disposition": f'attachment; filename="{batch_id}.csv"'})
+
+
+@app.get("/api/inspections/{batch_id}/report.json")
+def inspection_report_json(batch_id: str, user: User = Depends(current_user)) -> JSONResponse:
+    return JSONResponse(vision.report_json(batch_id, user.username),
+                        headers={"Content-Disposition": f'attachment; filename="{batch_id}.json"'})
 
 
 # --- memory and execution history ------------------------------------------------------

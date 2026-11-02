@@ -91,6 +91,29 @@ CREATE TABLE inspection_items (
 );
 CREATE INDEX inspection_items_batch ON inspection_items (batch_id);
 """),
+    (4, "potato_inspection", """
+ALTER TABLE inspection_batches ADD COLUMN supplier TEXT;
+ALTER TABLE inspection_batches ADD COLUMN lot_code TEXT;
+ALTER TABLE inspection_batches ADD COLUMN mm_per_px REAL;
+ALTER TABLE inspection_batches ADD COLUMN thresholds_json TEXT NOT NULL DEFAULT '{}';
+ALTER TABLE inspection_batches ADD COLUMN summary_json TEXT NOT NULL DEFAULT '{}';
+ALTER TABLE inspection_batches ADD COLUMN detector TEXT;
+ALTER TABLE inspection_batches ADD COLUMN updated_at TEXT;
+CREATE INDEX inspection_batches_user ON inspection_batches (username, created_at);
+ALTER TABLE inspection_items ADD COLUMN original_name TEXT;
+ALTER TABLE inspection_items ADD COLUMN annotated_ref TEXT;
+ALTER TABLE inspection_items ADD COLUMN scale REAL;
+ALTER TABLE inspection_items ADD COLUMN duration_ms REAL;
+CREATE TABLE inspection_potatoes (
+    batch_id TEXT NOT NULL REFERENCES inspection_batches (id) ON DELETE CASCADE,
+    potato_no INTEGER NOT NULL, item_id TEXT NOT NULL, grade TEXT, detection_score REAL,
+    length_mm REAL, width_mm REAL, area_px INTEGER, elongation REAL, solidity REAL, dark_pct REAL,
+    green_pct REAL, edge INTEGER NOT NULL DEFAULT 0, possible_cluster INTEGER, bbox_json TEXT NOT NULL,
+    reasons_json TEXT NOT NULL DEFAULT '[]', metrics_json TEXT NOT NULL DEFAULT '{}',
+    PRIMARY KEY (batch_id, potato_no)
+);
+CREATE INDEX inspection_potatoes_grade ON inspection_potatoes (batch_id, grade);
+"""),
 ]
 
 

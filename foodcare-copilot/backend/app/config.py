@@ -38,6 +38,12 @@ class Settings:
     memory_backup_interval_h: float = float(os.environ.get("FOODCARE_MEMORY_BACKUP_INTERVAL_H", "24"))
     memory_context_turns: int = int(os.environ.get("FOODCARE_MEMORY_CONTEXT_TURNS", "3"))
     memory_summary_after: int = int(os.environ.get("FOODCARE_MEMORY_SUMMARY_AFTER", "20"))
+    vision_concurrency: int = int(os.environ.get("FOODCARE_VISION_CONCURRENCY", "1"))
+    vision_queue_size: int = int(os.environ.get("FOODCARE_VISION_QUEUE_SIZE", "2"))
+    vision_queue_wait_s: float = float(os.environ.get("FOODCARE_VISION_QUEUE_WAIT_S", "30"))
+    vision_max_upload_mb: float = float(os.environ.get("FOODCARE_VISION_MAX_UPLOAD_MB", "15"))
+    vision_max_pixels: int = int(os.environ.get("FOODCARE_VISION_MAX_PIXELS", "40000000"))
+    vision_working_px: int = int(os.environ.get("FOODCARE_VISION_WORKING_PX", "1024"))
     tool_timeout_s: int = int(os.environ.get("FOODCARE_TOOL_TIMEOUT_S", "180"))
     tool_output_limit: int = 200_000
     max_repair_attempts: int = 1

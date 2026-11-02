@@ -38,7 +38,9 @@ def platform(tmp_path, monkeypatch):
     deploy.stop_current()
     flows.reset_graphs()
     config.configure(**{f: getattr(defaults, f) for f in ("memory_summary_after", "memory_context_turns",
-                                                          "llm_base_url", "llm_model")})
+                                                          "llm_base_url", "llm_model", "vision_concurrency",
+                                                          "vision_queue_size", "vision_queue_wait_s",
+                                                          "vision_max_upload_mb")})
 
 
 def user(username: str):

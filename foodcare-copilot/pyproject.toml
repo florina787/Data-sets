@@ -13,6 +13,8 @@ dependencies = [
     "tzdata==2025.2",
     "pytest==8.4.2",
     "ruff==0.13.3",
+    "pillow==11.3.0",
+    "numpy==2.3.3",
 ]
 
 [tool.uv]

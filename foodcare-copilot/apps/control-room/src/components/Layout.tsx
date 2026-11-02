@@ -13,6 +13,7 @@ const NAV: [string, [string, string][]][] = [
     ["/sales", "Sales & promotions"],
     ["/inventory", "Inventory"],
     ["/compliance", "Product compliance"],
+    ["/inspection", "Potato inspection"],
   ]],
   ["Digital delivery", [
     ["/delivery", "Delivery overview"],

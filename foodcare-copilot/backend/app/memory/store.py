@@ -107,6 +107,14 @@ class SqliteMemoryStore:
         finally:
             conn.close()
 
+    def query(self, sql: str, params: tuple = ()) -> list[dict]:
+        """Parameterised read for other modules that keep their data in the memory store."""
+        return self._q(sql, params)
+
+    def write(self, statements: list[tuple[str, tuple]]) -> int:
+        """Parameterised statements applied in one transaction."""
+        return self._x(statements)
+
     # --- conversations ---------------------------------------------------------------
 
     def save_turn(self, conversation_id: str, username: str, question: str, answer: str,

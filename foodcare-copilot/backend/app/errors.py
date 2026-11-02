@@ -59,3 +59,8 @@ class LocalModelBusy(PlatformError):
 class RequestCancelled(PlatformError):
     status_code = 409
     code = "request_cancelled"
+
+
+class Overloaded(PlatformError):
+    status_code = 503
+    code = "overloaded"

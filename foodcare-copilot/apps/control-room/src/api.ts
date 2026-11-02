@@ -64,6 +64,18 @@ export async function api<T = any>(path: string, init: RequestInit = {}): Promis
   return body as T;
 }
 
+/** Authenticated binary fetch (images, report downloads); returns an object URL. */
+export async function apiBlobUrl(path: string): Promise<string> {
+  const response = await fetch(path, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  if (!response.ok) throw new ApiError(response.status, "error", response.statusText);
+  return URL.createObjectURL(await response.blob());
+}
+
+/** Raw-body upload (no multipart): the file bytes are the request body. */
+export async function upload<T = any>(path: string, file: Blob): Promise<T> {
+  return api<T>(path, { method: "POST", body: file, headers: { "Content-Type": file.type || "application/octet-stream" } });
+}
+
 export const post = <T = any>(path: string, body?: unknown) =>
   api<T>(path, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) });
 

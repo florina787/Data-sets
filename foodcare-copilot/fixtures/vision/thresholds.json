@@ -1,0 +1,15 @@
+{
+  "_note": "Default grading thresholds for demonstration. They are not an industry or customer specification; set your own per batch.",
+  "min_length_mm": 45,
+  "max_length_mm": 110,
+  "min_relative_area_good": 0.6,
+  "min_relative_area_moderate": 0.4,
+  "max_elongation_good": 1.9,
+  "max_elongation_moderate": 2.4,
+  "min_solidity_good": 0.93,
+  "min_solidity_moderate": 0.86,
+  "max_dark_pct_good": 1.0,
+  "max_dark_pct_moderate": 4.0,
+  "max_green_pct_good": 0.5,
+  "max_green_pct_moderate": 3.0
+}
