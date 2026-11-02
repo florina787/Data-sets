@@ -1,6 +1,6 @@
-# The Hangar With No Internet: How Aerospace Maintenance Keeps Running When the Network Doesn't
+# Keep Aircraft Flying, Revenue Protected and Costs Down — Even With No Internet
 
-### A night shift at a remote base, a degrading hydraulic pump, a late supplier — and an AI system that never sends a byte off the machine.
+### How an offline, governed AI copilot spots failing parts before they ground aircraft, finds the cheapest way around a late supplier (28% fewer deferred labour hours in one simulated case), and keeps every cost decision with a human — without sending a byte off the machine.
 
 *All facilities, suppliers, aircraft and numbers in this story come from Flying Florina, my open concept demo, which runs on a fixed-seed synthetic dataset. The situations are illustrative; the numbers are what the software actually computed.*
 
