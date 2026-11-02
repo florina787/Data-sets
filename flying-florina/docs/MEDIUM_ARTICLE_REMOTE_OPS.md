@@ -1,6 +1,6 @@
-# Keep Aircraft Flying, Revenue Protected and Costs Down — Even With No Internet
+# It Saw the Failing Pump First, Cut the Delay Damage by 28%, and Blocked Every Attack — With No Internet
 
-### How an offline, governed AI copilot spots failing parts before they ground aircraft, finds the cheapest way around a late supplier (28% fewer deferred labour hours in one simulated case), and keeps every cost decision with a human — without sending a byte off the machine.
+### An offline AI copilot for aircraft maintenance: it flagged a hydraulic pump at 69% failure risk before it could ground an aircraft, warned of an 85% chance of running out of parts, found the option with 28% less delayed maintenance work, and stopped 3 out of 3 attempts to leak data or hijack it. Zero bytes left the machine. Humans still make every safety call.
 
 *All facilities, suppliers, aircraft and numbers in this story come from Flying Florina, my open concept demo, which runs on a fixed-seed synthetic dataset. The situations are illustrative; the numbers are what the software actually computed.*
 
