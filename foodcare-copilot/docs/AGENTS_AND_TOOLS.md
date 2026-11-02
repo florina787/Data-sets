@@ -9,7 +9,7 @@
 | Tools (read-only) | `sales_summary`, `campaign_performance`, `campaign_stock_risk`, `live_storefront_orders`, `inventory_status`, `compliance_check`, `product_record`, `executive_overview`, `evaluate_gates`, `get_incident`, `search_documents` |
 | Output | `answer` (markdown with `[S#]` citations), `sources[]` (id, kind, label, ref, detail), `tool_calls[]`, `intents`, `entities`, `mode`, `provenance` (*deterministic* or *live_ai*), `notice`, `follow_ups`, `read_only: true` |
 | Guarantees | Every cited ID exists in `sources`; numbers come only from tool results (tested); out-of-scope questions return `answered: false` with no sources; action requests are refused |
-| LIVE | Claude receives the deterministic facts and source list as data, returns `{answer, cited_source_ids}` via `messages.parse`, and any citation outside the provided sources is rejected. If LIVE is unavailable, out of budget or fails validation, the deterministic answer is returned **with a notice saying so** |
+| LIVE | The local model (OpenAI-compatible server, e.g. Qwen via Ollama) receives the deterministic facts, a bounded slice of the conversation and the source list as data, returns `{answer, cited_source_ids}` as schema-constrained JSON, and any citation outside the provided sources is rejected. If LIVE is unavailable, out of budget or fails validation, the deterministic answer is returned **with a notice saying so** |
 
 
 Agents are LangGraph nodes (`backend/app/agents/nodes.py`). In DEMO mode they are deterministic. Every visible output is a concise activity summary with a provenance label. No model chain-of-thought is stored or shown.

@@ -17,7 +17,9 @@
 | **Product compliance** | Every channel listing compared field by field with the approved ingredient and allergen record; seeded issues include a retail feed that dropped "oats (gluten)" | synthetic records and listings |
 | **Digital delivery** | The original workspace: brief → clarification → requirements → design → code → tests → release approval → local deployment → incident → repair, with real git, pytest, process deployments and telemetry | real tools on a demo app |
 
-The copilot runs without an API key. Answers are deterministic and labelled as such. In optional LIVE mode, Claude writes the answer from the **same** tool results, and its citations are validated against the sources actually provided.
+The copilot runs without an API key. Answers are deterministic and labelled as such. In optional LIVE mode, a **local model you already run** (for example Qwen through Ollama or LM Studio) writes the answer from the **same** tool results, and its citations are validated against the sources actually provided. No model is downloaded or started by FoodCare, and no external AI API is used.
+
+Conversations are saved in a local SQLite memory store (`var/memory/memory.db`, kept across *Reset Demo*), so they can be searched, resumed and deleted. Short follow-ups such as *"What about Quebec?"* reuse the topic of the previous answer. See [docs/LOCAL_LLM_AND_MEMORY.md](docs/LOCAL_LLM_AND_MEMORY.md).
 
 ### The delivery workspace: three verified episodes
 
@@ -78,7 +80,7 @@ Every artifact in the UI carries one provenance label:
 | Live AI output | Only when LIVE mode is configured | Brief Analyst / Requirements Agent |
 | Injected fault (demo) | The demo fault control | inventory timeout |
 
-**LIVE mode is optional.** Set `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` (no model name is hardcoded). The Brief Analyst and the Requirements Agent then call Claude server-side and validate the output against a Pydantic schema. Without credentials, a LIVE run fails visibly; scripted output is never substituted. LIVE runs stop before implementation because live-generated patches are not executed (no container sandbox is configured). See [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md).
+**LIVE mode is optional.** Point `FOODCARE_LLM_BASE_URL` and `FOODCARE_LLM_MODEL` at an OpenAI-compatible model server that is already running on your machine, e.g. `FOODCARE_LLM_BASE_URL=http://127.0.0.1:11434/v1 FOODCARE_LLM_MODEL=qwen2.5:7b-instruct scripts/start.sh` for Ollama (no model name is hardcoded). The copilot, the Brief Analyst and the Requirements Agent then call that local model server-side and validate the output against a Pydantic schema. Without that configuration, a LIVE run fails visibly; scripted output is never substituted. LIVE runs stop before implementation because live-generated patches are not executed (no container sandbox is configured). See [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md).
 
 ## Architecture in one paragraph
 
@@ -112,6 +114,7 @@ scripts/                 setup / start / reset / test / patch regeneration
 * [Scenario guide](docs/SCENARIO_GUIDE.md)
 * [Security and sandbox](docs/SECURITY_AND_SANDBOX.md)
 * [Test results](docs/TEST_RESULTS.md) and [screenshots](docs/screenshots/)
+* [Local model (Qwen) and persistent memory](docs/LOCAL_LLM_AND_MEMORY.md)
 * [Production gaps](docs/PRODUCTION_GAPS.md)
 * [Implementation status](docs/IMPLEMENTATION_STATUS.md)
 * [LinkedIn demo script and post](docs/LINKEDIN.md)

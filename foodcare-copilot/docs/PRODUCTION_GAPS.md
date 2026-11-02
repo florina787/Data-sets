@@ -20,6 +20,6 @@ This is a single-machine portfolio prototype. Before any real use it would need:
 | LIVE AI | Two advisory agents, call budget, schema validation | Evaluation suite, red-teaming, cost and latency monitoring, data governance review |
 | Accessibility | Semantic HTML, focus styles, reduced motion, role and label queries | WCAG 2.2 AA audit with assistive-technology testing |
 | Enterprise data | Deterministic synthetic dataset | Governed connectors to ERP/POS/WMS/PIM, data contracts, freshness SLAs, row-level security |
-| Copilot | Keyword router + templates (DEMO), Claude prose over validated facts (LIVE) | Semantic routing with evaluation sets, per-role data permissions, answer-quality monitoring, red-teaming |
+| Copilot | Keyword router + templates (DEMO), local-model prose over validated facts (LIVE) | Semantic routing with evaluation sets, per-role data permissions, answer-quality monitoring, red-teaming |
 | Analytics | Before/after uplift, heuristic stock projection | Causal promotion measurement (holdouts, MMM), statistical demand forecasting |
 | Localisation | English only | en-CA / fr-CA content (see the multilingual template) |

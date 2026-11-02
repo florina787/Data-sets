@@ -42,6 +42,7 @@ PERMISSIONS: dict[str, set[str]] = {
     "fault.inject": {"engineer"},
     "traffic.generate": {"engineer"},
     "demo.control": {"engineer", "release_approver", "product_owner", "marketing"},
+    "memory.admin": {"engineer", "release_approver"},
 }
 
 

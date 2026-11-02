@@ -38,7 +38,7 @@ function NewBrief() {
           <legend className="label mb-1">Mode</legend>
           <label className="flex items-center gap-1"><input type="radio" name="mode" checked={mode === "demo"} onChange={() => setMode("demo")} /> DEMO (deterministic, no API key)</label>
           <label className={`flex items-center gap-1 ${liveOk ? "" : "text-navy-600"}`}>
-            <input type="radio" name="mode" checked={mode === "live"} onChange={() => setMode("live")} /> LIVE (Anthropic)
+            <input type="radio" name="mode" checked={mode === "live"} onChange={() => setMode("live")} /> LIVE (local model)
           </label>
           {!liveOk && <span className="text-xs text-navy-600">{system?.live_mode?.reason}. A LIVE run fails visibly at analysis; no scripted output is substituted.</span>}
         </fieldset>

@@ -160,7 +160,7 @@ def test_live_mode_without_credentials_fails_visibly(platform):
     run_id = delivery.create_run(user("maya.marketing"), "live", BRIEF, "live")
     with pytest.raises(LiveModeUnavailable):
         flows.advance(run_id, "delivery", mode="live")
-    assert "ANTHROPIC_API_KEY" in delivery.get_run(run_id)["error"]
+    assert "FOODCARE_LLM_BASE_URL" in delivery.get_run(run_id)["error"]
     assert not delivery.list_clarifications(run_id)
 
 

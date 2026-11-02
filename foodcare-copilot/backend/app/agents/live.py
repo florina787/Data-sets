@@ -1,6 +1,7 @@
-"""Optional LIVE mode: server-side Anthropic calls with validated structured output.
+"""Optional LIVE mode: calls to the local model server with validated structured output.
 
-* Requires ANTHROPIC_API_KEY *and* ANTHROPIC_MODEL. No model name is hardcoded.
+* Requires FOODCARE_LLM_BASE_URL *and* FOODCARE_LLM_MODEL (an OpenAI-compatible server
+  that is already running locally). No model name is hardcoded; nothing is downloaded.
 * Missing configuration fails visibly (LiveModeUnavailable); scripted output is
   never substituted and labelled as live.
 * Every response is validated against a Pydantic schema before use.
@@ -13,11 +14,11 @@ from __future__ import annotations
 
 from typing import TypeVar
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field
 
 from app.config import get_settings
 from app.db import row, session
-from app.errors import LiveModeUnavailable, PlatformError
+from app.errors import PlatformError
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -60,61 +61,25 @@ class LiveRequirementSet(BaseModel):
 
 class LiveClient:
     def __init__(self) -> None:
-        settings = get_settings()
-        if not settings.anthropic_api_key or not settings.anthropic_model:
-            raise LiveModeUnavailable(
-                "LIVE mode needs ANTHROPIC_API_KEY and ANTHROPIC_MODEL in the backend environment. "
-                "No scripted output is substituted; use DEMO mode instead."
-            )
-        import anthropic  # imported lazily: DEMO mode never loads the SDK
+        from app.llm.local import get_llm
 
-        self._anthropic = anthropic
-        self.model = settings.anthropic_model
-        self.max_tokens = settings.llm_max_tokens
-        self.client = anthropic.Anthropic(
-            api_key=settings.anthropic_api_key, timeout=settings.llm_timeout_s, max_retries=1
-        )
+        self.llm = get_llm()  # raises LiveModeUnavailable when not configured
 
-    def structured(self, run_id: str | None, prompt: str, schema: type[T]) -> tuple[T, dict]:
+    def structured(self, run_id: str | None, prompt: str, schema: type[T],
+                   request_id: str | None = None) -> tuple[T, dict]:
         """Validated structured call. ``run_id`` charges the per-run call budget (copilot
         calls pass None and enforce their own per-conversation budget)."""
         settings = get_settings()
-        if run_id is None:
-            return self._call(prompt, schema)
-        with session() as conn:
-            updated = conn.execute(
-                "UPDATE runs SET llm_calls = llm_calls + 1 WHERE id = ? AND llm_calls < ?",
-                (run_id, settings.llm_max_calls_per_run),
-            ).rowcount
-        if not updated:
-            used = row("SELECT llm_calls FROM runs WHERE id = ?", (run_id,))
-            raise PlatformError("LLM call budget for this run is exhausted", used=used and used["llm_calls"])
-        return self._call(prompt, schema)
-
-    def _call(self, prompt: str, schema: type[T]) -> tuple[T, dict]:
-        try:
-            response = self.client.messages.parse(
-                model=self.model,
-                max_tokens=self.max_tokens,
-                system=SYSTEM,
-                messages=[{"role": "user", "content": prompt}],
-                output_format=schema,
-            )
-        except self._anthropic.APIConnectionError as exc:
-            raise LiveModeUnavailable(f"Could not reach the Anthropic API: {exc}") from exc
-        except self._anthropic.APIStatusError as exc:
-            raise LiveModeUnavailable(f"Anthropic API error {exc.status_code}: {exc.message}") from exc
-        if response.stop_reason == "refusal":
-            raise PlatformError("The model declined this request", stop_reason="refusal")
-        if response.stop_reason == "max_tokens":
-            raise PlatformError("Model output was truncated (max_tokens); not used")
-        try:
-            parsed = schema.model_validate(response.parsed_output.model_dump())
-        except (ValidationError, AttributeError) as exc:
-            raise PlatformError("Model output failed schema validation", error=str(exc)[:500]) from exc
-        usage = {"model": response.model, "input_tokens": response.usage.input_tokens,
-                 "output_tokens": response.usage.output_tokens, "request_id": response._request_id}
-        return parsed, usage
+        if run_id is not None:
+            with session() as conn:
+                updated = conn.execute(
+                    "UPDATE runs SET llm_calls = llm_calls + 1 WHERE id = ? AND llm_calls < ?",
+                    (run_id, settings.llm_max_calls_per_run),
+                ).rowcount
+            if not updated:
+                used = row("SELECT llm_calls FROM runs WHERE id = ?", (run_id,))
+                raise PlatformError("LLM call budget for this run is exhausted", used=used and used["llm_calls"])
+        return self.llm.structured(SYSTEM, prompt, schema, request_id)
 
 
 def analyse_brief(run_id: str, brief_text: str) -> tuple[LiveBriefAnalysis, dict]:

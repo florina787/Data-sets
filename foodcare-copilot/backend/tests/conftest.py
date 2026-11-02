@@ -17,8 +17,9 @@ from app import config  # noqa: E402
 @pytest.fixture()
 def platform(tmp_path, monkeypatch):
     """Fresh database, accounts, inventory simulator and storefront repository."""
+    defaults = config.get_settings()
     config.configure(var_dir=tmp_path / "var", api_port=18700, storefront_port=18801,
-                     anthropic_api_key=None, anthropic_model=None)
+                     llm_base_url=None, llm_model=None)
     from app import auth, db
     from app.graph import flows
     from app.services import delivery
@@ -36,6 +37,8 @@ def platform(tmp_path, monkeypatch):
 
     deploy.stop_current()
     flows.reset_graphs()
+    config.configure(**{f: getattr(defaults, f) for f in ("memory_summary_after", "memory_context_turns",
+                                                          "llm_base_url", "llm_model")})
 
 
 def user(username: str):

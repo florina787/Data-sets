@@ -29,7 +29,7 @@ For arbitrary generated code, run each test execution in a container with no net
 
 * All data is synthetic. Customer identities are fixtures (`cust-*-demo` tokens). The payment processor is a mock (`tok_demo_ok` / `tok_demo_decline`).
 * Audit and evidence tables are only ever appended to through the application. SQLite is not tamper-proof, and no cryptographic integrity is claimed.
-* `ANTHROPIC_API_KEY` is read only by the backend (LIVE mode) and is never passed to tool or storefront processes.
+* `FOODCARE_LLM_API_KEY` (optional, for local servers that require one) is read only by the backend and is never passed to tool or storefront processes. The local model endpoint is called server-side only and is never exposed to the browser.
 
 ## Prompt-injection posture
 

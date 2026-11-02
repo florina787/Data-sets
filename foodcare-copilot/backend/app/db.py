@@ -13,6 +13,7 @@ import threading
 import uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Iterator
 
 from app.config import get_settings
@@ -169,8 +170,9 @@ def canonical_json(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), default=str)
 
 
-def connect() -> sqlite3.Connection:
-    path = get_settings().db_path
+def connect(path: Path | None = None) -> sqlite3.Connection:
+    """Open a connection to the platform database, or to ``path`` (the memory store)."""
+    path = path or get_settings().db_path
     path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(path, timeout=15, isolation_level=None, check_same_thread=False)
     conn.row_factory = sqlite3.Row
@@ -189,8 +191,8 @@ def init_db() -> None:
 
 
 @contextmanager
-def session() -> Iterator[sqlite3.Connection]:
-    conn = connect()
+def session(path: Path | None = None) -> Iterator[sqlite3.Connection]:
+    conn = connect(path)
     try:
         yield conn
     finally:
@@ -198,8 +200,8 @@ def session() -> Iterator[sqlite3.Connection]:
 
 
 @contextmanager
-def tx() -> Iterator[sqlite3.Connection]:
-    conn = connect()
+def tx(path: Path | None = None) -> Iterator[sqlite3.Connection]:
+    conn = connect(path)
     try:
         conn.execute("BEGIN IMMEDIATE")
         try:

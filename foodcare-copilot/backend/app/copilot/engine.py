@@ -1,16 +1,21 @@
 """Answer composition. Every number in an answer comes from a tool result and is cited.
 
 DEMO mode composes the answer from templates over tool results (labelled
-"Deterministic answer"). LIVE mode gives the same tool results to Claude, which
-writes the prose; its citations are validated against the sources provided.
-The copilot is read-only: it never performs workflow actions.
+"Deterministic answer"). LIVE mode gives the same tool results to the local
+model, which writes the prose; its citations are validated against the sources
+provided. The copilot is read-only: it never performs workflow actions.
+
+Conversations persist in the memory store. A short follow-up ("What about
+Quebec?") reuses the intents and entities of the previous answer; only a bounded
+context window is ever passed to the model, never the whole history.
 """
 
 from __future__ import annotations
 
-import json
 import re
-import uuid
+import threading
+import time
+from dataclasses import replace
 from typing import Callable
 
 from pydantic import BaseModel, Field
@@ -18,9 +23,10 @@ from pydantic import BaseModel, Field
 from app.auth import User
 from app.config import get_settings
 from app.copilot.router import Parsed, parse
-from app.db import kv_get, now_iso, row, rows, session
+from app.db import kv_get, new_id, now_iso, row, rows
 from app.enterprise import queries as q
-from app.errors import PlatformError
+from app.errors import NotFound, PlatformError
+from app.memory.store import CONVERSATION_ID, get_store, new_conversation_id
 from app.services import delivery, incidents
 from app.tools.retrieval import get_index
 
@@ -53,9 +59,17 @@ class Ctx:
         self.tool_calls: list[dict] = []
 
     def call(self, tool: str, fn: Callable, **args):
-        result = fn(**args)
-        self.tool_calls.append({"tool": tool, "args": {k: v for k, v in args.items() if v not in (None, [], "")}})
-        return result
+        entry = {"tool": tool, "args": {k: v for k, v in args.items() if v not in (None, [], "")},
+                 "started_at": now_iso(), "status": "ok"}
+        started = time.perf_counter()
+        try:
+            return fn(**args)
+        except Exception as exc:
+            entry.update(status="error", error=str(exc)[:300])
+            raise
+        finally:
+            entry["duration_ms"] = round((time.perf_counter() - started) * 1000, 2)
+            self.tool_calls.append(entry)
 
     def cite(self, *sources: dict) -> str:
         marks = []
@@ -311,6 +325,29 @@ HANDLERS = {"sales": h_sales, "campaign": h_campaign, "inventory": h_inventory, 
             "help": h_help}
 
 
+FOLLOW_UP = re.compile(r"^\s*(and|what about|how about|same for|and for|what of|now for)\b", re.IGNORECASE)
+ENTITY_KEYS = ("skus", "provinces", "warehouses", "channels")
+
+
+def apply_follow_up(p: Parsed, previous: dict) -> tuple[Parsed, bool]:
+    """Resolve a short follow-up against the previous answer's intents and entities.
+
+    Only applies when the new question names no topic of its own (no keyword-scored
+    intent) and is either phrased as a follow-up or is short and names an entity.
+    """
+    prev_intents = [i for i in previous.get("intents", []) if i in HANDLERS]
+    if not prev_intents or any(p.scores.values()):
+        return p, False
+    named = any(getattr(p, k) for k in ENTITY_KEYS) or re.search(r"\bweeks?\b", p.question.lower())
+    if not (FOLLOW_UP.match(p.question) or (named and len(p.question.split()) <= 8)):
+        return p, False
+    prev = previous.get("entities", {})
+    merged = {k: getattr(p, k) or list(prev.get(k, [])) for k in ENTITY_KEYS}
+    weeks = p.weeks if re.search(r"\bweeks?\b|quarter|months?", p.question.lower()) else prev.get("weeks", p.weeks)
+    return replace(p, intents=prev_intents, weeks=weeks, run_id=p.run_id or prev.get("run_id"),
+                   incident_id=p.incident_id or prev.get("incident_id"), **merged), True
+
+
 def compose(p: Parsed) -> tuple[list[str], Ctx, list[str]]:
     c = Ctx()
     paragraphs: list[str] = []
@@ -335,32 +372,81 @@ class LiveAnswer(BaseModel):
     cited_source_ids: list[str] = Field(max_length=20)
 
 
-def _live_answer(question: str, draft: list[str], c: Ctx) -> tuple[str, dict]:
+def _live_answer(question: str, draft: list[str], c: Ctx, window: dict,
+                 request_id: str | None = None) -> tuple[str, dict]:
     from app.agents import live
 
+    settings = get_settings()
     sources = "\n".join(f"[{s['id']}] {s['label']} ({s['ref']}) {s.get('detail', '')}" for s in c.sources)
+    earlier = "\n".join(f"{m['role']}: {m['content'][:300]}" for m in window.get("recent", []))
+    if window.get("summary"):
+        earlier = window["summary"] + "\n" + earlier
+    facts = "\n".join(draft)
+    budget = settings.llm_max_prompt_chars - len(sources) - len(question) - 900
+    earlier = earlier[-max(0, min(len(earlier), budget // 4)):] if earlier else ""
+    facts = facts[:max(500, budget - len(earlier))]
     prompt = (
         "Answer the user's question for FoodCare's leadership using ONLY the facts below. Cite sources inline as "
         "[S1], [S2] using only the listed IDs. Keep every number exactly as given. If the facts do not answer "
-        "the question, say so. Keep it concise.\n"
-        f"<untrusted_question>\n{question}\n</untrusted_question>\n"
-        f"<facts>\n{chr(10).join(draft)}\n</facts>\n<sources>\n{sources}\n</sources>"
+        "the question, say so. Keep it concise. Reply as JSON with keys answer and cited_source_ids.\n"
+        + (f"<earlier_conversation>\n{earlier}\n</earlier_conversation>\n" if earlier else "")
+        + f"<untrusted_question>\n{question}\n</untrusted_question>\n"
+        f"<facts>\n{facts}\n</facts>\n<sources>\n{sources}\n</sources>"
     )
-    result, usage = live.LiveClient().structured(None, prompt, LiveAnswer)
+    started = now_iso()
+    t0 = time.perf_counter()
+    try:
+        result, usage = live.LiveClient().structured(None, prompt, LiveAnswer, request_id)
+    except PlatformError as exc:
+        c.tool_calls.append({"tool": "local_llm.answer", "args": {"prompt_chars": len(prompt)}, "status": "error",
+                             "started_at": started, "error": exc.message[:300],
+                             "duration_ms": round((time.perf_counter() - t0) * 1000, 2)})
+        raise
+    c.tool_calls.append({"tool": "local_llm.answer", "args": {"prompt_chars": len(prompt)}, "status": "ok",
+                         "started_at": started, "duration_ms": round((time.perf_counter() - t0) * 1000, 2),
+                         "cached": usage.get("cached", False)})
     allowed = {s["id"] for s in c.sources}
     used = set(re.findall(r"\[(S\d+)\]", result.answer)) | set(result.cited_source_ids)
     if not used <= allowed:
         raise PlatformError("Live answer cited sources that were not provided", invalid=sorted(used - allowed))
+    if not used and c.sources:
+        raise PlatformError("Live answer did not cite any source")
     return result.answer, usage
 
 
-def ask(question: str, user: User, conversation_id: str | None = None, mode: str = "demo") -> dict:
+_active_requests: dict[str, str] = {}
+_active_lock = threading.Lock()
+
+
+def cancel(request_id: str, username: str) -> bool:
+    """Cancel the caller's own in-flight LIVE answer (closes the model stream)."""
+    from app.llm import local
+
+    with _active_lock:
+        if _active_requests.get(request_id) != username:
+            return False
+    return local.cancel(request_id)
+
+
+def ask(question: str, user: User, conversation_id: str | None = None, mode: str = "demo",
+        request_id: str | None = None) -> dict:
     question = question.strip()
     if not question or len(question) > 500:
         raise PlatformError("Questions must be 1-500 characters")
-    conversation_id = conversation_id if conversation_id and re.fullmatch(r"CNV-[0-9A-F]{10}", conversation_id) \
-        else f"CNV-{uuid.uuid4().hex[:10].upper()}"
-    p = parse(question)
+    settings = get_settings()
+    store = get_store()
+    started_at, t0 = now_iso(), time.perf_counter()
+    window: dict = {"recent": [], "summary": None, "context": {}}
+    if conversation_id and CONVERSATION_ID.fullmatch(conversation_id):
+        owner = store.owner(conversation_id)
+        if owner is not None and owner != user.username:
+            raise NotFound("Conversation not found")
+        if owner:
+            window = store.context_window(conversation_id, user.username, settings.memory_context_turns)
+    else:
+        conversation_id = new_conversation_id()
+    previous = window["context"]
+    p, follow_up = apply_follow_up(parse(question), previous)
     paragraphs, c, intents = compose(p)
     answered = bool(paragraphs)
     if not answered:
@@ -369,39 +455,55 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
                       "policies, and I won't guess.",
                       "Try: " + "; ".join(f"“{e}”" for e in EXAMPLES[:5])]
     answer_mode, provenance, notice, usage = "demo", "deterministic", None, None
+    live_answers = int(previous.get("live_answers", 0))
     if mode == "live":
-        settings = get_settings()
-        live_count = row("SELECT COUNT(*) AS n FROM copilot_messages WHERE conversation_id = ? AND role = 'assistant'"
-                         " AND answer_json LIKE '%\"mode\": \"live\"%'", (conversation_id,))["n"]
         if not settings.live_available:
-            notice = ("LIVE mode is not configured (set ANTHROPIC_API_KEY and ANTHROPIC_MODEL). "
-                      "This is the deterministic answer.")
-        elif live_count >= settings.llm_max_calls_per_run * 3:
+            notice = ("LIVE mode is not configured (set FOODCARE_LLM_BASE_URL and FOODCARE_LLM_MODEL to the local "
+                      "model server). This is the deterministic answer.")
+        elif live_answers >= settings.llm_max_calls_per_run * 3:
             notice = "LIVE answer budget for this conversation is used up. This is the deterministic answer."
         elif answered:
+            if request_id:
+                with _active_lock:
+                    _active_requests[request_id] = user.username
             try:
-                text, usage = _live_answer(question, paragraphs, c)
+                text, usage = _live_answer(question, paragraphs, c, window, request_id)
                 paragraphs, answer_mode, provenance = [text], "live", "live_ai"
+                live_answers += 1
             except PlatformError as exc:
                 notice = f"LIVE answer unavailable ({exc.message}). This is the deterministic answer."
+            finally:
+                with _active_lock:
+                    _active_requests.pop(request_id or "", None)
+    if follow_up:
+        notice = ((notice + " ") if notice else "") + (
+            "Follow-up: used the topic of your previous question (" + ", ".join(intents) + ").")
     result = {
         "conversation_id": conversation_id, "question": question, "answered": answered,
         "answer": "\n\n".join(paragraphs), "sources": c.sources, "tool_calls": c.tool_calls,
         "intents": intents, "entities": p.entities(), "mode": answer_mode, "provenance": provenance,
-        "notice": notice, "usage": usage, "read_only": True,
+        "notice": notice, "usage": usage, "read_only": True, "follow_up": follow_up,
         "follow_ups": [e for e in EXAMPLES if e.lower() != question.lower()][:3],
     }
-    with session() as conn:
-        conn.execute("INSERT INTO copilot_messages (conversation_id, ts, role, username, content) VALUES (?, ?, 'user',"
-                     " ?, ?)", (conversation_id, now_iso(), user.username, question))
-        conn.execute("INSERT INTO copilot_messages (conversation_id, ts, role, username, content, answer_json) VALUES"
-                     " (?, ?, 'assistant', NULL, ?, ?)", (conversation_id, now_iso(), result["answer"],
-                                                          json.dumps(result, default=str)))
+    context = {"intents": intents if answered else previous.get("intents", []),
+               "entities": p.entities() if answered else previous.get("entities", {}),
+               "live_answers": live_answers}
+    store.save_turn(conversation_id, user.username, question, result["answer"], result, context)
+    agent_run_id = new_id("AGR")
+    result["agent_run_id"] = agent_run_id
+    store.record_agent_run({
+        "id": agent_run_id, "agent": "copilot.supervisor", "conversation_id": conversation_id,
+        "status": "ok" if answered else "declined", "started_at": started_at, "finished_at": now_iso(),
+        "duration_ms": round((time.perf_counter() - t0) * 1000, 2), "input_summary": question,
+        "output_summary": result["answer"][:500],
+        "detail": {"intents": intents, "mode": answer_mode, "follow_up": follow_up, "username": user.username},
+    }, c.tool_calls)
     return result
 
 
-def history(conversation_id: str) -> list[dict]:
-    items = rows("SELECT * FROM copilot_messages WHERE conversation_id = ? ORDER BY seq", (conversation_id,))
-    for item in items:
-        item["answer"] = json.loads(item.pop("answer_json")) if item.get("answer_json") else None
-    return items
+def history(conversation_id: str, username: str) -> list[dict]:
+    if get_store().owner(conversation_id) != username:
+        raise NotFound("Conversation not found")
+    return [{"seq": m["id"], "role": m["role"], "content": m["content"], "ts": m["created_at"],
+             "answer": m["meta"] if m["role"] == "assistant" else None}
+            for m in get_store().messages(conversation_id, username)]

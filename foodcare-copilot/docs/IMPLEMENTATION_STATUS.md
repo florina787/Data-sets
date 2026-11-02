@@ -9,7 +9,9 @@ Last updated: 2026-10-09.
 - [x] Executive overview, Sales & promotions, Inventory and Product compliance screens (charts with hover, table views, status labels)
 - [x] Measured promotion uplift (units and revenue), campaign stock-risk projection with stated assumptions, days-of-cover alerts, field-by-field listing compliance
 - [x] Ask Copilot: router, 11 read-only tools, cited answers, out-of-scope refusal, read-only refusal for actions, conversation history; drawer on every screen plus a full page
-- [x] LIVE copilot answers: Claude writes from the same facts, citations validated; labelled fallback notice when unavailable
+- [x] LIVE copilot answers: the local model writes from the same facts, citations validated; labelled fallback notice when unavailable
+- [x] Persistent conversation memory in SQLite: history, follow-ups, search, resume, delete, retention, backups and recovery
+- [x] Local model adapter: one shared client, bounded queue, timeout, cancellation, prompt cap, cache, status probe
 - [x] 20 backend tests for enterprise data and the copilot; Playwright test of the enterprise screens and copilot
 
 - [x] Deterministic commerce rules: eligibility, recompute, province, DST-safe window, no stacking, once per authenticated customer per campaign, reservation at order creation, idempotent checkout, mock payment failure handling, cancellation and allocated partial refunds
@@ -33,7 +35,7 @@ Last updated: 2026-10-09.
 
 ## Partially completed
 
-- [~] **LIVE mode.** The Brief Analyst and Requirements Agent call Anthropic through `messages.parse` with Pydantic validation, a call budget and a timeout. Missing credentials fail visibly (tested). Not exercised against the real API, because no key was available. LIVE runs stop before implementation: live requirements are not linked to the protected test suite, and live patches are not executed.
+- [~] **LIVE mode.** The copilot, Brief Analyst and Requirements Agent call the local model server with schema-constrained JSON, Pydantic validation, a call budget, a bounded queue and a timeout. Missing configuration fails visibly (tested). Tested against a mock OpenAI-compatible server only; not yet run against a real Qwen model. LIVE runs stop before implementation: live requirements are not linked to the protected test suite, and live patches are not executed.
 - [~] **Execution sandbox.** Restricted subprocess, not a container, because no container runtime was available. Mitigated by executing only trusted seeded patches.
 - [~] **Design Agent and Requirements Agent in DEMO mode** output seeded templates (labelled as fixtures) rather than generating content.
 - [~] **Accessibility.** Semantic landmarks, labelled controls, focus-visible styles, reduced-motion support and accessible chart text. Not audited with screen readers.

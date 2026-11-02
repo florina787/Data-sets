@@ -8,7 +8,7 @@ import warnings
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, Request
+from fastapi import Depends, FastAPI, Header, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -23,6 +23,9 @@ from app.enterprise import data as edata
 from app.enterprise import queries as equeries
 from app.errors import NotFound, PlatformError
 from app.graph import flows, jobs
+from app.llm import local as local_llm
+from app.memory import maintenance as memory_maintenance
+from app.memory.store import get_store
 from app.records import PROVENANCE, audit, list_activity
 from app.services import delivery, demo, incidents, system, views
 from app.tools import inventory_sim, telemetry, traffic, workspace
@@ -410,16 +413,79 @@ class AskBody(BaseModel):
     question: str = Field(min_length=1, max_length=500)
     conversation_id: str | None = Field(default=None, max_length=20)
     mode: str = Field(default="demo", pattern="^(demo|live)$")
+    request_id: str | None = Field(default=None, pattern="^[A-Za-z0-9-]{8,40}$")
 
 
 @app.post("/api/copilot/ask")
 def copilot_ask(body: AskBody, user: User = Depends(current_user)) -> dict:
-    return copilot.ask(body.question, user, body.conversation_id, body.mode)
+    return copilot.ask(body.question, user, body.conversation_id, body.mode, body.request_id)
+
+
+@app.post("/api/copilot/cancel/{request_id}")
+def copilot_cancel(request_id: str, user: User = Depends(current_user)) -> dict:
+    return {"request_id": request_id, "cancelled": copilot.cancel(request_id, user.username)}
+
+
+@app.get("/api/llm/status")
+def llm_status(user: User = Depends(current_user)) -> dict:
+    """Configuration, reachability (a model listing, which loads no weights), queue and latency."""
+    return local_llm.status()
+
+
+@app.get("/api/copilot/conversations")
+def copilot_conversations(limit: int = 50, user: User = Depends(current_user)) -> dict:
+    return {"conversations": get_store().list_conversations(user.username, limit)}
 
 
 @app.get("/api/copilot/conversations/{conversation_id}")
 def copilot_history(conversation_id: str, user: User = Depends(current_user)) -> dict:
-    return {"messages": copilot.history(conversation_id)}
+    return {"messages": copilot.history(conversation_id, user.username)}
+
+
+@app.delete("/api/copilot/conversations/{conversation_id}")
+def copilot_delete(conversation_id: str, user: User = Depends(current_user)) -> dict:
+    if not get_store().delete_conversation(conversation_id, user.username):
+        raise NotFound("Conversation not found")
+    audit(user.username, "memory.conversation.delete", entity_type="conversation", entity_id=conversation_id)
+    return {"deleted": conversation_id}
+
+
+@app.delete("/api/copilot/conversations")
+def copilot_delete_all(user: User = Depends(current_user)) -> dict:
+    deleted = get_store().delete_all(user.username)
+    audit(user.username, "memory.conversation.delete_all", entity_type="conversation", deleted=deleted)
+    return {"deleted": deleted}
+
+
+@app.get("/api/copilot/search")
+def copilot_search(q: str = Query(min_length=1, max_length=200), user: User = Depends(current_user)) -> dict:
+    return {"query": q, "results": get_store().search(user.username, q)}
+
+
+# --- memory and execution history ------------------------------------------------------
+
+@app.get("/api/memory/status")
+def memory_status(user: User = Depends(current_user)) -> dict:
+    s = get_settings()
+    return {"backend": s.memory_backend, "stats": get_store().stats(),
+            "retention_days": s.memory_retention_days, "context_turns": s.memory_context_turns,
+            "backups": [{"name": b.name, "bytes": b.stat().st_size} for b in memory_maintenance.list_backups()]}
+
+
+@app.post("/api/memory/backup")
+def memory_backup(user: User = Depends(current_user)) -> dict:
+    auth.require(user, "memory.admin", "memory")
+    result = memory_maintenance.backup()
+    audit(user.username, "memory.backup", entity_type="memory", path=result["path"], bytes=result["bytes"])
+    return result
+
+
+@app.get("/api/agents/runs")
+def agent_runs(limit: int = Query(default=50, ge=1, le=200), user: User = Depends(current_user)) -> dict:
+    runs = get_store().agent_runs(limit)
+    for r in runs:
+        r["tool_calls"] = get_store().tool_calls_for(r["id"])
+    return {"runs": runs}
 
 
 @app.get("/api/copilot/examples")

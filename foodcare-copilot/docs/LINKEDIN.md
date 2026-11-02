@@ -23,7 +23,7 @@ Screen-record at 1440 px wide. Run the guided demo first, so that the delivery r
 > 🥛 **Compliance**: every channel listing is checked against the approved allergen record. The copilot finds a retail feed missing "oats (gluten)".
 > 🚀 **Digital delivery with real evidence**: briefs are clarified before building; hash-locked pytest suites catch a seeded defect, then pass on the repaired commit; approvals are bound to the exact commit; a labelled fault drill runs from incident to rollback to verified repair.
 >
-> Stack: FastAPI, LangGraph (checkpoints and human-in-the-loop), SQLite, React/TypeScript/Vite/Tailwind, pytest, Playwright. Optional Claude mode writes copilot answers from the same facts, with validated citations. The demo runs with no API key.
+> Stack: FastAPI, LangGraph (checkpoints and human-in-the-loop), SQLite, React/TypeScript/Vite/Tailwind, pytest, Playwright. Optional local-model mode writes copilot answers from the same facts, with validated citations. The demo runs with no API key.
 >
 > What it isn't: production software, real company data, or a replacement for analysts and engineers. The docs list the production gaps.
 >

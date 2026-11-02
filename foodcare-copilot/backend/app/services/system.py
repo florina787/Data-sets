@@ -11,6 +11,7 @@ from app.db import init_db, kv_set, row
 from app.enterprise import data as enterprise_data
 from app.errors import Conflict
 from app.graph import flows, jobs
+from app.memory import maintenance as memory_maintenance
 from app.records import activity, audit
 from app.services import delivery, incidents
 from app.tools import deploy as deployer
@@ -24,6 +25,8 @@ def reset_demo(actor: str = "system") -> dict:
     flows.reset_graphs()
     if settings.var_dir.exists():
         for child in settings.var_dir.iterdir():
+            if child == settings.memory_dir:
+                continue  # conversation memory and execution history survive a demo reset
             shutil.rmtree(child) if child.is_dir() else child.unlink()
     settings.var_dir.mkdir(parents=True, exist_ok=True)
     init_db()
@@ -40,6 +43,9 @@ def reset_demo(actor: str = "system") -> dict:
 
 def startup() -> None:
     init_db()
+    memory_report = memory_maintenance.startup()
+    if memory_report.get("recovered"):
+        audit("startup", "memory.recovered", entity_type="memory", **memory_report)
     jobs.mark_interrupted()
     incomplete = (row("SELECT 1 FROM users LIMIT 1") is None or delivery.current_release() is None
                   or not (get_settings().storefront_repo / ".git").exists())

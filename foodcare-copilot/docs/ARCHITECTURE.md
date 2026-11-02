@@ -15,7 +15,7 @@ flowchart LR
   T --> LV[live storefront orders<br/>inventory simulator]
   SA & IN & CO & DL & IC & DOC & LV --> C[Composer<br/>every figure cited as S#]
   C -->|DEMO| A[Deterministic answer]
-  C -->|LIVE optional| L[Claude writes prose from the same facts<br/>citations validated against provided sources]
+  C -->|LIVE optional| L[Local model writes prose from the same facts<br/>citations validated against provided sources]
   L --> A
 ```
 
@@ -46,7 +46,7 @@ flowchart LR
     SIM[Inventory simulator<br/>+ demo fault switch]
     TEL[Telemetry ingest + queries]
     RET[BM25 retrieval<br/>versioned docs]
-    LLM[Optional LIVE: Anthropic<br/>validated structured output]
+    LLM[Optional LIVE: existing local model server<br/>validated structured output]
   end
   subgraph Tools["Fixed-argv tools (no shell for agents)"]
     GIT[git worktree / apply / diff / archive]

@@ -51,10 +51,7 @@ CREATE TABLE IF NOT EXISTS ent_listings (
     allergens_json TEXT NOT NULL, updated_at TEXT NOT NULL, note TEXT,
     PRIMARY KEY (sku, channel)
 );
-CREATE TABLE IF NOT EXISTS copilot_messages (
-    seq INTEGER PRIMARY KEY AUTOINCREMENT, conversation_id TEXT NOT NULL, ts TEXT NOT NULL, role TEXT NOT NULL,
-    username TEXT, content TEXT NOT NULL, answer_json TEXT
-);
+DROP TABLE IF EXISTS copilot_messages; -- superseded by the memory store (app/memory)
 """
 
 AS_OF = "2026-10-26"  # stock snapshot date (start of the demo week)
@@ -118,7 +115,7 @@ def seed() -> None:
         conn.executescript(SCHEMA)
         conn.execute("BEGIN")
         for table in ("ent_products", "ent_sales_weekly", "ent_campaigns", "ent_warehouses", "ent_stock",
-                      "ent_inbound", "ent_product_records", "ent_listings", "copilot_messages"):
+                      "ent_inbound", "ent_product_records", "ent_listings"):
             conn.execute(f"DELETE FROM {table}")
         conn.executemany("INSERT INTO ent_products VALUES (?, ?, ?, ?, ?)",
                          [(p["sku"], p["name"], p["brand"], p["category"], p["price_cents"]) for p in cfg["products"]])

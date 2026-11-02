@@ -18,11 +18,26 @@ class Settings:
     storefront_port: int = int(os.environ.get("FOODCARE_STOREFRONT_PORT", "8801"))
     demo_clock: str = os.environ.get("FOODCARE_DEMO_CLOCK", "2026-10-31T12:00:00-04:00")
     default_mode: str = os.environ.get("FOODCARE_MODE", "demo")
-    anthropic_api_key: str | None = os.environ.get("ANTHROPIC_API_KEY") or None
-    anthropic_model: str | None = os.environ.get("ANTHROPIC_MODEL") or None
-    llm_max_tokens: int = int(os.environ.get("FOODCARE_LLM_MAX_TOKENS", "4000"))
+    # Local LLM: an OpenAI-compatible server that is already running on this machine
+    # (Ollama, LM Studio, llama.cpp llama-server, MLX). Nothing is downloaded or started.
+    llm_base_url: str | None = (os.environ.get("FOODCARE_LLM_BASE_URL") or "").rstrip("/") or None
+    llm_model: str | None = os.environ.get("FOODCARE_LLM_MODEL") or None
+    llm_api_key: str | None = os.environ.get("FOODCARE_LLM_API_KEY") or None
+    llm_response_format: str = os.environ.get("FOODCARE_LLM_RESPONSE_FORMAT", "json_schema")
+    llm_max_tokens: int = int(os.environ.get("FOODCARE_LLM_MAX_TOKENS", "800"))
+    llm_max_prompt_chars: int = int(os.environ.get("FOODCARE_LLM_MAX_PROMPT_CHARS", "6000"))
     llm_max_calls_per_run: int = int(os.environ.get("FOODCARE_LLM_MAX_CALLS_PER_RUN", "6"))
     llm_timeout_s: float = float(os.environ.get("FOODCARE_LLM_TIMEOUT_S", "60"))
+    llm_concurrency: int = int(os.environ.get("FOODCARE_LLM_CONCURRENCY", "1"))
+    llm_queue_size: int = int(os.environ.get("FOODCARE_LLM_QUEUE_SIZE", "4"))
+    llm_queue_wait_s: float = float(os.environ.get("FOODCARE_LLM_QUEUE_WAIT_S", "20"))
+    llm_cache_entries: int = int(os.environ.get("FOODCARE_LLM_CACHE_ENTRIES", "64"))
+    memory_backend: str = os.environ.get("FOODCARE_MEMORY_BACKEND", "sqlite")
+    memory_retention_days: int = int(os.environ.get("FOODCARE_MEMORY_RETENTION_DAYS", "180"))
+    memory_backups_kept: int = int(os.environ.get("FOODCARE_MEMORY_BACKUPS_KEPT", "5"))
+    memory_backup_interval_h: float = float(os.environ.get("FOODCARE_MEMORY_BACKUP_INTERVAL_H", "24"))
+    memory_context_turns: int = int(os.environ.get("FOODCARE_MEMORY_CONTEXT_TURNS", "3"))
+    memory_summary_after: int = int(os.environ.get("FOODCARE_MEMORY_SUMMARY_AFTER", "20"))
     tool_timeout_s: int = int(os.environ.get("FOODCARE_TOOL_TIMEOUT_S", "180"))
     tool_output_limit: int = 200_000
     max_repair_attempts: int = 1
@@ -36,6 +51,15 @@ class Settings:
     @property
     def db_path(self) -> Path:
         return self.var_dir / "platform.db"
+
+    @property
+    def memory_dir(self) -> Path:
+        """Conversation memory and execution history. Kept across "Reset Demo"."""
+        return self.var_dir / "memory"
+
+    @property
+    def memory_db_path(self) -> Path:
+        return self.memory_dir / "memory.db"
 
     @property
     def checkpoint_path(self) -> Path:
@@ -87,7 +111,7 @@ class Settings:
 
     @property
     def live_available(self) -> bool:
-        return bool(self.anthropic_api_key and self.anthropic_model)
+        return bool(self.llm_base_url and self.llm_model)
 
 
 _settings = Settings()

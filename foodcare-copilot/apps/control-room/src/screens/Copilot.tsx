@@ -7,8 +7,10 @@ type Source = { id: string; kind: string; label: string; ref: string; detail?: s
 type Answer = {
   conversation_id: string; question: string; answer: string; sources: Source[]; answered: boolean;
   tool_calls: { tool: string; args: Record<string, unknown> }[]; intents: string[]; entities: Record<string, unknown>;
-  mode: string; provenance: string; notice: string | null; follow_ups: string[];
+  mode: string; provenance: string; notice: string | null; follow_ups: string[]; follow_up?: boolean;
 };
+type Summary = { id: string; title: string; updated_at: string; message_count: number };
+type Hit = { message_id: number; conversation_id: string; title: string; snippet: string; created_at: string };
 type Turn = { question: string; answer?: Answer; error?: string };
 
 const OPEN_EVENT = "copilot:ask";
@@ -67,7 +69,7 @@ function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
       <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
         <span className="font-semibold text-navy-800">Copilot</span>
         <Provenance kind={a.provenance} />
-        <span className="text-navy-600">{a.mode === "live" ? "Written by Claude from the cited data" : "Deterministic answer from read-only queries"}</span>
+        <span className="text-navy-600">{a.mode === "live" ? "Written by the local model from the cited data" : "Deterministic answer from read-only queries"}</span>
       </div>
       {a.notice && <p className="mb-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-700">{a.notice}</p>}
       <Rich text={a.answer} sources={a.sources} onCite={setFocus} />
@@ -100,12 +102,16 @@ function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
   );
 }
 
-export function Conversation({ pending, onConsumed, compact = false }: { pending?: string | null; onConsumed?: () => void; compact?: boolean }) {
+export function Conversation({ pending, onConsumed, compact = false, resume, onSaved }: {
+  pending?: string | null; onConsumed?: () => void; compact?: boolean;
+  resume?: { id: string | null; nonce: number }; onSaved?: (conversationId: string) => void;
+}) {
   const { user, system } = useApp();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [conversation, setConversation] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [requestId, setRequestId] = useState<string | null>(null);
   const [mode, setMode] = useState("demo");
   const [examples, setExamples] = useState<string[]>([]);
   const end = useRef<HTMLDivElement>(null);
@@ -114,21 +120,42 @@ export function Conversation({ pending, onConsumed, compact = false }: { pending
   useEffect(() => { api("/api/copilot/examples").then((d) => setExamples(d.examples)).catch(() => undefined); }, []);
   useEffect(() => { end.current?.scrollIntoView({ block: "end" }); }, [turns]);
 
+  // Resume a saved conversation (or start a new one when id is null).
+  useEffect(() => {
+    if (!resume) return;
+    setConversation(resume.id);
+    if (!resume.id) { setTurns([]); return; }
+    api(`/api/copilot/conversations/${resume.id}`).then((d) => {
+      const restored: Turn[] = [];
+      for (const m of d.messages as { role: string; content: string; answer: Answer | null }[]) {
+        if (m.role === "user") restored.push({ question: m.content });
+        else if (restored.length) restored[restored.length - 1].answer = m.answer ?? undefined;
+      }
+      setTurns(restored);
+    }).catch((e) => setTurns([{ question: "(could not load conversation)", error: (e as Error).message }]));
+  }, [resume?.id, resume?.nonce]);
+
   const ask = async (question: string) => {
     if (!question.trim() || busy || !user) return;
     setBusy(true);
     setInput("");
     setTurns((t) => [...t, { question }]);
+    const rid = `REQ-${Math.random().toString(36).slice(2, 12)}`;
+    setRequestId(mode === "live" ? rid : null);
     try {
-      const a: Answer = await post("/api/copilot/ask", { question, conversation_id: conversation, mode });
+      const a: Answer = await post("/api/copilot/ask", { question, conversation_id: conversation, mode, request_id: rid });
       setConversation(a.conversation_id);
+      onSaved?.(a.conversation_id);
       setTurns((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, answer: a } : x)));
     } catch (e) {
       setTurns((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, error: (e as Error).message } : x)));
     } finally {
       setBusy(false);
+      setRequestId(null);
     }
   };
+
+  const stop = () => { if (requestId) post(`/api/copilot/cancel/${requestId}`).catch(() => undefined); };
 
   useEffect(() => {
     if (pending && user) {
@@ -160,8 +187,10 @@ export function Conversation({ pending, onConsumed, compact = false }: { pending
       <form className={`flex flex-wrap items-center gap-2 border-t border-cream-300 ${compact ? "p-3" : "pt-3"}`} onSubmit={(e) => { e.preventDefault(); ask(input); }}>
         <label htmlFor={compact ? "copilot-q-drawer" : "copilot-q"} className="sr-only">Ask the copilot</label>
         <input id={compact ? "copilot-q-drawer" : "copilot-q"} className="min-w-0 flex-1 rounded-lg border border-cream-300 px-3 py-2 text-sm" placeholder="Ask about sales, stock, allergens, releases…" value={input} onChange={(e) => setInput(e.target.value)} disabled={!user || busy} maxLength={500} />
-        <button className="btn-primary" disabled={!user || busy || !input.trim()}>{busy ? "…" : "Ask"}</button>
-        <label className="flex items-center gap-1 text-xs text-navy-700" title={liveOk ? "Claude writes the answer from the same cited data" : system?.live_mode?.reason}>
+        {busy && requestId
+          ? <button type="button" className="btn-ghost" onClick={stop} title="Stop the local model">Stop</button>
+          : <button className="btn-primary" disabled={!user || busy || !input.trim()}>{busy ? "…" : "Ask"}</button>}
+        <label className="flex items-center gap-1 text-xs text-navy-700" title={liveOk ? `The local model (${system?.live_mode?.model}) writes the answer from the same cited data` : system?.live_mode?.reason}>
           <input type="checkbox" checked={mode === "live"} onChange={(e) => setMode(e.target.checked ? "live" : "demo")} /> LIVE {liveOk ? "" : "(not configured)"}
         </label>
       </form>
@@ -198,12 +227,75 @@ export function CopilotDrawer() {
   );
 }
 
+function History({ active, refresh, onOpen, onNew }: { active: string | null; refresh: number; onOpen: (id: string) => void; onNew: () => void }) {
+  const { user } = useApp();
+  const [items, setItems] = useState<Summary[]>([]);
+  const [query, setQuery] = useState("");
+  const [hits, setHits] = useState<Hit[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const load = () => { if (user) api("/api/copilot/conversations").then((d) => setItems(d.conversations)).catch((e) => setError((e as Error).message)); };
+  useEffect(load, [user, refresh]);
+  const search = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) { setHits(null); return; }
+    try { setHits((await api(`/api/copilot/search?q=${encodeURIComponent(query.trim())}`)).results); } catch (err) { setError((err as Error).message); }
+  };
+  const remove = async (id: string) => {
+    if (!window.confirm("Delete this conversation? This cannot be undone.")) return;
+    await api(`/api/copilot/conversations/${id}`, { method: "DELETE" }).catch((e) => setError((e as Error).message));
+    if (id === active) onNew();
+    load();
+  };
+  return (
+    <aside className="flex min-h-0 w-full flex-col rounded-xl border border-cream-300 bg-white p-3 md:w-72" aria-label="Conversation history">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="label">History</div>
+        <button className="btn-ghost text-xs" onClick={onNew}>New conversation</button>
+      </div>
+      <form onSubmit={search} className="mb-2 flex gap-1">
+        <label htmlFor="history-q" className="sr-only">Search earlier questions</label>
+        <input id="history-q" className="min-w-0 flex-1 rounded border border-cream-300 px-2 py-1 text-xs" placeholder="Search earlier questions" value={query} onChange={(e) => { setQuery(e.target.value); if (!e.target.value) setHits(null); }} maxLength={200} />
+        <button className="btn-ghost text-xs">Search</button>
+      </form>
+      {error && <p role="alert" className="mb-1 text-xs text-brick-700">{error}</p>}
+      <ul className="min-h-0 flex-1 space-y-1 overflow-y-auto text-xs">
+        {hits !== null && hits.length === 0 && <li className="text-navy-600">No earlier question matches.</li>}
+        {hits?.map((h) => (
+          <li key={h.message_id}>
+            <button className="w-full rounded px-2 py-1 text-left hover:bg-cream-200" onClick={() => onOpen(h.conversation_id)}>
+              <div className="truncate font-medium text-navy-900">{h.title}</div>
+              <div className="text-navy-600">{h.snippet}</div>
+            </button>
+          </li>
+        ))}
+        {hits === null && items.length === 0 && <li className="text-navy-600">No saved conversations yet.</li>}
+        {hits === null && items.map((c) => (
+          <li key={c.id} className={`group flex items-start gap-1 rounded ${c.id === active ? "bg-navy-100" : "hover:bg-cream-200"}`}>
+            <button className="min-w-0 flex-1 px-2 py-1 text-left" onClick={() => onOpen(c.id)} aria-current={c.id === active}>
+              <div className="truncate font-medium text-navy-900">{c.title}</div>
+              <div className="text-navy-600">{new Date(c.updated_at).toLocaleString()} · {c.message_count / 2} question(s)</div>
+            </button>
+            <button className="px-1 py-1 text-navy-600 hover:text-brick-700" onClick={() => remove(c.id)} aria-label={`Delete conversation: ${c.title}`} title="Delete">✕</button>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
 export default function CopilotPage() {
+  const [resume, setResume] = useState<{ id: string | null; nonce: number }>({ id: null, nonce: 0 });
+  const [active, setActive] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
+  const open = (id: string | null) => { setActive(id); setResume((r) => ({ id, nonce: r.nonce + 1 })); };
   return (
     <div className="flex h-[calc(100vh-200px)] min-h-[520px] flex-col">
       <h1 className="text-2xl font-semibold">Ask Copilot</h1>
-      <p className="text-sm text-navy-600">Questions go to read-only tools over FoodCare's synthetic enterprise data, the live demo systems, delivery records and policy documents. Answers cite their sources and say plainly when the data cannot answer.</p>
-      <div className="mt-3 min-h-0 flex-1"><Conversation /></div>
+      <p className="text-sm text-navy-600">Questions go to read-only tools over FoodCare's synthetic enterprise data, the live demo systems, delivery records and policy documents. Answers cite their sources and say plainly when the data cannot answer. Conversations are saved so you can search, resume or delete them.</p>
+      <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3 md:flex-row">
+        <History active={active} refresh={refresh} onOpen={open} onNew={() => open(null)} />
+        <div className="min-h-0 flex-1"><Conversation resume={resume} onSaved={(id) => { setActive(id); setRefresh((n) => n + 1); }} /></div>
+      </div>
     </div>
   );
 }

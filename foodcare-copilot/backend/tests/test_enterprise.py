@@ -115,5 +115,5 @@ def test_live_mode_without_credentials_is_labelled(enterprise):
 def test_conversation_is_recorded(enterprise):
     first = engine.ask("Give me a briefing", user("val.viewer"))
     engine.ask("Which listings have allergen issues?", user("val.viewer"), first["conversation_id"])
-    history = engine.history(first["conversation_id"])
+    history = engine.history(first["conversation_id"], "val.viewer")
     assert [m["role"] for m in history] == ["user", "assistant", "user", "assistant"]

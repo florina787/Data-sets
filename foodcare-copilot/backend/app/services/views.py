@@ -217,7 +217,8 @@ def system_status() -> dict:
         "default_mode": settings.default_mode,
         "live_mode": {"available": settings.live_available,
                       "reason": None if settings.live_available else
-                      "ANTHROPIC_API_KEY and ANTHROPIC_MODEL are not both set on the backend"},
+                      "FOODCARE_LLM_BASE_URL and FOODCARE_LLM_MODEL (local model server) are not both set",
+                      "model": settings.llm_model},
         "sandbox": {"container": False,
                     "note": "No container runtime is used. Only trusted seeded fixture patches are executed, in a "
                             "restricted subprocess (scrubbed env, timeouts, output caps, var/ working dirs)."},

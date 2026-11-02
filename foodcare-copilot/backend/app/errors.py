@@ -49,3 +49,13 @@ class ToolRejected(PlatformError):
 class LiveModeUnavailable(PlatformError):
     status_code = 503
     code = "live_mode_unavailable"
+
+
+class LocalModelBusy(PlatformError):
+    status_code = 503
+    code = "local_model_busy"
+
+
+class RequestCancelled(PlatformError):
+    status_code = 409
+    code = "request_cancelled"
