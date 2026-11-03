@@ -37,9 +37,9 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <br/><br/>
 
-<img src="docs/assets/flying_florina_3_tour.gif" width="100%" alt="Animated tour of Flying Florina 3.0: global map, supply chain, airspace safety lab, forecasting, digital twin, resilience, control tower, change impact and chat" />
+<img src="docs/assets/flying_florina_3_live_tour.gif" width="100%" alt="Live recording of Flying Florina 3.0: the globe timeline moving, layers switching, a supplier delay simulated, drone footage analysed, forecasts, digital twin, resilience, chat with memory and the Control Tower" />
 
-<sub>45-second tour: global intelligence → supply chain → airspace safety drone analysis → forecasting, digital twin, resilience, Control Tower, change impact and chat.</sub>
+<sub>Live recording (82 s): the timeline slides to +90 days, layers switch, a 14-day supplier delay is simulated, drone footage is analysed, a chat follow-up is answered from memory, and the Control Tower shows the real run. Lighter still-image version: <a href="docs/assets/flying_florina_3_tour.gif">45-second slideshow</a>.</sub>
 
 </div>
 
