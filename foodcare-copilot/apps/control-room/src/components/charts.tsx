@@ -2,15 +2,16 @@ import { ReactNode, useState } from "react";
 
 // Small inline SVG charts. Single-series charts carry no legend (the title names the
 // series); every chart has a hover tooltip and a table view, and text uses text
-// colours rather than the series colour. Colours: series #2f7d4f; diverging
-// gain #2f7d4f / loss #9b2c2c (validated pair, secondary-encoded by sign labels and
-// direction); status colours always come with a text label.
+// colours rather than the series colour. Colours (navy theme): series ice blue
+// #38bdf8; diverging gain #10b981 / loss #ef4444 (secondary-encoded by sign labels
+// and direction); status colours always come with a text label.
 
-const INK = "#1a2d52";
-const MUTED = "#3d5a8f";
-const GRID = "#e6dbc2";
-const SERIES = "#2f7d4f";
-const LOSS = "#9b2c2c";
+const INK = "#f8fafc";
+const MUTED = "#94a3b8";
+const GRID = "#1e3654";
+const SERIES = "#38bdf8";
+const GAIN = "#10b981";
+const LOSS = "#ef4444";
 
 export function ChartCard({ title, subtitle, table, children }: { title: string; subtitle?: string; table: ReactNode; children: ReactNode }) {
   const [showTable, setShowTable] = useState(false);
@@ -66,7 +67,7 @@ export function LineChart({ points, format, ariaLabel }: { points: Point[]; form
         {hp && hover !== null && (
           <g>
             <line x1={x(hover)} x2={x(hover)} y1={pt} y2={h - pb} stroke={MUTED} strokeDasharray="3 3" strokeWidth={1} />
-            <circle cx={x(hover)} cy={y(hp.value)} r={5} fill={SERIES} stroke="#fff" strokeWidth={2} />
+            <circle cx={x(hover)} cy={y(hp.value)} r={5} fill={SERIES} stroke="#071426" strokeWidth={2} />
           </g>
         )}
         <text x={x(points.length - 1)} y={y(points[points.length - 1].value) - 8} textAnchor="end" fontSize="11" fill={INK} fontWeight="600">
@@ -111,7 +112,7 @@ export function DivergingBars({ items, ariaLabel }: { items: { label: string; va
             <div className="flex justify-between text-navy-800"><span>{i.label}</span><span className="text-navy-600">{i.sub}</span></div>
             <div className="relative mt-0.5 h-3 bg-cream-100" aria-hidden>
               <span className="absolute left-1/2 top-0 h-3 w-px bg-navy-600" />
-              <span className="absolute top-0 h-3" style={{ background: v >= 0 ? SERIES : LOSS, width: `${width}%`, left: v >= 0 ? "50%" : `${50 - width}%`, borderRadius: v >= 0 ? "0 4px 4px 0" : "4px 0 0 4px" }} />
+              <span className="absolute top-0 h-3" style={{ background: v >= 0 ? GAIN : LOSS, width: `${width}%`, left: v >= 0 ? "50%" : `${50 - width}%`, borderRadius: v >= 0 ? "0 4px 4px 0" : "4px 0 0 4px" }} />
             </div>
             <div className={`mt-0.5 font-mono ${v >= 0 ? "text-leaf-700" : "text-brick-700"}`}>{v > 0 ? "+" : ""}{v.toFixed(1)}% {v >= 0 ? "▲" : "▼"}</div>
           </li>
@@ -123,8 +124,8 @@ export function DivergingBars({ items, ariaLabel }: { items: { label: string; va
 
 const STATUS: Record<string, { color: string; icon: string; label: string }> = {
   critical: { color: LOSS, icon: "●", label: "Critical" },
-  reorder: { color: "#8a5a00", icon: "▲", label: "Reorder" },
-  ok: { color: SERIES, icon: "✓", label: "OK" },
+  reorder: { color: "#f59e0b", icon: "▲", label: "Reorder" },
+  ok: { color: GAIN, icon: "✓", label: "OK" },
 };
 
 export function StatusBadge({ status }: { status: string }) {

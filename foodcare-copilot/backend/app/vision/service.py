@@ -329,7 +329,7 @@ def _annotate(work: Image.Image, regions: list[Region], rows: list[dict], path: 
         pixels[y0:y1 + 1, x0:x1 + 1][outline] = GRADE_COLOURS[p["grade"]]
     canvas = Image.fromarray(pixels)
     draw = ImageDraw.Draw(canvas)
-    font = _font(max(12, work.width // 60))
+    font = _font(max(14, work.width // 48))
     for region, p in zip(regions, rows, strict=True):
         x0, y0, _, _ = region.bbox
         label = f"#{p['potato_no']}"

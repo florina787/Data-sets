@@ -1,6 +1,6 @@
 # Test results
 
-Recorded on 2026-10-09 in the build container (backend and browser test counts updated 2026-11-02): Linux, Python 3.13.16, Node 22.22, Chromium 141 (Playwright 1.56.1). Every number below comes from commands that actually ran. Re-run them with `scripts/test.sh` and `npm run e2e`.
+Recorded on 2026-10-09 in the build container (backend and browser test counts updated 2026-11-03): Linux, Python 3.13.16, Node 22.22, Chromium 141 (Playwright 1.56.1). Every number below comes from commands that actually ran. Re-run them with `scripts/test.sh` and `npm run e2e`.
 
 ## Summary
 
@@ -9,10 +9,11 @@ Recorded on 2026-10-09 in the build container (backend and browser test counts u
 | Platform lint | `ruff check backend scripts` | passed |
 | Storefront lint (policy config) | `ruff check` in `v1.2-timeout-repair` | passed |
 | Fixture patches in sync with stage trees | `python scripts/regen_fixture_patches.py --check` | passed |
-| Backend tests | `python -m pytest` | **68 passed** in 98 s (23 delivery platform + 20 enterprise/copilot + 11 memory + 14 local model) |
+| Backend tests | `python -m pytest` | **84 passed** (23 delivery platform + 20 enterprise/copilot + 11 memory + 14 local model + 10 vision + 6 inspection Q&A) |
 | UI typecheck | `npm run typecheck` (strict TS, both apps) | passed |
 | UI build | `npm run build` | passed (control room 234 kB JS / 71 kB gzip) |
-| Browser end-to-end | `npm run e2e` | **4 passed** (flagship delivery, guided demo, enterprise copilot, conversation memory) |
+| Browser end-to-end | `npm run e2e` | **5 passed** (flagship delivery, guided demo, enterprise copilot, conversation memory, potato inspection + copilot) |
+| Vision on SYNTHETIC rendered images | `scripts/eval_vision.py --synthetic 20` | precision 1.0, recall 1.0, F1 1.0, grade agreement 99.2%, ~340 ms/image. Drawn shapes only; **accuracy on real potatoes is not measured** |
 | Performance and persistence | see [LOCAL_LLM_AND_MEMORY.md](LOCAL_LLM_AND_MEMORY.md#measured-results) | measured, DEMO mode |
 | Guided demo via API (13 checked steps) | `POST /api/demo/run` | **13/13 done** in about 40 s (latest run 42.1 s) |
 

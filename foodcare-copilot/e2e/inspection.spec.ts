@@ -7,7 +7,7 @@ const SHOTS = "../docs/screenshots";
 test("potato inspection: upload, grade, inspect one potato, thresholds", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel("Signed in as").selectOption({ label: "Val Park (Viewer)" });
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Potato inspection" }).click();
+  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Potato Inspection" }).click();
   const main = page.getByRole("main");
   await expect(main.getByText(/classical image processing \(no trained model\)/)).toBeVisible();
 
@@ -39,4 +39,17 @@ test("potato inspection: upload, grade, inspect one potato, thresholds", async (
   await main.getByRole("button", { name: "Try a synthetic sample" }).click();
   await expect(main.getByRole("heading", { name: /Synthetic sample/ })).toBeVisible();
   await expect(main.getByRole("button", { name: /^Synthetic upload test/ })).toBeVisible();
+
+  // Ask the copilot about this batch, then about one potato (answers come from the stored results).
+  await main.getByRole("button", { name: "Ask about this batch" }).click();
+  const drawer = page.getByRole("complementary", { name: "Ask Copilot" });
+  await expect(drawer.getByText(/12 potatoes detected/)).toBeVisible();
+  await expect(drawer.getByText(/not a trained or validated defect classifier/).first()).toBeVisible();
+  await drawer.getByLabel("Ask the copilot").fill("Show me potato #8");
+  await drawer.getByRole("button", { name: "Ask", exact: true }).click();
+  await expect(drawer.getByRole("img", { name: /Potato #8 from inspection/ })).toBeVisible();
+  await drawer.getByLabel("Ask the copilot").fill("Why was it rejected?");
+  await drawer.getByRole("button", { name: "Ask", exact: true }).click();
+  await expect(drawer.getByText(/Potato #8/).last()).toBeVisible();
+  await page.screenshot({ path: `${SHOTS}/28-inspection-copilot.png` });
 });

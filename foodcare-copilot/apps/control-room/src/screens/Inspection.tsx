@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { api, apiBlobUrl, post, upload } from "../api";
 import { Card, Empty, Notice } from "../components/ui";
+import { useBlob } from "../hooks";
 import { useApp } from "../context";
 import { AskButton } from "./Copilot";
 
@@ -24,17 +25,6 @@ const GRADE_ICON: Record<string, string> = { Good: "✓", Moderate: "▲", "Not 
 function GradeBadge({ grade }: { grade: string | null }) {
   const g = grade ?? "Not graded";
   return <span className={`whitespace-nowrap rounded px-1.5 py-0.5 text-xs font-semibold ${GRADE_STYLE[g] ?? "bg-cream-200 text-navy-700"}`}><span aria-hidden>{GRADE_ICON[g] ?? "–"}</span> {g}</span>;
-}
-
-function useBlob(path: string | null) {
-  const [url, setUrl] = useState<string | null>(null);
-  useEffect(() => {
-    if (!path) { setUrl(null); return; }
-    let live = true, made: string | null = null;
-    apiBlobUrl(path).then((u) => { made = u; if (live) setUrl(u); }).catch(() => setUrl(null));
-    return () => { live = false; if (made) URL.revokeObjectURL(made); };
-  }, [path]);
-  return url;
 }
 
 async function download(path: string, name: string) {
@@ -135,7 +125,7 @@ function BatchView({ batch, onChange }: { batch: Batch; onChange: (b: Batch) => 
           <p className="text-xs text-navy-600">{batch.id} · supplier {batch.supplier ?? "–"} · lot {batch.lot_code ?? "–"} · {new Date(batch.created_at).toLocaleString()}{batch.mm_per_px ? ` · ${batch.mm_per_px} mm/px` : " · no scale (sizes relative to the batch)"}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <AskButton question="How many potatoes are detected and which ones are defective?" label="Ask about this batch" />
+          <AskButton question={`How many potatoes are detected in ${batch.id} and which are defective?`} label="Ask about this batch" />
           <button className="btn-ghost" onClick={() => download(`/api/inspections/${batch.id}/report.csv`, `${batch.id}.csv`)}>Download CSV</button>
           <button className="btn-ghost" onClick={() => download(`/api/inspections/${batch.id}/report.json`, `${batch.id}.json`)}>Download JSON</button>
         </div>

@@ -2,12 +2,14 @@ import { Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { api, post } from "../api";
 import { Provenance } from "../components/ui";
 import { useApp } from "../context";
+import { useBlob } from "../hooks";
 
 type Source = { id: string; kind: string; label: string; ref: string; detail?: string };
 type Answer = {
   conversation_id: string; question: string; answer: string; sources: Source[]; answered: boolean;
   tool_calls: { tool: string; args: Record<string, unknown> }[]; intents: string[]; entities: Record<string, unknown>;
   mode: string; provenance: string; notice: string | null; follow_ups: string[]; follow_up?: boolean;
+  attachments?: { type: string; batch_id: string; potato_no: number }[];
 };
 type Summary = { id: string; title: string; updated_at: string; message_count: number };
 type Hit = { message_id: number; conversation_id: string; title: string; snippet: string; created_at: string };
@@ -62,6 +64,11 @@ function Rich({ text, sources, onCite }: { text: string; sources: Source[]; onCi
   );
 }
 
+function PotatoAttachment({ batchId, no }: { batchId: string; no: number }) {
+  const url = useBlob(`/api/inspections/${batchId}/potatoes/${no}/image`);
+  return url ? <img src={url} alt={`Potato #${no} from inspection ${batchId}`} className="mt-2 max-h-48 rounded-lg border border-surface-line" /> : null;
+}
+
 function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
   const [focus, setFocus] = useState<string | null>(null);
   return (
@@ -73,6 +80,7 @@ function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
       </div>
       {a.notice && <p className="mb-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-700">{a.notice}</p>}
       <Rich text={a.answer} sources={a.sources} onCite={setFocus} />
+      {a.attachments?.filter((x) => x.type === "potato").map((x) => <PotatoAttachment key={`${x.batch_id}-${x.potato_no}`} batchId={x.batch_id} no={x.potato_no} />)}
       {a.sources.length > 0 && (
         <div className="mt-3 border-t border-cream-200 pt-2">
           <div className="label mb-1">Sources</div>
@@ -178,7 +186,7 @@ export function Conversation({ pending, onConsumed, compact = false, resume, onS
         )}
         {turns.map((t, i) => (
           <div key={i} className="space-y-2">
-            <div className="ml-auto max-w-[85%] rounded-xl bg-navy-900 px-3 py-2 text-sm text-cream-50">{t.question}</div>
+            <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-royal-600 px-3 py-2 text-sm text-white shadow-glow">{t.question}</div>
             {t.answer ? <AnswerView a={t.answer} onAsk={ask} /> : t.error ? <p role="alert" className="text-sm text-brick-700">{t.error}</p> : <p className="text-sm text-navy-600">Looking it up…</p>}
           </div>
         ))}

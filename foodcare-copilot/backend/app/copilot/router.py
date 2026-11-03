@@ -43,6 +43,9 @@ INTENTS: dict[str, tuple[str, ...]] = {
     "overview": ("summary", "overview", "how are we doing", "briefing", "focus on", "priorities", "what should i",
                  "status of the business", "headlines", "today"),
     "help": ("what can you do", "help", "how do i use", "examples"),
+    "inspection": ("potato", "potatoes", "defect", "defective", "defects", "rejected", "reject", "inspection",
+                   "inspected", "graded", "grading", "batch", "greening", "rot", "bruise", "not good", "moderate",
+                   "processing spec", "meets spec", "meet spec", "quality grade", "specification", "specifications"),
 }
 
 
@@ -59,11 +62,16 @@ class Parsed:
     run_id: str | None = None
     incident_id: str | None = None
     release_id: str | None = None
+    potato_no: int | None = None
+    batch_id: str | None = None
+    username: str | None = None  # set by the engine, not parsed
+    conversation_id: str | None = None
 
     def entities(self) -> dict:
         return {k: v for k, v in {"skus": self.skus, "provinces": self.provinces, "warehouses": self.warehouses,
                                   "channels": self.channels, "weeks": self.weeks, "run_id": self.run_id,
-                                  "incident_id": self.incident_id, "release_id": self.release_id}.items() if v}
+                                  "incident_id": self.incident_id, "release_id": self.release_id,
+                                  "potato_no": self.potato_no, "batch_id": self.batch_id}.items() if v}
 
 
 def _has(text: str, keyword: str) -> bool:
@@ -110,5 +118,11 @@ def parse(question: str) -> Parsed:
     run_id = (m.group(0).upper() if (m := re.search(r"\brun-[0-9a-f]{10}\b", text)) else None)
     incident_id = (m.group(0).upper() if (m := re.search(r"\binc-[0-9a-f]{10}\b", text)) else None)
     release_id = (m.group(0).upper() if (m := re.search(r"\brel-[0-9a-z]{6,12}\b", text)) else None)
+    batch_id = (m.group(0).upper() if (m := re.search(r"\bins-[0-9a-f]{10}\b", text)) else None)
+    potato_no = None
+    if m := re.search(r"(?:#\s?|\bpotato(?:es)?\s+(?:no\.?\s*|number\s*)?#?)(\d{1,4})\b", text):
+        potato_no = int(m.group(1))
+    if (potato_no or batch_id) and "inspection" not in ranked[:2]:
+        ranked = ["inspection"] + [r for r in ranked if r != "inspection"][:1]
     return Parsed(question, ranked[:2], scores, skus, provinces, warehouses, channels, max(1, min(weeks, 8)),
-                  run_id, incident_id, release_id)
+                  run_id, incident_id, release_id, potato_no, batch_id)

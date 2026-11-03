@@ -42,6 +42,7 @@ EXAMPLES = [
     "Why is the release blocked?",
     "What happened in the checkout incident?",
     "What does the returns policy say about partial returns?",
+    "Which potatoes failed inspection?",
 ]
 
 
@@ -57,6 +58,7 @@ class Ctx:
     def __init__(self) -> None:
         self.sources: list[dict] = []
         self.tool_calls: list[dict] = []
+        self.attachments: list[dict] = []
 
     def call(self, tool: str, fn: Callable, **args):
         entry = {"tool": tool, "args": {k: v for k, v in args.items() if v not in (None, [], "")},
@@ -312,6 +314,111 @@ def h_overview(p: Parsed, c: Ctx) -> list[str]:
     return out
 
 
+def _inspection_batch(p: Parsed) -> dict | None:
+    """The batch a question is about: named ID, else the conversation's batch, else the user's latest."""
+    from app.vision import service as vision
+
+    if not p.username:
+        return None
+    if p.batch_id:
+        try:
+            return vision.get_batch(p.batch_id, p.username)
+        except NotFound:
+            return None
+    store = get_store()
+    if p.conversation_id:
+        linked = store.query("SELECT id FROM inspection_batches WHERE conversation_id = ? AND username = ?"
+                             " ORDER BY created_at DESC LIMIT 1", (p.conversation_id, p.username))
+        if linked:
+            return vision.get_batch(linked[0]["id"], p.username)
+    latest = vision.list_batches(p.username, limit=1)
+    return vision.get_batch(latest[0]["id"], p.username) if latest else None
+
+
+def _pct(n: int, d: int) -> str:
+    return f"{100 * n / d:.0f}%" if d else "n/a"
+
+
+def h_inspection(p: Parsed, c: Ctx) -> list[str]:
+    from app.vision import service as vision
+
+    b = c.call("get_inspection_batch", _inspection_batch, p=p)
+    if not b:
+        return ["No potato inspections are recorded for you yet. Upload a photo (or try the synthetic sample) in "
+                "Potato Inspection, then ask again."]
+    if p.conversation_id and not b.get("conversation_id"):
+        vision.link_conversation(b["id"], p.username, p.conversation_id)
+    cite = c.cite(q.src("record", f"Inspection batch {b['id']}", f"inspection_batches:{b['id']}",
+                        f"{b['title']}; detector {b['detector']}"))
+    s, text = b["summary"], p.question.lower()
+    p.batch_id = b["id"]
+    out: list[str] = []
+    if p.potato_no:
+        found = [x for x in b["potatoes"] if x["potato_no"] == p.potato_no]
+        if not found:
+            return [f"Batch {b['id']} has potatoes #1 to #{s.get('detected', 0)}; there is no #{p.potato_no} {cite}."]
+        x = found[0]
+        size = f"{x['length_mm']} × {x['width_mm']} mm" if x["length_mm"] else f"{x['area_px']:,} px area (no scale)"
+        verdict = x["grade"] or "not graded"
+        out.append(f"**Potato #{x['potato_no']}** in {b['id']}: **{verdict}** {cite}. Size {size}, elongation "
+                   f"{x['elongation']}, solidity {x['solidity']}, dark area {x['dark_pct']}%, green area "
+                   f"{x['green_pct']}%.")
+        label = "Why" if x["grade"] in ("Not Good", "Moderate", None) else "Checks"
+        out.append(f"{label}:\n" + "\n".join(f"- {r}" for r in x["reasons"]))
+        c.attachments.append({"type": "potato", "batch_id": b["id"], "potato_no": x["potato_no"]})
+    elif any(w in text for w in ("compare", "yesterday", "previous", "last week", "earlier batch", "other batch")):
+        others = [o for o in vision.list_batches(p.username, 50) if o["id"] != b["id"] and o["summary"]]
+        if "yesterday" in text:
+            day = b["created_at"][:10]
+            others = [o for o in others if o["created_at"][:10] < day][:1]
+        elif "last week" in text:
+            others = [o for o in others if o["created_at"] < b["created_at"]][:1]
+        if not others:
+            out.append(f"There is no earlier inspection batch to compare {b['id']} with {cite}.")
+        else:
+            o = others[0]
+            ocite = c.cite(q.src("record", f"Inspection batch {o['id']}", f"inspection_batches:{o['id']}", o["title"]))
+            def line(x: dict, ref: str, name: str) -> str:
+                sm = x["summary"]
+                return (f"- {name} ({x['created_at'][:16].replace('T', ' ')}, supplier {x.get('supplier') or '–'}): "
+                        f"{sm.get('detected', 0)} detected, Good {sm['counts']['Good']} ({sm['pct']['Good']}%), "
+                        f"Moderate {sm['counts']['Moderate']}, Not Good {sm['counts']['Not Good']} "
+                        f"({sm['pct']['Not Good']}%) {ref}")
+            out.append("**Batch comparison**:\n" + line(b, cite, b["id"]) + "\n" + line(o, ocite, o["id"]))
+            diff = s["pct"]["Good"] - o["summary"]["pct"]["Good"]
+            out.append(f"The share graded Good is {abs(diff):.1f} points {'higher' if diff >= 0 else 'lower'} in "
+                       f"{b['id']}. Both batches used the same classical method; thresholds may differ per batch.")
+    elif "supplier" in text or "lot" in text:
+        out.append(f"Batch {b['id']} was recorded with supplier **{b['supplier'] or 'not recorded'}** and lot "
+                   f"**{b['lot_code'] or 'not recorded'}** {cite}. These are the values entered at upload; they "
+                   "are not verified against a supplier system.")
+    elif any(w in text for w in ("history", "batches", "previous inspections", "all inspections")):
+        rows = vision.list_batches(p.username, 5)
+        out.append("**Recent inspections** " + cite + ":\n" + "\n".join(
+            f"- {r['id']} {r['title']} ({r['created_at'][:16].replace('T', ' ')}): {r['summary'].get('detected', 0)}"
+            f" detected, {r['summary'].get('counts', {}).get('Good', 0)} Good" for r in rows))
+    else:
+        graded = s.get("graded", 0)
+        out.append(f"**{b['title']}** ({b['id']}): **{s.get('detected', 0)} potatoes detected**, {graded} graded "
+                   f"{cite}. Good {s['counts']['Good']} ({_pct(s['counts']['Good'], graded)}), Moderate "
+                   f"{s['counts']['Moderate']} ({_pct(s['counts']['Moderate'], graded)}), Not Good "
+                   f"{s['counts']['Not Good']} ({_pct(s['counts']['Not Good'], graded)}).")
+        out.append(f"Meeting the batch thresholds as Good: {s['meets_spec']} of {graded} ({s['meets_spec_pct']}%).")
+        bad = [x for x in b["potatoes"] if x["grade"] in ("Not Good", "Moderate")]
+        if bad:
+            out.append("Flagged potatoes:\n" + "\n".join(
+                f"- #{x['potato_no']} {x['grade']}: {x['reasons'][0]}" for x in bad[:12]))
+        if s.get("not_graded"):
+            out.append(f"{s['not_graded']} region(s) were not graded (cut off by the image edge or possibly "
+                       "touching potatoes).")
+        if any(w in text for w in ("yield", "financial", "cost", "saving", "recover", "money")):
+            out.append("Processing yield and financial impact are not calculated from inspections yet; they need "
+                       "the savings model with your cost inputs (planned next).")
+    out.append("Method: classical colour segmentation and colour heuristics, not a trained or validated defect "
+               "classifier.")
+    return out
+
+
 def h_help(p: Parsed, c: Ctx) -> list[str]:
     return ["I answer read-only questions about FoodCare's **sales and promotions**, **inventory**, **product "
             "compliance**, **software delivery** (runs, tests, releases), **incidents** and **company policies**. I "
@@ -322,7 +429,7 @@ def h_help(p: Parsed, c: Ctx) -> list[str]:
 
 HANDLERS = {"sales": h_sales, "campaign": h_campaign, "inventory": h_inventory, "compliance": h_compliance,
             "delivery": h_delivery, "incident": h_incident, "policy": h_policy, "overview": h_overview,
-            "help": h_help}
+            "help": h_help, "inspection": h_inspection}
 
 
 FOLLOW_UP = re.compile(r"^\s*(and|what about|how about|same for|and for|what of|now for)\b", re.IGNORECASE)
@@ -447,6 +554,14 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
         conversation_id = new_conversation_id()
     previous = window["context"]
     p, follow_up = apply_follow_up(parse(question), previous)
+    prev_entities = previous.get("entities", {})
+    p = replace(p, username=user.username, conversation_id=conversation_id)
+    if "inspection" in p.intents:
+        if not p.batch_id and prev_entities.get("batch_id"):
+            p.batch_id = prev_entities["batch_id"]
+        if not p.potato_no and prev_entities.get("potato_no") and re.search(
+                r"\b(it|its|this one|that one|this potato|that potato)\b", question.lower()):
+            p.potato_no = prev_entities["potato_no"]
     paragraphs, c, intents = compose(p)
     answered = bool(paragraphs)
     if not answered:
@@ -482,7 +597,7 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
         "conversation_id": conversation_id, "question": question, "answered": answered,
         "answer": "\n\n".join(paragraphs), "sources": c.sources, "tool_calls": c.tool_calls,
         "intents": intents, "entities": p.entities(), "mode": answer_mode, "provenance": provenance,
-        "notice": notice, "usage": usage, "read_only": True, "follow_up": follow_up,
+        "notice": notice, "usage": usage, "read_only": True, "follow_up": follow_up, "attachments": c.attachments,
         "follow_ups": [e for e in EXAMPLES if e.lower() != question.lower()][:3],
     }
     context = {"intents": intents if answered else previous.get("intents", []),

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { api } from "./api";
+import { api, apiBlobUrl } from "./api";
 
 /** Fetch a resource and refresh it on an interval. Errors are surfaced, not hidden. */
 export function usePoll<T>(path: string | null, intervalMs = 3000) {
@@ -57,4 +57,17 @@ export function useAction() {
     }
   }, []);
   return { busy, message, run, setMessage };
+}
+
+/** Authenticated image as an object URL (revoked on change/unmount). */
+export function useBlob(path: string | null) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!path) { setUrl(null); return; }
+    let live = true;
+    let made: string | null = null;
+    apiBlobUrl(path).then((u) => { made = u; if (live) setUrl(u); }).catch(() => setUrl(null));
+    return () => { live = false; if (made) URL.revokeObjectURL(made); };
+  }, [path]);
+  return url;
 }

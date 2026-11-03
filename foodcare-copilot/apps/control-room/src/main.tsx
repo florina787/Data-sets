@@ -13,6 +13,7 @@ import Evidence from "./screens/Evidence";
 import Executive from "./screens/Executive";
 import Incidents from "./screens/Incidents";
 import Inspection from "./screens/Inspection";
+import Observability from "./screens/Observability";
 import Inventory from "./screens/Inventory";
 import Overview from "./screens/Overview";
 import Quality from "./screens/Quality";
@@ -33,6 +34,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/compliance" element={<Compliance />} />
             <Route path="/inspection" element={<Inspection />} />
+            <Route path="/observability" element={<Observability />} />
             <Route path="/delivery" element={<Overview />} />
             <Route path="/brief" element={<Brief />} />
             <Route path="/board" element={<Board />} />

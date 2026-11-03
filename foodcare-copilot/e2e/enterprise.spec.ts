@@ -5,7 +5,7 @@ const SHOTS = "../docs/screenshots";
 
 test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Executive overview" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Executive Command" })).toBeVisible();
   await expect(page.getByText("Revenue, last 4 weeks")).toBeVisible();
   await expect(page.getByText(/FreshSip Apple/).first()).toBeVisible(); // campaign stock risk surfaced
   await page.getByLabel("Signed in as").selectOption({ label: "Val Park (Viewer)" });
@@ -36,14 +36,14 @@ test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
 
   // Domain screens.
   const nav = page.getByRole("navigation", { name: "Primary" });
-  await nav.getByRole("link", { name: "Sales & promotions" }).click();
+  await nav.getByRole("link", { name: "Sales & Promotions" }).click();
   await expect(page.getByText("Promotion uplift in units")).toBeVisible();
   await expect(page.getByText("Rentrée 3-for-2").first()).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/23-sales-promotions.png`, fullPage: true });
   await nav.getByRole("link", { name: "Inventory" }).click();
   await expect(page.getByText(/Days of cover, as of/)).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/24-inventory.png`, fullPage: true });
-  await nav.getByRole("link", { name: "Product compliance" }).click();
+  await nav.getByRole("link", { name: "Compliance & Food Safety" }).click();
   await expect(page.getByRole("main").getByText("listing is missing declared allergen(s): oats (gluten)")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/25-product-compliance.png`, fullPage: true });
 });

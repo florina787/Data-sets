@@ -577,6 +577,16 @@ def memory_backup(user: User = Depends(current_user)) -> dict:
     return result
 
 
+@app.get("/api/system/resources")
+def system_resources() -> dict:
+    """Measured CPU/RAM, the backend process, and the local-model and vision queues (no model probe)."""
+    from app import resources
+
+    llm = local_llm.status() if not get_settings().live_available else local_llm.get_llm().status(probe=False)
+    return {**resources.snapshot(), "llm": llm, "vision_queue": vision.gate().status(),
+            "memory_db": get_store().stats()}
+
+
 @app.get("/api/agents/runs")
 def agent_runs(limit: int = Query(default=50, ge=1, le=200), user: User = Depends(current_user)) -> dict:
     runs = get_store().agent_runs(limit)

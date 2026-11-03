@@ -31,7 +31,7 @@ export default function Executive() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-semibold">Executive overview</h1>
+          <h1 className="text-2xl font-semibold">Executive Command</h1>
           <p className="text-sm text-navy-600">Food Beverage Food Care: sales, supply, compliance and digital delivery in one place.</p>
         </div>
         <AskButton question="Give me a briefing" label="Ask Copilot for a briefing" />

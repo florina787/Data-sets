@@ -13,12 +13,12 @@ function LatencyChart({ events }: { events: any[] }) {
   return (
     <figure>
       <svg viewBox={`0 0 ${w} ${h + 20}`} className="w-full" role="img" aria-label={`Checkout latency for ${points.length} requests; red bars are 5xx responses`}>
-        <line x1="30" x2={w} y1={h} y2={h} stroke="#c9bfa8" />
-        <text x="0" y="12" fontSize="10" fill="#3d5a8f">{Math.round(max)}ms</text>
-        <text x="0" y={h} fontSize="10" fill="#3d5a8f">0</text>
+        <line x1="30" x2={w} y1={h} y2={h} stroke="#233b58" />
+        <text x="0" y="12" fontSize="10" fill="#94a3b8">{Math.round(max)}ms</text>
+        <text x="0" y={h} fontSize="10" fill="#94a3b8">0</text>
         {points.map((p, i) => {
           const bh = ((p.latency_ms ?? 0) / max) * (h - 10);
-          const color = p.status >= 500 ? (p.status === 503 ? "#8a5a00" : "#9b2c2c") : "#2f7d4f";
+          const color = p.status >= 500 ? (p.status === 503 ? "#f59e0b" : "#ef4444") : "#10b981";
           return (
             <rect key={p.event_id} x={32 + i * (bw + 2)} y={h - bh} width={bw} height={bh} fill={color}>
               <title>{`${p.ts} ${p.status} ${p.latency_ms}ms rev ${String(p.revision).slice(0, 8)}`}</title>
