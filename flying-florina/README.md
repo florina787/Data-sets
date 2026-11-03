@@ -35,6 +35,12 @@ no certification, no airworthiness determinations, no promised savings.</sub>
 
 <sub>Global Intelligence: MapLibre globe with inventory-forecast layer, predictive timeline, KPIs, region comparison and freshness. No tile service, no network.</sub>
 
+<br/><br/>
+
+<img src="docs/assets/flying_florina_3_tour.gif" width="100%" alt="Animated tour of Flying Florina 3.0: global map, supply chain, airspace safety lab, forecasting, digital twin, resilience, control tower, change impact and chat" />
+
+<sub>45-second tour: global intelligence → supply chain → airspace safety drone analysis → forecasting, digital twin, resilience, Control Tower, change impact and chat.</sub>
+
 </div>
 
 ---
