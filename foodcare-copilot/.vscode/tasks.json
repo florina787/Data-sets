@@ -1,0 +1,57 @@
+{
+  // Flo & Jerry tasks. Run them from Terminal > Run Task..., or ask GitHub Copilot
+  // (Agent mode) to run them. Open the foodcare-copilot folder as the workspace.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Flo & Jerry: check prerequisites",
+      "type": "shell",
+      "command": "git --version && python3 --version && uv --version && node --version && npm --version",
+      "problemMatcher": []
+    },
+    {
+      "label": "Flo & Jerry: start (demo mode)",
+      "type": "shell",
+      "command": "scripts/start.sh",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^__never__$" },
+        "background": { "activesBegin": true, "beginsPattern": ".", "endsPattern": "Uvicorn running on" }
+      }
+    },
+    {
+      "label": "Flo & Jerry: start with local Qwen",
+      "type": "shell",
+      "command": "scripts/start.sh",
+      "options": { "env": { "FOODCARE_LLM_BASE_URL": "${input:llmUrl}", "FOODCARE_LLM_MODEL": "${input:llmModel}" } },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "^__never__$" },
+        "background": { "activesBegin": true, "beginsPattern": ".", "endsPattern": "Uvicorn running on" }
+      }
+    },
+    {
+      "label": "Flo & Jerry: stop",
+      "type": "shell",
+      "command": "lsof -t -i :8700 -i :8801 | xargs kill 2>/dev/null; echo stopped",
+      "problemMatcher": []
+    },
+    {
+      "label": "Flo & Jerry: run tests",
+      "type": "shell",
+      "command": "scripts/test.sh",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Flo & Jerry: reset demo",
+      "type": "shell",
+      "command": "scripts/reset_demo.sh",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    { "id": "llmUrl", "type": "promptString", "description": "Local model server URL (Ollama: http://127.0.0.1:11434/v1, LM Studio: http://127.0.0.1:1234/v1)", "default": "http://127.0.0.1:11434/v1" },
+    { "id": "llmModel", "type": "promptString", "description": "Model name exactly as `ollama list` shows it", "default": "qwen2.5:7b-instruct" }
+  ]
+}
