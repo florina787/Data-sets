@@ -1,0 +1,31 @@
+[project]
+name = "flobank-sherin-backend"
+version = "3.0.0"
+description = "FLO Bank - Sherin AI 3.0: money-first enterprise AI operating platform (FastAPI + LangGraph)"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "python-multipart>=0.0.9",
+  "pydantic>=2.7,<3",
+  "pydantic-settings>=2.4,<3",
+  "sqlalchemy>=2.0,<3",
+  "psycopg[binary]>=3.2,<4",
+  "langgraph>=1.0,<2",
+  "langgraph-checkpoint-sqlite>=3.0,<4",
+  "httpx>=0.27",
+  "pyyaml>=6",
+  "psutil>=6",
+  "opentelemetry-api>=1.27,<2",
+  "opentelemetry-sdk>=1.27,<2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.uv]
+package = false

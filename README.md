@@ -26,3 +26,7 @@ Cross-disciplinary data repositories, data collections and data search engines:
 10. http://reddit.com/r/datasets
 
 Most Important all the datasets are in CSV ( Comma separated values) format.  
+
+## Projects in this repository
+
+- [FLO Bank — Sherin AI 3.0](flobank-sherin/README.md): money-first enterprise AI platform (financial command center, agent harness, investment judgment, manager approvals). Demo data is synthetic and labelled.

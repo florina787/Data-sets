@@ -1,0 +1,79 @@
+name: FLO Bank Sherin CI
+
+on:
+  pull_request:
+    paths: ["flobank-sherin/**", ".github/workflows/flobank-sherin-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["flobank-sherin/**", ".github/workflows/flobank-sherin-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: sherin, POSTGRES_PASSWORD: sherin, POSTGRES_DB: flobank_test }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U sherin" --health-interval 5s --health-retries 20
+    defaults: { run: { working-directory: flobank-sherin/backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.13" }
+      - run: uv sync --frozen
+      - name: Tests on PostgreSQL
+        run: uv run pytest
+        env: { TEST_DATABASE_URL: "postgresql+psycopg://sherin:sherin@localhost:5432/flobank_test" }
+      - name: Tests on SQLite
+        run: uv run pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: flobank-sherin/frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: flobank-sherin/frontend/package-lock.json }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: sherin, POSTGRES_PASSWORD: sherin, POSTGRES_DB: flobank }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U sherin" --health-interval 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.13" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: flobank-sherin/frontend/package-lock.json }
+      - name: Start API (seeds synthetic demo data)
+        working-directory: flobank-sherin/backend
+        run: |
+          uv sync --frozen
+          nohup uv run uvicorn app.main:app --port 8000 > api.log 2>&1 &
+          for i in $(seq 1 120); do curl -sf localhost:8000/api/health && break; sleep 1; done
+        env: { DATABASE_URL: "postgresql+psycopg://sherin:sherin@localhost:5432/flobank", LLM_ENABLED: "false" }
+      - name: Build and serve web
+        working-directory: flobank-sherin/frontend
+        run: |
+          npm ci && npm run build
+          nohup npx vite preview --port 4173 --strictPort > web.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf localhost:4173 && break; sleep 1; done
+      - name: Browser acceptance tests
+        working-directory: flobank-sherin/frontend
+        run: |
+          npm i --no-save playwright@1.53.0
+          npx playwright install --with-deps chromium
+          npm run e2e

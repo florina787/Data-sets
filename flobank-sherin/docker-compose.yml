@@ -1,0 +1,45 @@
+# FLO Bank - Sherin AI 3.0
+#   docker compose up --build                 -> http://localhost:8080 (demo data seeds on first start)
+#   docker compose --profile qwen up --build  -> also runs Ollama; then: docker compose exec ollama ollama pull qwen2.5:7b-instruct
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sherin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sherin}
+      POSTGRES_DB: flobank
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sherin -d flobank"]
+      interval: 5s
+      retries: 20
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://sherin:${POSTGRES_PASSWORD:-sherin}@db:5432/flobank
+      APP_MODE: ${APP_MODE:-demo}
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:7b-instruct}
+      CHECKPOINT_PATH: /data/harness_checkpoints.sqlite
+      CORS_ORIGINS: http://localhost:8080
+    volumes: [harness:/data]
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8000:8000"]
+
+  web:
+    build: ./frontend
+    depends_on: [api]
+    ports: ["8080:80"]
+
+  ollama:
+    image: ollama/ollama:0.6.8
+    profiles: [qwen]
+    volumes: [ollama:/root/.ollama]
+    ports: ["11434:11434"]
+
+volumes:
+  pgdata: {}
+  harness: {}
+  ollama: {}
