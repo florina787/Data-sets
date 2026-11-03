@@ -12,9 +12,10 @@
 ![Tests](https://img.shields.io/badge/tests-160%20%2B%209%20%2B%2022%20passing-10B981)
 ![License](https://img.shields.io/badge/license-GPL--3.0-14B8A6)
 
-<img src="docs/assets/flying_florina_3_live_tour.gif" width="100%" alt="Live recording of Flying Florina 3.0 in use" />
+<img src="docs/assets/flying_florina_3_highlights.gif" width="100%" alt="Live recording: global intelligence, supply chain, inventory forecast, dependency map and heatmaps" />
 
-<sub>▲ A real 82-second recording of the app: the timeline slides, layers switch, a supplier delay is simulated, drone footage is analysed, a chat follow-up is answered from memory.</sub>
+<sub>▲ Live recording: global intelligence → supply-chain routes → inventory timeline → supply-chain simulation → dependency map → heatmaps.<br/>
+Watch the <a href="docs/assets/flying_florina_3_full_tour.gif">full tour GIF</a> (every section) or the <a href="docs/assets/flying_florina_3_tour.mp4">sharp MP4 version</a>.</sub>
 
 </div>
 
