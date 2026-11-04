@@ -34,10 +34,10 @@ function Sparkline({ values, tone }: { values: number[]; tone: string }) {
 const TONE = { good: "text-pos", warn: "text-warn", crit: "text-crit", neutral: "text-muted" } as const;
 const STROKE = { good: "#10B981", warn: "#F59E0B", crit: "#EF4444", neutral: "#94a3b8" } as const;
 
-export function FinancialKPICard({ k, index = 0 }: { k: KPI; index?: number }) {
+export function FinancialKPICard({ k, index = 0, inline = false }: { k: KPI; index?: number; inline?: boolean }) {
   const v = useCountUp(k.value);
   return (
-    <div className="flo-rise rounded-xl border border-line bg-card p-3.5" style={{ animationDelay: `${index * 50}ms` }} data-kpi={k.id}>
+    <div className="flo-rise rounded-xl border border-line bg-card p-3.5" style={{ animationDelay: `${index * 50}ms` }} data-kpi={inline ? undefined : k.id}>
       <div className="flex items-start justify-between gap-2">
         <div className="text-xs text-muted">{k.label}</div>
         {k.provenance !== "platform_synthetic" && <Badge tone={k.provenance === "illustrative_assumption" ? "warn" : "blue"}>{PROVENANCE_LABEL[k.provenance]}</Badge>}

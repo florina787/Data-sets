@@ -23,7 +23,7 @@ export const FloMessageComposer = forwardRef<ComposerHandle, {
   };
   return (
     <form onSubmit={(e) => { e.preventDefault(); submit(); }}
-      className={cn("rounded-2xl border bg-card shadow-lg transition-colors focus-within:border-gold/70", size === "hero" ? "border-gold/30 p-3 sm:p-4" : "border-line p-2")}>
+      className={cn("rounded-2xl border bg-card shadow-lg transition-colors focus-within:border-gold/70", size === "hero" ? "border-transparent bg-[#111a2e] p-3 sm:p-4" : "border-line p-2")}>
       <label htmlFor={`flo-input-${size}`} className="sr-only">Message FLO</label>
       <textarea id={`flo-input-${size}`} ref={ta} value={text} onChange={(e) => setText(e.target.value)} rows={size === "hero" ? 2 : 1} maxLength={4000}
         onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); submit(); } }}

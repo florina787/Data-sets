@@ -25,7 +25,7 @@ export function tokens() {
 export const baseOption = () => {
   const t = tokens();
   return {
-    aria: { enabled: true, decal: { show: false } },
+    aria: { enabled: false }, // EChart wraps the canvas in role="img" with a label
     color: t.series,
     textStyle: { color: t.muted, fontFamily: "Inter, system-ui, sans-serif" },
     grid: { left: 56, right: 18, top: 36, bottom: 32, containLabel: true },

@@ -265,3 +265,38 @@ def test_viz_schema_and_authorized_metrics(client, H):
     prods = {m["data_product"] for m in adv["metrics"]}
     assert "wealth" in prods and "finance" not in prods
     assert client.post("/api/conversations", json={}, headers={}).status_code == 401
+
+
+def test_conversational_memory_resolves_references(conv):
+    say = conv("u-cio")
+    d = say("Show our portfolio performance.")
+    assert d["intent"]["intent"] == "portfolio_performance" and {"performance_trend", "sector_contribution"} <= charts(d)
+    d = say("Compare it with last quarter.")
+    assert d["intent"]["intent"] == "portfolio_performance" and d["intent"]["modifiers"]["months"] == 3
+    assert "3 month" in d["answer"]["headline"]
+    d = say("Which sector contributed the most?")
+    top = d["intent"]["entities"]["sector"]
+    assert d["intent"]["modifiers"]["months"] == 3 and top in d["answer"]["headline"]
+    d = say("What happens if that sector falls 15%?")  # "that sector" resolves to the previous answer's top contributor
+    assert d["intent"]["intent"] == "sector_scenario" and d["intent"]["modifiers"]["sector_shock"] == {"sector": top, "shock": -0.15}
+    assert {i["section"] for i in d["insights"]} >= {"simulated", "limitation"} and "lose about CAD" in d["answer"]["headline"]
+    assert "scenario.sector_shock" in tools(d)
+
+
+def test_sector_shock_is_governed(conv):
+    d = conv("u-advisor")("What happens if Energy falls 20%?")
+    assert d["status"] == "denied" and not d["charts"]  # advisors cannot run enterprise scenarios
+    assert {i["section"] for i in conv("u-risk")("What happens if Energy falls 20%?")["insights"]} >= {"simulated"}
+
+
+def test_concurrent_retries_run_the_workflow_once(client, H):
+    import threading
+    h = H("u-ceo")
+    cid = client.post("/api/conversations", json={}, headers=h).json()["id"]
+    body = {"text": "Show our portfolio performance.", "client_message_id": "concurrent-0001"}
+    out = []
+    ts = [threading.Thread(target=lambda: out.append(client.post(f"/api/conversations/{cid}/messages", json=body, headers=h).json()["message_id"]))
+          for _ in range(3)]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    assert len(set(out)) == 1 and len(client.get(f"/api/conversations/{cid}", headers=h).json()["messages"]) == 2

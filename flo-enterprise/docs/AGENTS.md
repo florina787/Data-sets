@@ -36,6 +36,12 @@ financial performance and revenue agents for the CEO question).
 | 18 | operational_intelligence_agent | AI ops | aiops.traces, aiops.breakers, docs.search | ai_admin |
 | 19 | data_quality_agent | AI ops | data_quality.run | ai_admin, executive |
 | 20 | evaluation_agent | AI ops | aiops.traces | ai_admin |
+| 21 | advisor_productivity_agent | executive | wealth.advisor_productivity | executive, finance |
+| 22 | client_retention_agent | wealth | finance.retention, wealth.book_health (own book only) | executive, finance, advisor |
+| 23 | firm_diagnostic_agent | executive | advisory.firm_model (user-supplied figures only) | all incl. prospect |
+| 24 | performance_agent | investment | investment.performance | cio, analyst, executive, risk_officer |
+| 25 | sector_scenario_agent | investment | scenario.sector_shock | cio, analyst, executive, risk_officer |
+| — | visualization_agent | (conversation) | allowlisted chart data tools, each authorized as the user | every role with ask:use |
 
 All agents have Pydantic input schemas and a common structured output (`narrative`, `facts`, `citations`, `warnings`,
 `approval`, `charts`). Full contracts (owner, version, roles, tools, schemas, budgets, classification, approval and

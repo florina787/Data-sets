@@ -41,8 +41,8 @@ function Scorecard({ spec }: { spec: ChartSpec }) {
   );
 }
 
-export function FinancialChartRenderer({ spec, onFollowup, index = 0, height = 280 }: {
-  spec: ChartSpec; onFollowup: (q: string, ctx?: MessageContext) => void; index?: number; height?: number;
+export function FinancialChartRenderer({ spec, onFollowup, index = 0, height = 280, inline = false }: {
+  spec: ChartSpec; onFollowup: (q: string, ctx?: MessageContext) => void; index?: number; height?: number; inline?: boolean;
 }) {
   const { theme } = useApp();
   const ref = useRef<ReactECharts>(null);
@@ -65,7 +65,7 @@ export function FinancialChartRenderer({ spec, onFollowup, index = 0, height = 2
   const summary = `${spec.title}. ${spec.subtitle}`.trim();
   return (
     <section className="flo-rise flex min-w-0 flex-col rounded-xl border border-line bg-card p-4" style={{ animationDelay: `${120 + index * 70}ms` }}
-      data-chart={spec.chart_id} aria-label={spec.title}>
+      data-chart={inline ? undefined : spec.chart_id} data-inline-chart={inline ? spec.chart_id : undefined} aria-label={inline ? `${spec.title} (in answer)` : spec.title}>
       <header className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="text-sm font-semibold">{spec.title}</h3>

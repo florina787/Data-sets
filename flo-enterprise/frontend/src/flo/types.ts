@@ -27,7 +27,7 @@ export type KpiUnit = "CAD" | "%" | "bps" | "count" | "ratio" | "x" | "score" | 
 export type KPI = { id: string; label: string; value: number | null; unit: KpiUnit; delta?: number | null; delta_unit: "%" | "pp" | "bps" | "CAD" | "count" | "";
   delta_label: string; trend: number[]; status: "good" | "warn" | "crit" | "neutral"; metric_id?: string | null; provenance: Provenance; note: string };
 export type EvidenceRef = { agent: string; fact: string; value: string; tool?: string | null };
-export type Insight = { id: string; section: "current_state" | "finding" | "risk" | "opportunity" | "limitation"; title: string; detail: string;
+export type Insight = { id: string; section: "current_state" | "finding" | "simulated" | "risk" | "opportunity" | "limitation"; title: string; detail: string;
   severity: "info" | "positive" | "warning" | "critical"; evidence: EvidenceRef[] };
 export type Recommendation = { id: string; title: string; priority: "P1" | "P2" | "P3"; rationale: string; evidence: EvidenceRef[]; expected_benefit: string;
   kpis: string[]; complexity: "low" | "medium" | "high"; dependencies: string[]; owner_function: string; timeframe: string; approvals_required: string[];
@@ -54,9 +54,11 @@ export type MessageResponse = {
   trace_id?: string | null; trace_ids: string[];
   workflow: { workflow_id?: string | null; route?: string | null; agents: string[]; tool_calls: ToolCall[]; policy_decisions: { action: string; allowed: boolean }[];
     errors: { agent: string; failure_class: string; message?: string }[]; model: string; model_mode: string; injection?: { flagged: boolean; severity?: string } | null;
-    stages: Stage[]; latency_ms?: number | null; graph?: ChartSpec | null };
+    stages: Stage[]; latency_ms?: number | null; graph?: ChartSpec | null; agent_runs?: AgentRun[] };
   created_at: string;
 };
+export type AgentRun = { agent: string; responsibility: string; status: string; duration_ms?: number | null; tool_calls: number; denied_calls: number;
+  tools: string[]; data_sources: string[]; evidence_refs: number; approval_actions: string[]; data_classification: string; cached?: boolean };
 export type Persona = { id: string; label: string; short: string; description: string; typical_roles: string[]; depth: string; terminology: string;
   emphasis: string[]; owner_functions: string[]; prompts: string[]; default_intent: string; aligned_with_identity: boolean };
 export type PersonaCatalogue = { starter_prompts: string[]; default: string; note: string; personas: Persona[] };

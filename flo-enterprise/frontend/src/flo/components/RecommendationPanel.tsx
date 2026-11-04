@@ -51,7 +51,7 @@ export function RecommendationPanel({ recs, onAsk }: { recs: Recommendation[]; o
   if (!recs.length) return null;
   return (
     <section aria-label="Recommendations" className="space-y-2">
-      <h3 className="text-sm font-semibold">Prioritized recommendations</h3>
+      <h3 className="text-sm font-semibold">Proposed actions <span className="font-normal text-muted">· prioritized, evidence-cited, each needs a human decision</span></h3>
       <ul className="space-y-2">{recs.map((r) => <Rec key={r.id} r={r} onAsk={onAsk} open={open === r.id} toggle={() => setOpen(open === r.id ? null : r.id)} />)}</ul>
       <p className="text-[11px] text-muted">Every recommendation cites the governed facts it rests on. FLO does not estimate ROI, probabilities or returns; personalized advice needs approved rules and human review.</p>
     </section>

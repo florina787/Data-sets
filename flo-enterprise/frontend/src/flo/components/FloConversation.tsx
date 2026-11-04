@@ -3,13 +3,17 @@ import { useEffect, useRef } from "react";
 import { Badge, cn } from "@/components/ui";
 import { STATUS_LABEL } from "../format";
 import type { Turn } from "../useConversation";
+import { AgentTimeline } from "./AgentTimeline";
+import { FinancialChartRenderer } from "./FinancialChartRenderer";
+import { FinancialKPICard } from "./FinancialKPICard";
 import { WorkflowProgress } from "./WorkflowProgress";
 
 const TONE: Record<string, "good" | "warn" | "crit" | "blue" | "neutral"> = { complete: "good", partial: "warn", denied: "crit", needs_input: "blue",
   rejected: "crit", cancelled: "neutral", error: "crit" };
 
-export function FloConversation({ turns, selected, onSelect, onFollowup }: {
+export function FloConversation({ turns, selected, onSelect, onFollowup, onChartFollowup }: {
   turns: Turn[]; selected: number; onSelect: (i: number) => void; onFollowup: (q: string) => void;
+  onChartFollowup?: (q: string, c?: import("../types").MessageContext) => void;
 }) {
   const end = useRef<HTMLDivElement>(null);
   const last = turns[turns.length - 1];
@@ -46,6 +50,17 @@ export function FloConversation({ turns, selected, onSelect, onFollowup }: {
                   {(r.status === "denied" || r.status === "needs_input" || r.intent.intent === "greeting" || r.intent.intent === "help") && r.answer.body && (
                     <p className="text-sm text-muted">{r.answer.body}</p>
                   )}
+                  {i === turns.length - 1 && r.kpis.length > 0 && (
+                    <div role="group" aria-label="Headline metrics" className="grid grid-cols-2 gap-2 pt-1 sm:grid-cols-3">
+                      {r.kpis.slice(0, 3).map((k, j) => <FinancialKPICard key={k.id} k={k} index={j} inline />)}
+                    </div>
+                  )}
+                  {i === turns.length - 1 && r.charts[0] && (
+                    <div className="pt-1">
+                      <FinancialChartRenderer spec={r.charts[0]} onFollowup={onChartFollowup ?? ((q) => onFollowup(q))} height={210} inline />
+                    </div>
+                  )}
+                  {r.workflow.agent_runs && r.workflow.agent_runs.length > 0 && <AgentTimeline runs={r.workflow.agent_runs} latency={r.workflow.latency_ms} />}
                   {(r.charts.length > 0 || r.kpis.length > 0 || r.recommendations.length > 0) && (
                     <button onClick={() => onSelect(i)} className={cn("flex items-center gap-1 text-xs", i === selected ? "text-gold" : "text-muted hover:text-ink")}>
                       <LayoutDashboard className="h-3.5 w-3.5 shrink-0" />

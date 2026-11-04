@@ -1,5 +1,6 @@
 import { Clock, History, ShieldCheck } from "lucide-react";
 import type { RefObject } from "react";
+import { LogoMark } from "@/components/Logo";
 import type { Persona, PersonaCatalogue } from "../types";
 import { FloMessageComposer, type ComposerHandle } from "./FloMessageComposer";
 import { PersonaSelector } from "./PersonaSelector";
@@ -13,7 +14,8 @@ export function FloWelcome({ catalogue, persona, onPersona, onSend, recent, comp
     <div className="flo-hero relative flex min-h-full flex-col items-center px-4 pb-10 pt-8 sm:pt-14">
       <div className="w-full max-w-6xl space-y-7">
         <header className="space-y-3 text-center flo-rise">
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-gold">FLO Wealth Intelligence</p>
+          <div className="flex justify-center"><LogoMark className="h-12 w-12" title="FLO" /></div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-gold">FLO Investment Intelligence</p>
           <h1 className="text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-5xl">
             <span className="whitespace-nowrap">Your wealth.</span> <span className="whitespace-nowrap">Your strategy.</span>{" "}
             <span className="whitespace-nowrap text-gold">Your intelligence.</span>
@@ -23,7 +25,9 @@ export function FloWelcome({ catalogue, persona, onPersona, onSend, recent, comp
           </p>
         </header>
         <div className="mx-auto max-w-4xl flo-rise" style={{ animationDelay: "60ms" }}>
-          <FloMessageComposer ref={composerRef} size="hero" onSend={onSend} personaLabel={persona?.label} />
+          <div className="flo-edge shadow-[0_20px_60px_-25px_rgb(59_130_246/0.45)]">
+            <FloMessageComposer ref={composerRef} size="hero" onSend={onSend} personaLabel={persona?.label} />
+          </div>
         </div>
         {catalogue && (
           <div className="flo-rise" style={{ animationDelay: "120ms" }}>

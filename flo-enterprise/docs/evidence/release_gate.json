@@ -1,44 +1,45 @@
 {
  "status": "PASS",
- "generated_at": "2026-10-20T23:35:25Z",
+ "generated_at": "2026-11-04T16:00:58Z",
  "blocking_failures": [],
  "checks": [
   {
    "check": "critical_tests (security + financial correctness)",
    "passed": true,
    "blocking": true,
-   "seconds": 9.1,
+   "seconds": 16.8,
    "tail": [
-    "........................................................................ [ 66%]",
-    ".....................................                                    [100%]"
+    "..............................................................s......... [ 55%]",
+    "..........................................................               [100%]"
    ]
   },
   {
    "check": "full_test_suite",
    "passed": true,
    "blocking": true,
-   "seconds": 9.3,
+   "seconds": 17.1,
    "tail": [
-    "........................................................................ [ 56%]",
-    "........................................................                 [100%]"
+    "...................................................................s.... [ 39%]",
+    "........................................................................ [ 79%]",
+    "......................................                                   [100%]"
    ]
   },
   {
    "check": "opa_policy_tests",
-   "passed": true,
-   "blocking": true,
+   "passed": null,
+   "blocking": false,
    "seconds": 0.0,
    "tail": [
-    "PASS: 7/7"
+    "tool not installed"
    ]
   },
   {
    "check": "evaluation_suite",
    "passed": true,
    "blocking": true,
-   "seconds": 2.6,
+   "seconds": 3.4,
    "tail": [
-    "{\"cases\": 10, \"passed\": 10, \"pass_rate\": 1.0, \"financial_identity_check\": true, \"latency_ms\": {\"p50\": 33.0, \"max\": 100.9}}"
+    "{\"cases\": 10, \"passed\": 10, \"pass_rate\": 1.0, \"financial_identity_check\": true, \"latency_ms\": {\"p50\": 40.2, \"max\": 109.4}}"
    ]
   },
   {
@@ -54,14 +55,14 @@
    "check": "security_lint (bandit, high severity)",
    "passed": true,
    "blocking": true,
-   "seconds": 1.0,
+   "seconds": 1.5,
    "tail": []
   },
   {
    "check": "dependency_audit (pip-audit)",
    "passed": true,
    "blocking": false,
-   "seconds": 7.9,
+   "seconds": 10.3,
    "tail": [
     "No known vulnerabilities found"
    ]
@@ -79,7 +80,7 @@
    "check": "frontend_typecheck",
    "passed": true,
    "blocking": true,
-   "seconds": 4.0,
+   "seconds": 5.4,
    "tail": []
   }
  ]

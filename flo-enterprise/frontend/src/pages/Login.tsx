@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Building2, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
+import { LogoMark } from "@/components/Logo";
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { useApp } from "@/lib/app";
@@ -13,8 +14,8 @@ export default function Login() {
     <div className="grid min-h-full place-items-center p-6">
       <div className="w-full max-w-3xl space-y-4">
         <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-xl bg-card ring-1 ring-gold/50"><Building2 className="h-6 w-6 text-gold" /></div>
-          <div><h1 className="text-2xl font-semibold">FLO Enterprise</h1><p className="text-sm text-muted">Financial Leadership, Operations &amp; Wealth Intelligence</p></div>
+          <LogoMark className="h-12 w-12" />
+          <div><h1 className="text-2xl font-semibold tracking-wide">FLO</h1><p className="text-sm text-muted">Conversational investment intelligence · governed agents · synthetic data</p></div>
         </div>
         <Card className="p-4 text-sm text-muted">
           Independent architecture demonstration. Not affiliated with any asset manager. All data is <b className="text-gold">synthetic</b>; integrations are mock adapters;

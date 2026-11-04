@@ -63,6 +63,10 @@ INTENTS: dict[str, IntentDef] = {d.id: d for d in [
     IntentDef("scenario", "Scenario simulation", "investment", ("scenario_agent",),
               ("scenario_paths", "scenario_by_asset_class", "portfolio_impacts", "scenario_comparison", "sensitivity_tornado"), "scenario",
               ("aum.total", "revenue.management_fees", "margin.operating"), ("finance", "investment")),
+    IntentDef("portfolio_performance", "Portfolio performance", "investment", ("performance_agent",),
+              ("performance_trend", "period_comparison", "sector_contribution"), "performance", ("perf.twr",), ("investment",)),
+    IntentDef("sector_scenario", "Sector shock scenario", "investment", ("sector_scenario_agent",), ("sector_shock_mandates",), "sector_shock",
+              ("aum.total", "revenue.management_fees"), ("investment", "finance")),
     IntentDef("client_review", "Client portfolio review", "wealth",
               ("client_intelligence_agent", "wealth_advisor_agent", "retirement_planning_agent", "client_meeting_agent"),
               ("client_allocation", "risk_return", "goal_progress", "retirement_projection"), "client",
@@ -99,6 +103,8 @@ RULES: list[tuple[str, str]] = [
     (r"retention|attrition|churn|losing clients|at[- ]risk clients|clients? (need|needing|that need) attention|attrition signals", "client_retention"),
     (r"retire", "retirement_strategy"),
     (r"\bC-\d{5}\b|client review|portfolio review|meeting prep|prepare.{0,30}(client|meeting)", "client_review"),
+    (r"\bsector\b.{0,40}(fall|falls|fell|drop|drops|decline|declines|crash|crashes|shock|down)|(fall|falls|drop|drops|decline|crash|shock)\w*.{0,40}\bsector\b", "sector_scenario"),
+    (r"portfolio performance|how (did|have|has|are|were) (our |the )?(portfolios?|investments|funds) (do|done|perform|performed|performing|doing)|performance of (our|the) portfolios?|which sector|sector contribut|contributed the most|top contributors?", "portfolio_performance"),
     (r"shock|scenario|stress|simulat|what if|what happens if|crash|downturn|bear market|bull market|rates? (rise|fall|increase|decrease|go up|go down|drop)|basis points|\bbps\b", "scenario"),
     (r"concentrat|single[- ]issuer|exposure", "concentration_risk"),
     (r"largest risk|biggest risk|top risk|risk heat ?map|risk register", "risk_overview"),
@@ -127,6 +133,8 @@ def months_of(text: str) -> int | None:
     m = re.search(r"(?:last|past|trailing|previous)\s+(\d{1,2})\s+months", t)
     if m:
         return max(1, min(24, int(m.group(1))))
+    if re.search(r"\bquarter\b|three months|3 months", t):
+        return 3
     if re.search(r"two years|2 years|24 months", t):
         return 24
     if re.search(r"last year|past year|12 months|one year|1 year", t):
@@ -155,6 +163,34 @@ def scenario_of(text: str) -> dict[str, Any]:
     elif re.search(r"downturn|bear|recession|sell[- ]?off|correction", t) or out.get("equity_shock"):
         out["preset"] = "bear"
     return out
+
+
+SECTORS = ["Energy", "Materials", "Industrials", "Consumer Discretionary", "Consumer Staples", "Health Care", "Financials",
+           "Information Technology", "Communication Services", "Utilities", "Real Estate", "Corporate Credit", "Government", "Cash & Equivalents"]
+SECTOR_ALIASES = {"tech": "Information Technology", "technology": "Information Technology", "it": "Information Technology",
+                  "banks": "Financials", "financial": "Financials", "healthcare": "Health Care", "telecom": "Communication Services"}
+
+
+def sector_of(text: str, state: dict) -> str | None:
+    """Explicit sector name, or a reference ("that sector", "it") resolved to the sector of the previous result."""
+    t = text.lower()
+    for sec in SECTORS:
+        if sec.lower() in t:
+            return sec
+    for alias, sec in SECTOR_ALIASES.items():
+        if re.search(rf"\b{re.escape(alias)}\b(?! (sector )?contribut)", t) and alias != "it":
+            return sec
+    if re.search(r"\b(that|this|the same|the top|the best|the largest|the worst) sector\b|\bit\b|\bthat one\b", t):
+        return state.get("sector")
+    return None
+
+
+def shock_of(text: str) -> float | None:
+    m = re.search(r"(\d{1,2}(?:\.\d+)?)\s?%", text)
+    if not m:
+        return None
+    v = float(m.group(1)) / 100
+    return v if re.search(r"\b(rise|rises|rally|rallies|gain|gains|up|increase)\b", text, re.I) else -v
 
 
 def entities_of(text: str) -> dict[str, Any]:
@@ -239,6 +275,13 @@ def classify(text: str, persona_id: str, principal: Principal, engine, state: di
         mods["scenario"] = sc
     if d.id in ("business_onboarding", "transformation_roadmap") and (profile or (in_onboarding and state.get("business_profile"))):
         mods["business_profile"] = {**(state.get("business_profile") or {}), **profile}
+    if d.id == "sector_scenario":
+        sec = sector_of(text, state) or overrides.get("sector")
+        if sec:
+            entities["sector"] = sec
+        mods["sector_shock"] = {"sector": sec, "shock": shock_of(text) if shock_of(text) is not None else -0.15}
+    if d.id == "portfolio_performance" and re.search(r"sector|contribut", text, re.I):
+        mods["focus"] = "sector_contribution"
     if overrides.get("focus"):
         mods["focus"] = str(overrides["focus"])[:120]
     return Plan(d, entities, mods, follow_up_of)

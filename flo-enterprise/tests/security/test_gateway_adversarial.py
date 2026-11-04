@@ -143,7 +143,7 @@ def test_provider_failure_retries_then_circuit_opens(ctx_for):
 
 
 def test_every_agent_registers_full_contract():
-    assert len(REGISTRY.agents) == 24  # 23 specialists + the visualization agent
+    assert len(REGISTRY.agents) == 26  # 25 specialists + the visualization agent
     for a in REGISTRY.agents.values():
         c = a.spec.contract()
         for k in ("name", "version", "owner", "allowed_roles", "allowed_tools", "input_schema", "output_schema", "budget",

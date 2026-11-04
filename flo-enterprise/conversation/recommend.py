@@ -139,7 +139,7 @@ def _investment(b: Builder) -> None:
         ev = [_ev("scenario_agent", "scenario", f, "scenario.run"), _ev("scenario_agent", "aum_chg_pct", f), _ev("scenario_agent", "margin_pct", f),
               _ev("scenario_agent", "port_impact_m", f)]
         label = s["scenario"] + (f", equity {s['equity_shock_pct']}%" if s.get("equity_shock_pct") else "") + (f", rates {s['rate_bps']:+g} bps" if s.get("rate_bps") else "")
-        b.ins("finding", f"Under '{label}', AUM moves {s['aum_chg_pct']}% to CAD {s['aum1_bn']}bn over {s['horizon']} months",
+        b.ins("simulated", f"Under '{label}', AUM moves {s['aum_chg_pct']}% to CAD {s['aum1_bn']}bn over {s['horizon']} months",
               f"Operating margin {s['margin_pct']}%; immediate portfolio impact CAD {s['port_impact_m']}m; most affected mandate {s['worst_mandate']} "
               f"({s['worst_mandate_pct']}%). Conditional on stated assumptions; not a forecast.", "critical" if s["aum_chg_pct"] < -10 else "warning", ev)
         if s["aum_chg_pct"] < 0:
@@ -164,6 +164,43 @@ def _investment(b: Builder) -> None:
         b.ins("current_state", f"{k['beat']} of {k['n']} funds beat their benchmark over 12 months (gross of fees)",
               f"Strongest {k['best']} ({k['best_rel_pct']} pp), weakest {k['worst']} ({k['worst_rel_pct']} pp).", "info",
               [_ev("benchmark_agent", "beat", f, "investment.fund_list"), _ev("benchmark_agent", "worst", f)])
+
+
+def _performance(b: Builder) -> None:
+    f = b.f
+    p = f.get("performance_agent")
+    if p:
+        sev = "positive" if p["diff_pp"] >= 0 else "warning"
+        b.ins("current_state", f"Portfolios returned {p['ret_pct']}% over the last {p['months']} month(s) versus {p['prior_pct']}% in the preceding period",
+              f"{p['portfolios']} managed portfolios, CAD {p['mv_bn']}bn; difference {p['diff_pp']} percentage points.", sev,
+              [_ev("performance_agent", "ret_pct", f, "investment.performance"), _ev("performance_agent", "prior_pct", f)])
+        if p.get("top_sector"):
+            b.ins("finding", f"{p['top_sector']} contributed the most: {p['top_contrib_pp']} percentage points on a {p['top_weight_pct']}% weight",
+                  f"{p['bottom_sector']} contributed the least ({p['bottom_contrib_pp']} percentage points). Holdings-based approximation using latest weights.",
+                  "info", [_ev("performance_agent", "top_sector", f), _ev("performance_agent", "top_contrib_pp", f), _ev("performance_agent", "bottom_sector", f)])
+            b.rec(title=f"Stress-test the dependence on {p['top_sector']}", priority="P3",
+                  rationale=f"{p['top_sector']} was the largest single contributor to recent returns; a reversal would hit results disproportionately.",
+                  evidence=[_ev("performance_agent", "top_sector", f), _ev("performance_agent", "top_contrib_pp", f)],
+                  expected_benefit="Know the downside before deciding whether any positioning change is warranted.", kpis=["perf.twr", "risk.single_issuer"],
+                  complexity="low", dependencies=["Scenario engine (available in FLO)"], owner_function="Investment Risk", timeframe="0-30 days",
+                  approvals_required=["Any positioning change requires PM and CIO approval; FLO never trades"],
+                  validation_criteria=["Sector shock reviewed at the investment committee"])
+    s = f.get("sector_scenario_agent")
+    if s:
+        ev = [_ev("sector_scenario_agent", "sector", f, "scenario.sector_shock"), _ev("sector_scenario_agent", "port_imp_m", f),
+              _ev("sector_scenario_agent", "rev_imp_m", f)]
+        b.ins("simulated", f"If {s['sector']} {'fell' if s['shock_pct'] < 0 else 'rose'} {s['shock_abs_pct']}%, portfolios would "
+              f"{'lose' if s['port_imp_m'] < 0 else 'gain'} about CAD {s['port_abs_m']}m ({s['port_abs_pct']}% of value)",
+              f"Product AUM about CAD {s['aum_imp_m']}m; annualized fee revenue about CAD {s['rev_imp_m']}m; most affected mandate {s['worst_mandate']} "
+              f"({s['worst_mandate_pct']}%). Instantaneous shock, other holdings unchanged; not a forecast.", "warning", ev)
+        b.rec(title=f"Review {s['sector']} exposure limits for {s['worst_mandate']} mandates", priority="P2",
+              rationale=f"{s['worst_mandate']} mandates carry the largest simulated loss ({s['worst_mandate_pct']}%) from a {s['shock_abs_pct']}% {s['sector']} fall.",
+              evidence=ev + [_ev("sector_scenario_agent", "worst_mandate", f)], expected_benefit="Exposure decisions made deliberately against a stated loss tolerance.",
+              kpis=["risk.single_issuer", "risk.max_drawdown"], complexity="medium", dependencies=["Portfolio manager review", "Client risk profiles"],
+              owner_function="Investment Risk", timeframe="31-60 days",
+              approvals_required=["Portfolio changes require PM and CIO approval; FLO never executes trades"],
+              validation_criteria=["Mandate exposure reviewed and decision documented"])
+        b.limitations.append("Sector shock: instantaneous, single-sector, no second-order or correlation effects.")
 
 
 def _wealth(b: Builder) -> None:
@@ -346,6 +383,9 @@ def build_plan(recs: list[Recommendation], title: str) -> ImplementationPlan | N
 
 
 FOLLOWUPS = {
+    "portfolio_performance": ["Compare it with last quarter.", "Which sector contributed the most?", "What happens if that sector falls 15%?",
+                              "Analyze our portfolio concentration risk."],
+    "sector_scenario": ["What happens if it falls 25% instead?", "Simulate a market downturn.", "Show our portfolio performance."],
     "aum_profitability": ["Break this down by product.", "Now show the last 24 months.", "What happens if rates rise by 200 basis points?",
                           "Explain the largest risk.", "Prepare a board-level summary."],
     "firm_overview": ["Why is our AUM growing while profitability declines?", "Identify opportunities to improve revenue.", "Simulate a market downturn.",
@@ -373,6 +413,7 @@ def build(intent: str, facts: Facts, roadmap: bool, persona_functions: tuple[str
     b = Builder(facts)
     _executive(b)
     _investment(b)
+    _performance(b)
     _wealth(b)
     _firm(b)
     order = {"P1": 0, "P2": 1, "P3": 2}

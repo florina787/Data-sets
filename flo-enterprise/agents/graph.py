@@ -169,6 +169,12 @@ def _make_supervisor(name: str):
                     inp["draft_language"] = ctxd.get("draft_language") or state["language"]
             if spec.input_model.__name__ == "PortfolioQ":
                 inp["portfolio_id"] = (pid.group(0) if pid else None) or ctxd.get("portfolio_id")
+            if spec.input_model.__name__ == "SectorQ":
+                ss = ctxd.get("sector_shock") or {}
+                if not ss.get("sector"):
+                    skipped.append(a)
+                    continue
+                inp.update(sector=ss["sector"], shock=ss.get("shock", -0.15))
             if spec.input_model.__name__ == "FirmQ":
                 prof = ctxd.get("business_profile") or {}
                 inp.update({k: prof[k] for k in ("aum", "fee_bps", "revenue", "expenses", "advisors", "clients", "net_flows") if prof.get(k) is not None})

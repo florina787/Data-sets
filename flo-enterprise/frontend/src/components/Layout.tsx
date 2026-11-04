@@ -1,12 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Bot, Briefcase, Building2, CheckSquare, Database, FileSearch, Gauge, History, Landmark, LineChart, LogOut, Moon, Scale,
-  Shield, ShieldCheck, Sparkles, Sun, Users } from "lucide-react";
+import { Bell, Bot, Briefcase, CheckSquare, Database, FileSearch, Gauge, History, Landmark, LineChart, LogOut, MessageSquare, Moon,
+  PanelLeftClose, PanelLeftOpen, Plus, Scale, Shield, ShieldCheck, Sparkles, Sun, Users } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { LANGS, t, type Lang } from "@/lib/i18n";
+import { Logo } from "./Logo";
 import { Badge, Button, Input, Select, cn } from "./ui";
+
+const readCollapsed = () => {
+  try {
+    return localStorage.getItem("flo.sidebar") === "collapsed";
+  } catch {
+    return false;
+  }
+};
 
 const ICONS: Record<string, any> = { executive: Gauge, investment: LineChart, scenarios: Scale, wealth: Users, products: Briefcase, compliance: Landmark,
   approvals: CheckSquare, decisions: History, knowledge: FileSearch, aiops: Bot, governance: ShieldCheck, privacy: Shield, data: Database };
@@ -22,37 +31,62 @@ export function Layout({ children }: { children: ReactNode }) {
   const gov = useQuery({ queryKey: ["gov"], queryFn: () => api("/api/governance/status") });
   const pending = useQuery({ queryKey: ["approvals", "pending"], queryFn: () => api("/api/approvals?status=pending"), refetchInterval: 30000 });
   const pendingCount = (pending.data?.approvals ?? []).filter((a: any) => me && a.requested_by !== me.user_id).length;
+  const recents = useQuery({ queryKey: ["conversations", ""], enabled: can("ask:use"),
+    queryFn: () => api<{ conversations: { id: string; title: string }[] }>("/api/conversations") });
+  const [collapsed, setCollapsed] = useState(readCollapsed);
+  const toggle = () => setCollapsed((c) => {
+    try {
+      localStorage.setItem("flo.sidebar", c ? "open" : "collapsed");
+    } catch { /* storage unavailable */ }
+    return !c;
+  });
   return (
     <div className="flex h-full">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-gold focus:p-2 focus:text-bg">Skip to content</a>
-      <nav className="hidden w-60 shrink-0 flex-col border-r border-line bg-side md:flex" aria-label="Primary">
-        <div className="flex items-center gap-2 px-4 py-4">
-          <div className="grid h-8 w-8 place-items-center rounded-lg bg-bg ring-1 ring-gold/50"><Building2 className="h-4 w-4 text-gold" /></div>
-          <div><div className="font-semibold tracking-wide">FLO</div><div className="text-[10px] text-muted leading-tight">Financial Leadership, Operations &amp; Wealth Intelligence</div></div>
+      <nav className={cn("hidden shrink-0 flex-col border-r border-line bg-side transition-[width] duration-200 md:flex", collapsed ? "w-[68px]" : "w-64")} aria-label="Primary">
+        <div className={cn("flex items-center px-3.5 py-4", collapsed ? "justify-center" : "justify-between")}>
+          <NavLink to="/" aria-label="FLO home"><Logo collapsed={collapsed} /></NavLink>
+          {!collapsed && <Button size="icon" variant="ghost" onClick={toggle} aria-label="Collapse sidebar" title="Collapse sidebar"><PanelLeftClose className="h-4 w-4" /></Button>}
         </div>
-        <div className="flex-1 overflow-y-auto scroll-thin px-2 space-y-0.5">
-          <NavLink to="/" end className={({ isActive }) => cn("mb-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
-            isActive ? "bg-gold/10 text-gold ring-1 ring-gold/50" : "text-ink hover:bg-card/60")}>
-            <Sparkles className="h-4 w-4 text-gold" />{t("flo", lang)}
+        {collapsed && <Button size="icon" variant="ghost" className="mx-auto mb-2" onClick={toggle} aria-label="Expand sidebar" title="Expand sidebar"><PanelLeftOpen className="h-4 w-4" /></Button>}
+        <div className="flex-1 space-y-0.5 overflow-y-auto scroll-thin px-2">
+          <NavLink to="/" end title={t("flo", lang)} className={({ isActive }) => cn("mb-1 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium",
+            collapsed && "justify-center px-0", isActive ? "bg-gold/10 text-gold ring-1 ring-gold/50" : "text-ink hover:bg-card/60")}>
+            <Sparkles className="h-4 w-4 shrink-0 text-gold" />{!collapsed && t("flo", lang)}
           </NavLink>
+          {!collapsed && can("ask:use") && (
+            <div className="mb-3">
+              <button onClick={() => nav("/?new=1")} className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs text-muted hover:bg-card/60 hover:text-ink">
+                <Plus className="h-3.5 w-3.5" />New conversation</button>
+              {(recents.data?.conversations ?? []).slice(0, 5).map((c) => (
+                <button key={c.id} onClick={() => nav(`/?c=${c.id}`)} title={c.title}
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-left text-xs text-muted hover:bg-card/60 hover:text-ink">
+                  <MessageSquare className="h-3.5 w-3.5 shrink-0" /><span className="truncate">{c.title}</span></button>
+              ))}
+            </div>
+          )}
+          {!collapsed && <div className="px-3 pb-1 pt-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted/80">Enterprise modules</div>}
           {me?.navigation.map((n) => {
             const Icon = ICONS[n.id] ?? Gauge;
             return (
-              <NavLink key={n.id} to={`/${n.id}`} className={({ isActive }) => cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm",
-                isActive ? "bg-card text-ink ring-1 ring-gold/40" : "text-muted hover:bg-card/60 hover:text-ink")}>
-                <Icon className="h-4 w-4" />{t(n.id, lang)}
-                {n.id === "approvals" && pendingCount > 0 && <span className="ml-auto rounded-full bg-gold px-1.5 text-[10px] font-semibold text-bg">{pendingCount}</span>}
+              <NavLink key={n.id} to={`/${n.id}`} title={t(n.id, lang)} aria-label={collapsed ? t(n.id, lang) : undefined}
+                className={({ isActive }) => cn("flex items-center gap-2 rounded-lg px-3 py-2 text-sm", collapsed && "justify-center px-0",
+                  isActive ? "bg-card text-ink ring-1 ring-gold/40" : "text-muted hover:bg-card/60 hover:text-ink")}>
+                <Icon className="h-4 w-4 shrink-0" />{!collapsed && t(n.id, lang)}
+                {n.id === "approvals" && pendingCount > 0 && !collapsed && <span className="ml-auto rounded-full bg-gold px-1.5 text-[10px] font-semibold text-bg">{pendingCount}</span>}
               </NavLink>
             );
           })}
         </div>
-        <div className="border-t border-line p-3 text-[11px] text-muted space-y-1">
-          <div className="flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-pos" />Policy {gov.data?.policy_version ?? "…"}</div>
-          <div>PDP: {gov.data?.pdp ?? "…"}</div>
-          <div>Telemetry: {gov.data?.observability ?? "…"}</div>
-          <div>Integrations: mock adapters</div>
-          <Badge tone="gold">{t("synthetic", lang)} · independent demo</Badge>
-        </div>
+        {!collapsed && (
+          <div className="space-y-1 border-t border-line p-3 text-[11px] text-muted">
+            <div className="flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-pos" />Policy {gov.data?.policy_version ?? "…"}</div>
+            <div>PDP: {gov.data?.pdp ?? "…"}</div>
+            <div>Model: {gov.data?.model?.provider === "mock" ? "in-process deterministic" : gov.data?.model?.model ?? "…"}</div>
+            <div>Integrations: mock adapters</div>
+            <Badge tone="gold">{t("synthetic", lang)} · independent demo</Badge>
+          </div>
+        )}
       </nav>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex flex-wrap items-center gap-2 border-b border-line bg-side/60 px-4 py-2">

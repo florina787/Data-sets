@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { History, MessageSquarePlus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button, ErrorState, Spinner } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useApp } from "@/lib/app";
@@ -56,12 +57,23 @@ export default function FloHome() {
     }
   }, [askOpen, askCtx, closeAsk, send]);
 
+  // sidebar shortcuts: /?c=<conversation id> reopens a conversation, /?new=1 starts a fresh one
+  const [params, setParams] = useSearchParams();
+  useEffect(() => {
+    const c = params.get("c");
+    if (c) conv.load(c).then((p) => p && setPersonaId(p)).catch(() => undefined);
+    else if (params.get("new")) conv.reset();
+    if (c || params.get("new")) setParams({}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
   const turn = conv.turns[conv.selected];
   const started = conv.turns.length > 0;
   if (cat.error) return <div className="p-6"><ErrorState error={cat.error} /></div>;
   if (!cat.data) return <Spinner label="Preparing FLO" />;
   return (
     <div className="flex h-full min-h-0 flex-col">
+      {started && <h1 className="sr-only">FLO conversation</h1>}
       <ConversationHistory open={history} onClose={() => setHistory(false)} activeId={conv.conversationId}
         onOpen={async (id) => { const p = await conv.load(id); if (p) setPersonaId(p); }} onNew={conv.reset} />
       {!started ? (
@@ -70,7 +82,7 @@ export default function FloHome() {
             composerRef={welcomeComposer} onHistory={() => setHistory(true)} firstName={me?.display_name.split(" ")[0]} />
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto pb-28 lg:grid-cols-[minmax(360px,0.9fr)_minmax(0,1.7fr)] lg:overflow-hidden lg:pb-0">
+        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto pb-28 max-lg:auto-rows-max lg:grid-cols-[minmax(360px,0.9fr)_minmax(0,1.7fr)] lg:overflow-hidden lg:pb-0">
           <div className="flex min-h-0 flex-col border-line lg:border-r">
             <div className="flex items-center gap-2 border-b border-line px-3 py-2">
               <Button size="sm" variant="ghost" onClick={() => setHistory(true)} aria-label="Conversation history"><History className="h-4 w-4" /></Button>
@@ -78,7 +90,7 @@ export default function FloHome() {
               <Button size="sm" variant="ghost" onClick={conv.reset} aria-label="New conversation"><MessageSquarePlus className="h-4 w-4" /></Button>
             </div>
             <div className="min-h-0 flex-1 p-4 lg:overflow-y-auto lg:scroll-thin">
-              <FloConversation turns={conv.turns} selected={conv.selected} onSelect={conv.setSelected} onFollowup={(q) => send(q)} />
+              <FloConversation turns={conv.turns} selected={conv.selected} onSelect={conv.setSelected} onFollowup={(q) => send(q)} onChartFollowup={send} />
             </div>
             <div className="border-t border-line bg-bg/95 p-3 backdrop-blur max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-30">
               <FloMessageComposer ref={composer} onSend={(q) => send(q)} onCancel={conv.cancel} busy={conv.busy} personaLabel={persona?.label}

@@ -3,8 +3,9 @@
 </p>
 
 <p align="center">
-  <img alt="tests" src="https://img.shields.io/badge/pytest-128%20passed-10B981?style=flat-square">
-  <img alt="browser" src="https://img.shields.io/badge/Playwright-6%2F6-10B981?style=flat-square">
+  <img alt="tests" src="https://img.shields.io/badge/pytest-181%20passed-10B981?style=flat-square">
+  <img alt="browser" src="https://img.shields.io/badge/Playwright-20%2F20-10B981?style=flat-square">
+  <img alt="a11y" src="https://img.shields.io/badge/axe-0%20serious-10B981?style=flat-square">
   <img alt="evals" src="https://img.shields.io/badge/evals-10%2F10-10B981?style=flat-square">
   <img alt="release gate" src="https://img.shields.io/badge/release%20gate-PASS-10B981?style=flat-square">
   <img alt="opa" src="https://img.shields.io/badge/OPA%20parity-~2000%20decisions-3B82F6?style=flat-square">
@@ -13,9 +14,10 @@
 </p>
 
 <p align="center">
-  An enterprise <b>agentic AI platform</b> for an investment-management firm — executive command center, investment and
-  wealth-advisor workspaces, a governed multi-agent copilot (<b>Ask Flo</b>), scenario simulation, decision memory,
-  regulatory research and AI operations — with deny-by-default governance, privacy controls and human approvals built in.
+  A <b>conversation-first investment intelligence workspace</b>. Ask FLO a question; governed specialist agents fetch
+  authorized data, a deterministic engine computes every number, and the answer arrives as a live dashboard with
+  evidence-cited recommendations and human approval gates. Behind the conversation: executive, investment, wealth,
+  compliance and AI-operations modules, all with deny-by-default governance and privacy built in.
 </p>
 
 > [!IMPORTANT]
@@ -24,27 +26,126 @@
 > default model is a **deterministic in-process mock** (no external LLM calls) · **securities trading is prohibited.**
 
 <p align="center">
-  <img src="docs/screenshots/01-executive.png" alt="Executive Command Center" width="100%">
+  <img src="docs/screenshots/20-flo-welcome.png" alt="FLO conversation-first home" width="100%">
 </p>
 
 ---
 
 ## Contents
 
-[At a glance](#at-a-glance) · [The data story](#the-data-story) · [Product tour](#product-tour) ·
+[FLO 2.0: the conversation is the product](#flo-20-the-conversation-is-the-product) · [At a glance](#at-a-glance) · [The data story](#the-data-story) · [Product tour](#product-tour) ·
 [Architecture](#architecture) · [Agents](#multi-agent-orchestration) · [Governance & security](#governance-zero-trust--human-in-the-loop) ·
 [Knowledge / RAG](#permission-aware-knowledge-retrieval) · [Analytics & scenarios](#financial-engine--scenario-simulator) ·
 [The 8 demonstrations](#the-eight-end-to-end-demonstrations) · [Verification](#verification--measured-performance) ·
 [Quick start](#quick-start) · [Repository](#repository-layout) · [Docs](#documentation) · [Limitations](#limitations)
 
+## FLO 2.0: the conversation is the product
+
+FLO opens on a conversation, not a dashboard. The dashboard is FLO's **answer**: it is composed for each question from
+governed data and stays live while you keep talking.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/21-flo-answer.png" alt="Answer with KPIs and live dashboard"><br>
+<sub><b>An answer is a workspace.</b> Headline and summary computed from governed facts, KPI cards, the first chart inline
+in the reply and the full dashboard alongside.</sub></td>
+<td width="50%"><img src="docs/screenshots/27-flo-sector-shock.png" alt="Conversational memory and sector shock"><br>
+<sub><b>Conversational memory.</b> "Which sector contributed the most?" → "What happens if <i>that sector</i> falls 15%?"
+resolves the reference and runs a governed sector-shock scenario.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/24-flo-agent-timeline.png" alt="Agent timeline"><br>
+<sub><b>Agent timeline.</b> Each agent's responsibility, status, measured duration, tool calls, data sources, evidence
+references and approval needs. No hidden reasoning, arguments or record values.</sub></td>
+<td width="50%"><img src="docs/screenshots/25-flo-evidence.png" alt="Evidence drawer"><br>
+<sub><b>Evidence & trace.</b> The workflow graph, every tool call with its policy decision, citations, assumptions and
+trace references.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/23-flo-recommendations.png" alt="Recommendations and roadmap"><br>
+<sub><b>Observed facts, interpretations, simulated outcomes, proposed actions</b>, each labelled. Every action cites
+the facts it rests on, its owner, KPIs, validation criteria and approvals. No invented ROI or confidence.</sub></td>
+<td width="50%"><img src="docs/screenshots/30-flo-onboarding.png" alt="Business owner onboarding"><br>
+<sub><b>Prospect onboarding.</b> Figures the owner types are labelled <i>you provided</i>, <i>calculated from your
+inputs</i> or <i>illustrative assumption</i>, and never presented as platform data.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/31-flo-denied.png" alt="Unauthorized request denied"><br>
+<sub><b>The chat is not a bypass.</b> Another advisor's client is denied by policy (and audited). Choosing a persona
+never grants access.</sub></td>
+<td width="50%"><img src="docs/screenshots/33-flo-mobile-answer.png" alt="Mobile" width="45%"><br>
+<sub><b>Responsive.</b> On mobile, conversation and analytics stack and the composer stays docked.</sub></td>
+</tr>
+</table>
+
+### How a question flows
+
+```mermaid
+flowchart LR
+  U[Composer] -- "POST /api/conversations/{id}/messages/stream (SSE)" --> I[Intent planner<br/>flo-intent-rules/1.0<br/>+ conversation state]
+  I --> P[Policy check<br/>identity, not persona]
+  P --> G[LangGraph<br/>guard → supervisors → specialists]
+  G -- "every tool call" --> GW{{Tool gateway<br/>RBAC/ABAC · audit}}
+  G --> V[Visualization agent<br/>allowlisted chart builders]
+  V -- "data as the user" --> GW
+  G & V --> R[Recommendation engine<br/>evidence-cited · roadmap]
+  R --> X[Numeric grounding<br/>+ schema validation]
+  X --> S[(Conversation store<br/>ids only · PII masked)]
+  X -- "stage · plan · agent · result events" --> U
+```
+
+* **Real progress only.** Stage, plan and agent events are emitted when the backend actually reaches each step.
+* **Streaming, cancellation, retries, reconnection.** Each message carries an idempotency key. A dropped stream keeps
+  running, and a retry joins the in-flight run and returns its stored result. Stop cancels explicitly (owner-only).
+* **Context without bypass.** Follow-ups carry entity ids and parameters (months, group-by, scenario, sector). Every reuse
+  goes back through the gateway, and stored answers about a client you can no longer see are withheld on reload.
+
+### Response contract and visualization schema
+
+`flo.conversation/1.0` returns `answer`, `intent` (agents, tools, data dependencies, risk classification, approvals),
+`kpis`, `charts`, `tables`, `insights` (sections: observed facts, analytical interpretation, simulated outcomes,
+risks, opportunities, limitations), `recommendations`, `implementation_plan`, `citations`, `data_freshness`,
+`assumptions`, `approval_requirements`, `suggested_followups` and a `workflow` trace with the agent timeline.
+Charts follow the **allowlisted `flo.viz/1.0` schema**: 18 declared types (line, area, waterfall, treemap, heatmap,
+matrix, scatter, geo, tornado, scorecard, agent graph and more). Each chart is validated server-side for type, shape,
+finite values and size, and the browser maps data to ECharts. No server- or model-supplied code is ever executed.
+
+### Personas (a UX preference, never a permission)
+
+| Persona | Shapes | Typical identity |
+|---|---|---|
+| CEO · CFO · CIO | KPIs first, board language, revenue/margin/scenario emphasis | executive · finance · cio |
+| Wealth Advisor · Relationship Manager | client review, retirement, book retention signals | wealth_advisor |
+| Institutional Investment Manager · Portfolio Analyst | mandates, stress tests, benchmarks, methodology shown | cio · investment_analyst |
+| Risk and Compliance Officer | concentration, risk register, policy research | risk_officer · compliance_officer |
+| Business Owner / Prospective Client | plain language, glossary, discovery questions, labelled assumptions | prospect |
+| AI Operations Administrator | agent graph, traces, data quality | ai_admin |
+
+### Demonstrations (automated)
+
+API: [`tests/e2e/test_conversation.py`](tests/e2e/test_conversation.py) · Browser: [`frontend/e2e/conversation.spec.ts`](frontend/e2e/conversation.spec.ts)
+
+| # | Who | Conversation | Governance shown |
+|---|---|---|---|
+| 1 | Business owner | "I own a firm managing CAD 500 million…" → discovery, labelled preliminary dashboard, figures added in a follow-up, 90-day roadmap | no platform data used for a prospect |
+| 2 | CEO | "Why is AUM growing while profitability declines?" → AUM, margin, yield, revenue bridge, recommendations | `board:distribute` approval gate |
+| 3 | CIO | "Simulate a 20% equity downturn", then re-run with inline scenario controls | outputs labelled conditional, not forecasts |
+| 4 | Wealth advisor | client review: allocation, risk vs band, goals, retirement, agenda | `recommendation:deliver` approval |
+| 5 | CFO | revenue and expense drivers, budget variance | analyst depth with methodology |
+| 6 | Relationship manager | retention in their own book with review signals | enterprise data not composed for an advisor |
+| 7 | Risk officer | concentration exposure, correlation, heatmap | aggregate only; compliance officer is denied |
+| 8 | Executive | board-ready briefing | distribution approval-gated |
+| 9 | Any | follow-ups: "by product", "last 24 months", "rates +200 bps", "largest risk"; "compare it with last quarter" → "which sector" → "if *that sector* falls 15%" | context re-authorized every turn |
+| 10 | Advisor 2 | asks for another advisor's client | denied, audited, no data in the response |
+
 ## At a glance
 
 <table>
 <tr>
-<td align="center"><h3>20</h3>specialist agents<br><sub>+ 6 LangGraph supervisors</sub></td>
+<td align="center"><h3>25</h3>specialist agents<br><sub>+ visualization agent · 6 supervisors</sub></td>
 <td align="center"><h3>13</h3>workspaces<br><sub>role-aware navigation</sub></td>
 <td align="center"><h3>~2,000</h3>policy decisions<br><sub>Python ⇄ OPA parity-tested</sub></td>
-<td align="center"><h3>128</h3>backend tests<br><sub>SQLite & PostgreSQL</sub></td>
+<td align="center"><h3>181</h3>backend tests<br><sub>+ 20 browser · 8 frontend unit</sub></td>
 </tr>
 <tr>
 <td align="center"><h3>2,000</h3>synthetic clients<br><sub>500 portfolios · 100 funds</sub></td>
@@ -418,11 +519,12 @@ Automated in [`tests/e2e/test_journeys.py`](tests/e2e/test_journeys.py) (API) an
 
 | Check | Result |
 |---|---|
-| Backend tests — unit, financial, security, adversarial, e2e journeys | **128 passed** on SQLite **and** PostgreSQL + Redis |
-| OPA policy tests + Python ⇄ OPA parity | 7/7 · parity on ~2,000 decisions |
+| Backend tests: unit, financial, security, adversarial, conversation, streaming, persistence, e2e journeys | **181 passed**, 1 skipped (OPA parity, needs the `opa` binary) on SQLite in the FLO 2.0 run. PostgreSQL + Redis: 128/128 on the 1.x suite; not re-run for 2.0 |
+| OPA policy tests + Python ⇄ OPA parity | 7/7 · parity on ~2,000 decisions (1.x run). **Skipped in the 2.0 run**: no `opa` binary in that container. YAML → OPA data sync test passes |
 | Evaluation suite (grounding, citations, retrieval, tool selection, authorization, privacy, injection, multilingual) | 10/10 |
-| Release gate (critical tests, OPA, evals, ruff, bandit, pip-audit, secret scan, TypeScript) | **PASS** |
-| Playwright browser journeys | 6/6 on the dev stack and on the Docker stack |
+| Release gate (critical tests, OPA, evals, ruff, bandit, pip-audit, secret scan, TypeScript) | **PASS** (OPA step skipped as above; pip-audit clean after upgrading pypdf to 6.21.4) |
+| Playwright: 10 conversation demos, memory chain, starter prompts, sidebar, evidence/history, mobile, axe accessibility, 6 module journeys | **20/20** against the running app; axe reports 0 serious/critical violations |
+| Frontend unit tests (chart mapping, formatting, SSE parsing) | 8/8 |
 | Docker Compose | all services healthy; OPA PDP, pgvector, Redis, Prometheus & Grafana verified |
 | Backup / restore drill | identical row counts; audit hash chain valid on the restored copy |
 | Helm / Kubernetes / Terraform | `helm lint` + `template` pass; manifests parse; module contracts `terraform validate` — **not applied to a real cluster/account** |
@@ -455,8 +557,10 @@ Behind a TLS-intercepting corporate proxy, pass its CA as a build secret (TLS ve
 make setup     # venv + npm ci
 make seed      # migrations + synthetic data + document ingestion
 make api       # http://localhost:8000
-make ui        # http://localhost:5173 (proxies /api)
+make ui        # http://localhost:5173 (proxies /api) → FLO opens on the conversation
 ```
+Optional LLM narration: `FLO_MODEL_PROVIDER=gemini GEMINI_API_KEY=… make api`. Gemini is approved for **public** data
+only, so client and firm data stays with the in-process model by policy.
 </details>
 
 <details>
@@ -484,7 +588,8 @@ compliance, privacy, AI administrator, and an advisor in a second tenant.</sub><
 flo-enterprise/
 ├── frontend/        React + TypeScript UI, Playwright journeys & screenshot gallery
 ├── backend/         FastAPI app, routers, DB models, Alembic migrations, seed, worker
-├── agents/          LangGraph graphs, 20 specialist agents, tool catalog, approved comms templates
+├── conversation/    FLO 2.0: response contract & viz schema, personas, intent planner, dashboards, recommendations, service
+├── agents/          LangGraph graphs, 25 specialist agents, tool catalog, approved comms templates
 ├── harness/         agent runtime, tool gateway, budgets, resilience, model adapters, grounding
 ├── governance/      identity, policy engine, OPA adapter, resources, hash-chained audit
 ├── privacy/         detection, masking, tokenization, encrypted vault
@@ -530,3 +635,7 @@ flo-enterprise/
 * Load results come from a single shared host and are not production SLAs; horizontal scaling is untested.
 * Regulatory references are illustrative; the AI makes no legal or regulatory determinations.
 * Not implemented: dedicated Sankey chart, real AV engine, regional DR failover drill.
+* FLO 2.0: intent planning is a deterministic rule set (`flo-intent-rules/1.0`), not a language model, so unusual phrasings
+  fall back to the supervisor's own routing. Sector contribution is a holdings-based approximation (latest weights). Sector
+  shocks are instantaneous and single-sector. Agent durations are measured from fan-out to completion within one run;
+  repeated identical questions may be served from the harness cache and are labelled as cached.

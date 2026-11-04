@@ -1,4 +1,4 @@
-import { AlertTriangle, ClipboardList, FileSearch, Lightbulb, ScrollText, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
+import { AlertTriangle, ClipboardList, FileSearch, FlaskConical, Lightbulb, ScrollText, ShieldAlert, TrendingDown, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import { DataGrid } from "@/components/ChartCard";
 import { Badge, Button, cn } from "@/components/ui";
@@ -14,10 +14,12 @@ import { RecommendationPanel } from "./RecommendationPanel";
 import { ScenarioControls } from "./ScenarioControls";
 import { WorkflowProgress } from "./WorkflowProgress";
 
-const SECTIONS: { id: Insight["section"]; label: string; icon: any }[] = [
-  { id: "current_state", label: "Current state", icon: ClipboardList }, { id: "finding", label: "Findings", icon: FileSearch },
-  { id: "risk", label: "Risks", icon: AlertTriangle }, { id: "opportunity", label: "Opportunities", icon: Lightbulb },
-  { id: "limitation", label: "Limitations & assumptions", icon: ScrollText }];
+const SECTIONS: { id: Insight["section"]; label: string; hint: string; icon: any }[] = [
+  { id: "current_state", label: "Observed facts", hint: "computed from governed data", icon: ClipboardList },
+  { id: "finding", label: "Analytical interpretation", hint: "what the facts indicate", icon: FileSearch },
+  { id: "simulated", label: "Simulated outcomes", hint: "conditional on stated assumptions", icon: FlaskConical },
+  { id: "risk", label: "Risks", hint: "", icon: AlertTriangle }, { id: "opportunity", label: "Opportunities", hint: "", icon: Lightbulb },
+  { id: "limitation", label: "Limitations & assumptions", hint: "", icon: ScrollText }];
 const SEV = { info: "text-ink/90", positive: "text-pos", warning: "text-warn", critical: "text-crit" } as const;
 const SCENARIO_PERSONAS = new Set(["cio", "institutional_pm", "ceo", "cfo", "risk_compliance"]);
 
@@ -25,12 +27,13 @@ function Insights({ items }: { items: Insight[] }) {
   if (!items.length) return null;
   return (
     <div className="grid gap-3 lg:grid-cols-2">
-      {SECTIONS.map(({ id, label, icon: Icon }) => {
+      {SECTIONS.map(({ id, label, hint, icon: Icon }) => {
         const xs = items.filter((i) => i.section === id);
         if (!xs.length) return null;
         return (
           <section key={id} className="rounded-xl border border-line bg-card p-3.5" aria-label={label}>
-            <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"><Icon className="h-3.5 w-3.5" />{label}</h3>
+            <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted"><Icon className="h-3.5 w-3.5" />{label}
+              {hint && <span className="font-normal normal-case tracking-normal text-muted/80">· {hint}</span>}</h3>
             <ul className="space-y-2 text-sm">
               {xs.map((i) => (
                 <li key={i.id}>

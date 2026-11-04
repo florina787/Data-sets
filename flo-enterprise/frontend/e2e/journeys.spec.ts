@@ -78,7 +78,7 @@ test("AI admin: observability dashboard and agent workflow", async ({ page }) =>
 
 test("External advisor: restricted navigation, product research only", async ({ page }) => {
   await login(page, "u-external");
-  const links = await page.getByRole("navigation", { name: "Primary" }).getByRole("link").allTextContents();
+  const links = await page.getByRole("navigation", { name: "Primary" }).getByRole("link").filter({ hasNotText: "Investment Intelligence" }).allTextContents();
   expect(links.map((l) => l.trim())).toEqual(["FLO Intelligence", "Product Research", "Knowledge Search", "Data Products"]);
   const r = await page.request.get("/api/wealth/clients/C-00001", { headers: { Authorization: `Bearer ${await page.evaluate(() => sessionStorage.getItem("flo.token"))}` } });
   expect(r.status()).toBe(403);

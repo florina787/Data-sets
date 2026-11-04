@@ -22,6 +22,7 @@ VIZ_TOOLS = ["finance.kpis", "finance.aum_trend", "finance.aum_waterfall", "fina
              "finance.revenue_attribution", "finance.product_profitability", "finance.actual_vs_budget", "finance.retention", "strategy.initiatives",
              "investment.enterprise_concentration", "investment.correlation", "investment.geographic_exposure", "investment.fund_list", "risk.heatmap",
              "scenario.run", "scenario.compare", "scenario.sensitivity", "wealth.advisor_productivity", "wealth.book_health", "advisory.firm_model",
+             "investment.performance", "scenario.sector_shock",
              "client.profile", "client.portfolios", "client.goals", "client.suitability", "client.retirement"]
 VIZ_ROLES = frozenset({"executive", "finance", "cio", "investment_analyst", "wealth_advisor", "external_advisor", "compliance_officer",
                        "privacy_officer", "ai_admin", "risk_officer", "prospect"})
@@ -37,6 +38,7 @@ class VizQ(BaseModel):
     client_id: str | None = Field(None, pattern=r"^C-\d{5}$")
     scenario: dict[str, Any] = {}
     business_profile: dict[str, Any] = {}
+    sector_shock: dict[str, Any] = {}
     persona: str = "ceo"
 
 
@@ -531,7 +533,58 @@ def firm_data_readiness(c: Ctx) -> ChartSpec:
                                      tools=["advisory.firm_model"]))
 
 
+def _perf(c: Ctx) -> dict:
+    return c.tool("investment.performance", months=c.q.months)
+
+
+def performance_trend(c: Ctx) -> ChartSpec:
+    r = _perf(c)
+    d = r["data"]
+    return ChartSpec(chart_id="performance_trend", chart_type="combo", title="Portfolio performance", subtitle="Aggregate monthly return and cumulative return, managed portfolios",
+                     categories=d["months"], series=[Series(name="Monthly return", values=d["monthly_returns"], unit="%", render="bar", metric_id="perf.twr"),
+                                                     Series(name="Cumulative return", values=d["cumulative"], unit="%", render="line", metric_id="perf.twr")],
+                     unit="%", metrics=_metrics(r["lineage"]), lineage=_lin(r["lineage"], ["investment.performance"]),
+                     drilldown={"dimension": "month", "prompt_template": "What drove portfolio performance in {value}?"},
+                     interactions=["tooltip", "drilldown", "export", "explain", "methodology"])
+
+
+def period_comparison(c: Ctx) -> ChartSpec:
+    r = _perf(c)
+    d = r["data"]
+    n = d["window_months"]
+    return ChartSpec(chart_id="period_comparison", chart_type="bar", title="Period comparison", subtitle=f"Linked return, last {n} month(s) vs the preceding {n}",
+                     categories=[f"{d['prior_period']['start'][:7]} to {d['prior_period']['end'][:7]}", f"{d['period']['start'][:7]} to {d['period']['end'][:7]}"],
+                     series=[Series(name="Return", values=[d["prior_period"]["return"], d["period"]["return"]], unit="%", metric_id="perf.twr")], unit="%",
+                     metrics=_metrics(r["lineage"]), lineage=_lin(r["lineage"], ["investment.performance"]), filters={"months": n},
+                     available_filters=[FilterSpec(id="months", label="Window", options=[3, 6, 12], value=n)],
+                     interactions=["tooltip", "compare", "filter", "export", "explain", "methodology"])
+
+
+def sector_contribution(c: Ctx) -> ChartSpec:
+    r = _perf(c)
+    rows = r["data"]["sector_contribution"]
+    return ChartSpec(chart_id="sector_contribution", chart_type="hbar", title="Return contribution by sector",
+                     subtitle=f"Weight x sector return over {r['data']['window_months']} month(s); holdings-based approximation",
+                     categories=[x["sector"] for x in rows], series=[Series(name="Contribution", values=[x["contribution"] for x in rows], unit="%")], unit="%",
+                     metrics=_metrics(r["lineage"]), lineage=_lin(r["lineage"], ["investment.performance"]),
+                     drilldown={"dimension": "sector", "prompt_template": "What happens if {value} falls 15%?"},
+                     interactions=["tooltip", "drilldown", "export", "explain", "methodology"])
+
+
+def sector_shock_mandates(c: Ctx) -> ChartSpec:
+    ss = c.q.sector_shock or {}
+    if not ss.get("sector"):
+        raise PolicyDenied("no sector selected", code="NEEDS-SECTOR")
+    r = c.tool("scenario.sector_shock", sector=ss["sector"], shock=ss.get("shock", -0.15))
+    d = r["data"]
+    return ChartSpec(chart_id="sector_shock_mandates", chart_type="hbar", title=f"{d['sector']} {d['shock'] * 100:+.0f}%: impact by mandate",
+                     subtitle="Average immediate impact on managed portfolios", categories=list(d["by_mandate"]),
+                     series=[Series(name="Impact", values=list(d["by_mandate"].values()), unit="%")], unit="%",
+                     lineage=_lin(r["lineage"], ["scenario.sector_shock"]), note=d["method"])
+
+
 BUILDERS: dict[str, Callable[[Ctx], ChartSpec]] = {f.__name__: f for f in [
+    performance_trend, period_comparison, sector_contribution, sector_shock_mandates,
     aum_trend, aum_waterfall, net_flows, revenue_expenses, margin_trend, revenue_yield, revenue_bridge, product_profitability, product_revenue,
     budget_variance, initiative_scorecard, risk_heatmap, concentration_top_issuers, sector_exposure, geographic_exposure, correlation, scenario_paths,
     scenario_by_asset_class, portfolio_impacts, scenario_comparison, sensitivity_tornado, advisor_productivity_scatter, advisor_book_distribution,
@@ -557,7 +610,9 @@ CHART_TOOLS = {"aum_trend": ["finance.aum_trend"], "aum_waterfall": ["finance.au
                "fee_by_strategy": ["investment.fund_list"], "relative_return": ["investment.fund_list"], "client_allocation": ["client.profile", "client.portfolios"],
                "risk_return": ["client.portfolios", "client.suitability"], "goal_progress": ["client.goals"], "retirement_projection": ["client.retirement"],
                "cash_flow": ["client.retirement"], "firm_fee_sensitivity": ["advisory.firm_model"], "firm_market_scenarios": ["advisory.firm_model"],
-               "firm_data_readiness": ["advisory.firm_model"]}
+               "firm_data_readiness": ["advisory.firm_model"], "performance_trend": ["investment.performance"],
+               "period_comparison": ["investment.performance"], "sector_contribution": ["investment.performance"],
+               "sector_shock_mandates": ["scenario.sector_shock"]}
 
 
 def chart_relevant(chart_id: str, perms: set[str], has_book: bool) -> bool:
@@ -689,7 +744,33 @@ def kpis_firm(c: Ctx) -> list[KPI]:
             for m in a["metrics"]]
 
 
-KPI_SETS = {"exec": kpis_exec, "advisors": kpis_advisors, "retention": kpis_retention, "concentration": kpis_concentration, "scenario": kpis_scenario,
+def kpis_performance(c: Ctx) -> list[KPI]:
+    d = _perf(c)["data"]
+    sc = d["sector_contribution"]
+    out = [KPI(id="period_return", label=f"Return, last {d['window_months']} month(s)", value=d["period"]["return"], unit="%",
+               delta=round(d["period"]["return"] - d["prior_period"]["return"], 6), delta_unit="pp", delta_label="vs preceding period",
+               trend=d["cumulative"][-max(d["window_months"], 6):], status="good" if d["period"]["return"] >= d["prior_period"]["return"] else "warn",
+               metric_id="perf.twr"),
+           KPI(id="prior_return", label="Preceding period return", value=d["prior_period"]["return"], unit="%", metric_id="perf.twr"),
+           KPI(id="portfolio_mv", label="Managed portfolio value", value=d["market_value"], unit="CAD")]
+    if sc:
+        out.append(KPI(id="top_sector", label=f"Top contributor: {sc[0]['sector']}", value=sc[0]["contribution"], unit="%", note="holdings-based approximation"))
+    return out
+
+
+def kpis_sector_shock(c: Ctx) -> list[KPI]:
+    ss = c.q.sector_shock or {}
+    if not ss.get("sector"):
+        return []
+    d = c.tool("scenario.sector_shock", sector=ss["sector"], shock=ss.get("shock", -0.15))["data"]
+    return [KPI(id="shock_port", label="Portfolio impact", value=d["portfolio_impact"], unit="CAD", status="warn" if d["portfolio_impact"] < 0 else "good",
+                note=f"{d['sector']} {d['shock'] * 100:+.0f}% (simulated)"),
+            KPI(id="shock_port_pct", label="Share of portfolio value", value=d["portfolio_impact_pct"], unit="%"),
+            KPI(id="shock_aum", label="Product AUM impact", value=d["product_aum_impact"], unit="CAD", status="warn" if d["product_aum_impact"] < 0 else "good"),
+            KPI(id="shock_rev", label="Annualized fee revenue impact", value=d["annual_fee_revenue_impact"], unit="CAD")]
+
+
+KPI_SETS = {"performance": kpis_performance, "sector_shock": kpis_sector_shock, "exec": kpis_exec, "advisors": kpis_advisors, "retention": kpis_retention, "concentration": kpis_concentration, "scenario": kpis_scenario,
             "client": kpis_client, "products": kpis_products, "firm": kpis_firm}
 
 
@@ -744,6 +825,11 @@ def tables_for(intent: str, facts_by_agent: dict[str, dict]) -> list[Table]:
                          columns=["Advisor", "Active clients", "Book AUM (CAD)", "Interactions / client (12m)", "Retention (12m)", "Stale KYC"],
                          rows=[[a["advisor"], a["active_clients"], a["book_aum"], a["interactions_per_client"], a["retention_12m"], a["kyc_stale"]]
                                for a in rows[:5] + rows[-5:]]))
+    ss = facts_by_agent.get("sector_scenario_agent", {})
+    if ss.get("most_impacted"):
+        out.append(Table(table_id="sector_most_impacted", title=f"Most affected portfolios if {ss['sector']} moves {ss['shock_pct']}%",
+                         columns=["Portfolio", "Mandate", "Sector weight", "Impact", "Impact (CAD)"],
+                         rows=[[x["portfolio_id"], x["mandate"], x["sector_weight"], x["impact_pct"], x["impact_value"]] for x in ss["most_impacted"]]))
     sc = facts_by_agent.get("scenario_agent", {})
     if sc.get("most_impacted"):
         out.append(Table(table_id="most_impacted", title="Most impacted portfolios", columns=["Portfolio", "Mandate", "Market value (CAD)", "Impact"],

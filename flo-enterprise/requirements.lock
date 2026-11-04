@@ -14,7 +14,7 @@ psycopg-binary==3.3.6
 pydantic==2.14.1
 pydantic_core==2.50.1
 PyJWT==2.15.1
-pypdf==6.21.1
+pypdf==6.21.4
 python-docx==1.2.0
 python-multipart==0.0.32
 PyYAML==6.0.3

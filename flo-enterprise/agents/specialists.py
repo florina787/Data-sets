@@ -781,3 +781,56 @@ def firm_diagnostic_agent(ctx, q: FirmQ):
              "per_bp": sens.get("revenue_per_1bp_fee"), "per_pct": sens.get("revenue_per_1pct_net_new_assets"), "fee_used": sens.get("fee_bps_used"),
              "unit_bp": 1, "unit_pct": 1, "assessment": a}
     return _out(ctx, "firm_diagnostic_agent", "firm", facts, ["firm_kpis", "firm_fee_sensitivity", "firm_market_scenarios", "firm_data_readiness"])
+
+
+# ------------------------------------------------------------------ 24 Portfolio performance (enterprise aggregate)
+@template("performance")
+def _t_perf(f):
+    s = (f"Across {f['portfolios']} managed portfolios (CAD {f['mv_bn']}bn), the aggregate return over the {f['months']} month(s) to {f['end']} "
+         f"was {f['ret_pct']}%, versus {f['prior_pct']}% in the preceding {f['months']} month(s) - a difference of {f['diff_pp']} percentage points.")
+    if f.get("top_sector"):
+        s += (f" {f['top_sector']} contributed the most ({f['top_contrib_pp']} percentage points on a {f['top_weight_pct']}% weight) and "
+              f"{f['bottom_sector']} the least ({f['bottom_contrib_pp']} percentage points). Sector contribution is a holdings-based approximation.")
+    return s
+
+
+@REGISTRY.register(spec("performance_agent", "investment", "investment_supervisor", "Aggregate portfolio performance, period comparison and sector contribution.",
+                        INV | EXEC | RISK, ["investment.performance"], Question))
+def performance_agent(ctx, q: Question):
+    d = ctx.tool("investment.performance", months=q.months)["data"]
+    sc = d["sector_contribution"]
+    facts = {"portfolios": d["portfolios"], "mv_bn": bn(d["market_value"]), "months": d["window_months"], "end": d["period"]["end"],
+             "ret_pct": pct(d["period"]["return"]), "prior_pct": pct(d["prior_period"]["return"]),
+             "diff_pp": round(pct(d["period"]["return"]) - pct(d["prior_period"]["return"]), 2), "sector_contribution": sc}
+    if sc:
+        facts.update(top_sector=sc[0]["sector"], top_contrib_pp=pct(sc[0]["contribution"]), top_weight_pct=pct(sc[0]["weight"]),
+                     bottom_sector=sc[-1]["sector"], bottom_contrib_pp=pct(sc[-1]["contribution"]))
+    return _out(ctx, "performance_agent", "performance", facts, ["performance_trend", "period_comparison", "sector_contribution"])
+
+
+# ------------------------------------------------------------------ 25 Sector shock scenario
+class SectorQ(Question):
+    sector: str = Field(min_length=2, max_length=40)
+    shock: float = Field(-0.15, ge=-0.8, le=0.8)
+
+
+@template("sector_shock")
+def _t_sector(f):
+    verb = "fell" if f["shock_pct"] < 0 else "rose"
+    lose = "lose" if f["port_imp_m"] < 0 else "gain"
+    return (f"If {f['sector']} {verb} {f['shock_abs_pct']}% instantly, managed portfolios would {lose} about CAD {f['port_abs_m']}m ({f['port_abs_pct']}% of "
+            f"CAD {f['port_mv_bn']}bn); product AUM would change by about CAD {f['aum_imp_m']}m and annualized fee revenue by about CAD {f['rev_imp_m']}m. "
+            f"The most affected mandate is {f['worst_mandate']} ({f['worst_mandate_pct']}%). Conditional on the stated shock; not a forecast.")
+
+
+@REGISTRY.register(spec("sector_scenario_agent", "investment", "investment_supervisor", "Single-sector shock across portfolios and products.",
+                        INV | EXEC | RISK, ["scenario.sector_shock"], SectorQ))
+def sector_scenario_agent(ctx, q: SectorQ):
+    d = ctx.tool("scenario.sector_shock", sector=q.sector, shock=q.shock)["data"]
+    worst = min(d["by_mandate"].items(), key=lambda kv: kv[1])
+    facts = {"sector": d["sector"], "shock_pct": pct(d["shock"]), "shock_abs_pct": abs(pct(d["shock"])), "port_imp_m": mn(d["portfolio_impact"]),
+             "port_imp_pct": pct(d["portfolio_impact_pct"]), "port_abs_m": abs(mn(d["portfolio_impact"])),
+             "port_abs_pct": abs(pct(d["portfolio_impact_pct"])), "port_mv_bn": bn(d["portfolio_market_value"]), "aum_imp_m": mn(d["product_aum_impact"]),
+             "rev_imp_m": mn(d["annual_fee_revenue_impact"]), "worst_mandate": worst[0], "worst_mandate_pct": pct(worst[1]),
+             "by_mandate": d["by_mandate"], "most_impacted": d["most_impacted"], "method": d["method"]}
+    return _out(ctx, "sector_scenario_agent", "sector_shock", facts, ["sector_shock_mandates"])

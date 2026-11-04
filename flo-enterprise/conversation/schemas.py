@@ -189,7 +189,7 @@ class EvidenceRef(BaseModel):
 
 class Insight(BaseModel):
     id: str
-    section: Literal["current_state", "finding", "risk", "opportunity", "limitation"]
+    section: Literal["current_state", "finding", "simulated", "risk", "opportunity", "limitation"]
     title: str
     detail: str = ""
     severity: Literal["info", "positive", "warning", "critical"] = "info"
@@ -309,6 +309,7 @@ class WorkflowInfo(BaseModel):
     stages: list[dict] = []
     latency_ms: int | None = None
     graph: ChartSpec | None = None
+    agent_runs: list[dict] = []
 
 
 class Discovery(BaseModel):

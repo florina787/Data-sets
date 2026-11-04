@@ -18,7 +18,7 @@ const axisFmt = (unit: string) => (v: number) => (unit === "%" ? `${Math.round(v
 function base(tk: Tokens, animate: boolean) {
   return {
     animation: animate, animationDuration: 600, animationEasing: "cubicOut" as const,
-    aria: { enabled: true, decal: { show: false } }, color: tk.series,
+    aria: { enabled: false }, color: tk.series, // the wrapper provides role="img" + label
     textStyle: { color: tk.muted, fontFamily: "Inter, system-ui, sans-serif" },
     grid: { left: 12, right: 18, top: 40, bottom: 24, containLabel: true },
     tooltip: { backgroundColor: tk.surface, borderColor: tk.grid, textStyle: { color: tk.ink }, confine: true },

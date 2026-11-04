@@ -34,7 +34,13 @@ body { background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: Inter, s
 .flo-rise { animation: flo-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 .flo-slide-in { animation: flo-slide-in 220ms ease-out both; }
 .flo-slide-left { animation: flo-slide-left 220ms ease-out both; }
-.flo-hero { background: radial-gradient(ellipse 70% 45% at 50% 0%, rgb(212 175 55 / 0.07), transparent 70%); }
+.flo-hero {
+  background:
+    radial-gradient(ellipse 55% 40% at 22% 0%, rgb(59 130 246 / 0.10), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 80% 6%, rgb(139 92 246 / 0.08), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgb(212 175 55 / 0.06), transparent 70%);
+}
+.flo-edge { background: linear-gradient(120deg, rgb(59 130 246 / 0.55), rgb(139 92 246 / 0.35) 45%, rgb(212 175 55 / 0.6)); padding: 1px; border-radius: 1.05rem; }
 @media (prefers-reduced-motion: reduce) {
   .flo-rise, .flo-slide-in, .flo-slide-left { animation: none; }
   * { scroll-behavior: auto !important; }

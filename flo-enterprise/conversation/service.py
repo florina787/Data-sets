@@ -251,7 +251,7 @@ def _persist(principal: Principal, cid: str, text: str, client_message_id: str |
     new_state = dict(state)
     new_state.update(last_intent=payload["intent"]["intent"], persona=payload["persona"])
     if payload["status"] in ("complete", "partial", "needs_input"):
-        for k in ("client_id", "portfolio_id"):
+        for k in ("client_id", "portfolio_id", "sector"):
             if ents.get(k) and payload["status"] != "denied":
                 new_state[k] = ents[k]
         mods = payload["intent"]["modifiers"]
@@ -336,7 +336,7 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
             ctx_ctx[k] = plan.entities[k]
     if overrides.get("chart_id") and "route_hint" not in ctx_ctx:
         ctx_ctx["chart_id"] = overrides["chart_id"]  # "Explain with FLO" from a dashboard chart: the graph maps it to agents
-    for k in ("months", "scenario", "business_profile"):
+    for k in ("months", "scenario", "business_profile", "sector_shock"):
         if plan.modifiers.get(k):
             ctx_ctx[k] = plan.modifiers[k]
     needs_client = INTENTS[intent["intent"]].needs_client and not plan.entities.get("client_id") and bool(intent["agents_authorized"])
@@ -344,17 +344,22 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
     agent_events: list[dict] = []
     em.stage("evidence", "active", "Routing to supervisors and specialist agents")
 
+    fan_out_t = [time.monotonic()]
+
     def on_event(node: str, upd: dict) -> None:
         if node.endswith("_supervisor") and node != "enterprise_supervisor":
+            fan_out_t[0] = time.monotonic()
             em("plan", {"supervisor": node, "agents": [p["agent"] for p in upd.get("plan", [])],
                         "skipped": [e["agent"] for e in upd.get("errors", [])]})
         elif node == "specialist":
             for r in upd.get("results", []):
-                ev = {"agent": r["agent"], "status": "succeeded", "tools": [t["tool"] for t in ctx.tool_log if t.get("agent") == r["agent"]]}
+                ev = {"agent": r["agent"], "status": "succeeded", "tools": [t["tool"] for t in ctx.tool_log if t.get("agent") == r["agent"]],
+                      "duration_ms": int((time.monotonic() - fan_out_t[0]) * 1000)}
                 agent_events.append(ev)
                 em("agent", ev)
             for e in upd.get("errors", []):
-                ev = {"agent": e["agent"], "status": "failed", "failure_class": e["failure_class"]}
+                ev = {"agent": e["agent"], "status": "failed", "failure_class": e["failure_class"],
+                      "duration_ms": int((time.monotonic() - fan_out_t[0]) * 1000)}
                 agent_events.append(ev)
                 em("agent", ev)
         elif node == "synthesize":
@@ -381,6 +386,9 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
     facts = {r["agent"]: r["facts"] for r in results}
     guard_blocked = bool(ans and ans.get("text", "").startswith("Request rejected"))
     em.stage("analysis", "done", f"{len(results)} specialist result(s)")
+    perf = facts.get("performance_agent") or {}
+    if perf.get("top_sector"):
+        intent["entities"]["sector"] = perf["top_sector"]  # referenced later as "that sector"
     # 4. dashboard
     em.stage("visualization", "active")
     charts: list[ChartSpec] = []
@@ -403,7 +411,8 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
             out = get_harness().run("visualization_agent", ctx.fork(), {"charts": chart_ids[:8], "kpis": kset, "months": plan.modifiers.get("months", 12),
                                                                          "group_by": plan.modifiers.get("group_by"), "client_id": plan.entities.get("client_id"),
                                                                          "scenario": plan.modifiers.get("scenario") or {},
-                                                                         "business_profile": plan.modifiers.get("business_profile") or {}, "persona": pid})
+                                                                         "business_profile": plan.modifiers.get("business_profile") or {},
+                                                                         "sector_shock": plan.modifiers.get("sector_shock") or {}, "persona": pid})
             charts = [ChartSpec.model_validate(c) for c in out.facts["charts"]]
             kpis = [KPI.model_validate(k) for k in out.facts["kpis"]]
             withheld = out.facts["withheld_charts"]
@@ -481,6 +490,7 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
         discovery = Discovery(known=a["known"], missing=a["missing"], questions=a["discovery_questions"], integrations=a["integrations"])
     insights = rec["insights"] + [Insight(id=f"L{i + 1}", section="limitation", title=t) for i, t in enumerate(rec["limitations"])]
     graph = _agent_graph(intent, ans, ctx, agent_events)
+    agent_runs = _agent_runs(intent, ctx, agent_events, rec)
     if pid == "ai_ops" or intent["intent"] == "general" and (ans or {}).get("route") == "ai_operations":
         charts.append(graph)
     resp = {**base, "status": status, "intent": Intent(**intent),
@@ -494,14 +504,15 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
             "workflow": WorkflowInfo(workflow_id=request_id, route=(ans or {}).get("route"), agents=(ans or {}).get("agents", []),
                                      tool_calls=ctx.tool_log, policy_decisions=ctx.policy_log, errors=errors, model=ctx.model.name,
                                      model_mode=(ans or {}).get("model_mode", ""), injection=inj, stages=em.stages,
-                                     latency_ms=int((time.monotonic() - t0) * 1000), graph=graph)}
+                                     latency_ms=int((time.monotonic() - t0) * 1000), graph=graph,
+                                     agent_runs=agent_runs)}
     if needs_client:
         resp["tables"] = [Table(table_id="client_choices", title="Your largest clients with a retirement goal", columns=["Client", "Segment", "Client value (CAD)"],
                                 rows=[[x["client_id"], x["segment"], x["client_value"]] for x in choices])] if choices else []
     return MessageResponse.model_validate(resp).model_dump(), plan.modifiers.get("business_profile")
 
 
-HEADLINE_PREF = {"client_review": ("current_state",), "risk_overview": ("risk",), "scenario": ("finding",), "concentration_risk": ("finding", "risk"),
+HEADLINE_PREF = {"portfolio_performance": ("current_state",), "sector_scenario": ("simulated",), "client_review": ("current_state",), "risk_overview": ("risk",), "scenario": ("simulated",), "concentration_risk": ("finding", "risk"),
                  "advisor_productivity": ("finding",), "client_retention": ("current_state",), "retirement_strategy": ("finding",)}
 
 
@@ -523,6 +534,8 @@ def _headline(intent: dict, facts: dict, rec: dict, narrative: str, results: lis
     first = None
     if headline is None:
         pref = HEADLINE_PREF.get(iid, ("finding", "current_state"))
+        if iid == "portfolio_performance" and intent["modifiers"].get("focus") == "sector_contribution":
+            pref = ("finding",)
         first = next((i for sec in pref for i in ins if i.section == sec), None) or next((i for i in ins if i.section in ("finding", "current_state")), None)
         headline = first.title if first else (narrative.split(". ")[0][:200] if narrative else intent["label"])
     summary = [i.title for i in ins if i.section in ("finding", "risk", "current_state", "opportunity") and i is not first and i.title != headline][:3]
@@ -545,6 +558,47 @@ def _approvals(intent: dict, ans: dict | None, perms: set[str], eng) -> list[App
                                        approver_roles=list((spec.get(act) or {}).get("approver_roles", [])),
                                        status="pending" if a else ("required" if act in perms else "not_permitted"), approval_id=a["id"] if a else None))
     return out
+
+
+SOURCE_BY_PREFIX = {"finance.": "Portfolio accounting & general ledger", "investment.": "Portfolio management & market data",
+                    "risk.": "Enterprise risk register", "client.": "CRM (assigned clients)", "wealth.": "CRM & advisor book",
+                    "scenario.": "Deterministic scenario engine", "docs.": "Document repository", "market.": "Market data provider",
+                    "advisory.": "Figures you provided", "strategy.": "Strategy office", "compliance.": "Compliance register", "comms.": "Approved templates"}
+
+
+def _sources(tools: list[str]) -> list[str]:
+    return sorted({v for t in tools for k, v in SOURCE_BY_PREFIX.items() if t.startswith(k)})
+
+
+def _agent_runs(intent: dict, ctx, agent_events: list[dict], rec: dict) -> list[dict]:
+    """Timeline rows: responsibility, status, measured duration (from fan-out to completion), tools, data sources, evidence and approvals.
+    Built only from this request's recorded events and logs - no reasoning traces, arguments or record values."""
+    done = {e["agent"]: e for e in agent_events}
+    cites = {}
+    for x in list(rec["insights"]) + list(rec["recommendations"]):
+        for e in x.evidence:
+            cites[e.agent] = cites.get(e.agent, 0) + 1
+    rows = []
+    for a in dict.fromkeys(list(intent["agents"]) + [e["agent"] for e in agent_events]):
+        spec = REGISTRY.get(a).spec
+        e = done.get(a)
+        calls = [t for t in ctx.tool_log if t.get("agent") == a]
+        status = "succeeded" if e and e["status"] == "succeeded" else "not_permitted" if a in intent["agents_not_authorized"] else \
+            (e or {}).get("failure_class", "not_run")
+        rows.append({"agent": a, "responsibility": spec.description, "status": status, "duration_ms": (e or {}).get("duration_ms"),
+                     "tool_calls": len(calls), "denied_calls": sum(1 for t in calls if t.get("decision") != "allow"),
+                     "tools": sorted({t["tool"] for t in calls}),
+                     "data_sources": _sources([t["tool"] for t in calls]),
+                     "evidence_refs": cites.get(a, 0), "approval_actions": list(spec.approval_actions), "data_classification": spec.data_classification,
+                     # an identical request (same user, roles, inputs, data and policy version) was answered from the harness cache
+                     "cached": bool(e and e["status"] == "succeeded" and not calls and spec.data_classification not in ("confidential", "restricted"))})
+    vis = [t for t in ctx.tool_log if t.get("agent") == "visualization_agent"]
+    if vis:
+        rows.append({"agent": "visualization_agent", "responsibility": REGISTRY.get("visualization_agent").spec.description, "status": "succeeded",
+                     "duration_ms": None, "tool_calls": len(vis), "denied_calls": sum(1 for t in vis if t.get("decision") != "allow"),
+                     "tools": sorted({t["tool"] for t in vis}), "data_sources": _sources([t["tool"] for t in vis]),
+                     "evidence_refs": 0, "approval_actions": [], "data_classification": "public"})
+    return rows
 
 
 def _freshness(charts: list[ChartSpec], store) -> DataFreshness:

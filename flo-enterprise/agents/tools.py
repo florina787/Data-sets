@@ -9,7 +9,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from analytics import data_quality, decisions, firm_model, practice, service as fin, wealth
+from analytics import data_quality, decisions, firm_model, performance, practice, service as fin, wealth
 from analytics.money import from_cents
 from governance import resources
 from governance.policy import Resource
@@ -53,6 +53,12 @@ class TrendArgs(BaseModel):
     model_config = {"extra": "forbid"}
     months: int = Field(24, ge=1, le=24)
     group_by: Literal["asset_class", "vehicle", "region", "strategy"] = "asset_class"
+
+
+class SectorShockArgs(BaseModel):
+    model_config = {"extra": "forbid"}
+    sector: str = Field(min_length=2, max_length=40)
+    shock: float = Field(ge=-0.8, le=0.8)
 
 
 class FirmArgs(BaseModel):
@@ -162,6 +168,10 @@ reg("investment.fund_list", "Fund range metrics", "product_research:read", NoArg
 reg("investment.fund_detail", "One fund's history and holdings", "product_research:read", ProductArg, lambda c, a: fin.fund_detail(c.adapters, a.product_id), _firm("product", "public"))
 reg("investment.geographic_exposure", "Look-through geographic exposure across products and portfolios", "investment:read_aggregate", NoArgs,
     lambda c, a: fin.geographic_exposure(c.adapters), _firm("investment"))
+reg("investment.performance", "Aggregate managed-portfolio return, prior-period comparison and sector contribution", "investment:read_aggregate",
+    Window, lambda c, a: performance.portfolio_performance(c.adapters, a.months), _firm("investment"), upstream="portfolio_management")
+reg("scenario.sector_shock", "Instantaneous shock to one sector across portfolios and products", "scenarios:run", SectorShockArgs,
+    lambda c, a: performance.sector_shock(c.adapters, a.sector, a.shock), _firm("scenario"))
 reg("investment.correlation", "Sector correlation matrix", "risk:read", NoArgs, lambda c, a: fin.sector_correlation(c.adapters), _firm("risk"))
 reg("risk.heatmap", "Enterprise risk register heatmap", "risk:read_aggregate", NoArgs, lambda c, a: fin.risk_heatmap(c.adapters), _firm("risk"))
 reg("market.intelligence", "Benchmark and sector returns from the market data provider", "market:read", NoArgs,

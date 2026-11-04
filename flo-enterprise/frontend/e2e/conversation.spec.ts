@@ -26,6 +26,7 @@ async function lastTurn(page: Page) {
 const chart = (page: Page, id: string) => page.locator(`[data-chart="${id}"]`);
 
 async function seriousA11y(page: Page) {
+  await page.waitForTimeout(1200); // let entrance animations finish so contrast is measured at rest
   const r = await new AxeBuilder({ page }).disableRules(["region"]).analyze();
   return r.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => `${v.id}: ${v.nodes.length}`);
 }
@@ -49,7 +50,7 @@ test("all ten starter prompts reach a governed workflow", async ({ page }) => {
   test.setTimeout(180_000);
   await login(page, "u-ceo");
   for (let i = 0; i < 10; i++) {
-    if (i > 0) await page.getByRole("button", { name: "New conversation" }).click();
+    if (i > 0) await page.getByRole("main").getByRole("button", { name: "New conversation" }).click();
     await page.locator(`[data-prompt="${i}"]`).click();
     const t = await lastTurn(page);
     expect(["complete", "partial", "needs_input", "denied"]).toContain(await t.getAttribute("data-status"));
@@ -159,7 +160,7 @@ test("evidence drawer, history and reload restore the conversation", async ({ pa
   await expect(dlg.locator('[data-chart="agent_workflow"]')).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(dlg).toHaveCount(0);
-  await page.getByRole("button", { name: "New conversation" }).click();
+  await page.getByRole("main").getByRole("button", { name: "New conversation" }).click();
   await page.getByRole("button", { name: "Conversation history" }).click();
   await page.getByLabel("Search conversations").fill("concentration");
   await page.getByRole("complementary", { name: "Conversation history" }).getByRole("button", { name: /concentration/i }).first().click();
@@ -176,4 +177,40 @@ test("mobile: conversation and analytics stack vertically and the composer stays
   await expect(page.getByTestId("workspace")).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);
+});
+
+test("conversational memory: performance → last quarter → top sector → 'that sector' falls 15%", async ({ page }) => {
+  await login(page, "u-cio");
+  await ask(page, "Show our portfolio performance.");
+  await expect(chart(page, "performance_trend")).toBeVisible();
+  await expect(page.locator('[data-inline-chart="performance_trend"]')).toBeVisible(); // charts appear inside the answer too
+  await ask(page, "Compare it with last quarter.");
+  await expect(page.getByTestId("workspace-headline")).toContainText("3 month");
+  await ask(page, "Which sector contributed the most?");
+  const sector = (await page.getByTestId("workspace-headline").textContent())!.split(" contributed")[0];
+  const t = await ask(page, "What happens if that sector falls 15%?");
+  await expect(t).toHaveAttribute("data-status", "complete");
+  await expect(page.getByTestId("workspace-headline")).toContainText(`If ${sector} fell 15`);
+  await expect(page.getByRole("region", { name: "Simulated outcomes" })).toBeVisible();
+  // expandable agent timeline: responsibility, duration, sources, approvals
+  await t.getByRole("button", { name: /Agent timeline/ }).click();
+  const row = t.locator('[data-agent-run="sector_scenario_agent"]');
+  await expect(row).toContainText("Single-sector shock");
+  await expect(row).toContainText("ms");
+  await expect(row).toContainText("Deterministic scenario engine");
+  expect(await seriousA11y(page)).toEqual([]);
+});
+
+test("sidebar collapses, keeps modules reachable and reopens recent conversations", async ({ page }) => {
+  await login(page, "u-ceo");
+  await ask(page, "Show our portfolio performance.");
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await expect(nav.getByRole("button", { name: /Show our portfolio performance/ }).first()).toBeVisible();
+  await nav.getByRole("button", { name: "Collapse sidebar" }).click();
+  await expect(nav.getByRole("link", { name: "Executive Command Center" })).toBeVisible();
+  await nav.getByRole("button", { name: "Expand sidebar" }).click();
+  await nav.getByRole("button", { name: "New conversation" }).click();
+  await expect(page.getByRole("heading", { name: /Your wealth\. Your strategy\./ })).toBeVisible();
+  await nav.getByRole("button", { name: /Show our portfolio performance/ }).first().click();
+  await expect(page.getByTestId("flo-turn")).toHaveCount(1);
 });
