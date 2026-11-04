@@ -5,11 +5,11 @@ Local Qwen (Ollama) was **not** running, so every test exercised the determinist
 
 | Suite | Command | Result |
 |---|---|---|
-| Backend on PostgreSQL | `TEST_DATABASE_URL=… uv run pytest` | 107 passed |
-| Backend on SQLite | `uv run pytest` | 107 passed |
-| Frontend typecheck + unit | `npm run typecheck && npm test` | 25 passed |
+| Backend on PostgreSQL | `TEST_DATABASE_URL=… uv run pytest` | 109 passed |
+| Backend on SQLite | `uv run pytest` | 109 passed |
+| Frontend typecheck + unit | `npm run typecheck && npm test` | 34 passed |
 | Frontend production build | `npm run build` | OK (Plotly lazy-loaded in its own chunk) |
-| Browser acceptance (real API + built UI) | `npm run e2e` | 27 passed |
+| Browser acceptance (real API + built UI) | `npm run e2e` | 27 + 12 (walking agent) passed |
 
 ## Acceptance criteria → evidence
 
@@ -29,3 +29,7 @@ Local Qwen (Ollama) was **not** running, so every test exercised the determinist
 | Every route displays Sherin's avatar | `avatar.test.tsx` (14 routes, one asset) and e2e on all 14 routes |
 | All UI controls function | e2e covers navigation, period/currency/data toggles, drill-downs, chat send + history search, uploads via sample runs, approvals, report download, tablet layout |
 | Agent workflows tested end to end | `test_python_debug_run_pauses_for_approval_then_completes`, `test_rejected_run_gets_no_savings_credit`, `test_retry_and_recovery`, `test_tool_permission_denied`, `test_chat_attachment_starts_agent_run`; e2e Python run → approval → completion |
+| Sherin walks between scenes; smooth walk/turn; same identity | `journey-e2e.mjs` (walk + turn observed, one asset id on every route), `sherin.test.tsx` |
+| Agent animations reflect real execution | `test_typed_events_follow_real_execution_and_pause_for_approval`, `test_failed_tool_emits_tool_failed`; journey e2e scene 3 |
+| Manager approval pauses the workflow | Backend event test (no `TASK_COMPLETED` before the decision); journey e2e scene 6 waits, then completes after Approve |
+| Controls, non-blocking UI, reduced motion | Journey e2e: pause/resume, jump/replay/skip, mute/speed, `elementFromPoint` click-through, `prefers-reduced-motion` run |

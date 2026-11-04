@@ -13,10 +13,11 @@ import Approvals from "./pages/Approvals";
 import Esg from "./pages/Esg";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Journey from "./pages/Journey";
 import { PageHeader } from "./components/ui";
 
 export const ROUTES: [string, () => React.ReactElement][] = [
-  ["/", CommandCenter], ["/chat", Chat], ["/portfolio", Portfolio], ["/guardian", Guardian], ["/harness", Harness], ["/azure", Azure], ["/python", Python],
+  ["/", CommandCenter], ["/journey", Journey], ["/chat", Chat], ["/portfolio", Portfolio], ["/guardian", Guardian], ["/harness", Harness], ["/azure", Azure], ["/python", Python],
   ["/tokens", Tokens], ["/savings", Savings], ["/metrics", Metrics], ["/approvals", Approvals], ["/esg", Esg], ["/reports", Reports], ["/settings", Settings],
 ];
 

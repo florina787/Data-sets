@@ -10,6 +10,19 @@ efficient? Which decisions need a human?**
 > **Demonstration data.** In demo mode every financial figure is synthetic and badged as such. Synthetic and measured
 > records are kept in separate views and never mixed. Nothing here is FLO Bank's actual performance.
 
+## Sherin walks you through it
+
+[![Guided journey video](docs/media/sherin-guided-journey-poster.png)](docs/media/sherin-guided-journey.mp4)
+
+A full-body Sherin lives in a persistent, click-through lane at the bottom of every route. On **Guided Journey**
+(`/journey`) she walks through seven scenes: Revenue, Expenditure, Agent Harness, Human vs AI, Investment Guardian,
+Manager Approval and Executive Summary. In the harness scene she follows a **live LangGraph run** event by event
+(`AGENT_STARTED`, `TOOL_RUNNING`, `VALIDATION_STARTED`, `APPROVAL_REQUIRED` and so on). She waits at the manager's
+desk until an authorized decision is recorded, and celebrates only after the recorded `TASK_COMPLETED`.
+The controls are Play, Pause, Resume, Skip, Replay, Jump, Speed and Mute, and reduced motion is respected.
+In the copilot, asking *"why did AI spending increase?"* sends her to point at the largest cost increase.
+See [docs/WALKING_AGENT.md](docs/WALKING_AGENT.md).
+
 ## What's inside
 
 | | |
@@ -73,7 +86,7 @@ cd frontend && npm run typecheck && npm test && npm run build
 cd frontend && npm run e2e
 ```
 
-The first command runs 107 backend tests on SQLite; the second runs them on PostgreSQL. The third covers types, 25 unit tests and the build. The last runs 27 browser acceptance checks and needs the API on :8000 and `vite preview` on :4173.
+The first command runs 109 backend tests on SQLite; the second runs them on PostgreSQL. The third covers types, 34 unit tests and the build. The last runs 39 browser acceptance checks and needs the API on :8000 and `vite preview` on :4173.
 
 See [docs/TEST_RESULTS.md](docs/TEST_RESULTS.md), [docs/STATUS.md](docs/STATUS.md) (functional, simulated, measured or pending) and
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

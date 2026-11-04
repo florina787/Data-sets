@@ -8,11 +8,12 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "test": "vitest run",
-    "e2e": "node e2e/run-e2e.mjs",
+    "e2e": "node e2e/run-e2e.mjs && node e2e/journey-e2e.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
     "@xyflow/react": "12.10.0",
+    "framer-motion": "12.29.3",
     "lucide-react": "0.511.0",
     "plotly.js-dist-min": "3.0.1",
     "react": "19.1.0",

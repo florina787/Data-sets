@@ -25,6 +25,8 @@ with no live external system behind it. **Measured** = recorded by the running s
 | 12-month system metric history | Simulated | Synthetic daily history, labelled |
 | Budget alerts and "why did spend increase" | Functional | Built from cost records: category, agent, volume, paid-token share, retries |
 | Executive report (Markdown, CSV) | Functional | Includes reconciliation results and definitions |
+| Walking full-body Sherin (persistent layer, 11 animation states, 7-scene journey, controls, reduced motion) | Functional | Code-rigged SVG with framer-motion movement. Follows real harness events through SSE `/api/harness/runs/{id}/stream`. Demo mode uses clearly labelled synthetic events |
+| Full-body character art | **Draft, pending approval** | Drawn to the brief (long black hair, orange-red outfit). It must be matched to the approved portrait, or replaced by a Rive or Spine export using the same pose names, before release |
 | Sherin's approved Ghibli portrait | **Pending asset** | Place the approved image at `frontend/public/sherin/sherin-ghibli.png`. All screens use it automatically. No substitute face is generated |
 | Identity / SSO | Pending | Roles come from `X-Role` / `X-User` headers (demo). Production should use Entra ID OIDC group claims |
 | Docker Compose | Written, not verified here | No Docker daemon was available in the build environment |

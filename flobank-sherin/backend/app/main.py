@@ -494,6 +494,50 @@ def harness_run(rid: str, db: Session = Depends(get_session)):
     return H.run_to_dict(r)
 
 
+def _run_events(run: M.HarnessRun, after: int) -> list[dict]:
+    out = []
+    for i, t in enumerate(run.trace or []):
+        if i >= after and t.get("event"):
+            out.append({"seq": i, "run_id": run.id, "synthetic": False, **t})
+    return out
+
+
+@app.get("/api/harness/runs/{rid}/events")
+def harness_events(rid: str, after: int = 0, db: Session = Depends(get_session)):
+    """Typed execution events for a run (polling form)."""
+    r = db.get(M.HarnessRun, rid)
+    if not r:
+        raise HTTPException(404, rid)
+    ev = _run_events(r, after)
+    return {"run_id": rid, "status": r.status, "events": ev, "next": len(r.trace or []),
+            "terminal": any(e["event"] in H.TERMINAL_EVENTS for e in _run_events(r, 0))}
+
+
+@app.get("/api/harness/runs/{rid}/stream")
+async def harness_stream(rid: str, after: int = 0, timeout_s: float = 600):
+    """Server-sent events: one `harness` event per typed execution event, then `end` once the run is terminal."""
+    with session_scope() as db:
+        if not db.get(M.HarnessRun, rid):
+            raise HTTPException(404, rid)
+
+    async def gen():
+        seq, t0 = after, time.monotonic()
+        while time.monotonic() - t0 < timeout_s:
+            with session_scope() as db:
+                run = db.get(M.HarnessRun, rid)
+                events, nxt, status = _run_events(run, seq), len(run.trace or []), run.status
+            for e in events:
+                yield f"event: harness\ndata: {json.dumps(e, default=str)}\n\n"
+                if e["event"] in H.TERMINAL_EVENTS:
+                    yield f"event: end\ndata: {json.dumps({'status': status})}\n\n"
+                    return
+            seq = nxt
+            yield ": keep-alive\n\n"
+            await asyncio.sleep(0.3)
+        yield "event: end\ndata: {\"status\": \"timeout\"}\n\n"
+    return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
 @app.get("/api/harness/agents")
 def harness_agents(q: Q = Depends(), db: Session = Depends(get_session)):
     """Live agent cards: current task, status, time, tokens, cost, quality, verified work, economic contribution."""

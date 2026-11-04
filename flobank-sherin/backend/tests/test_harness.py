@@ -120,3 +120,34 @@ def test_measured_runs_never_enter_synthetic_view(client, db):
     assert n >= 1
     k = client.get("/api/finance/kpis", params={"dc": "measured", "period": "custom", "start": "2026-01-01", "end": "2030-12-31"}).json()
     assert {c["key"]: c for c in k["cards"]}["verified_work"]["value"] >= 1
+
+
+def _events(client, run_id):
+    return [e["event"] for e in client.get(f"/api/harness/runs/{run_id}/events").json()["events"]]
+
+
+def test_typed_events_follow_real_execution_and_pause_for_approval(client):
+    run = _run(client, "Evaluate trade TP-1003 and check the portfolio risk", role="PORTFOLIO_MANAGER", user="pm.ananya")
+    ev = _events(client, run["id"])
+    assert ev[0] == "RUN_PLANNED"
+    # every step starts, runs its tool and completes, in order
+    for i in range(len(run["plan"])):
+        seg = ev[1 + 3 * i: 4 + 3 * i]
+        assert seg == ["AGENT_STARTED", "TOOL_RUNNING", "TOOL_COMPLETED"], seg
+    assert ev[-3:] == ["VALIDATION_STARTED", "VALIDATION_PASSED", "APPROVAL_REQUIRED"]
+    assert "TASK_COMPLETED" not in ev  # nothing claims success while the workflow waits for a human
+    aid = run["result"]["approval_id"]
+    client.post(f"/api/approvals/{aid}/decision", json={"decision": "approve"}, headers=hdr("SHERIN_MANAGER", "mgr.sherin"))
+    ev = _events(client, run["id"])
+    assert ev[-2:] == ["APPROVAL_DECIDED", "TASK_COMPLETED"]
+    body = client.get(f"/api/harness/runs/{run['id']}/stream").text
+    assert body.count("event: harness") == len(ev) and body.rstrip().endswith('{"status": "completed"}')
+
+
+def test_failed_tool_emits_tool_failed(client, monkeypatch):
+    monkeypatch.setattr(H, "make_plan", lambda *a, **k: [{"step": 1, "agent": "reporting", "tool": "deploy.request_approval", "objective": "x"}])
+    run = _run(client, "anything")
+    ev = _events(client, run["id"])
+    assert "TOOL_DENIED" in ev and "VALIDATION_FAILED" in ev and ev[-1] == "TASK_COMPLETED"
+    last = client.get(f"/api/harness/runs/{run['id']}/events").json()["events"][-1]
+    assert last["verified"] is False

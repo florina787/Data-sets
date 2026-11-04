@@ -109,7 +109,7 @@ export default function CommandCenter() {
       <KpiRow />
       <div className="mt-4">
         {wide ? (
-          <PanelGroup direction="horizontal" autoSaveId="sherin-command-center" className="!overflow-visible" style={{ height: "calc(100vh - 120px)" }}>
+          <PanelGroup direction="horizontal" autoSaveId="sherin-command-center" className="!overflow-visible" style={{ height: "max(620px, calc(100vh - 250px))" }}>
             <Panel defaultSize={55} minSize={35} className="!overflow-y-auto scroll-thin pr-1"><Charts /></Panel>
             <PanelResizeHandle className="resize-handle mx-1" aria-label="Resize charts and chat" />
             <Panel defaultSize={25} minSize={18}><Card className="flex h-full flex-col overflow-hidden"><ChatPanel compact /></Card></Panel>

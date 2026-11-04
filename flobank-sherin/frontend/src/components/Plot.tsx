@@ -40,7 +40,10 @@ export function Plot({ data, layout, height = 380, onClick, testId, ariaLabel }:
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => loadPlotly().then((P) => { try { P.Plots.resize(el); } catch { /* not yet plotted */ } }).catch(() => {}));
+    const ro = new ResizeObserver(() => loadPlotly().then((P) => {
+      if (!el.isConnected || !el.offsetParent || !(el as any)._fullLayout) return; // hidden, unmounting or not yet plotted
+      try { Promise.resolve(P.Plots.resize(el)).catch(() => {}); } catch { /* ignore */ }
+    }).catch(() => {}));
     ro.observe(el);
     return () => { ro.disconnect(); loadPlotly().then((P) => { try { P.purge(el); } catch { /* ignore */ } }).catch(() => {}); };
   }, []);

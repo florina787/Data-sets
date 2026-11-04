@@ -1,0 +1,80 @@
+/* Sherin rig: joint origins are in SVG view-box coordinates. --sherin-walk is the step duration (speed-scaled). */
+.sherin-rig { --sherin-walk: .62s; }
+.sherin-rig * { transform-box: view-box; }
+.sherin-rig .arm-l { transform-origin: 41px 84px; } .sherin-rig .arm-r { transform-origin: 79px 84px; }
+.sherin-rig .fore-l { transform-origin: 41px 108px; } .sherin-rig .fore-r { transform-origin: 79px 108px; }
+.sherin-rig .leg-l { transform-origin: 53px 148px; } .sherin-rig .leg-r { transform-origin: 67px 148px; }
+.sherin-rig .head { transform-origin: 60px 74px; } .sherin-rig .hair-back { transform-origin: 60px 44px; }
+.sherin-rig .arm, .sherin-rig .fore, .sherin-rig .head, .sherin-rig .leg { transition: transform .32s cubic-bezier(.3,.7,.3,1); }
+.sherin-rig .lids { transform-origin: 60px 43.5px; transform: scaleY(0); animation: sh-blink 4.6s infinite; }
+.sherin-rig .m, .sherin-rig .prop, .sherin-rig .badge, .sherin-rig .finger { opacity: 0; transition: opacity .2s; }
+.sherin-rig .m-smile { opacity: 1; }
+
+@keyframes sh-blink { 0%, 93%, 100% { transform: scaleY(0); } 95.5% { transform: scaleY(1); } }
+@keyframes sh-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(.7px); } }
+@keyframes sh-sway-l { 0%, 100% { transform: rotate(3deg); } 50% { transform: rotate(-1deg); } }
+@keyframes sh-sway-r { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(1deg); } }
+@keyframes sh-leg-a { 0%, 100% { transform: rotate(22deg); } 50% { transform: rotate(-22deg); } }
+@keyframes sh-leg-b { 0%, 100% { transform: rotate(-22deg); } 50% { transform: rotate(22deg); } }
+@keyframes sh-arm-a { 0%, 100% { transform: rotate(-20deg); } 50% { transform: rotate(18deg); } }
+@keyframes sh-arm-b { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(-20deg); } }
+@keyframes sh-bob { 0%, 50%, 100% { transform: translateY(0); } 25%, 75% { transform: translateY(-2.4px); } }
+@keyframes sh-hair { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+@keyframes sh-type { 0%, 100% { transform: rotate(-78deg); } 50% { transform: rotate(-70deg); } }
+@keyframes sh-type2 { 0%, 100% { transform: rotate(78deg); } 50% { transform: rotate(70deg); } }
+@keyframes sh-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-7px); } }
+@keyframes sh-tap { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-8deg); } }
+@keyframes sh-nod { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(-2deg); } }
+@keyframes sh-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+/* idle */
+.pose-idle .body-bob, .pose-turn .body-bob { animation: sh-breathe 3.2s ease-in-out infinite; }
+.pose-idle .arm-l { animation: sh-sway-l 3.2s ease-in-out infinite; } .pose-idle .arm-r { animation: sh-sway-r 3.2s ease-in-out infinite; }
+/* walk */
+.pose-walk .leg-l { animation: sh-leg-a var(--sherin-walk) linear infinite; } .pose-walk .leg-r { animation: sh-leg-b var(--sherin-walk) linear infinite; }
+.pose-walk .arm-l { animation: sh-arm-a var(--sherin-walk) linear infinite; } .pose-walk .arm-r { animation: sh-arm-b var(--sherin-walk) linear infinite; }
+.pose-walk .fore-l, .pose-walk .fore-r { transform: rotate(-12deg); }
+.pose-walk .body-bob { animation: sh-bob var(--sherin-walk) linear infinite; }
+.pose-walk .hair-back { animation: sh-hair var(--sherin-walk) ease-in-out infinite; }
+.pose-walk .head { transform: rotate(2deg); }
+/* turn: eyes look at the viewer while the layer flips */
+.pose-turn .m-smile { opacity: 0; } .pose-turn .m-o { opacity: 1; }
+/* point */
+.pose-point .arm-r { transform: rotate(-118deg); } .pose-point .fore-r { transform: rotate(-12deg); } .pose-point .finger { opacity: 1; }
+.pose-point .arm-l { transform: rotate(8deg); } .pose-point .head { transform: rotate(-5deg); }
+.pose-point .m-smile { opacity: 0; } .pose-point .m-open { opacity: 1; }
+/* think */
+.pose-think .arm-r { transform: rotate(18deg); } .pose-think .fore-r { transform: rotate(150deg); }
+.pose-think .arm-l { transform: rotate(-14deg); } .pose-think .fore-l { transform: rotate(-80deg); }
+.pose-think .head { animation: sh-nod 2.4s ease-in-out infinite; } .pose-think .badge-think { opacity: 1; }
+.pose-think .m-smile { opacity: 0; } .pose-think .m-flat { opacity: 1; } .pose-think .brow-l { transform: translateY(-1.2px); }
+/* work */
+.pose-work .prop-tablet { opacity: 1; }
+.pose-work .arm-l { transform: rotate(-22deg); } .pose-work .arm-r { transform: rotate(22deg); }
+.pose-work .fore-l { animation: sh-type .5s ease-in-out infinite; } .pose-work .fore-r { animation: sh-type2 .5s .25s ease-in-out infinite; }
+.pose-work .head { transform: rotate(4deg) translateY(1px); }
+/* success */
+.pose-success .arm-l { transform: rotate(150deg); } .pose-success .arm-r { transform: rotate(-150deg); }
+.pose-success .fore-l { transform: rotate(-18deg); } .pose-success .fore-r { transform: rotate(18deg); }
+.pose-success .body-bob { animation: sh-hop .9s ease-in-out 2; } .pose-success .badge-success { opacity: 1; animation: sh-pulse 1.2s ease-in-out infinite; transform-origin: 60px 20px; }
+.pose-success .m-smile { opacity: 0; } .pose-success .m-open { opacity: 1; }
+/* warning */
+.pose-warning .arm-r { transform: rotate(-96deg); } .pose-warning .fore-r { transform: rotate(-60deg); }
+.pose-warning .badge-warning { opacity: 1; } .pose-warning .m-smile { opacity: 0; } .pose-warning .m-o { opacity: 1; }
+.pose-warning .brow-l { transform: rotate(10deg); transform-origin: 52px 41px; } .pose-warning .brow-r { transform: rotate(-10deg); transform-origin: 68px 41px; }
+/* waiting for approval: holds the request folder and taps a foot */
+.pose-waiting .prop-folder { opacity: 1; } .pose-waiting .badge-waiting { opacity: 1; }
+.pose-waiting .arm-l { transform: rotate(-24deg); } .pose-waiting .arm-r { transform: rotate(24deg); }
+.pose-waiting .fore-l { transform: rotate(-64deg); } .pose-waiting .fore-r { transform: rotate(64deg); }
+.pose-waiting .leg-r { animation: sh-tap 1.1s ease-in-out infinite; }
+/* error */
+.pose-error .head { transform: rotate(-9deg) translateY(2px); } .pose-error .arm-l { transform: rotate(4deg); } .pose-error .arm-r { transform: rotate(-4deg); }
+.pose-error .badge-error { opacity: 1; } .pose-error .m-smile { opacity: 0; } .pose-error .m-frown { opacity: 1; }
+
+/* reduced motion: hold poses, no looping animation (blink included) */
+.sherin-reduced .sherin-rig *, .sherin-reduced .sherin-rig { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .sherin-rig *, .sherin-rig { animation: none !important; transition: none !important; } }
+
+/* focus ring for whatever Sherin is presenting */
+.sherin-focus { outline: 3px solid #2BB673 !important; outline-offset: 6px; border-radius: 18px; box-shadow: 0 0 0 10px rgba(43,182,115,.12); transition: box-shadow .4s, outline-color .4s; }
+.sherin-paused .sherin-rig, .sherin-paused .sherin-rig * { animation-play-state: paused !important; }

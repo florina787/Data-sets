@@ -8,6 +8,7 @@ import { DiffView, Markdown, Badge } from "./ui";
 import { Plot } from "./Plot";
 import { ApprovalCard } from "./ApprovalCard";
 import { RunInline } from "./RunInline";
+import { focusForAnswer } from "../sherin/director";
 import { AGENT_COLORS, SERIES, wrap } from "../lib/format";
 
 export interface Turn { role: "user" | "assistant"; content: string; payload?: any; activity?: any[]; streaming?: boolean; attachments?: string[] }
@@ -77,7 +78,7 @@ export function ChatPanel({ compact = false, conversationId, onConversation }: {
       await chatStream({ message: msg, conversation_id: cid, currency: s.currency, dc: s.dc, attachments: atts }, {
         activity: (a) => patch((t) => ({ ...t, activity: [...(t.activity ?? []), a] })),
         delta: (d) => patch((t) => ({ ...t, content: t.content + d })),
-        final: (p) => { patch((t) => ({ ...t, content: p.text, payload: p, streaming: false })); if (p.conversation_id && p.conversation_id !== cid) { setCid(p.conversation_id); onConversation?.(p.conversation_id); } },
+        final: (p) => { patch((t) => ({ ...t, content: p.text, payload: p, streaming: false })); setTimeout(() => focusForAnswer(p.intent), 150); if (p.conversation_id && p.conversation_id !== cid) { setCid(p.conversation_id); onConversation?.(p.conversation_id); } },
       });
     } catch (e: any) { setErr(e.message); patch((t) => ({ ...t, streaming: false, content: t.content || "I could not answer that request." })); }
     finally { setBusy(false); }
@@ -127,7 +128,7 @@ export function ChatPanel({ compact = false, conversationId, onConversation }: {
                 {t.payload?.approvals?.length > 0 && <div className="mt-2 space-y-2">{t.payload.approvals.slice(0, compact ? 2 : 6).map((a: any) => <ApprovalCard key={a.id} a={a} compact onChange={(x) => updateApproval(i, x)} />)}</div>}
                 {t.payload && (
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                    {t.payload.links?.map((l: any) => <button key={l.route} type="button" onClick={() => nav(l.route)} className="inline-flex items-center gap-1 rounded-full bg-flo-100 px-2.5 py-0.5 text-[11px] font-semibold text-flo-800 hover:bg-flo-200">{l.label}<ArrowUpRight className="h-3 w-3" /></button>)}
+                    {t.payload.links?.map((l: any) => <button key={l.route} type="button" data-sherin-link onClick={() => nav(l.route)} className="inline-flex items-center gap-1 rounded-full bg-flo-100 px-2.5 py-0.5 text-[11px] font-semibold text-flo-800 hover:bg-flo-200">{l.label}<ArrowUpRight className="h-3 w-3" /></button>)}
                     {t.payload.run_id && <Badge tone="green">run {t.payload.run_id}</Badge>}
                     <a href={reportUrl({ ...periodParams(s), format: "md" })} className="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-0.5 text-[11px] font-semibold text-muted hover:text-flo-800"><Download className="h-3 w-3" />Report</a>
                   </div>

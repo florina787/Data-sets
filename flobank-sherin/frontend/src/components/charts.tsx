@@ -200,6 +200,7 @@ export function GraphD() {
               data={Object.entries(trend.data.monthly.series).map(([k, ys]) => ({ type: "bar", name: cats.find((c: any) => c.category === k)?.label ?? k, x: trend.data.monthly.x, y: ys, marker: { color: CAT_COLOR[k] } }))}
               layout={{ barmode: "stack", yaxis: { tickformat: "~s", title: { text: cur } }, margin: { t: 70 } }} />}
           </div>
+          <div className="xl:col-span-5"><CostDriversChart /></div>
           <div className="flex flex-wrap gap-1.5 xl:col-span-5">
             {cats.map((c: any) => <button key={c.category} type="button" onClick={() => setCat(c.category)} className="inline-flex items-center gap-1.5 rounded-full border border-line px-2.5 py-1 text-xs hover:border-flo-600 hover:bg-flo-50">
               <span className="h-2.5 w-2.5 rounded-full" style={{ background: CAT_COLOR[c.category] }} aria-hidden />{c.label}: <strong className="tnum">{money(c.value, cur)}</strong> <span className="text-muted">({c.share_pct}%)</span></button>)}
@@ -229,6 +230,31 @@ export function CostRecordsDrawer({ category, onClose }: { category: string | nu
         </>
       )}
     </Drawer>
+  );
+}
+
+// ------------------------------------------------------------------------------------------- cost drivers
+/** Change in AI cost per day by category vs the prior period. The largest increase is annotated; click a bar for its records. */
+export function CostDriversChart({ id = "graph-d-drivers", height = 300 }: { id?: string; height?: number }) {
+  const { p, cur } = useParams();
+  const { data } = useApi<any>("/finance/cost-drivers", p);
+  const [cat, setCat] = useState<string | null>(null);
+  if (!data) return <Spinner label="Loading cost drivers" />;
+  const rows = [...data.by_category].sort((a: any, b: any) => b.delta_per_day - a.delta_per_day);
+  const top = rows[0];
+  return (
+    <div id={id} data-testid={id} className="rounded-2xl">
+      <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2 px-1 text-sm">
+        <strong className="text-flo-900">What changed: AI cost per day vs {data.baseline.label}</strong>
+        <span className="text-xs text-muted">Total {money(data.total_per_day.baseline, cur)} → <strong className="text-flo-900">{money(data.total_per_day.current, cur)}</strong>/day ({pctChange(data.total_per_day.delta_pct)})</span>
+      </div>
+      <Plot ariaLabel="Cost drivers: change in AI cost per day by category" testId={`${id}-plot`} height={height} onClick={(ev) => setCat(rows[ev.points?.[0]?.pointNumber]?.key ?? null)}
+        data={[{ type: "bar", x: rows.map((r: any) => wrap(r.label, 12)), y: rows.map((r: any) => r.delta_per_day), marker: { color: rows.map((r: any) => (r.delta_per_day > 0 ? SERIES.cost : SERIES.savings)) },
+          customdata: rows.map((r: any) => [r.baseline_per_day, r.current_per_day, r.delta_pct]), hovertemplate: `%{x}<br>%{customdata[0]:,.2f} → %{customdata[1]:,.2f} ${cur}/day (%{customdata[2]}%)<extra>click for records</extra>` }]}
+        layout={{ showlegend: false, hovermode: "closest", yaxis: { title: { text: `Δ ${cur}/day` } }, xaxis: { tickangle: 0, tickfont: { size: 10 } }, margin: { t: 30, b: 56 },
+          annotations: top && top.delta_per_day > 0 ? [{ x: wrap(top.label, 12), y: top.delta_per_day, text: `Largest increase: +${money(top.delta_per_day, cur)}/day`, showarrow: true, arrowhead: 2, ay: -26, font: { size: 11, color: "#B4413C" } }] : [] }} />
+      <CostRecordsDrawer category={cat} onClose={() => setCat(null)} />
+    </div>
   );
 }
 

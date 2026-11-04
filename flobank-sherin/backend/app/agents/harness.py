@@ -72,6 +72,12 @@ def _now() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(tzinfo=None).isoformat(timespec="milliseconds")
 
 
+# Typed execution events (stored in the run trace, streamed to the UI):
+# RUN_PLANNED, AGENT_STARTED, TOOL_RUNNING, TOOL_RETRY, TOOL_COMPLETED, TOOL_FAILED, TOOL_DENIED,
+# VALIDATION_STARTED, VALIDATION_PASSED, VALIDATION_FAILED, APPROVAL_REQUIRED, APPROVAL_DECIDED, TASK_COMPLETED, TASK_FAILED
+TERMINAL_EVENTS = {"TASK_COMPLETED", "TASK_FAILED"}
+
+
 def _ev(node: str, msg: str, **kw) -> dict:
     return {"at": _now(), "node": node, "message": msg, **kw}
 
@@ -235,7 +241,7 @@ def run_tool(tool: str, state: HarnessState, db, prior: list[dict]) -> dict:
 # ---------------------------------------------------------------------------------------------- nodes
 def plan_task(state: HarnessState) -> dict:
     plan = make_plan(state["request"], state.get("attachments") or [], state.get("context") or {})
-    _persist(state["run_id"], status="running", plan=plan, trace_add=[_ev("plan_task", f"Planned {len(plan)} step(s)", plan=plan)])
+    _persist(state["run_id"], status="running", plan=plan, trace_add=[_ev("plan_task", f"Planned {len(plan)} step(s)", plan=plan, event="RUN_PLANNED")])
     return {"plan": plan, "cursor": 0, "status": "running", "trace": [_ev("plan_task", f"Planned {len(plan)} step(s)")]}
 
 
@@ -244,13 +250,18 @@ def execute_step(state: HarnessState) -> dict:
     agent, tool = step["agent"], step["tool"]
     allowed = C.AGENTS[agent]["tools"]
     t0 = time.perf_counter()
-    events = [_ev("execute_step", f"{C.AGENTS[agent]['label']} -> {tool}", agent=agent, tool=tool, status="running")]
+    # Persisted before the tool runs so observers see the agent start in real time.
+    started = [_ev("execute_step", f"{C.AGENTS[agent]['label']} started: {step['objective']}", agent=agent, tool=tool, step=step["step"], status="running", event="AGENT_STARTED")]
+    if tool in allowed:
+        started.append(_ev("execute_step", f"{agent} running {tool}", agent=agent, tool=tool, step=step["step"], status="running", event="TOOL_RUNNING"))
+    _persist(state["run_id"], trace_add=started)
+    events: list[dict] = []
     if tool not in allowed:
         res = {"step": step["step"], "agent": agent, "tool": tool, "ok": False, "denied": True, "retries": 0, "duration_ms": 0,
                "output": {"error": f"Tool {tool} is not permitted for {agent}"}, "tokens": None}
         with session_scope() as db:
             audit(db, f"agent.{agent}", "AGENT", "tool.denied", "harness_run", state["run_id"], tool=tool)
-        events.append(_ev("execute_step", f"Permission denied: {agent} cannot call {tool}", agent=agent, status="denied"))
+        events.append(_ev("execute_step", f"Permission denied: {agent} cannot call {tool}", agent=agent, tool=tool, step=step["step"], status="denied", event="TOOL_DENIED"))
     else:
         out, retries, err = None, 0, None
         while True:
@@ -264,7 +275,7 @@ def execute_step(state: HarnessState) -> dict:
                     out = {"ok": False, "error": err}
                     break
                 retries += 1
-                events.append(_ev("execute_step", f"Retry {retries}/{MAX_RETRIES} after error: {err}", agent=agent, status="retry"))
+                events.append(_ev("execute_step", f"Retry {retries}/{MAX_RETRIES} after error: {err}", agent=agent, tool=tool, step=step["step"], status="retry", event="TOOL_RETRY"))
                 time.sleep(0.05 * 2 ** retries)
         tokens = None
         if out.get("ok") is not False and llm.status()["available"]:
@@ -276,9 +287,10 @@ def execute_step(state: HarnessState) -> dict:
         res = {"step": step["step"], "agent": agent, "tool": tool, "ok": out.get("ok", True) is not False, "retries": retries,
                "duration_ms": int((time.perf_counter() - t0) * 1000), "output": out, "tokens": tokens}
         events.append(_ev("execute_step", f"{'Completed' if res['ok'] else 'Failed'} in {res['duration_ms']} ms", agent=agent, tool=tool,
-                          status="ok" if res["ok"] else "failed", retries=retries, tokens=tokens))
+                          status="ok" if res["ok"] else "failed", retries=retries, tokens=tokens, step=step["step"],
+                          event="TOOL_COMPLETED" if res["ok"] else "TOOL_FAILED", error=None if res["ok"] else out.get("error")))
     _persist(state["run_id"], trace_add=events, result_add=res)
-    return {"results": [res], "cursor": state["cursor"] + 1, "trace": events}
+    return {"results": [res], "cursor": state["cursor"] + 1, "trace": started + events}
 
 
 def route_after_execute(state: HarnessState) -> str:
@@ -334,6 +346,7 @@ def _apply_unified(diff: str) -> str | None:
 
 
 def verify(state: HarnessState) -> dict:
+    _persist(state["run_id"], trace_add=[_ev("verify", "Independent Verification Agent is checking every step", agent="verification", status="running", event="VALIDATION_STARTED")])
     checks = []
     for r in state.get("results") or []:
         ok, why = _verify_one(r)
@@ -342,7 +355,7 @@ def verify(state: HarnessState) -> dict:
                if r["ok"] and isinstance(r["output"], dict) and r["output"].get("action")]
     all_ok = all(c["verified"] for c in checks) and bool(checks)
     ev = [_ev("verify", f"Independent Verification Agent: {sum(c['verified'] for c in checks)}/{len(checks)} steps verified", agent="verification",
-              status="ok" if all_ok else "failed", checks=checks)]
+              status="ok" if all_ok else "failed", checks=checks, event="VALIDATION_PASSED" if all_ok else "VALIDATION_FAILED")]
     _persist(state["run_id"], trace_add=ev, verification=checks)
     return {"trace": ev, "actions": actions if all_ok else [],
             "status": "verified" if all_ok else "verification_failed"}
@@ -373,13 +386,14 @@ def approval_gate(state: HarnessState) -> dict:
                                       risk_evidence=[f"Step {a['step']} ({a['agent']}): {a['title']}" for a in acts], related_run_id=state["run_id"])
             approval_id = ap.id
             status = ap.status
-        ev = [_ev("approval_gate", f"Waiting for human approval {approval_id} ({status})", status="waiting", approval_id=approval_id)]
+        ev = [_ev("approval_gate", f"Waiting for human approval {approval_id} ({status})", status="waiting", approval_id=approval_id, approval_status=status,
+                  event="APPROVAL_REQUIRED")]
         _persist(state["run_id"], status="awaiting_approval" if status not in ("blocked", "insufficient_data") else status, trace_add=ev,
                  approval_id=approval_id)
         if status in ("blocked", "insufficient_data"):
             return {"approval_id": approval_id, "approval": {"status": status}, "trace": ev}
     decision = interrupt({"approval_id": approval_id})
-    ev = [_ev("approval_gate", f"Approval {approval_id}: {decision.get('status')}", status=decision.get("status"))]
+    ev = [_ev("approval_gate", f"Approval {approval_id}: {decision.get('status')}", status=decision.get("status"), approval_id=approval_id, event="APPROVAL_DECIDED")]
     _persist(state["run_id"], trace_add=ev)
     return {"approval_id": approval_id, "approval": decision, "trace": ev}
 
@@ -448,7 +462,8 @@ def finalize(state: HarnessState) -> dict:
         run.status = "completed" if appr.get("status") in (None, "approved") else f"completed_{appr.get('status')}"
         run.result = {**(run.result or {}), **summary}
         run.finished_at = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
-        run.trace = [*run.trace, _ev("finalize", summary["sentence"], status="done")]
+        run.trace = [*run.trace, _ev("finalize", summary["sentence"], status="done", event="TASK_COMPLETED", verified=summary["verified"],
+                                     action_outcome=summary["action_outcome"], task_id=task_id)]
         audit(db, state["requested_by"], "USER", "harness.completed", "harness_run", run_id, task_id=task_id, verified=bool(task.verified))
     return {"status": "completed", "trace": [_ev("finalize", "Run complete")]}
 
@@ -508,7 +523,7 @@ class Harness:
                 self.graph.invoke(payload, cfg)
         except Exception as e:  # noqa: BLE001
             log.exception("harness run failed")
-            _persist(run_id, status="failed", trace_add=[_ev("error", f"{type(e).__name__}: {e}", status="failed")])
+            _persist(run_id, status="failed", trace_add=[_ev("error", f"{type(e).__name__}: {e}", status="failed", event="TASK_FAILED")])
 
     def start(self, request: str, requested_by: str, attachments: list[dict] | None = None, context: dict | None = None, sync: bool | None = None) -> str:
         sync = self.sync_mode if sync is None else sync

@@ -13,8 +13,9 @@ export function headers(extra?: Record<string, string>) {
   return { "Content-Type": "application/json", "X-Role": identity.role, "X-User": identity.user, ...extra };
 }
 
-export async function api<T = any>(path: string, opts: { method?: string; params?: Record<string, any>; body?: unknown } = {}): Promise<T> {
-  const r = await fetch(`/api${path}${qs(opts.params)}`, { method: opts.method ?? "GET", headers: headers(), body: opts.body === undefined ? undefined : JSON.stringify(opts.body) });
+export async function api<T = any>(path: string, opts: { method?: string; params?: Record<string, any>; body?: unknown; as?: { role: string; user: string } } = {}): Promise<T> {
+  const h = opts.as ? headers({ "X-Role": opts.as.role, "X-User": opts.as.user }) : headers();
+  const r = await fetch(`/api${path}${qs(opts.params)}`, { method: opts.method ?? "GET", headers: h, body: opts.body === undefined ? undefined : JSON.stringify(opts.body) });
   if (!r.ok) {
     let msg = r.statusText;
     try { msg = (await r.json()).detail ?? msg; } catch { /* not json */ }

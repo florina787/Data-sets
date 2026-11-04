@@ -1,16 +1,19 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  Activity, BadgeCheck, Bot, Briefcase, Cloud, Code2, Coins, FileBarChart, Gauge, Leaf, Menu, MessageSquare, PiggyBank, Scale, Settings, ShieldCheck, X,
+  Activity, BadgeCheck, Footprints, Bot, Briefcase, Cloud, Code2, Coins, FileBarChart, Gauge, Leaf, Menu, MessageSquare, PiggyBank, Scale, Settings, ShieldCheck, X,
 } from "lucide-react";
 import { SherinAvatar } from "./SherinAvatar";
 import { DataClassBadge, Segmented } from "./ui";
 import { DEFAULT_MONTH, useApp, type Currency, type PeriodKind, type Role } from "../lib/store";
 import { lastMonths, monthLabel } from "../lib/format";
 import { useApi } from "../lib/api";
+import { CharacterLayer, LANE_H } from "../sherin/CharacterLayer";
+import { useSherin } from "../sherin/director";
 
 export const NAV = [
   { to: "/", label: "Financial Command Center", icon: Gauge },
+  { to: "/journey", label: "Guided Journey", icon: Footprints },
   { to: "/chat", label: "Sherin Copilot", icon: MessageSquare },
   { to: "/portfolio", label: "Portfolio Dashboard", icon: Briefcase },
   { to: "/guardian", label: "Investment Judgment", icon: ShieldCheck },
@@ -65,6 +68,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
   const { dc } = useApp();
+  const ch = useSherin();
   const inbox = useApi<any[]>("/approvals", { status: "open" }, 15000);
   useEffect(() => setOpen(false), [loc.pathname]);
   useEffect(() => {
@@ -111,7 +115,8 @@ export function Layout({ children }: { children: ReactNode }) {
             </div>
           )}
         </header>
-        <main className="min-w-0 flex-1 px-4 py-5 lg:px-6">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-5 lg:px-6" style={{ paddingBottom: ch.collapsed ? 72 : LANE_H + 24 }}>{children}</main>
+        <CharacterLayer />
       </div>
     </div>
   );

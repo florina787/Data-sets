@@ -17,7 +17,7 @@ describe("Sherin's approved avatar", () => {
 
   it("every navigation entry has a route", () => {
     expect(NAV.map((n) => n.to).sort()).toEqual(ROUTES.map(([p]) => p).sort());
-    expect(ROUTES).toHaveLength(14);
+    expect(ROUTES).toHaveLength(15);
   });
 
   it("uses one image file and falls back to a neutral monogram, never another face", () => {
