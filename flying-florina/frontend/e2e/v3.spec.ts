@@ -63,3 +63,19 @@ test("airspace lab is honest about capabilities; control tower shows recorded ru
   await expect(page.getByTestId("ci-summary")).toContainText("Resolved to", { timeout: 30_000 });
   expect(errors).toEqual([]);
 });
+
+test("guided journey: the emblem flies from supply chain onward and narrates real numbers", async ({ page }) => {
+  const { errors, external } = await boot(page);
+  await page.goto("/journey");
+  await expect(page.getByRole("heading", { name: "Supply Chain" })).toBeVisible();
+  await page.getByRole("button", { name: "Reduce motion" }).click();
+  await page.getByTestId("gj-play").click();
+  const narration = page.getByTestId("gj-narration");
+  await expect(narration).toContainText("late-delivery model was tested on held-out orders", { timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "Supplier Delay" })).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("tab", { name: /^9 / }).click();
+  await page.getByRole("button", { name: "Skip Animation" }).click();
+  await expect(narration).toContainText("a person approves every consequential action");
+  expect(errors).toEqual([]);
+  expect(external).toEqual([]);
+});

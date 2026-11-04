@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import {
+import { Navigation,
   Activity, Bot, Boxes, BrainCircuit, Building2, Cable, FileBarChart, FileCheck2, FlaskConical, Gauge, Gauge as GaugeIcon, LayoutDashboard, Menu, Moon,
   Plane, Radar, ScanSearch, Settings, ShieldCheck, Sparkles, Sun, Wrench, X, Globe2, LineChart as LineChartIcon, Cpu, ScanEye, Network,
   LifeBuoy, TowerControl, GitBranch,
@@ -15,6 +15,7 @@ import { Badge } from "./ui";
 
 /** Flying Florina 3.0: ten primary sections. Every 1.0 / 2.0 page still exists and is listed under "Workspace". */
 export const NAV = [
+  { to: "/journey", label: "Guided Journey", icon: Navigation },
   { to: "/global", label: "Global Intelligence", icon: Globe2 },
   { to: "/forecasting", label: "Component Forecasting", icon: LineChartIcon },
   { to: "/twin", label: "Aerospace Digital Twin", icon: Cpu },

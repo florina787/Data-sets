@@ -12,6 +12,10 @@
 ![Tests](https://img.shields.io/badge/tests-160%20%2B%209%20%2B%2022%20passing-10B981)
 ![License](https://img.shields.io/badge/license-GPL--3.0-14B8A6)
 
+<img src="docs/assets/flying_florina_guided_journey.gif" width="100%" alt="Guided Journey: the Flying Florina emblem flies from the supply chain to supplier delay, inventory forecast, dependency map, heatmap, digital twin, airspace safety, resilience and agent approvals, narrating real numbers from the synthetic data" />
+
+<sub>▲ <b>Guided Journey</b> (open <code>/journey</code> in the app and press Play): the emblem flies from the supply chain to every scene, hovers over the evidence and narrates numbers read live from the forecasting, simulation and evaluation APIs. <a href="docs/assets/flying_florina_guided_journey.mp4">Sharp MP4</a>.</sub>
+
 <img src="docs/assets/flying_florina_3_emblem_tour.gif" width="100%" alt="Live recording in the Sky theme: the Flying Florina emblem flies from the global supply chain to inventory, dependency maps, heatmaps, the digital twin, the airspace lab, resilience, chat and the Control Tower" />
 
 <sub>▲ Follow the emblem (Sky theme, live recording): global intelligence → supply chain → inventory timeline → dependency map → heatmaps → digital twin → airspace lab → resilience → chat → Control Tower.<br/>

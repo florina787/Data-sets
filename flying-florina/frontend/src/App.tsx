@@ -30,6 +30,7 @@ const SupplyChain = lazy(() => import("@/features/v3/SupplyChain").then((m) => (
 const Resilience = lazy(() => import("@/features/v3/Resilience").then((m) => ({ default: m.Resilience })));
 const ControlTower = lazy(() => import("@/features/v3/ControlTower").then((m) => ({ default: m.ControlTower })));
 const AirspaceLab = lazy(() => import("@/features/v3/AirspaceLab").then((m) => ({ default: m.AirspaceLab })));
+const GuidedJourney = lazy(() => import("@/features/v3/GuidedJourney").then((m) => ({ default: m.GuidedJourney })));
 const ChangeImpact = lazy(() => import("@/features/v3/ChangeImpact").then((m) => ({ default: m.ChangeImpact })));
 const lazyPage = (el: React.ReactNode) => <Suspense fallback={<Loading label="Loading" />}>{el}</Suspense>;
 
@@ -76,6 +77,7 @@ export function App() {
         <Route path="/resilience" element={lazyPage(<Resilience />)} />
         <Route path="/control-tower" element={lazyPage(<ControlTower />)} />
         <Route path="/airspace" element={lazyPage(<AirspaceLab />)} />
+        <Route path="/journey" element={lazyPage(<GuidedJourney />)} />
         <Route path="/change-impact" element={lazyPage(<ChangeImpact />)} />
         <Route path="/chat" element={<Navigate to="/" replace />} />
         {/* 2.0 aliases for the section names; every pre-2.0 route above still works */}
