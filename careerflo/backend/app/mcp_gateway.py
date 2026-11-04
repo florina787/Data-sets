@@ -145,6 +145,12 @@ async def call_tool(user_id: uuid.UUID, agent: str, server: str, tool: str, argu
     t0 = time.perf_counter()
 
     def record(status: str, error: str | None = None) -> None:
+        try:
+            _record(status, error)
+        except Exception:  # noqa: BLE001 - auditing must never hide a denial or a result
+            pass
+
+    def _record(status: str, error: str | None = None) -> None:
         with SessionLocal() as db:
             db.add(McpToolCall(user_id=user_id, agent_run_id=run_id, server=server, tool=tool, tool_version=version,
                                agent=agent, status=status, duration_ms=int((time.perf_counter() - t0) * 1000),

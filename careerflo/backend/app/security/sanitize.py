@@ -39,7 +39,7 @@ def neutralize(text: str, max_chars: int = 12000) -> tuple[str, list[str]]:
     text = (text or "")[:max_chars]
     hits = detect_injection(text)
     if hits:
-        text = _INJ.sub(lambda m: f"[removed: instruction-like text '{m.group(0)[:40]}']", text)
+        text = _INJ.sub("[removed instruction-like text]", text)
     return text, hits
 
 

@@ -360,18 +360,28 @@ async def analytics_report(user: CurrentUser, idem: IdemKey = None) -> dict:
 
 
 # ---------------------------------------------------------------- roadmap / skills planner (part of analytics report allowance)
+@router.get("/learning/catalog")
+def learning_catalog() -> dict:
+    from ..careers.learning import catalog
+
+    return catalog()
+
+
 @router.post("/analytics/roadmap")
 async def roadmap(user: CurrentUser, idem: IdemKey = None) -> dict:
     async with metered(user.id, "career_analytics", idem) as m:
         if m.replay is not None:
             return m.replay
         gaps = (await gw.call_tool(user.id, "user", "analytics", "identify_skill_gaps", {})).data
+        from ..careers.learning import learning_plan
+
+        learning = learning_plan(gaps["gaps"])
         plan = []
         for i, g in enumerate(gaps["gaps"][:6]):
             plan.append({"week": f"{i * 2 + 1}-{i * 2 + 2}", "skill": g["skill"], "demand": g["demand"],
                          "activities": [f"Build a small project that uses {g['skill']}", f"Add {g['skill']} to your profile once you have used it",
                                         f"Practise interview questions involving {g['skill']}"]})
-        result = {"roadmap": plan, "based_on_jobs": gaps["based_on_jobs"],
+        result = {"roadmap": plan, "learning": learning, "based_on_jobs": gaps["based_on_jobs"],
                   "note": "Ordered by how often stored postings require each skill you have not verified yet."}
         m.set_result(result)
     return with_usage(result, user.id, "career_analytics")

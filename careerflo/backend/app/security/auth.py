@@ -99,9 +99,10 @@ def provision_user(db: Session, user_id: uuid.UUID, email: str, *, password_hash
     user = User(id=user_id, email=email.lower(), email_canonical_hash=email_hash(email), password_hash=password_hash,
                 email_verified=verified, is_admin=email.lower() in s.admin_email_set)
     db.add(user)
-    db.add(Profile(user_id=user_id))
-    db.add(UserPreference(user_id=user_id))
     try:
+        db.flush()  # user row first: profile/preferences reference it
+        db.add(Profile(user_id=user_id))
+        db.add(UserPreference(user_id=user_id))
         db.commit()
     except IntegrityError as exc:
         db.rollback()
