@@ -69,6 +69,7 @@ def seed_demo(db: Session, email: str = "demo@careerflo.example", password: str 
     user = User(id=uuid.uuid4(), email=email, email_canonical_hash=email_hash(email), password_hash=hash_password(password),
                 email_verified=True, is_demo=True)
     db.add(user)
+    db.flush()  # parent row first (no ORM relationships define insert order)
     from .models import Profile, UserPreference
 
     db.add(Profile(user_id=user.id, full_name="Jordan Rivera (Synthetic Demo)", headline="Senior AI Engineer", location="Toronto, ON",

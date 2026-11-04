@@ -202,16 +202,26 @@ class QwenClient:
         finally:
             self.queue_depth = max(0, self.queue_depth)
 
-    async def _openai_compatible(self, messages, max_tokens, temperature, json_mode, sink: LLMResult
-                                 ) -> AsyncIterator[str]:
+    def build_body(self, messages, max_tokens, temperature, json_mode) -> dict[str, Any]:
         msgs = [dict(m) for m in messages]
         # Qwen3 soft switch: skip the long reasoning trace for latency on CPU.
         if msgs and msgs[0]["role"] == "system" and "/no_think" not in msgs[0]["content"]:
             msgs[0]["content"] += "\n/no_think"
         body: dict[str, Any] = {"model": self.model, "messages": msgs, "stream": True, "max_tokens": max_tokens,
                                 "temperature": temperature, "stream_options": {"include_usage": True}}
+        # Disable Qwen3's reasoning trace: on CPU it costs most of the token budget, and Ollama returns it
+        # in a separate "reasoning" field, leaving "content" empty when max_tokens is reached.
+        if self.provider == "ollama":
+            body["reasoning_effort"] = "none"
+        else:
+            body["chat_template_kwargs"] = {"enable_thinking": False}
         if json_mode:
             body["response_format"] = {"type": "json_object"}
+        return body
+
+    async def _openai_compatible(self, messages, max_tokens, temperature, json_mode, sink: LLMResult
+                                 ) -> AsyncIterator[str]:
+        body = self.build_body(messages, max_tokens, temperature, json_mode)
         timeout = httpx.Timeout(self.timeout, connect=5.0)
         async with httpx.AsyncClient(timeout=timeout) as client:
             async with client.stream("POST", f"{self.base_url}/v1/chat/completions", json=body) as resp:

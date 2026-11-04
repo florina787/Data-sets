@@ -209,3 +209,29 @@ def test_other_features(client, user):
     assert client.get("/api/mcp/tools").json()["servers"]
     assert client.get("/api/agents/metrics", headers=h).json()["system"]["memory_total_gb"] > 0
     assert client.get("/api/governance/summary", headers=h).json()["pending_approvals"] >= 1
+
+
+def test_demo_seed_is_labelled_and_excluded_from_admin_metrics(client):
+    from app.db import SessionLocal
+    from app.seed import seed_demo
+
+    with SessionLocal() as db:
+        u = seed_demo(db, email="demo-seed@example.com")
+        from app.models import Application, Recruiter
+        apps = db.query(Application).filter_by(user_id=u.id).all()
+        assert len(apps) == 25 and all(a.is_synthetic for a in apps)
+        assert db.query(Recruiter).filter_by(user_id=u.id).count() == 15
+    admin_h, _ = register(client, "admin@example.com") if not _admin_exists(client) else (_admin_login(client), None)
+    m = client.get("/api/admin/metrics", headers=admin_h).json()
+    with SessionLocal() as db:
+        from app.models import User
+        assert m["registered_users"] == db.query(User).filter_by(is_demo=False).count()
+
+
+def _admin_exists(client):
+    return client.post("/api/auth/login", json={"email": "admin@example.com", "password": "CorrectHorse42"}).status_code == 200
+
+
+def _admin_login(client):
+    t = client.post("/api/auth/login", json={"email": "admin@example.com", "password": "CorrectHorse42"}).json()["access_token"]
+    return {"Authorization": f"Bearer {t}"}
