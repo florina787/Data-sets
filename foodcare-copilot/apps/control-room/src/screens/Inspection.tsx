@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { api, apiBlobUrl, post, upload } from "../api";
 import { Card, Empty, Notice } from "../components/ui";
 import { useBlob } from "../hooks";
+import { Potato } from "../components/Illustrations";
 import { useApp } from "../context";
 import { AskButton } from "./Copilot";
 
@@ -240,7 +241,13 @@ export default function Inspection() {
             )}
           </Card>
         </div>
-        {batch ? <BatchView batch={batch} onChange={setBatch} /> : <Card><Empty>Upload a photo or try the synthetic sample to start an inspection.</Empty></Card>}
+        {batch ? <BatchView batch={batch} onChange={setBatch} /> : <Card>
+          <div className="flex flex-col items-center gap-3 py-10 text-center">
+            <div className="flex items-end gap-4"><Potato size={84} /><Potato size={60} /><Potato size={72} /></div>
+            <p className="text-base font-semibold text-navy-900">No batch selected</p>
+            <p className="max-w-md text-sm text-navy-600">Upload a photo of potatoes on a plain background, or try the synthetic sample. Every potato will be numbered, measured and graded with its reasons.</p>
+          </div>
+        </Card>}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { api, login, logout, post, waitForJob } from "../api";
 import { can, useApp } from "../context";
 import { useAction } from "../hooks";
 import { CopilotDrawer, openCopilot } from "../screens/Copilot";
+import { FriesCarton } from "./Illustrations";
 import { Short, Status } from "./ui";
 
 const NAV: [string, [string, string][]][] = [
@@ -124,24 +125,9 @@ export function DemoControls({ compact = false }: { compact?: boolean }) {
   );
 }
 
-/** Jerry, the AI assistant mascot (an illustration, not a person). */
+/** Jerry, the AI assistant mascot: a smiling fries carton (original illustration, not a person). */
 export function Jerry({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" role="img" aria-label="Jerry, the AI assistant">
-      <defs>
-        <linearGradient id="jerry-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#3b82f6" /><stop offset="1" stopColor="#1d4ed8" /></linearGradient>
-      </defs>
-      <rect x="1" y="1" width="46" height="46" rx="14" fill="#0c1e35" stroke="#233b58" />
-      <line x1="24" y1="7" x2="24" y2="12" stroke="#7dd3fc" strokeWidth="2" strokeLinecap="round" />
-      <circle cx="24" cy="6" r="2.4" fill="#e9b95b" />
-      <rect x="10" y="12" width="28" height="24" rx="10" fill="url(#jerry-body)" />
-      <rect x="14" y="17" width="20" height="11" rx="5.5" fill="#071426" />
-      <circle cx="19.5" cy="22.5" r="2.4" fill="#38bdf8" />
-      <circle cx="28.5" cy="22.5" r="2.4" fill="#38bdf8" />
-      <path d="M20 31.5c2.4 1.6 5.6 1.6 8 0" stroke="#e0f2fe" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-      <rect x="15" y="37" width="18" height="4" rx="2" fill="#152e4c" />
-    </svg>
-  );
+  return <FriesCarton size={size} />;
 }
 
 /** Flo's portrait: served from /flo-portrait.jpg once supplied; a neutral monogram until then. */

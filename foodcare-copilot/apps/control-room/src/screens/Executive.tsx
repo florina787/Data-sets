@@ -3,6 +3,7 @@ import { ChartCard, HBars, LineChart, StatusBadge } from "../components/charts";
 import { Card, Empty, Notice } from "../components/ui";
 import { usePoll } from "../hooks";
 import { AskButton } from "./Copilot";
+import { FieldToFriesBanner } from "../components/Illustrations";
 
 export const money = (cents: number) => `$${Math.round(cents / 100).toLocaleString()}`;
 export const pct = (v: number | null | undefined) => (v == null ? "n/a" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`);
@@ -36,6 +37,7 @@ export default function Executive() {
         </div>
         <AskButton question="Give me a briefing" label="Ask Copilot for a briefing" />
       </div>
+      <FieldToFriesBanner />
       <Notice kind="info">{data.label}</Notice>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Kpi label={`Revenue, last 4 weeks (${s.current_weeks[0]} to ${s.current_weeks[1]})`} value={money(s.revenue_cents)} sub={`${pct(s.revenue_change_pct)} vs prior 4 weeks`} to="/sales" />

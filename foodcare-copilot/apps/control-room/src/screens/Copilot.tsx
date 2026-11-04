@@ -3,6 +3,7 @@ import { api, post } from "../api";
 import { Provenance } from "../components/ui";
 import { useApp } from "../context";
 import { useBlob } from "../hooks";
+import { FriesCarton } from "../components/Illustrations";
 
 type Source = { id: string; kind: string; label: string; ref: string; detail?: string };
 type Answer = {
@@ -227,7 +228,7 @@ export function CopilotDrawer() {
     <aside aria-label="Ask Copilot" aria-hidden={!open}
       className={`fixed inset-y-0 right-0 z-40 flex w-full max-w-xl flex-col border-l border-cream-300 bg-cream-50 shadow-2xl ${open ? "" : "hidden"}`}>
       <div className="flex items-center justify-between bg-navy-900 px-4 py-3 text-cream-50">
-        <div><div className="font-semibold">Ask Copilot</div><div className="text-xs text-cream-200">Read-only · cites every figure · synthetic data</div></div>
+        <div className="flex items-center gap-2"><FriesCarton size={34} label="" /><div><div className="font-semibold">Ask Copilot</div><div className="text-xs text-cream-200">Jerry · read-only · cites every figure · synthetic data</div></div></div>
         <button className="btn border border-cream-300/40 text-cream-50 hover:bg-navy-700" onClick={() => setOpen(false)}>Close</button>
       </div>
       <div className="min-h-0 flex-1"><Conversation compact pending={pending} onConsumed={() => setPending(null)} /></div>

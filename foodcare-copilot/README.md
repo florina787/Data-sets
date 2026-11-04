@@ -40,7 +40,7 @@ Imagine a food company's control room. Managers want quick, **trustworthy** answ
 * "In this photo of potatoes, which ones are bad, and why?"
 * "Why did the website's checkout break yesterday?"
 
-**Flo & Jerry** is a web application that answers questions like these. *Flo* is the product's persona and *Jerry* is its friendly robot mascot (the little blue robot in the top-left corner).
+**Flo & Jerry** is a web application that answers questions like these. *Flo* is the product's persona and *Jerry* is its friendly mascot: the smiling fries carton in the top-left corner and in the copilot panel.
 
 It is built on three ideas:
 
@@ -84,6 +84,7 @@ All screenshots are **real captures of the running app** taken by automated brow
 At the top of every page:
 
 * **Brand** "Flo & Jerry — Food Copilot 2.0" with the subtitle *Agentic AI for End-to-End Food Manufacturing Excellence*.
+* **Illustrations:** Jerry (a smiling fries carton), potatoes and fries are **original vector drawings made for this project**, not copied artwork. *Why:* stock illustrations and packaging mockups carry licences and other companies' branding.
 * **Local model pill:** whether your local Qwen is connected ("not configured" means the app is answering with its built-in rules only).
 * **CPU and RAM pills:** **measured live** on the computer running the app, every 5 seconds. They are never typed-in numbers.
 * **Bell:** notifications built from real alerts (low stock, missing allergens, an injected fault).
@@ -101,10 +102,11 @@ The same page at laptop width (1280 pixels) wraps neatly:
 
 What you see, from top to bottom:
 
-1. **Five headline numbers:** revenue and units sold in the last 4 weeks (compared with the 4 weeks before), stock alerts, listing-compliance issues, and live demo-shop orders.
-2. **Weekly revenue chart** (16 weeks) and **revenue by region**. Every chart has a **"Show table"** button, so the numbers can be read without the picture (this helps screen-reader users too).
-3. **Needs attention:** for example, *FreshSip Apple may not cover the Ontario weekend campaign*.
-4. **Promotions** and **Digital delivery** status.
+1. **"From field to fries" banner:** an illustration of the journey from potato to fries. It is decoration only; it shows no data.
+2. **Five headline numbers:** revenue and units sold in the last 4 weeks (compared with the 4 weeks before), stock alerts, listing-compliance issues, and live demo-shop orders.
+3. **Weekly revenue chart** (16 weeks) and **revenue by region**. Every chart has a **"Show table"** button, so the numbers can be read without the picture (this helps screen-reader users too).
+4. **Needs attention:** for example, *FreshSip Apple may not cover the Ontario weekend campaign*.
+5. **Promotions** and **Digital delivery** status.
 
 ### 3.3 Ask Copilot
 
@@ -122,6 +124,10 @@ The drawer version opens from any page:
 ### 3.4 Potato Inspection studio
 
 ![Potato inspection studio](docs/screenshots/27-potato-inspection.png)
+
+Before you choose a batch, the studio shows an empty state with drawn potatoes and a one-line explanation:
+
+![Inspection empty state](docs/screenshots/32-inspection-empty-state.png)
 
 1. **Upload a photo** (JPEG, PNG or WebP), or click **"Try a synthetic sample"** (a drawn picture with known answers, labelled as not a photo).
 2. The app finds **every potato**, numbers it (#1, #2, …) and outlines it in **green (Good)**, **amber (Moderate)**, **red (Not Good)** or **grey (not graded)**.
