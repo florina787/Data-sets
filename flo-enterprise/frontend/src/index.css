@@ -26,3 +26,16 @@ body { background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: Inter, s
 .scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
 .scroll-thin::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 4px; }
 .maplibregl-canvas { outline: none; }
+
+/* FLO conversation workspace: motion that aids comprehension, disabled for reduced-motion users */
+@keyframes flo-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes flo-slide-in { from { transform: translateX(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes flo-slide-left { from { transform: translateX(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.flo-rise { animation: flo-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.flo-slide-in { animation: flo-slide-in 220ms ease-out both; }
+.flo-slide-left { animation: flo-slide-left 220ms ease-out both; }
+.flo-hero { background: radial-gradient(ellipse 70% 45% at 50% 0%, rgb(212 175 55 / 0.07), transparent 70%); }
+@media (prefers-reduced-motion: reduce) {
+  .flo-rise, .flo-slide-in, .flo-slide-left { animation: none; }
+  * { scroll-behavior: auto !important; }
+}

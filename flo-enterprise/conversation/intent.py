@@ -208,6 +208,8 @@ def classify(text: str, persona_id: str, principal: Principal, engine, state: di
     scen = scenario_of(text)
     prev = state.get("last_intent")
     iid = overrides.get("intent") if overrides.get("intent") in INTENTS else _match(text)
+    if overrides.get("chart_id") and iid is None:
+        iid = "general"  # explain-a-chart: let the graph's chart routing pick the agents
     is_cue = prev is not None and (bool(FOLLOWUP_CUE.search(text)) or len(text.split()) <= 7)
     follow_up_of = prev if is_cue else None
     if is_cue and (iid is None or (iid == "revenue_drivers" and prev in ("aum_profitability", "firm_overview", "revenue_opportunities"))):

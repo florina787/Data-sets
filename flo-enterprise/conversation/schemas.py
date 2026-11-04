@@ -308,6 +308,7 @@ class WorkflowInfo(BaseModel):
     injection: dict | None = None
     stages: list[dict] = []
     latency_ms: int | None = None
+    graph: ChartSpec | None = None
 
 
 class Discovery(BaseModel):

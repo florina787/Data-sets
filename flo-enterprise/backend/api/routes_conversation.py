@@ -50,6 +50,7 @@ class MessageContext(BaseModel):
     scenario: ScenarioIn | None = None
     focus: str | None = Field(None, max_length=120)
     intent: str | None = Field(None, max_length=40)
+    chart_id: str | None = Field(None, pattern=r"^[a-z_]{2,40}$")
 
 
 class MessageIn(BaseModel):
@@ -137,8 +138,9 @@ def _sse(event: str, data: dict) -> str:
 @router.post("/conversations/{cid}/messages/stream")
 async def stream_message(cid: str, body: MessageIn, request: Request, ctx: Ctx = Depends(require("ask:use"))):
     """Server-Sent Events: started, stage, intent, plan, agent, result, error, done. Events are emitted as the backend
-    actually reaches each step. A client disconnect cancels the workflow; re-posting with the same client_message_id
-    returns the stored result instead of re-running (idempotent retry / reconnection)."""
+    actually reaches each step. A dropped connection does not stop the work: re-posting with the same client_message_id
+    waits for the in-flight run and returns its stored result (idempotent retry / reconnection). Use the cancel endpoint
+    to stop a request explicitly."""
     _nf(lambda: service.get_conversation(ctx.principal, ctx.store, cid))
     q: queue.Queue = queue.Queue()
     started: dict = {}
@@ -166,9 +168,7 @@ async def stream_message(cid: str, body: MessageIn, request: Request, ctx: Ctx =
         yield ": stream open\n\n"
         while True:
             if await request.is_disconnected():
-                if started.get("request_id"):
-                    service.cancel(started["request_id"])
-                return
+                return  # the worker finishes and persists; the client reconnects with the same client_message_id
             try:
                 event, data = await asyncio.to_thread(q.get, True, 0.25)
             except queue.Empty:

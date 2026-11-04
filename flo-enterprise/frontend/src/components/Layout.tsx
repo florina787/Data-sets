@@ -1,20 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Bot, Briefcase, Building2, CheckSquare, Database, FileSearch, Gauge, History, Landmark, LineChart, LogOut, Moon, Scale,
-  Shield, ShieldCheck, Sun, Users } from "lucide-react";
-import { useState, type ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+  Shield, ShieldCheck, Sparkles, Sun, Users } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import { useApp } from "@/lib/app";
 import { LANGS, t, type Lang } from "@/lib/i18n";
-import { AskFloPanel } from "./AskFloPanel";
 import { Badge, Button, Input, Select, cn } from "./ui";
 
 const ICONS: Record<string, any> = { executive: Gauge, investment: LineChart, scenarios: Scale, wealth: Users, products: Briefcase, compliance: Landmark,
   approvals: CheckSquare, decisions: History, knowledge: FileSearch, aiops: Bot, governance: ShieldCheck, privacy: Shield, data: Database };
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { me, logout, lang, setLang, theme, toggleTheme, ask, filters, setFilters, can } = useApp();
+  const { me, logout, lang, setLang, theme, toggleTheme, filters, setFilters, can, askOpen } = useApp();
   const nav = useNavigate();
+  const loc = useLocation();
+  const onFlo = loc.pathname === "/";
+  // "Explain with FLO" anywhere in the enterprise modules opens the conversation, where FLO is the primary interface
+  useEffect(() => { if (askOpen && !onFlo) nav("/"); }, [askOpen, onFlo, nav]);
   const [q, setQ] = useState("");
   const gov = useQuery({ queryKey: ["gov"], queryFn: () => api("/api/governance/status") });
   const pending = useQuery({ queryKey: ["approvals", "pending"], queryFn: () => api("/api/approvals?status=pending"), refetchInterval: 30000 });
@@ -28,6 +31,10 @@ export function Layout({ children }: { children: ReactNode }) {
           <div><div className="font-semibold tracking-wide">FLO</div><div className="text-[10px] text-muted leading-tight">Financial Leadership, Operations &amp; Wealth Intelligence</div></div>
         </div>
         <div className="flex-1 overflow-y-auto scroll-thin px-2 space-y-0.5">
+          <NavLink to="/" end className={({ isActive }) => cn("mb-2 flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+            isActive ? "bg-gold/10 text-gold ring-1 ring-gold/50" : "text-ink hover:bg-card/60")}>
+            <Sparkles className="h-4 w-4 text-gold" />{t("flo", lang)}
+          </NavLink>
           {me?.navigation.map((n) => {
             const Icon = ICONS[n.id] ?? Gauge;
             return (
@@ -52,10 +59,10 @@ export function Layout({ children }: { children: ReactNode }) {
           <form className="flex-1 min-w-[180px] max-w-md" role="search" onSubmit={(e) => { e.preventDefault(); if (q.trim()) nav(`/knowledge?q=${encodeURIComponent(q)}`); }}>
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("search", lang)} aria-label="Global search" />
           </form>
-          <Select aria-label="Date range" value={filters.months} onChange={(e) => setFilters({ months: Number(e.target.value) as 12 | 24 })}>
+          {!onFlo && <Select aria-label="Date range" value={filters.months} onChange={(e) => setFilters({ months: Number(e.target.value) as 12 | 24 })}>
             <option value={12}>Trailing 12 months</option><option value={24}>Trailing 24 months</option>
-          </Select>
-          {(can("finance:read") || can("investment:read")) && (
+          </Select>}
+          {!onFlo && (can("finance:read") || can("investment:read")) && (
             <Select aria-label="Asset class filter" value={filters.asset_class} onChange={(e) => setFilters({ asset_class: e.target.value })}>
               <option value="">All asset classes</option>{["Equity", "Fixed Income", "Balanced", "Alternatives", "Cash"].map((x) => <option key={x}>{x}</option>)}
             </Select>
@@ -69,17 +76,17 @@ export function Layout({ children }: { children: ReactNode }) {
               {LANGS.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
             </Select>
             <Button size="icon" variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">{theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}</Button>
-            <Button variant="primary" size="sm" onClick={() => ask({})}><Bot className="h-4 w-4" />{t("ask", lang)}</Button>
+            {!onFlo && <Button variant="primary" size="sm" onClick={() => nav("/")}><Bot className="h-4 w-4" />{t("ask", lang)}</Button>}
             <div className="ml-2 hidden text-right text-xs sm:block"><div className="font-medium">{me?.display_name}</div><div className="text-muted">{me?.title}</div></div>
             <Button size="icon" variant="ghost" onClick={() => { logout(); nav("/"); }} aria-label="Sign out" title="Switch user"><LogOut className="h-4 w-4" /></Button>
           </div>
         </header>
         <nav className="flex gap-1 overflow-x-auto border-b border-line px-2 py-1 md:hidden" aria-label="Primary mobile">
+          <NavLink to="/" end className="whitespace-nowrap rounded px-2 py-1 text-xs text-gold">{t("flo", lang)}</NavLink>
           {me?.navigation.map((n) => <NavLink key={n.id} to={`/${n.id}`} className="whitespace-nowrap rounded px-2 py-1 text-xs text-muted">{t(n.id, lang)}</NavLink>)}
         </nav>
-        <main id="main" className="flex-1 overflow-y-auto scroll-thin p-4 md:p-6">{children}</main>
+        <main id="main" className={cn("min-h-0 flex-1", onFlo ? "overflow-hidden" : "overflow-y-auto scroll-thin p-4 md:p-6")}>{children}</main>
       </div>
-      <AskFloPanel />
     </div>
   );
 }

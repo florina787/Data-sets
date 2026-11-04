@@ -8,6 +8,7 @@ import { AppProvider, useApp } from "@/lib/app";
 import Login from "@/pages/Login";
 import "./index.css";
 
+const FloHome = lazy(() => import("@/pages/FloHome"));
 const Executive = lazy(() => import("@/pages/Executive"));
 const Investment = lazy(() => import("@/pages/Investment"));
 const Scenarios = lazy(() => import("@/pages/Scenarios"));
@@ -29,12 +30,11 @@ function Shell() {
   const { me, loading } = useApp();
   if (loading) return <Spinner label="Starting FLO" />;
   if (!me) return <Login />;
-  const home = `/${me.navigation[0]?.id ?? "data"}`;
   return (
     <Layout>
       <Suspense fallback={<Spinner />}>
         <Routes>
-          <Route path="/" element={<Navigate to={home} replace />} />
+          <Route path="/" element={<FloHome />} />
           <Route path="/executive" element={<Executive />} />
           <Route path="/investment" element={<Investment />} />
           <Route path="/scenarios" element={<Scenarios />} />
@@ -49,7 +49,7 @@ function Shell() {
           <Route path="/governance" element={<Governance />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/data" element={<DataProducts />} />
-          <Route path="*" element={<Navigate to={home} replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </Layout>

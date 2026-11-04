@@ -8,8 +8,9 @@ async function login(page: Page, user: string) {
   await expect(page.getByRole("navigation", { name: "Primary" })).toBeVisible();
 }
 
-test("CEO: executive command center renders seeded charts and Ask Flo answers", async ({ page }) => {
+test("CEO: executive command center renders seeded charts and FLO answers", async ({ page }) => {
   await login(page, "u-ceo");
+  await page.getByRole("link", { name: "Executive Command Center" }).click();
   await expect(page.getByRole("heading", { name: "Executive Command Center" })).toBeVisible();
   await expect(page.getByText("Total AUM")).toBeVisible();
   await expect(page.locator("[data-chart] canvas").first()).toBeVisible({ timeout: 20000 });
@@ -17,12 +18,11 @@ test("CEO: executive command center renders seeded charts and Ask Flo answers", 
   await page.waitForTimeout(1500);
   await shot(page, "01-executive");
   await page.getByRole("button", { name: "Ask Flo" }).first().click();
-  await page.getByLabel("Question for Flo").fill("Why did AUM increase while profitability declined?");
-  await page.getByRole("button", { name: "Ask", exact: true }).click();
-  await expect(page.getByTestId("ask-answer")).toContainText("operating margin", { timeout: 20000 });
-  await shot(page, "02-ask-flo");
-  // lineage panel on a chart
-  await page.getByRole("button", { name: "Close Ask Flo" }).click();
+  await page.getByLabel("Message FLO").fill("Why did AUM increase while profitability declined?");
+  await page.getByLabel("Message FLO").press("Enter");
+  await expect(page.getByTestId("workspace-headline")).toContainText("operating margin", { timeout: 20000 });
+  // lineage panel on a chart in the enterprise module
+  await page.getByRole("link", { name: "Executive Command Center" }).click();
   await page.locator('[data-chart="aum_waterfall"]').getByRole("button", { name: "Source lineage and methodology" }).click();
   await expect(page.locator('[data-chart="aum_waterfall"]')).toContainText("Methodology");
 });
@@ -43,6 +43,7 @@ test("CIO: investment workspace, portfolio detail and scenario simulator", async
 
 test("Advisor: sees only assigned clients and drafts an approval-gated communication", async ({ page }) => {
   await login(page, "u-advisor");
+  await page.getByRole("link", { name: "Wealth Advisor 360" }).click();
   await expect(page.getByRole("heading", { name: /Advisor Home/ })).toBeVisible();
   await page.getByRole("table", { name: "Clients" }).locator("tbody tr").first().click();
   await expect(page.getByText("Contact (masked)")).toBeVisible({ timeout: 20000 });
@@ -78,7 +79,7 @@ test("AI admin: observability dashboard and agent workflow", async ({ page }) =>
 test("External advisor: restricted navigation, product research only", async ({ page }) => {
   await login(page, "u-external");
   const links = await page.getByRole("navigation", { name: "Primary" }).getByRole("link").allTextContents();
-  expect(links.map((l) => l.trim())).toEqual(["Product Research", "Knowledge Search", "Data Products"]);
+  expect(links.map((l) => l.trim())).toEqual(["FLO Intelligence", "Product Research", "Knowledge Search", "Data Products"]);
   const r = await page.request.get("/api/wealth/clients/C-00001", { headers: { Authorization: `Bearer ${await page.evaluate(() => sessionStorage.getItem("flo.token"))}` } });
   expect(r.status()).toBe(403);
 });

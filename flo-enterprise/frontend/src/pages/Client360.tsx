@@ -144,7 +144,7 @@ function Meeting({ id }: { id: string }) {
   return (
     <Card className="space-y-3 p-4">
       <div className="flex flex-wrap gap-2"><Button variant="primary" onClick={() => m.mutate()} disabled={m.isPending}><MessageSquareText className="h-4 w-4" />Generate meeting preparation</Button>
-        <Button onClick={() => ask({ client_id: id, question: `What should I discuss with client ${id}?` })}>Open in Ask Flo</Button></div>
+        <Button onClick={() => ask({ client_id: id, question: `What should I discuss with client ${id}?` })}>Ask FLO about this client</Button></div>
       {m.isPending && <Spinner label="Client intelligence, wealth, retirement and meeting agents running" />}
       {m.error && <ErrorState error={m.error} />}
       {m.data && <div className="space-y-2"><div className="flex flex-wrap gap-1">{m.data.agents.map((a: string) => <Badge key={a}>{a}</Badge>)}</div>

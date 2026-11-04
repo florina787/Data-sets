@@ -37,6 +37,8 @@ from retrieval.injection import scan_text
 STAGES = [("understanding", "Understanding request"), ("permissions", "Checking permissions"), ("evidence", "Retrieving evidence"),
           ("analysis", "Running financial analysis"), ("visualization", "Preparing visualizations"), ("validation", "Validating recommendations")]
 ACTIVE: dict[str, tuple[str, threading.Event]] = {}  # request_id -> (owner user id, cancel event)
+INFLIGHT: dict[tuple[str, str], threading.Event] = {}  # (conversation id, client_message_id) -> completion event
+_inflight_lock = threading.Lock()
 GLOSSARY = {"AUM": "assets under management - the market value of client assets the firm manages",
             "bps": "basis points - hundredths of a percent (100 bps = 1%)",
             "operating margin": "operating income as a share of revenue",
@@ -202,6 +204,30 @@ def process_message(principal: Principal, store, conversation_id: str, text: str
     if prior is not None:
         em("replay", {"message_id": prior["message_id"]})
         return prior
+    key, owner, waiting = (conversation_id, client_message_id or ""), False, None
+    if client_message_id:
+        with _inflight_lock:
+            waiting = INFLIGHT.get(key)
+            if waiting is None:
+                INFLIGHT[key], owner = threading.Event(), True
+    if waiting is not None:  # a retry/reconnect while the original request is still running: wait for its stored result
+        em("replay", {"waiting_for": client_message_id})
+        waiting.wait(120)
+        with session_scope() as s:
+            prior = _idempotent(s, conversation_id, client_message_id)
+        if prior is None:
+            raise RuntimeError("original request did not complete")
+        return prior
+    try:
+        return _process(principal, store, conversation_id, text, pid, state, client_message_id, overrides, language, em)
+    finally:
+        if owner:
+            with _inflight_lock:
+                INFLIGHT.pop(key).set()
+
+
+def _process(principal: Principal, store, conversation_id: str, text: str, pid: str, state: dict, client_message_id: str | None,
+             overrides: dict | None, language: str | None, em: Emitter) -> dict:
     request_id = f"WF-{uuid.uuid4().hex[:12]}"
     message_id = f"MSG-{uuid.uuid4().hex[:12]}"
     cancel_ev = threading.Event()
@@ -308,6 +334,8 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
     for k in ("client_id", "portfolio_id"):
         if plan.entities.get(k):
             ctx_ctx[k] = plan.entities[k]
+    if overrides.get("chart_id") and "route_hint" not in ctx_ctx:
+        ctx_ctx["chart_id"] = overrides["chart_id"]  # "Explain with FLO" from a dashboard chart: the graph maps it to agents
     for k in ("months", "scenario", "business_profile"):
         if plan.modifiers.get(k):
             ctx_ctx[k] = plan.modifiers[k]
@@ -466,7 +494,7 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
             "workflow": WorkflowInfo(workflow_id=request_id, route=(ans or {}).get("route"), agents=(ans or {}).get("agents", []),
                                      tool_calls=ctx.tool_log, policy_decisions=ctx.policy_log, errors=errors, model=ctx.model.name,
                                      model_mode=(ans or {}).get("model_mode", ""), injection=inj, stages=em.stages,
-                                     latency_ms=int((time.monotonic() - t0) * 1000))}
+                                     latency_ms=int((time.monotonic() - t0) * 1000), graph=graph)}
     if needs_client:
         resp["tables"] = [Table(table_id="client_choices", title="Your largest clients with a retirement goal", columns=["Client", "Segment", "Client value (CAD)"],
                                 rows=[[x["client_id"], x["segment"], x["client_value"]] for x in choices])] if choices else []

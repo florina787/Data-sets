@@ -17,6 +17,7 @@ const T: Record<string, Record<Lang, string>> = {
   governance: { en: "Governance & Audit", fr: "Gouvernance et audit", es: "Gobernanza y auditoría", hi: "शासन और ऑडिट", ta: "ஆளுகை & தணிக்கை", ko: "거버넌스 및 감사" },
   privacy: { en: "Privacy Console", fr: "Console de confidentialité", es: "Consola de privacidad", hi: "गोपनीयता कंसोल", ta: "தனியுரிமை பணியகம்", ko: "개인정보 콘솔" },
   data: { en: "Data Products", fr: "Produits de données", es: "Productos de datos", hi: "डेटा उत्पाद", ta: "தரவு தயாரிப்புகள்", ko: "데이터 상품" },
+  flo: { en: "FLO Intelligence", fr: "Intelligence FLO", es: "Inteligencia FLO", hi: "FLO इंटेलिजेंस", ta: "FLO நுண்ணறிவு", ko: "FLO 인텔리전스" },
   ask: { en: "Ask Flo", fr: "Demander à Flo", es: "Pregunte a Flo", hi: "Flo से पूछें", ta: "Flo-விடம் கேளுங்கள்", ko: "Flo에게 질문" },
   explain: { en: "Explain with Flo", fr: "Expliquer avec Flo", es: "Explicar con Flo", hi: "Flo से समझें", ta: "Flo மூலம் விளக்கு", ko: "Flo로 설명" },
   dataAsOf: { en: "Data as of", fr: "Données au", es: "Datos al", hi: "डेटा तिथि", ta: "தரவு தேதி", ko: "기준일" },
