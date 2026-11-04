@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FastForward, Pause, Play, RotateCcw, Wind } from "lucide-react";
 import { Chart } from "@/components/Chart";
@@ -7,6 +7,14 @@ import { Badge, ErrorBox, Skeleton } from "@/components/ui";
 import { get, post } from "@/lib/api";
 import type { GraphEdge, GraphNode } from "@/lib/types";
 import { pct, usd } from "./common";
+import type { MapState } from "@/features/global/types";
+import { webglAvailable } from "@/features/global/GlobeMap";
+
+// The globe (MapLibre) is a large chunk: load it only when its scene is shown.
+const GlobeMap = lazy(() => import("@/features/global/GlobeMap").then((m) => ({ default: m.GlobeMap })));
+const GLOBE_HORIZON = "30";
+/** Probabilities this close to 1 are still estimates: never present them as certainty. */
+const late = (p: number) => (p >= 0.995 ? "over 99%" : pct(p));
 
 /* ---------------------------------------------------------------------------------------------
  * Guided Journey: the Flying Florina emblem flies from scene to scene (supply chain first) and
@@ -39,6 +47,7 @@ const SCENARIO_LABEL: Record<string, string> = { baseline: "No delay", delay: "D
 const MITIGATION = { overtime_capacity: 0.15, delay_reduction: 0.5, demand_deferral: 0.1 };
 
 function useJourneyData() {
+  const globe = useQuery({ queryKey: ["global-timeline", ""], queryFn: () => get<Record<string, MapState>>("/api/global/timeline"), staleTime: 300_000 });
   const supply = useQuery({ queryKey: ["gj-supply"], queryFn: () => get<Overview>("/api/supply/overview"), staleTime: 300_000 });
   const impact = useQuery({ queryKey: ["gj-impact"], queryFn: () => post<Impact>("/api/supply/delay-impact", { supplier_id: "S1", delay_days: 14, horizon_days: 60 }), staleTime: 300_000 });
   const comp = useQuery({ queryKey: ["gj-comp"], queryFn: () => get<Comp>("/api/forecast/components?horizon=30"), staleTime: 300_000 });
@@ -54,7 +63,7 @@ function useJourneyData() {
     },
   });
   const ct = useQuery({ queryKey: ["gj-ct"], queryFn: () => get<CT>("/api/harness/control-tower"), staleTime: 60_000 });
-  return { supply, impact, comp, heat, units, vis, res, ct };
+  return { globe, supply, impact, comp, heat, units, vis, res, ct };
 }
 type Data = ReturnType<typeof useJourneyData>;
 
@@ -80,13 +89,48 @@ const Big = ({ k, v, hint }: { k: string; v: ReactNode; hint?: string }) => (
 
 const SCENES: SceneDef[] = [
   {
+    id: "global", title: "Global Intelligence", subtitle: "The supply chain on one globe: every supplier, hub and route", source: "GET /api/global/timeline (supply chain layer, +30 days)",
+    ready: (d) => !!d.globe.data?.data[GLOBE_HORIZON], error: (d) => d.globe.error,
+    intro: "Take off! First, the whole supply chain on one globe, drawn offline.",
+    stops: (d) => {
+      const st = d.globe.data!.data[GLOBE_HORIZON]; const sup = [...st.suppliers].sort((a, b) => b.late_probability - a.late_probability);
+      const mro = st.facilities.filter((f) => f.kind === "mro").length;
+      return [
+        `${st.suppliers.length} suppliers feed ${mro} maintenance hubs through ${st.links.length} supply links. Each route glows by its chance of arriving late.`,
+        `The reddest routes start at ${sup[0].name} in ${sup[0].city} (${late(sup[0].late_probability)} late) and ${sup[1].name} (${late(sup[1].late_probability)}). Let's zoom in on suppliers.`,
+      ];
+    },
+    body: (d) => {
+      const st = d.globe.data!.data[GLOBE_HORIZON]; const sup = [...st.suppliers].sort((a, b) => b.late_probability - a.late_probability);
+      return (
+        <div className="grid gap-4 lg:grid-cols-[1.7fr_1fr]">
+          <Stop n={0} className="gj-globe relative h-[400px] overflow-hidden">
+            <Suspense fallback={<Skeleton className="h-full" />}>
+              <GlobeMap state={st} layer="supply" mode={webglAvailable() ? "globe" : "lite"} selection={null} onSelect={() => undefined} />
+            </Suspense>
+          </Stop>
+          <Stop n={1} className="space-y-2 p-1">
+            <p className="label">Chance of late delivery, +30 days</p>
+            {sup.slice(0, 6).map((x) => (
+              <div key={x.id} className="gj-big rounded-xl px-4 py-2 text-sm">
+                <div className="flex items-center justify-between gap-2"><span className="font-medium">{x.name}</span><span className="font-serif text-lg">{x.late_probability >= 0.995 ? ">99%" : pct(x.late_probability)}</span></div>
+                <div className="muted text-xs">{x.city} · {x.open_orders} open orders</div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[var(--panel)]"><div className="h-full rounded-full" style={{ width: `${Math.max(3, x.late_probability * 100)}%`, background: x.late_probability > 0.6 ? "#EF4444" : x.late_probability > 0.35 ? "#F59E0B" : "#10B981" }} /></div>
+              </div>
+            ))}
+          </Stop>
+        </div>
+      );
+    },
+  },
+  {
     id: "supply", title: "Supply Chain", subtitle: "Which suppliers are likely to deliver late?", source: "GET /api/supply/overview",
     ready: (d) => !!d.supply.data, error: (d) => d.supply.error,
-    intro: "Let's start where shortages begin: the suppliers.",
+    intro: "Down from the globe to the suppliers themselves.",
     stops: (d) => {
       const o = d.supply.data!.data; const s = [...o.suppliers].sort((a, b) => b.late_probability_open_orders - a.late_probability_open_orders);
       return [
-        `${s[0].name} is the riskiest: ${s[0].late_probability_open_orders >= 0.995 ? "over 99%" : pct(s[0].late_probability_open_orders)} chance its open orders arrive late.`,
+        `${s[0].name} is the riskiest: ${late(s[0].late_probability_open_orders)} chance its open orders arrive late.`,
         `The late-delivery model was tested on held-out orders: precision ${pct(o.late_delivery_eval.precision)}, recall ${pct(o.late_delivery_eval.recall)}.`,
       ];
     },
@@ -418,7 +462,7 @@ export function GuidedJourney() {
         say(lines[stop]); setState(`Hovering · evidence ${stop + 1} of ${lines.length}`);
         await wait((2600 + lines[stop].length * 22) / speed); if (live) setStop(stop + 1);
       } else if (scene < SCENES.length - 1) {
-        setScene(scene + 1); setStop(-1);
+        setBubble(null); setState(`Flying to ${SCENES[scene + 1].title}`); setScene(scene + 1); setStop(-1);
       } else {
         setPlaying(false); setState("Journey complete"); setBubble({ text: "Journey complete. Jump to any scene, or explore the full pages.", left: false });
       }
@@ -445,7 +489,7 @@ export function GuidedJourney() {
         <img src="/brand/ff-emblem.svg" alt="" className="h-16 w-16 shrink-0 drop-shadow-[0_6px_12px_rgba(14,34,64,0.3)]" />
         <div>
           <h1 className="text-2xl font-semibold sm:text-3xl">Flying Florina Guided Journey</h1>
-          <p className="muted mt-1 max-w-3xl text-sm">The Flying Florina emblem flies from the supply chain to every part of the platform and hovers over the evidence it explains. Charts stay interactive; the narration panel repeats every message as text for screen readers and reduced motion.</p>
+          <p className="muted mt-1 max-w-3xl text-sm">The Flying Florina emblem flies from the global supply chain to every part of the platform and hovers over the evidence it explains. Charts stay interactive; the narration panel repeats every message as text for screen readers and reduced motion.</p>
         </div>
       </header>
 
@@ -470,7 +514,7 @@ export function GuidedJourney() {
             <Badge tone={playing ? "teal" : "gray"}>{playing ? "PLAYING" : started ? (state === "Journey complete" ? "COMPLETE" : "PAUSED") : "READY"}</Badge>
           </span>
         </div>
-        <div className="grid gap-1.5 sm:grid-cols-3 lg:grid-cols-9" role="tablist" aria-label="Scenes">
+        <div className="grid gap-1.5 sm:grid-cols-3 lg:grid-cols-10" role="tablist" aria-label="Scenes">
           {SCENES.map((s, i) => (
             <button key={s.id} role="tab" aria-selected={i === scene} onClick={() => jump(i)}
               className={`gj-chip rounded-xl px-2.5 py-1.5 text-left text-xs ${i === scene ? "gj-chip-on" : i < scene ? "gj-chip-done" : ""}`}>
