@@ -12,10 +12,10 @@
 ![Tests](https://img.shields.io/badge/tests-160%20%2B%209%20%2B%2022%20passing-10B981)
 ![License](https://img.shields.io/badge/license-GPL--3.0-14B8A6)
 
-<img src="docs/assets/flying_florina_3_highlights.gif" width="100%" alt="Live recording: global intelligence, supply chain, inventory forecast, dependency map and heatmaps" />
+<img src="docs/assets/flying_florina_3_emblem_tour.gif" width="100%" alt="Live recording in the Sky theme: the Flying Florina emblem flies from the global supply chain to inventory, dependency maps, heatmaps, the digital twin, the airspace lab, resilience, chat and the Control Tower" />
 
-<sub>▲ Live recording: global intelligence → supply-chain routes → inventory timeline → supply-chain simulation → dependency map → heatmaps.<br/>
-Watch the <a href="docs/assets/flying_florina_3_full_tour.gif">full tour GIF</a> (every section) or the <a href="docs/assets/flying_florina_3_tour.mp4">sharp MP4 version</a>.</sub>
+<sub>▲ Follow the emblem (Sky theme, live recording): global intelligence → supply chain → inventory timeline → dependency map → heatmaps → digital twin → airspace lab → resilience → chat → Control Tower.<br/>
+Sharp <a href="docs/assets/flying_florina_3_emblem_tour.mp4">MP4 version</a> · earlier dark-theme <a href="docs/assets/flying_florina_3_highlights.gif">highlights</a>, <a href="docs/assets/flying_florina_3_full_tour.gif">full tour GIF</a> and <a href="docs/assets/flying_florina_3_tour.mp4">MP4</a>.</sub>
 
 </div>
 
