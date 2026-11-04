@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AgentGraph } from "@/components/AgentGraph";
 import { AgentTimeline } from "@/components/AgentTimeline";
 import { BrandMark } from "@/components/Brand";
+import { SkyHero } from "@/components/SkyHero";
 import { FourQuestionCards } from "@/components/QwenBlocks";
 import { Badge, Card, ErrorBox, Skeleton, statusTone } from "@/components/ui";
 import { Workspace } from "@/components/Workspace";
@@ -221,11 +222,17 @@ export function MissionControl() {
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6">
       {runIds.length === 0 ? (
-        <div className="pt-2 sm:pt-6">
+        <div className="space-y-8 pt-2 sm:pt-4">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <SkyHero stats={[
+              { value: f ? String(f.total_aircraft) : "—", label: "aircraft in the synthetic demo fleet" },
+              { value: "$0", label: "per-query AI fees: the model runs on this machine" },
+            ]} />
+          </motion.div>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="flex flex-col items-center text-center">
             <BrandMark size={64} />
             <Badge tone="purple"><Sparkles className="h-3 w-3" />Agentic · evidence-backed · local Qwen · human-approved</Badge>
-            <h1 className="gradient-title mt-4 text-3xl font-semibold tracking-tight sm:text-5xl">What should we understand about our aerospace operations?</h1>
+            <h1 className="gradient-title hero-question mt-4 text-3xl font-semibold tracking-tight sm:text-5xl">What should we understand about our aerospace operations?</h1>
             <p className="muted mx-auto mt-3 max-w-2xl text-sm sm:text-base">
               Ask in plain language. Specialist agents query verified synthetic data, your local Qwen model explains the evidence, an Evidence Challenger checks every number, and humans approve every consequential action.
             </p>

@@ -3,16 +3,11 @@ import { Map as MLMapCtor, NavigationControl, Popup, setWorkerUrl, type GeoJSONS
 // MapLibre 6 loads its worker as a separate ES module; let Vite bundle it and hand MapLibre the URL (works in dev and build).
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { feature } from "topojson-client";
-import type { FeatureCollection, Geometry } from "geojson";
-import world from "world-atlas/countries-110m.json";
-import type { Topology } from "topojson-specification";
 import type { Disruption, Facility, LayerId, MapState, Supplier } from "./types";
 
-/** Country outlines bundled from Natural Earth (public domain) via world-atlas: the map needs no tile server and no network. */
-setWorkerUrl(maplibreWorkerUrl);
+import { COUNTRIES } from "@/lib/world";
 
-const COUNTRIES = feature(world as unknown as Topology, (world as unknown as Topology).objects.countries) as unknown as FeatureCollection<Geometry>;
+setWorkerUrl(maplibreWorkerUrl);
 
 export type MapMode = "globe" | "flat" | "lite";
 export type Selection = { kind: "facility" | "supplier" | "disruption"; id: string } | null;
@@ -155,13 +150,15 @@ export function GlobeMap({ state, layer, mode, selection, onSelect, focus }: {
   useEffect(() => {
     const m = map.current;
     if (!ready || !m) return;
-    (m.getSource("links") as GeoJSONSource).setData(linksGeo(enc.links));
+    // The map can be torn down (mode switch) while a tween frame is queued, so look the sources up defensively.
+    (m.getSource("links") as GeoJSONSource | undefined)?.setData(linksGeo(enc.links));
     const from = last.current, to = enc.points;
     const start = performance.now();
     let raf = 0;
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / 450);
-      (m.getSource("points") as GeoJSONSource).setData(pointsGeo(tween(from, to, t)));
+      if (map.current !== m) return;
+      (m.getSource("points") as GeoJSONSource | undefined)?.setData(pointsGeo(tween(from, to, t)));
       if (t < 1) raf = requestAnimationFrame(step);
       else last.current = to;
     };

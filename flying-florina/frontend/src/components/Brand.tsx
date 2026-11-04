@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-/** Uses the locally provided, authorized logo when present; otherwise the neutral placeholder mark. */
+/** The Flying Florina emblem (original, public/brand/ff-emblem.svg); falls back to the neutral placeholder mark. */
 export function BrandMark({ size = 40 }: { size?: number }) {
-  const [src, setSrc] = useState("/brand/florina-logo.png");
+  const [src, setSrc] = useState("/brand/ff-emblem.svg");
   return (
     <img
       src={src}
@@ -10,7 +10,7 @@ export function BrandMark({ size = 40 }: { size?: number }) {
       width={size}
       height={size}
       alt="Flying_Florina logo"
-      className="rounded-full ring-2 ring-gold/70 object-cover"
+      className="rounded-full object-cover drop-shadow-[0_2px_6px_rgba(15,40,80,0.25)]"
       style={{ width: size, height: size }}
     />
   );

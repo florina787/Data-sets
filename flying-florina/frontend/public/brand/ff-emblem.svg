@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Flying Florina emblem">
+  <!-- Original Flying Florina emblem (2026): four overlapping gradient petals forming a globe, with a plane in flight. -->
+  <defs>
+    <linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C026D3"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#84CC16"/><stop offset="1" stop-color="#15803D"/></linearGradient>
+    <linearGradient id="o" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FDBA74"/><stop offset="1" stop-color="#EA580C"/></linearGradient>
+    <clipPath id="c"><circle cx="64" cy="64" r="58"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <circle cx="64" cy="64" r="58" fill="url(#o)"/>
+    <path d="M6 64 C6 22 40 6 70 8 C98 10 118 34 116 50 C88 34 46 40 6 64Z" fill="url(#m)" opacity=".95"/>
+    <path d="M6 64 C22 54 40 50 52 56 C44 78 40 98 46 122 C22 112 6 92 6 64Z" fill="url(#b)" opacity=".95"/>
+    <path d="M46 122 C42 100 48 82 62 74 C74 92 92 108 102 112 C86 124 64 128 46 122Z" fill="url(#g)" opacity=".95"/>
+    <path d="M62 74 C74 58 96 46 116 50 C124 74 118 98 102 112 C88 104 72 90 62 74Z" fill="url(#o)" opacity=".95"/>
+  </g>
+  <!-- plane (top view, swept wings) -->
+  <g transform="translate(62 66) rotate(-40) scale(0.78)" fill="#FFFFFF">
+    <path d="M-40 0 C-40 -2.6 -37 -3.6 -33 -3.6 L30 -3.6 C38 -3.6 44 -1.6 44 0 C44 1.6 38 3.6 30 3.6 L-33 3.6 C-37 3.6 -40 2.6 -40 0Z"/>
+    <path d="M8 -3 L-8 -36 L-1 -36 L22 -3Z"/>
+    <path d="M8 3 L-8 36 L-1 36 L22 3Z"/>
+    <path d="M-33 -2.5 L-40 -14 L-35.5 -14 L-26 -2.5Z"/>
+    <path d="M-33 2.5 L-40 14 L-35.5 14 L-26 2.5Z"/>
+  </g>
+</svg>

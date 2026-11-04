@@ -10,7 +10,7 @@ function readTheme(): Theme {
   } catch {
     /* storage unavailable */
   }
-  return "dark"; // the Conversation Intelligence Copilot design system is dark-first
+  return "light"; // 3.0: the Sky theme is the default; dark ("night") is one click away
 }
 
 type SessionState = {

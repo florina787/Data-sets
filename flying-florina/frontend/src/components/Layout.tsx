@@ -120,8 +120,13 @@ export function Layout({ children }: { children: ReactNode }) {
     </nav>
   );
   return (
-    <div className={theme === "dark" ? "dark" : ""}>
+    <div className={theme === "dark" ? "dark" : "sky"}>
       <div className="app-bg flex min-h-screen flex-col text-[var(--text)]">
+        {theme !== "dark" && (
+          <div className="sky-clouds" aria-hidden>
+            <span className="c1" /><span className="c2" /><span className="c3" /><span className="c4" /><span className="c5" />
+          </div>
+        )}
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded focus:bg-indigo focus:p-2 focus:text-white">Skip to content</a>
         <header className="sticky top-0 z-30 border-b border-token bg-[var(--bg)]/75 backdrop-blur-xl">
           <div className="mx-auto flex h-14 max-w-[1680px] items-center gap-2 px-3 sm:gap-3 sm:px-4">
@@ -144,7 +149,7 @@ export function Layout({ children }: { children: ReactNode }) {
               <PersonaSelect />
               {actor && <span className="muted hidden text-xs 2xl:inline" data-testid="actor">{actor.display_name} · {actor.role}</span>}
               {!actor && <span data-testid="actor" />}
-              <button className="btn btn-ghost !rounded-full !p-1.5" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle dark mode">
+              <button className="btn btn-ghost !rounded-full !p-1.5" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label="Toggle dark mode" title={theme === "dark" ? "Switch to the Sky theme" : "Switch to the Night theme"}>
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
             </div>
