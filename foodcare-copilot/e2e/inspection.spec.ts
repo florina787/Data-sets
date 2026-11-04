@@ -27,6 +27,13 @@ test("potato inspection: upload, grade, inspect one potato, thresholds", async (
   await expect(main.getByText("Detection score")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/27-potato-inspection.png`, fullPage: true });
 
+  // Inspector correction: kept next to the rules' grade and counted in the summary.
+  await main.getByText("Correct this grade (inspector review)").click();
+  await main.getByLabel("New grade").selectOption("Good");
+  await main.getByLabel(/Reason \(required/).fill("dark patch is soil, not rot");
+  await main.getByRole("button", { name: "Save correction" }).click();
+  await expect(main.getByText(/Inspector correction by val.viewer/)).toBeVisible();
+
   // Loosening the dark-area limit re-grades from stored measurements.
   const goodBefore = await summary.locator(".card").nth(1).locator(".text-2xl").innerText();
   await main.getByText(/Quality thresholds/).click();

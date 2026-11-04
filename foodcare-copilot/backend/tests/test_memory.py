@@ -103,7 +103,7 @@ def test_migrations_are_idempotent_and_checksummed(enterprise):
     versions = [r[0] for r in conn.execute("SELECT version FROM schema_migrations ORDER BY version")]
     conn.execute("UPDATE schema_migrations SET checksum = 'tampered' WHERE version = 1")
     conn.close()
-    assert versions == [1, 2, 3, 4]
+    assert versions == [1, 2, 3, 4, 5]
     with pytest.raises(RuntimeError, match="changed after it was applied"):
         store.init()
 

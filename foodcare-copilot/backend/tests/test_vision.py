@@ -149,3 +149,23 @@ def test_vision_jobs_are_bounded(platform):
     release.set()
     t.join()
     assert gate.status()["rejected"] == 1
+
+
+def test_inspector_correction_keeps_model_grade_and_updates_summary(platform):
+    batch = inspect(synthetic.render(seed=1)[0])
+    bad = next(p for p in batch["potatoes"] if p["grade"] == "Not Good")
+    before = batch["summary"]["counts"]
+    with pytest.raises(PlatformError, match="reason"):
+        service.correct_potato(batch["id"], "val.viewer", bad["potato_no"], "Good", "")
+    with pytest.raises(NotFound):
+        service.correct_potato(batch["id"], "maya.marketing", bad["potato_no"], "Good", "soil, not rot")
+    out = service.correct_potato(batch["id"], "val.viewer", bad["potato_no"], "Good", "soil, not rot")["batch"]
+    fixed = next(p for p in out["potatoes"] if p["potato_no"] == bad["potato_no"])
+    assert fixed["grade"] == "Good" and fixed["model_grade"] == "Not Good" and fixed["corrected"]
+    assert out["summary"]["counts"]["Good"] == before["Good"] + 1 and out["summary"]["corrected"] == 1
+    service.regrade(batch["id"], "val.viewer", {"max_dark_pct_good": 0.5})  # re-grading keeps the correction
+    again = next(p for p in service.potatoes(batch["id"]) if p["potato_no"] == bad["potato_no"])
+    assert again["grade"] == "Good"
+    log = service.corrections(batch["id"], "val.viewer")
+    assert log[0]["model_grade"] == "Not Good" and log[0]["new_grade"] == "Good"
+    assert log[0]["corrected_by"] == "val.viewer" and log[0]["model_version"] == service.detector().name

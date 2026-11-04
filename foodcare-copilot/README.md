@@ -155,7 +155,25 @@ Before you choose a batch, the studio shows an empty state with drawn potatoes a
 
 This page shows only **measured** information: machine CPU and RAM, the app's own memory use, the image-inspection queue, the local-model queue, the size of the memory database, and a list of **recent agent runs**. Click a run to see each step and how many milliseconds it took.
 
-### 3.8 Digital delivery workspace
+### 3.8 Model Evaluation Lab
+
+![Model Evaluation Lab](docs/screenshots/33-model-evaluation-lab.png)
+
+This page answers the question **"how good is the model, really?"**, honestly:
+
+* **Model registry:** every model, with a **Trained? yes/no** column. Today both potato components say **no**, because they are rules, not trained neural networks. Planned neural models are listed as **unavailable**, with what they need.
+* **Datasets:** each one shows its licence and source, a **SYNTHETIC** badge when the images are drawn, and the results of the leakage check.
+* **Evaluation reports:** each row names the model version, dataset version, split, sample size, date and method, with detection mAP, precision, recall, counting error and grading accuracy.
+* **Confusion matrix:** rows are the true grades and columns the predicted ones. The green diagonal is correct, red cells are mistakes.
+* **Run evaluation on the synthetic set:** re-measures the current pipeline (engineer, product owner or release approver).
+
+*Why it matters:* a number such as "99% accurate" means nothing without knowing **which data it was measured on**. Here, every score carries its receipt.
+
+### 3.9 Inspector corrections (human in the loop)
+
+In the potato detail panel, **Correct this grade** lets an inspector override the rules' grade **with a required reason**. The original grade is kept next to the correction, the change is written to the audit log, the batch summary updates, and Jerry mentions the correction when asked about that potato. *Why:* the rules can mistake soil for rot; a person should be able to fix that, and the record should show who did and why. Corrections also become labelled examples for training a future model.
+
+### 3.10 Digital delivery workspace
 
 | Clarify the brief | Tests catch a bug | Incident evidence |
 |---|---|---|
@@ -217,8 +235,8 @@ The server checks permissions on **every action**, not just in the screen. A rej
 
 ```bash
 scripts/reset_demo.sh     # back to a clean demo (your saved conversations and inspections are kept)
-scripts/test.sh           # code checks, 84 backend tests, interface build
-npm run e2e               # 5 browser tests that click through the app
+scripts/test.sh           # code checks, 92 backend tests, interface build
+npm run e2e               # 6 browser tests that click through the app
 .venv/bin/python scripts/eval_vision.py --synthetic 20   # measure the potato detector on drawn test images
 ```
 
@@ -573,14 +591,14 @@ pie showData
 | **F1** | 1.0 | A single score combining the two |
 | **Grade agreement** | 99.2% (238 of 240) | The two misses were left "not graded" instead of being given the expected grade |
 
-**Why these numbers do NOT prove real-world accuracy:** the test images are smooth drawn ovals on a plain background, which is easy on purpose. Real potatoes have soil, shadows, odd shapes, and they touch each other. **Accuracy on real photos has not been measured.** To measure it, label some real photos and run `scripts/eval_vision.py --dataset your_folder`. The script's header explains the label format.
+**Why these numbers do NOT prove real-world accuracy:** the test images are smooth drawn ovals on a plain background, which is easy on purpose. Real potatoes have soil, shadows, odd shapes, and they touch each other. **Accuracy on real photos has not been measured.** To measure it, label some real photos in COCO format and run `scripts/eval_vision.py --dataset your_folder --license "..." --source "..."`. The script's header explains the format; [docs/DATASET_LICENSES.md](docs/DATASET_LICENSES.md) explains the rules.
 
 ### 11.3 Tests
 
 | Test suite | Count | Result |
 |---|---|---|
-| Backend (Python) | 84 | all pass |
-| Browser, clicking through the real app | 5 | all pass |
+| Backend (Python) | 92 | all pass |
+| Browser, clicking through the real app | 6 | all pass |
 | Of which use a **mock** model server instead of real Qwen | 14 | pass (no real Qwen run in the cloud) |
 
 ---
@@ -677,8 +695,8 @@ foodcare-copilot/
 │   ├── graph/, agents/         Delivery workflow (LangGraph) and its agents
 │   ├── resources.py            Measured CPU / RAM (psutil)
 │   └── main.py                 All web API endpoints
-├── backend/tests/              84 automated tests
-├── e2e/                        5 browser tests (Playwright) + a synthetic test image
+├── backend/tests/              92 automated tests
+├── e2e/                        6 browser tests (Playwright) + a synthetic test image
 ├── fixtures/vision/            Default potato grading thresholds
 ├── fixtures/enterprise/        The fictional company's products, regions, warehouses
 ├── scripts/                    start, reset, test, eval_vision
@@ -691,6 +709,9 @@ foodcare-copilot/
 
 | Document | Read it to learn |
 |---|---|
+| [docs/MODEL_EVALUATION.md](docs/MODEL_EVALUATION.md) | Every metric, current results, and how to evaluate on your own photos |
+| [docs/MODEL_LICENSES.md](docs/MODEL_LICENSES.md), [docs/DATASET_LICENSES.md](docs/DATASET_LICENSES.md), [docs/THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md) | Licences of models, datasets and every dependency (no copyleft found) |
+| [docs/FOODCARE_ARCHITECTURE.md](docs/FOODCARE_ARCHITECTURE.md) | Vision, evaluation and review architecture, and what each unbuilt capability needs |
 | [docs/RUN_WITH_GITHUB_COPILOT.md](docs/RUN_WITH_GITHUB_COPILOT.md) | How to have GitHub Copilot in VS Code start the app for you |
 | [docs/LOCAL_LLM_AND_MEMORY.md](docs/LOCAL_LLM_AND_MEMORY.md) | Every local-model and memory setting, plus measured results |
 | [docs/SCENARIO_GUIDE.md](docs/SCENARIO_GUIDE.md) | Click-by-click walk-through of the delivery stories |

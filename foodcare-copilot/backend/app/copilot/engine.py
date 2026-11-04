@@ -363,6 +363,9 @@ def h_inspection(p: Parsed, c: Ctx) -> list[str]:
         out.append(f"**Potato #{x['potato_no']}** in {b['id']}: **{verdict}** {cite}. Size {size}, elongation "
                    f"{x['elongation']}, solidity {x['solidity']}, dark area {x['dark_pct']}%, green area "
                    f"{x['green_pct']}%.")
+        if x.get("corrected"):
+            out.append(f"Inspector correction: the rules graded it **{x['model_grade'] or 'not graded'}**; "
+                       f"{x['corrected_by']} corrected it to **{x['grade']}** (see the correction log).")
         label = "Why" if x["grade"] in ("Not Good", "Moderate", None) else "Checks"
         out.append(f"{label}:\n" + "\n".join(f"- {r}" for r in x["reasons"]))
         c.attachments.append({"type": "potato", "batch_id": b["id"], "potato_no": x["potato_no"]})

@@ -10,6 +10,7 @@ type Potato = {
   potato_no: number; item_id: string; grade: string | null; detection_score: number; length_mm: number | null;
   width_mm: number | null; area_px: number; elongation: number; solidity: number; dark_pct: number; green_pct: number;
   edge: boolean; possible_cluster: number | null; bbox: number[]; reasons: string[];
+  model_grade: string | null; corrected: boolean; corrected_by: string | null;
 };
 type Batch = {
   id: string; title: string; supplier: string | null; lot_code: string | null; mm_per_px: number | null;
@@ -107,6 +108,38 @@ function Thresholds({ batch, onChange }: { batch: Batch; onChange: (b: Batch) =>
   );
 }
 
+function Correction({ batchId, potato, onChange }: { batchId: string; potato: Potato; onChange: (b: Batch) => void }) {
+  const [grade, setGrade] = useState("Good");
+  const [reason, setReason] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => { setReason(""); setError(null); }, [potato.potato_no]);
+  const save = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const out = await api(`/api/inspections/${batchId}/potatoes/${potato.potato_no}/correction`, { method: "PUT", body: JSON.stringify({ grade, reason }) });
+      onChange(out.batch);
+    } catch (err) { setError((err as Error).message); }
+  };
+  return (
+    <details className="rounded-lg border border-surface-line p-2 text-xs">
+      <summary className="cursor-pointer font-semibold text-navy-800">Correct this grade (inspector review)</summary>
+      <form onSubmit={save} className="mt-2 space-y-2">
+        <label className="block">New grade
+          <select className="mt-0.5 w-full rounded border border-surface-line px-2 py-1" value={grade} onChange={(e) => setGrade(e.target.value)}>
+            {["Good", "Moderate", "Not Good"].map((g) => <option key={g}>{g}</option>)}
+          </select>
+        </label>
+        <label className="block">Reason (required, kept in the audit log)
+          <input className="mt-0.5 w-full rounded border border-surface-line px-2 py-1" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={300} placeholder="e.g. dark patch is soil, not rot" />
+        </label>
+        {error && <p role="alert" className="text-brick-700">{error}</p>}
+        <button className="btn-ghost" disabled={reason.trim().length < 3}>Save correction</button>
+        <p className="text-navy-600">The rules' grade is kept next to yours. Corrections become labelled examples for future model training.</p>
+      </form>
+    </details>
+  );
+}
+
 function BatchView({ batch, onChange }: { batch: Batch; onChange: (b: Batch) => void }) {
   const [imageId, setImageId] = useState(batch.images[0]?.id ?? null);
   const [selected, setSelected] = useState<number | null>(null);
@@ -159,8 +192,12 @@ function BatchView({ batch, onChange }: { batch: Batch; onChange: (b: Batch) => 
           {!p ? <Empty>Select a potato number.</Empty> : (
             <div className="space-y-2 text-sm">
               {crop && <img src={crop} alt={`Close-up of potato #${p.potato_no}`} className="max-h-56 rounded" />}
-              <GradeBadge grade={p.grade} />
+              <div className="flex flex-wrap items-center gap-2">
+                <GradeBadge grade={p.grade} />
+                {p.corrected && <span className="text-xs text-gold-300">Inspector correction by {p.corrected_by} (rules said {p.model_grade ?? "not graded"})</span>}
+              </div>
               <ul className="list-disc pl-5 text-xs">{p.reasons.map((r) => <li key={r}>{r}</li>)}</ul>
+              <Correction batchId={batch.id} potato={p} onChange={onChange} />
               <table className="table text-xs"><tbody>
                 {p.length_mm !== null && <tr><th>Length × width</th><td>{p.length_mm} × {p.width_mm} mm</td></tr>}
                 <tr><th>Area</th><td>{p.area_px.toLocaleString()} px</td></tr>

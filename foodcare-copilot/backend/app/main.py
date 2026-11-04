@@ -536,6 +536,22 @@ def inspection_thresholds(batch_id: str, body: ThresholdBody, user: User = Depen
     return vision.get_batch(batch_id, user.username)
 
 
+class CorrectionBody(BaseModel):
+    grade: str = Field(pattern="^(Good|Moderate|Not Good)$")
+    reason: str = Field(min_length=3, max_length=300)
+
+
+@app.put("/api/inspections/{batch_id}/potatoes/{potato_no}/correction")
+def inspection_correct(batch_id: str, potato_no: int, body: CorrectionBody,
+                       user: User = Depends(current_user)) -> dict:
+    return vision.correct_potato(batch_id, user.username, potato_no, body.grade, body.reason)
+
+
+@app.get("/api/inspections/{batch_id}/corrections")
+def inspection_corrections(batch_id: str, user: User = Depends(current_user)) -> dict:
+    return {"corrections": vision.corrections(batch_id, user.username)}
+
+
 @app.get("/api/inspections/{batch_id}/images/{item_id}")
 def inspection_image(batch_id: str, item_id: str, annotated: bool = True,
                      user: User = Depends(current_user)) -> FileResponse:
@@ -574,6 +590,33 @@ def memory_backup(user: User = Depends(current_user)) -> dict:
     auth.require(user, "memory.admin", "memory")
     result = memory_maintenance.backup()
     audit(user.username, "memory.backup", entity_type="memory", path=result["path"], bytes=result["bytes"])
+    return result
+
+
+# --- model evaluation lab -------------------------------------------------------------
+
+@app.get("/api/ml/registry")
+def ml_registry(user: User = Depends(current_user)) -> dict:
+    from app.ml import registry
+
+    registry.ensure_builtins()
+    return {"models": registry.models(), "datasets": registry.datasets(), "evaluations": registry.evaluations()}
+
+
+@app.post("/api/ml/evaluations/synthetic")
+async def ml_evaluate_synthetic(user: User = Depends(current_user)) -> dict:
+    """Evaluate the current detector and grader on the registered SYNTHETIC set (about 25 s, one at a time)."""
+    from app.ml import datasets, evaluate
+
+    auth.require(user, "ml.evaluate", "model")
+
+    def job() -> dict:
+        with vision.gate().slot():
+            return evaluate.run(datasets.ensure_synthetic(), "test", user.username)
+
+    result = await run_in_threadpool(job)
+    audit(user.username, "ml.evaluate", entity_type="model", entity_id=evaluate.DETECTOR,
+          dataset="synthetic", evaluation=result["detection_evaluation"])
     return result
 
 

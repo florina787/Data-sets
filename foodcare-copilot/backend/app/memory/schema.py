@@ -114,6 +114,41 @@ CREATE TABLE inspection_potatoes (
 );
 CREATE INDEX inspection_potatoes_grade ON inspection_potatoes (batch_id, grade);
 """),
+    (5, "model_registry_and_review", """
+CREATE TABLE ml_models (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, version TEXT NOT NULL, task TEXT NOT NULL, kind TEXT NOT NULL,
+    framework TEXT NOT NULL, trained INTEGER NOT NULL, weights_ref TEXT, weights_sha256 TEXT,
+    license TEXT NOT NULL, status TEXT NOT NULL, notes TEXT, created_at TEXT NOT NULL, UNIQUE (name, version)
+);
+CREATE TABLE ml_datasets (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, version TEXT NOT NULL, task TEXT NOT NULL, source TEXT NOT NULL,
+    license TEXT NOT NULL, synthetic INTEGER NOT NULL, label_definitions_json TEXT NOT NULL DEFAULT '{}',
+    n_images INTEGER NOT NULL DEFAULT 0, n_objects INTEGER NOT NULL DEFAULT 0, splits_json TEXT NOT NULL DEFAULT '{}',
+    governance_json TEXT NOT NULL DEFAULT '{}', created_by TEXT, created_at TEXT NOT NULL, UNIQUE (name, version)
+);
+CREATE TABLE ml_dataset_items (
+    dataset_id TEXT NOT NULL REFERENCES ml_datasets (id) ON DELETE CASCADE, image_id TEXT NOT NULL,
+    file_ref TEXT NOT NULL, sha256 TEXT NOT NULL, width INTEGER, height INTEGER, split TEXT NOT NULL,
+    group_key TEXT NOT NULL, dhash TEXT NOT NULL, annotations_json TEXT NOT NULL DEFAULT '[]',
+    PRIMARY KEY (dataset_id, image_id)
+);
+CREATE INDEX ml_dataset_items_split ON ml_dataset_items (dataset_id, split);
+CREATE TABLE ml_evaluations (
+    id TEXT PRIMARY KEY, model_id TEXT NOT NULL REFERENCES ml_models (id), dataset_id TEXT NOT NULL
+        REFERENCES ml_datasets (id), split TEXT NOT NULL, task TEXT NOT NULL, sample_size INTEGER NOT NULL,
+    metrics_json TEXT NOT NULL, method TEXT NOT NULL, duration_ms REAL, created_by TEXT, created_at TEXT NOT NULL
+);
+CREATE INDEX ml_evaluations_model ON ml_evaluations (model_id, created_at);
+CREATE TABLE inspection_corrections (
+    id TEXT PRIMARY KEY, batch_id TEXT NOT NULL REFERENCES inspection_batches (id) ON DELETE CASCADE,
+    potato_no INTEGER NOT NULL, model_grade TEXT, previous_grade TEXT, new_grade TEXT NOT NULL, reason TEXT NOT NULL,
+    corrected_by TEXT NOT NULL, model_version TEXT, created_at TEXT NOT NULL
+);
+CREATE INDEX inspection_corrections_batch ON inspection_corrections (batch_id, potato_no);
+ALTER TABLE inspection_potatoes ADD COLUMN corrected_grade TEXT;
+ALTER TABLE inspection_potatoes ADD COLUMN corrected_by TEXT;
+ALTER TABLE inspection_potatoes ADD COLUMN corrected_at TEXT;
+"""),
 ]
 
 

@@ -14,6 +14,7 @@ const NAV: [string, [string, string][]][] = [
   ]],
   ["Quality & Inspection", [
     ["/inspection", "Potato Inspection"],
+    ["/evaluation", "Model Evaluation Lab"],
   ]],
   ["Operations Intelligence", [
     ["/inventory", "Inventory"],

@@ -44,6 +44,9 @@ def reset_demo(actor: str = "system") -> dict:
 def startup() -> None:
     init_db()
     memory_report = memory_maintenance.startup()
+    from app.ml import registry as ml_registry
+
+    ml_registry.ensure_builtins()
     if memory_report.get("recovered"):
         audit("startup", "memory.recovered", entity_type="memory", **memory_report)
     jobs.mark_interrupted()

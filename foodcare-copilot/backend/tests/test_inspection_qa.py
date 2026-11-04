@@ -73,3 +73,11 @@ def test_yield_and_money_questions_are_not_invented(platform):
     _batch(1)
     a = ask("What is the financial impact of this batch of potatoes?")
     assert "not calculated from inspections yet" in a["answer"] and "$" not in a["answer"]
+
+
+def test_answers_mention_inspector_corrections(platform):
+    b = _batch(1)
+    bad = next(x for x in b["potatoes"] if x["grade"] == "Not Good")
+    service.correct_potato(b["id"], "val.viewer", bad["potato_no"], "Good", "soil, not rot")
+    a = ask(f"Show me potato #{bad['potato_no']}")
+    assert "**Good**" in a["answer"] and "rules graded it **Not Good**" in a["answer"]

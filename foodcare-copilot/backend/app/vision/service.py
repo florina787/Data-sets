@@ -146,7 +146,7 @@ def potatoes(batch_id: str, grade: str | None = None) -> list[dict]:
     sql = "SELECT * FROM inspection_potatoes WHERE batch_id = ?"
     params: tuple = (batch_id,)
     if grade:
-        sql += " AND grade = ?"
+        sql += " AND COALESCE(corrected_grade, grade) = ?"
         params += (grade,)
     items = get_store().query(sql + " ORDER BY potato_no", params)
     for p in items:
@@ -154,7 +154,46 @@ def potatoes(batch_id: str, grade: str | None = None) -> list[dict]:
         p["reasons"] = json.loads(p.pop("reasons_json"))
         p["metrics"] = json.loads(p.pop("metrics_json"))
         p["edge"] = bool(p["edge"])
+        p["model_grade"] = p["grade"]  # what the rules produced
+        p["corrected"] = p["corrected_grade"] is not None
+        p["grade"] = p["corrected_grade"] or p["grade"]  # effective grade: a human correction wins
     return items
+
+
+def correct_potato(batch_id: str, username: str, potato_no: int, new_grade: str, reason: str) -> dict:
+    """Record an inspector's correction (kept alongside the model grade, audited, summary updated)."""
+    from app.records import audit
+
+    batch = _batch_row(batch_id, username)
+    if new_grade not in analyse.GRADES:
+        raise PlatformError("Grade must be Good, Moderate or Not Good")
+    reason = (reason or "").strip()
+    if not 3 <= len(reason) <= 300:
+        raise PlatformError("A reason of 3-300 characters is required for a correction")
+    found = [p for p in potatoes(batch_id) if p["potato_no"] == potato_no]
+    if not found:
+        raise NotFound(f"Potato #{potato_no} not found in this batch")
+    p = found[0]
+    ts = now_iso()
+    correction_id = new_id("COR")
+    get_store().write([
+        ("INSERT INTO inspection_corrections (id, batch_id, potato_no, model_grade, previous_grade, new_grade, reason,"
+         " corrected_by, model_version, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+         (correction_id, batch_id, potato_no, p["model_grade"], p["grade"], new_grade, reason, username,
+          batch["detector"], ts)),
+        ("UPDATE inspection_potatoes SET corrected_grade = ?, corrected_by = ?, corrected_at = ?"
+         " WHERE batch_id = ? AND potato_no = ?", (new_grade, username, ts, batch_id, potato_no)),
+    ])
+    audit(username, "inspection.correct", entity_type="inspection", entity_id=batch_id, potato_no=potato_no,
+          model_grade=p["model_grade"], previous_grade=p["grade"], new_grade=new_grade, reason=reason)
+    regrade(batch_id, username)
+    return {"correction_id": correction_id, "batch": get_batch(batch_id, username)}
+
+
+def corrections(batch_id: str, username: str) -> list[dict]:
+    _batch_row(batch_id, username)
+    return get_store().query("SELECT * FROM inspection_corrections WHERE batch_id = ? ORDER BY created_at",
+                             (batch_id,))
 
 
 def list_batches(username: str, limit: int = 50) -> list[dict]:
@@ -211,6 +250,29 @@ def _timed(calls: list[dict], tool: str, fn: Callable, *args):
     calls.append({"tool": tool, "status": "ok", "started_at": started,
                   "duration_ms": round((time.perf_counter() - t0) * 1000, 2)})
     return result
+
+
+def analyse_bytes(data: bytes, mm_per_px: float | None = None, thresholds: dict | None = None) -> list[dict]:
+    """Detect, measure and grade one image without storing anything (used by evaluations).
+    Boxes are in original-image pixels; grades use the same rules as stored batches."""
+    img, _ = _decode(data)
+    s = get_settings()
+    work = img.copy()
+    work.thumbnail((s.vision_working_px, s.vision_working_px))
+    scale = img.width / work.width
+    rgb = np.asarray(work, dtype=np.float32)
+    regions, _ = detector().detect(rgb)
+    rows = [analyse.measure(r, rgb, scale, mm_per_px) for r in regions]
+    t = _thresholds(thresholds)
+    gradable = [m["area_px"] for m in rows if not m["edge"]]
+    median = float(np.median(gradable)) if gradable else 0.0
+    for m in rows:
+        cluster = round(m["area_px"] / median) if median and not m["edge"] and m["area_px"] > 1.8 * median \
+            and m["solidity"] < 0.96 else None
+        m["possible_cluster"] = cluster if cluster and cluster > 1 else None
+        m["grade"], m["reasons"] = analyse.grade(m, t, median)
+        m["score"] = m["detection_score"]
+    return rows
 
 
 def add_image(batch_id: str, username: str, data: bytes, filename: str | None = None) -> dict:
@@ -283,7 +345,7 @@ def regrade(batch_id: str, username: str, thresholds: dict | None = None) -> dic
             and m["solidity"] < 0.96 else None
         m["possible_cluster"] = cluster if cluster and cluster > 1 else None
         g, reasons = analyse.grade(m, t, median)
-        graded_rows.append({**p, "grade": g, "possible_cluster": m["possible_cluster"]})
+        graded_rows.append({**p, "grade": p["corrected_grade"] or g, "possible_cluster": m["possible_cluster"]})
         statements.append(("UPDATE inspection_potatoes SET grade = ?, reasons_json = ?, possible_cluster = ?,"
                            " metrics_json = ? WHERE batch_id = ? AND potato_no = ?",
                            (g, json.dumps(reasons), m["possible_cluster"], json.dumps(m), batch_id, p["potato_no"])))
@@ -304,6 +366,7 @@ def _summary(rows: list[dict], t: dict, mm_per_px: float | None) -> dict:
         "pct": {g: round(100 * c / graded, 1) if graded else 0.0 for g, c in counts.items()},
         "meets_spec": counts["Good"], "meets_spec_pct": round(100 * counts["Good"] / graded, 1) if graded else 0.0,
         "possible_clusters": sum(1 for p in rows if p.get("possible_cluster")),
+        "corrected": sum(1 for p in rows if p.get("corrected_grade")),
         "dark_flagged": sum(1 for p in rows if p["grade"] and p["dark_pct"] > t["max_dark_pct_good"]),
         "green_flagged": sum(1 for p in rows if p["grade"] and p["green_pct"] > t["max_green_pct_good"]),
         "mean_length_mm": round(sum(lengths) / len(lengths), 1) if lengths else None,
