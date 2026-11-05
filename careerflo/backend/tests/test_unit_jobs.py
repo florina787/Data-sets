@@ -58,3 +58,17 @@ def test_synthetic_jobs_are_labelled():
     jobs = synthetic_jobs()
     assert len(jobs) == 100 and all(j.is_synthetic and "(Demo)" in j.company for j in jobs)
     assert all(j.apply_url.startswith("https://example.com/") for j in jobs)
+
+
+def test_query_keeps_acronyms_and_matches_whole_words():
+    from types import SimpleNamespace as N
+
+    from app.jobs.providers import SearchFilters
+    from app.jobs.search import apply_filters
+
+    def job(title):
+        return N(title=title, company="X", city="Toronto", location="Toronto", country="CA", work_arrangement="onsite", seniority="senior",
+                 industry=None, employment_type=None, required_skills=[], preferred_skills=[], posted_at=None, salary_min=None,
+                 salary_max=None, salary_verified=False, salary_currency=None)
+    out, _ = apply_filters([job("Senior AI Engineer"), job("Staff Data Engineer"), job("Email Maintainer")], SearchFilters(query="Senior AI Engineer"))
+    assert [j.title for j in out] == ["Senior AI Engineer"]

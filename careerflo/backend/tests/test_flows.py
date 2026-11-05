@@ -6,7 +6,7 @@ import pytest
 from app import mcp_gateway as gw
 from app.agents.intents import classify, extract_params
 
-from .conftest import register, search_jobs, upload_resume
+from .conftest import admin_headers, register, search_jobs, upload_resume
 
 SCENARIO_A = "Find Senior AI Engineer jobs in Toronto paying above CAD 150,000."
 
@@ -17,8 +17,9 @@ def test_scenario_a_job_discovery(client, user):
     assert p["city"] == "Toronto" and p["salary_min"] == 150000 and p["currency"] == "CAD" and p["query"] == "Senior AI Engineer"
     data = search_jobs(client, h, query="AI Engineer", city="Toronto", salary_min=150000, currency="CAD")
     assert data["providers"]["jsearch"] == "not_configured" and data["providers"]["synthetic"] in ("synthetic", "cached")
-    assert data["jobs"]
+    assert len(data["jobs"]) >= 3 and data["filter_stats"]["excluded_no_salary"] >= 1
     for j in data["jobs"]:
+        assert "ai" in j["title"].lower().split()
         assert j["salary_verified"] and j["salary_currency"] == "CAD" and (j["salary_max"] or j["salary_min"]) >= 150000
         assert "Toronto" in (j["location"] or "") or j["work_arrangement"] == "remote"
         assert j["apply_url"] and j["source"]
@@ -221,17 +222,9 @@ def test_demo_seed_is_labelled_and_excluded_from_admin_metrics(client):
         apps = db.query(Application).filter_by(user_id=u.id).all()
         assert len(apps) == 25 and all(a.is_synthetic for a in apps)
         assert db.query(Recruiter).filter_by(user_id=u.id).count() == 15
-    admin_h, _ = register(client, "admin@example.com") if not _admin_exists(client) else (_admin_login(client), None)
+    admin_h = admin_headers(client)
     m = client.get("/api/admin/metrics", headers=admin_h).json()
     with SessionLocal() as db:
         from app.models import User
         assert m["registered_users"] == db.query(User).filter_by(is_demo=False).count()
 
-
-def _admin_exists(client):
-    return client.post("/api/auth/login", json={"email": "admin@example.com", "password": "CorrectHorse42"}).status_code == 200
-
-
-def _admin_login(client):
-    t = client.post("/api/auth/login", json={"email": "admin@example.com", "password": "CorrectHorse42"}).json()["access_token"]
-    return {"Authorization": f"Bearer {t}"}

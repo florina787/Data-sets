@@ -11,7 +11,7 @@ from app.db import SessionLocal
 from app.features import FEATURES
 from app.models import Subscription, TrialUsage
 
-from .conftest import register, search_jobs, upload_resume
+from .conftest import admin_headers, register, search_jobs, upload_resume
 
 
 def usage(client, h, fid):
@@ -187,7 +187,7 @@ def test_invoice_events_recorded(client, user):
     assert signed(client, inv).json()["outcome"] == "processed"
     rows = client.get("/api/billing/invoices", headers=h).json()["invoices"]
     assert rows[0]["amount_cents"] == 999 and rows[0]["plan"] == "pro"
-    admin_h, _ = register(client, "admin@example.com")
+    admin_h = admin_headers(client)
     m = client.get("/api/admin/metrics", headers=admin_h).json()
     assert m["active_pro"] >= 1 and m["mrr_cents"] >= 999
 

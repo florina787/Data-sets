@@ -1,33 +1,34 @@
 {
   "machine": {
     "cpus": 4,
-    "ram_gb": 16.9
+    "ram_gb": 16.9,
+    "runtime": "Ollama 0.40.14, CPU only, Q4_K_M default quantisation"
   },
   "results": [
     {
       "model": "qwen3:0.6b",
-      "load_seconds": 1.9,
-      "server_rss_gb": 6.53,
-      "cpu_percent_during_generation": 99.8,
-      "ttft_ms": 192,
-      "tokens_per_second": 33.3,
+      "load_seconds": 48.54,
+      "server_rss_gb": 1.24,
+      "cpu_percent_during_generation": 98.8,
+      "ttft_ms": 166,
+      "tokens_per_second": 36.8,
       "structured_output_accuracy": "3/4",
-      "tool_selection_accuracy": "7/8",
-      "resume_skill_recall": 0.0,
-      "resume_skill_precision": 0.0,
-      "interview_feedback_relevance": "0/2"
+      "tool_selection_accuracy": "6/8",
+      "resume_skill_recall": 0.78,
+      "resume_skill_precision": 0.88,
+      "interview_feedback_relevance": "1/2"
     },
     {
       "model": "qwen3:1.7b",
-      "load_seconds": 5.75,
-      "server_rss_gb": 6.45,
-      "cpu_percent_during_generation": 99.4,
-      "ttft_ms": 901,
-      "tokens_per_second": 10.1,
+      "load_seconds": 5.63,
+      "server_rss_gb": 2.08,
+      "cpu_percent_during_generation": 99.2,
+      "ttft_ms": 342,
+      "tokens_per_second": 15.0,
       "structured_output_accuracy": "4/4",
       "tool_selection_accuracy": "8/8",
-      "resume_skill_recall": 0.0,
-      "resume_skill_precision": 0.0,
+      "resume_skill_recall": 0.56,
+      "resume_skill_precision": 0.83,
       "interview_feedback_relevance": "1/2"
     },
     {
@@ -39,9 +40,10 @@
       "tokens_per_second": 4.6,
       "structured_output_accuracy": "4/4",
       "tool_selection_accuracy": "8/8",
-      "resume_skill_recall": 0.0,
-      "resume_skill_precision": 0.0,
-      "interview_feedback_relevance": "1/2"
+      "resume_skill_recall": null,
+      "resume_skill_precision": null,
+      "interview_feedback_relevance": "1/2",
+      "note": "From the earlier full run (same harness except the skill-extraction scoring, which was fixed afterwards and not re-measured: the 4B rerun timed out loading cold from disk). server_rss_gb in that run included other resident models."
     }
   ]
 }

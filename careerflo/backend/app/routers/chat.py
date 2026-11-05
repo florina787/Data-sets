@@ -115,6 +115,7 @@ def _compact(results: dict[str, Any]) -> str:
             jobs = r["jobs"][:6]
             out.append(f"{agent}: {len(r['jobs'])} jobs. Top: " + "; ".join(
                 f"{j['title']} at {j['company']} ({j.get('city') or j.get('location') or ''}"
+                + (f", {j['work_arrangement'].upper()}" if j.get("work_arrangement") else "")
                 + (f", {j.get('salary_currency')} {j['salary_min']:,.0f}-{(j.get('salary_max') or j['salary_min']):,.0f}" if j.get("salary_min") else ", salary not published")
                 + (", SYNTHETIC DEMO" if j.get("is_synthetic") else "") + ")" for j in jobs))
         elif "ranked" in r:

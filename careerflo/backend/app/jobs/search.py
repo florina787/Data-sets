@@ -104,11 +104,16 @@ async def _provider_jobs(db: Session, source: str, f: P.SearchFilters, board: tu
 def apply_filters(jobs: list[Job], f: P.SearchFilters) -> tuple[list[Job], dict[str, int]]:
     stats = {"excluded_no_salary": 0, "excluded_currency": 0}
     out = []
-    q_words = [w for w in (f.query or "").lower().replace(",", " ").split() if len(w) > 2 and w not in {"jobs", "job", "the", "and", "for", "with", "role", "roles"}]
+    import re as _re
+
+    stop = {"jobs", "job", "the", "and", "for", "with", "role", "roles", "in", "of", "a", "an"}
+    levels = {"senior", "junior", "staff", "principal", "lead", "sr", "jr"}
+    # Short acronyms (AI, ML, UX, QA, BI) are meaningful; match on whole words, not substrings.
+    q_words = [w for w in _re.findall(r"[a-z0-9+#]+", (f.query or "").lower()) if w not in stop and (len(w) > 2 or w in {"ai", "ml", "ux", "qa", "bi", "go"})]
     now = datetime.now(timezone.utc)
     for j in jobs:
-        hay = f"{j.title} {j.company}".lower()
-        if q_words and not all(w in hay for w in q_words if w not in {"senior", "junior", "staff", "principal", "lead"}):
+        hay = set(_re.findall(r"[a-z0-9+#]+", f"{j.title} {j.company}".lower()))
+        if q_words and not all(w in hay for w in q_words if w not in levels):
             continue
         if f.company and f.company.lower() not in j.company.lower():
             continue

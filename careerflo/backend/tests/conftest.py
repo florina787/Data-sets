@@ -81,3 +81,12 @@ def search_jobs(client, headers, **filters):
     r = client.post("/api/jobs/search", headers=headers, json=body)
     assert r.status_code == 200, r.text
     return r.json()
+
+
+def admin_headers(client):
+    """Register the admin once per session; later calls log in."""
+    creds = {"email": "admin@example.com", "password": "CorrectHorse42"}
+    r = client.post("/api/auth/login", json=creds)
+    if r.status_code != 200:
+        r = client.post("/api/auth/register", json=creds)
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}

@@ -56,4 +56,24 @@ def synthetic_jobs(n: int = 100, seed: int = 42) -> list[NormalizedJob]:
             salary_verified=bool(smin), description=desc, required_skills=req, preferred_skills=pref,
             posted_at=now - timedelta(days=rng.randint(0, 40), hours=rng.randint(0, 23)),
             apply_url=f"https://example.com/demo/jobs/{i + 1:03d}", verification_status="synthetic", is_synthetic=True)))
+    # Fixed showcase postings for the flagship demo request ("Senior AI Engineer jobs in Toronto over CAD 150,000"):
+    # some above the bar, some below, one without a published salary — so filtering is visible.
+    showcase = [
+        ("Senior AI Engineer", "hybrid", 155000, 185000), ("Senior AI Engineer", "onsite", 162000, 195000),
+        ("Senior Forward Deployed AI Engineer", "hybrid", 150000, 178000), ("Senior AI Engineer", "remote", 135000, 148000),
+        ("Senior Generative AI Engineer", "hybrid", None, None), ("Staff AI Engineer", "onsite", 180000, 220000),
+    ]
+    req = ["Python", "LLMs", "RAG", "LangGraph", "Docker"]
+    for k, (title, arr, lo, hi) in enumerate(showcase):
+        i = n - len(showcase) + k
+        company = COMPANIES[(k * 3 + 1) % len(COMPANIES)]
+        desc = (f"[SYNTHETIC DEMO POSTING] {company} is hiring a {title} in Toronto ({arr}).\n\n"
+                f"Requirements: {', '.join(req)}.\n\nNice to have: MCP, Kubernetes.")
+        jobs[i] = enrich(NormalizedJob(
+            source="synthetic", source_job_id=f"demo-{i + 1:03d}", origin_publisher="Synthetic demo data",
+            company=f"{company} (Demo)", title=title, location="Toronto, CA", city="Toronto", country="CA", work_arrangement=arr,
+            employment_type="Full-time", industry="Technology", salary_min=lo, salary_max=hi, salary_currency="CAD" if lo else None,
+            salary_period="year" if lo else None, salary_verified=bool(lo), description=desc, required_skills=req,
+            preferred_skills=["MCP", "Kubernetes"], posted_at=now - timedelta(days=k + 1),
+            apply_url=f"https://example.com/demo/jobs/{i + 1:03d}", verification_status="synthetic", is_synthetic=True))
     return jobs
