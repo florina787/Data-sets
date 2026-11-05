@@ -1,0 +1,168 @@
+# FLO reference Kubernetes manifests (plain YAML). Provider-neutral: external Postgres/Redis are referenced via Secrets.
+# Apply: kubectl apply -f infrastructure/k8s/flo.yaml   (create the flo-secrets Secret first; see README)
+apiVersion: v1
+kind: Namespace
+metadata: { name: flo, labels: { pod-security.kubernetes.io/enforce: restricted } }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: flo-config, namespace: flo }
+data:
+  FLO_ENV: production
+  FLO_OPA_URL: http://localhost:8181          # OPA runs as a sidecar in each API pod
+  FLO_MAX_CONCURRENT_WORKFLOWS: "32"
+  FLO_MAX_INFLIGHT: "256"
+  FLO_AUTO_SEED: "0"
+  FLO_INPROCESS_WORKER: "0"
+  FLO_MODEL_PROVIDER: mock
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: flo-opa-policy, namespace: flo }
+data: {}   # populated by: kubectl create configmap flo-opa-policy -n flo --from-file=policies/opa --dry-run=client -o yaml | kubectl apply -f -
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: flo-api, namespace: flo, labels: { app: flo-api } }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: flo-api } }
+  strategy: { rollingUpdate: { maxUnavailable: 0, maxSurge: 1 } }
+  template:
+    metadata: { labels: { app: flo-api }, annotations: { prometheus.io/scrape: "true", prometheus.io/port: "8000", prometheus.io/path: /metrics } }
+    spec:
+      serviceAccountName: flo-api
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 10001, seccompProfile: { type: RuntimeDefault } }
+      topologySpreadConstraints: [{ maxSkew: 1, topologyKey: topology.kubernetes.io/zone, whenUnsatisfiable: ScheduleAnyway, labelSelector: { matchLabels: { app: flo-api } } }]
+      containers:
+        - name: api
+          image: registry.example.com/flo/api:1.0.0
+          ports: [{ containerPort: 8000 }]
+          envFrom: [{ configMapRef: { name: flo-config } }, { secretRef: { name: flo-secrets } }]
+          resources: { requests: { cpu: 500m, memory: 768Mi }, limits: { cpu: "2", memory: 2Gi } }
+          readinessProbe: { httpGet: { path: /readyz, port: 8000 }, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /healthz, port: 8000 }, periodSeconds: 10 }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          volumeMounts: [{ name: var, mountPath: /app/var }]
+        - name: opa
+          image: openpolicyagent/opa:1.4.2-static
+          args: ["run", "--server", "--addr", "127.0.0.1:8181", "/policies"]
+          resources: { requests: { cpu: 50m, memory: 64Mi }, limits: { cpu: 500m, memory: 256Mi } }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          volumeMounts: [{ name: policy, mountPath: /policies, readOnly: true }]
+      volumes:
+        - { name: var, emptyDir: {} }
+        - { name: policy, configMap: { name: flo-opa-policy } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: flo-worker, namespace: flo }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: flo-worker } }
+  template:
+    metadata: { labels: { app: flo-worker } }
+    spec:
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 10001, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: worker
+          image: registry.example.com/flo/api:1.0.0
+          command: ["python", "-m", "backend.worker"]
+          envFrom: [{ configMapRef: { name: flo-config } }, { secretRef: { name: flo-secrets } }]
+          resources: { requests: { cpu: 250m, memory: 512Mi }, limits: { cpu: "1", memory: 1Gi } }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          volumeMounts: [{ name: var, mountPath: /app/var }]
+      volumes: [{ name: var, emptyDir: {} }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: flo-ui, namespace: flo }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: flo-ui } }
+  template:
+    metadata: { labels: { app: flo-ui } }
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: ui
+          image: registry.example.com/flo/ui:1.0.0
+          ports: [{ containerPort: 8080 }]
+          env:   # nginx re-resolves the API service; set NGINX_RESOLVER to your cluster DNS service IP
+            - { name: NGINX_RESOLVER, value: "10.96.0.10" }
+            - { name: FLO_API_UPSTREAM, value: "http://flo-api.flo.svc.cluster.local:8000" }
+          resources: { requests: { cpu: 50m, memory: 64Mi }, limits: { cpu: 500m, memory: 256Mi } }
+---
+apiVersion: batch/v1
+kind: Job
+metadata: { name: flo-migrate, namespace: flo }
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: registry.example.com/flo/api:1.0.0
+          command: ["python", "-m", "backend.db.seed"]
+          envFrom: [{ configMapRef: { name: flo-config } }, { secretRef: { name: flo-secrets } }]
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: { name: flo-api, namespace: flo }   # bind to a cloud workload identity for short-lived credentials
+---
+apiVersion: v1
+kind: Service
+metadata: { name: flo-api, namespace: flo }
+spec: { selector: { app: flo-api }, ports: [{ port: 8000, targetPort: 8000 }] }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: flo-ui, namespace: flo }
+spec: { selector: { app: flo-ui }, ports: [{ port: 8080, targetPort: 8080 }] }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: flo-api, namespace: flo }
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: flo-api }
+  minReplicas: 3
+  maxReplicas: 20
+  metrics: [{ type: Resource, resource: { name: cpu, target: { type: Utilization, averageUtilization: 65 } } }]
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: flo-worker, namespace: flo }
+spec:   # queue-depth scaling via prometheus-adapter external metric flo_job_queue_depth (CPU as fallback)
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: flo-worker }
+  minReplicas: 2
+  maxReplicas: 10
+  metrics: [{ type: Resource, resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } } }]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata: { name: flo-api, namespace: flo }
+spec: { minAvailable: 2, selector: { matchLabels: { app: flo-api } } }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny, namespace: flo }
+spec: { podSelector: {}, policyTypes: [Ingress, Egress] }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: flo-allow, namespace: flo }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from: [{ podSelector: { matchLabels: { app: flo-ui } } }]
+      ports: [{ port: 8000 }]
+    - from: [{ namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: ingress } } }]
+      ports: [{ port: 8080 }]
+  egress:
+    - to: [{ ipBlock: { cidr: 10.0.0.0/8 } }]       # managed Postgres / Redis in the private network
+      ports: [{ port: 5432 }, { port: 6379 }]
+    - ports: [{ port: 53, protocol: UDP }]          # DNS

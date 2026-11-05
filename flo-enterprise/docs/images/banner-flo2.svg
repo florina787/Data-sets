@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="420" viewBox="0 0 1600 420" role="img" aria-label="FLO Investment Intelligence: the conversation is the product">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1220"/><stop offset="1" stop-color="#121a33"/></linearGradient>
+    <radialGradient id="g1" cx="0.2" cy="0" r="0.6"><stop offset="0" stop-color="#5B67F1" stop-opacity="0.35"/><stop offset="1" stop-color="#5B67F1" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g2" cx="0.85" cy="0.1" r="0.5"><stop offset="0" stop-color="#D4AF37" stop-opacity="0.22"/><stop offset="1" stop-color="#D4AF37" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6B76F5"/><stop offset="1" stop-color="#3D46C9"/></linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D4AF37"/><stop offset="0.55" stop-color="#E2C766"/><stop offset="1" stop-color="#C8E06B"/></linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2C766" stop-opacity="0.25"/><stop offset="1" stop-color="#E2C766" stop-opacity="0"/></linearGradient>
+    <filter id="glow" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+  <rect width="1600" height="420" fill="url(#bg)"/>
+  <rect width="1600" height="420" fill="url(#g1)"/>
+  <rect width="1600" height="420" fill="url(#g2)"/>
+  <g transform="translate(96 92) scale(2.4)">
+    <rect width="40" height="40" rx="10" fill="url(#tile)"/>
+    <polygon points="9,31 14.3,31 20.7,9 15.4,9" fill="#fff"/><polygon points="22.1,9 32.3,9 30.73,14.4 20.53,14.4" fill="#fff"/>
+    <polygon points="19.3,18.6 27.5,18.6 26.05,23.6 17.85,23.6" fill="#fff" opacity=".8"/>
+  </g>
+  <text x="96" y="248" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="68" font-weight="700" fill="#ECF0F6" letter-spacing="10">FLO</text>
+  <text x="96" y="286" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="20" fill="#94A3B8" letter-spacing="5">INVESTMENT INTELLIGENCE</text>
+  <text x="96" y="346" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="26" fill="#ECF0F6">The conversation is the product. <tspan fill="#E2C766">The charts, agents and governance are its intelligence.</tspan></text>
+  <g transform="translate(860 70)">
+    <rect width="640" height="230" rx="22" fill="#121826" stroke="#26304a"/>
+    <text x="28" y="44" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" fill="#94A3B8">Managed portfolios · cumulative return</text>
+    <text x="28" y="88" font-family="Inter, Helvetica, Arial, sans-serif" font-size="36" font-weight="700" fill="#ECF0F6">3.26%</text>
+    <rect x="140" y="64" width="150" height="30" rx="15" fill="#C8E06B" opacity="0.18"/><text x="154" y="85" font-family="Inter, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#C8E06B">+8.24 pp · qtr</text>
+    <path d="M28 196 C70 180 90 150 120 160 S170 120 200 140 S260 110 290 118 S350 90 380 104 S440 70 470 86 S540 60 612 40 L612 214 L28 214 Z" fill="url(#fade)"/>
+    <path d="M28 196 C70 180 90 150 120 160 S170 120 200 140 S260 110 290 118 S350 90 380 104 S440 70 470 86 S540 60 612 40" fill="none" stroke="url(#hero)" stroke-width="7" opacity="0.35" filter="url(#glow)"/>
+    <path d="M28 196 C70 180 90 150 120 160 S170 120 200 140 S260 110 290 118 S350 90 380 104 S440 70 470 86 S540 60 612 40" fill="none" stroke="url(#hero)" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="612" cy="40" r="7" fill="#C8E06B" stroke="#121826" stroke-width="3"/>
+  </g>
+  <g transform="translate(860 318)" font-family="Inter, Helvetica, Arial, sans-serif">
+    <rect width="300" height="64" rx="16" fill="#121826" stroke="#26304a"/><text x="20" y="40" font-size="18" fill="#ECF0F6">“Which sector contributed most?”</text>
+    <rect x="320" width="320" height="64" rx="16" fill="#1b2140" stroke="#5B67F1" stroke-opacity="0.6"/><text x="340" y="40" font-size="18" fill="#ECF0F6">“What if <tspan fill="#E2C766">that sector</tspan> falls 15%?”</text>
+  </g>
+</svg>

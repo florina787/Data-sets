@@ -1,0 +1,6 @@
+apiVersion: v2
+name: flo
+description: FLO Enterprise - Financial Leadership, Operations & Wealth Intelligence (independent demonstration, synthetic data)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

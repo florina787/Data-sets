@@ -1,0 +1,64 @@
+"""Runtime configuration. Every external dependency has an explicit mock/local fallback."""
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field
+from functools import lru_cache
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def _env(name: str, default: str = "") -> str:
+    return os.environ.get(name, default)
+
+
+@dataclass(frozen=True)
+class Settings:
+    env: str = field(default_factory=lambda: _env("FLO_ENV", "development"))
+    database_url: str = field(default_factory=lambda: _env("FLO_DATABASE_URL", f"sqlite:///{ROOT / 'var' / 'flo.db'}"))
+    # Audit log store: separate connection (dedicated append-only database in production) so audit writes are
+    # independent of business transactions. Defaults to a separate SQLite file in development.
+    audit_database_url: str = field(default_factory=lambda: _env("FLO_AUDIT_DATABASE_URL", ""))
+    redis_url: str = field(default_factory=lambda: _env("FLO_REDIS_URL", ""))
+    checkpoint_db: str = field(default_factory=lambda: _env("FLO_CHECKPOINT_DB", str(ROOT / "var" / "checkpoints.sqlite")))
+    # Demo signing key for the mock identity provider. Production uses the enterprise IdP (OIDC) and never this key.
+    jwt_secret: str = field(default_factory=lambda: _env("FLO_JWT_SECRET", "dev-only-insecure-signing-key-change-me"))
+    jwt_ttl_seconds: int = field(default_factory=lambda: int(_env("FLO_JWT_TTL_SECONDS", "1800")))
+    # Key-encryption key for the token vault. Production: secret manager / KMS.
+    vault_key: str = field(default_factory=lambda: _env("FLO_VAULT_KEY", ""))
+    model_provider: str = field(default_factory=lambda: _env("FLO_MODEL_PROVIDER", "mock"))
+    bedrock_region: str = field(default_factory=lambda: _env("FLO_BEDROCK_REGION", "ca-central-1"))
+    # Google Gemini API (FLO_MODEL_PROVIDER=gemini). Supply the key via environment / secret manager only.
+    gemini_api_key: str = field(default_factory=lambda: _env("GEMINI_API_KEY", ""))
+    gemini_model: str = field(default_factory=lambda: _env("FLO_GEMINI_MODEL", "gemini-3.5-flash"))
+    gemini_timeout_s: float = field(default_factory=lambda: float(_env("FLO_GEMINI_TIMEOUT_S", "20")))
+    langsmith_api_key: str = field(default_factory=lambda: _env("LANGSMITH_API_KEY", ""))
+    langsmith_project: str = field(default_factory=lambda: _env("LANGSMITH_PROJECT", "flo-enterprise"))
+    opa_url: str = field(default_factory=lambda: _env("FLO_OPA_URL", ""))
+    max_concurrent_workflows: int = field(default_factory=lambda: int(_env("FLO_MAX_CONCURRENT_WORKFLOWS", "32")))
+    max_input_chars: int = field(default_factory=lambda: int(_env("FLO_MAX_INPUT_CHARS", "4000")))
+    cors_origins: str = field(default_factory=lambda: _env("FLO_CORS_ORIGINS", "http://localhost:5173,http://localhost:8080"))
+    export_dir: str = field(default_factory=lambda: _env("FLO_EXPORT_DIR", str(ROOT / "var" / "exports")))
+
+    @property
+    def audit_url(self) -> str:
+        if self.audit_database_url:
+            return self.audit_database_url
+        if self.database_url.startswith("sqlite:///"):
+            return self.database_url.replace(".db", "") + "_audit.db"
+        return self.database_url
+
+    @property
+    def is_production(self) -> bool:
+        return self.env == "production"
+
+
+@lru_cache
+def get_settings() -> Settings:
+    s = Settings()
+    if s.is_production and s.jwt_secret.startswith("dev-only"):
+        raise RuntimeError("FLO_JWT_SECRET must be set in production")
+    if s.is_production and not s.vault_key:
+        raise RuntimeError("FLO_VAULT_KEY must be set in production")
+    return s

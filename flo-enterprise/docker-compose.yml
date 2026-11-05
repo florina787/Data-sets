@@ -1,0 +1,88 @@
+# FLO Enterprise - local/demo deployment. Synthetic data only; all integrations are mock adapters.
+name: flo
+x-api-env: &api-env
+  FLO_ENV: demo
+  FLO_DATABASE_URL: postgresql+psycopg://flo:${POSTGRES_PASSWORD:-flo-demo}@postgres:5432/flo
+  FLO_AUDIT_DATABASE_URL: postgresql+psycopg://flo:${POSTGRES_PASSWORD:-flo-demo}@postgres:5432/flo
+  FLO_REDIS_URL: redis://redis:6379/0
+  FLO_OPA_URL: http://opa:8181
+  FLO_JWT_SECRET: ${FLO_JWT_SECRET:-change-me-demo-signing-key-0123456789}
+  FLO_VAULT_KEY: ${FLO_VAULT_KEY:-}
+  FLO_CHECKPOINT_DB: /app/var/checkpoints.sqlite
+  FLO_EXPORT_DIR: /app/var/exports
+  FLO_CORS_ORIGINS: http://localhost:8080
+  LANGSMITH_API_KEY: ${LANGSMITH_API_KEY:-}
+  FLO_MODEL_PROVIDER: ${FLO_MODEL_PROVIDER:-mock}
+  GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+  FLO_GEMINI_MODEL: ${FLO_GEMINI_MODEL:-gemini-3.5-flash}
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment: { POSTGRES_USER: flo, POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-flo-demo}", POSTGRES_DB: flo }
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U flo -d flo"], interval: 5s, timeout: 3s, retries: 20 }
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 5s, timeout: 3s, retries: 20 }
+
+  opa:
+    image: openpolicyagent/opa:1.4.2-static
+    command: ["run", "--server", "--addr", "0.0.0.0:8181", "--log-level", "error", "/policies"]
+    volumes: ["./policies/opa:/policies:ro"]
+
+  migrate:
+    build: { context: ., dockerfile: backend/Dockerfile, secrets: [extra_ca] }
+    image: flo-api:local
+    command: ["python", "-m", "backend.db.seed"]
+    environment: *api-env
+    volumes: [flovar:/app/var]
+    depends_on: { postgres: { condition: service_healthy } }
+
+  api:
+    image: flo-api:local
+    environment: { <<: *api-env, FLO_AUTO_SEED: "0", FLO_INPROCESS_WORKER: "0" }
+    volumes: [flovar:/app/var]
+    ports: ["8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+      opa: { condition: service_started }
+
+  worker:
+    image: flo-api:local
+    command: ["python", "-m", "backend.worker"]
+    healthcheck: { disable: true }
+    environment: { <<: *api-env, FLO_AUTO_SEED: "0" }
+    volumes: [flovar:/app/var]
+    depends_on: { migrate: { condition: service_completed_successfully } }
+
+  ui:
+    build: { context: ./frontend, secrets: [extra_ca] }
+    ports: ["8080:8080"]
+    depends_on: [api]
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    profiles: [observability]
+    volumes: ["./infrastructure/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    profiles: [observability]
+    environment: { GF_AUTH_ANONYMOUS_ENABLED: "true", GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer }
+    volumes:
+      - ./infrastructure/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infrastructure/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+
+secrets:
+  extra_ca:
+    file: ${FLO_EXTRA_CA_FILE:-./infrastructure/no-extra-ca.pem}  # corporate proxy CA bundle, if your network requires one
+
+volumes:
+  pgdata: {}
+  flovar: {}

@@ -1,0 +1,15 @@
+# Approved financial terminology. Used for multilingual query expansion and terminology preservation checks.
+# Terms in `preserve` must appear unchanged in translated communications.
+preserve: [FLO, ETF, RRSP, TFSA, RESP, AUM, KYC, CAD, NI 31-103, CIRO]
+terms:
+  concentration: {fr: concentration, es: concentración, hi: संकेंद्रण, ta: செறிவு, ko: 집중}
+  communication: {fr: communication, es: comunicación, hi: संचार, ta: தொடர்பு, ko: 커뮤니케이션}
+  approval: {fr: approbation, es: aprobación, hi: अनुमोदन, ta: ஒப்புதல், ko: 승인}
+  portfolio: {fr: portefeuille, es: cartera, hi: पोर्टफोलियो, ta: போர்ட்ஃபோலியோ, ko: 포트폴리오}
+  risk: {fr: risque, es: riesgo, hi: जोखिम, ta: இடர், ko: 위험}
+  fee: {fr: frais, es: comisión, hi: शुल्क, ta: கட்டணம், ko: 수수료}
+  return: {fr: rendement, es: rendimiento, hi: प्रतिफल, ta: வருவாய், ko: 수익률}
+  emerging markets: {fr: marchés émergents, es: mercados emergentes, hi: उभरते बाजार, ta: வளர்ந்து வரும் சந்தைகள், ko: 신흥시장}
+  liquidity: {fr: liquidité, es: liquidez, hi: तरलता, ta: பணப்புழக்கம், ko: 유동성}
+  retirement: {fr: retraite, es: jubilación, hi: सेवानिवृत्ति, ta: ஓய்வு, ko: 은퇴}
+  suitability: {fr: convenance, es: idoneidad, hi: उपयुक्तता, ta: பொருத்தம், ko: 적합성}

@@ -1,0 +1,256 @@
+{
+ "runs": [
+  {
+   "measured_at": "2026-10-20T23:33:06+00:00",
+   "users": 50,
+   "duration_s": 45,
+   "wall_s": 46.7,
+   "base": "http://localhost:8080",
+   "host_note": "docker compose on one 4 vCPU / 15 GB cloud container; api = 2 uvicorn workers, FLO_MAX_INFLIGHT=32/worker, DB pool 20+20; load generator on the SAME host; after per-document policy dedupe in search",
+   "by_kind": {
+    "dashboard": {
+     "requests": 1156,
+     "ok": 1156,
+     "p50_ms": 20.5,
+     "p95_ms": 50.0,
+     "p99_ms": 519.4,
+     "mean_ms": 37.7,
+     "status_codes": {
+      "200": 1156
+     }
+    },
+    "detail": {
+     "requests": 243,
+     "ok": 243,
+     "p50_ms": 18.8,
+     "p95_ms": 39.6,
+     "p99_ms": 57.9,
+     "mean_ms": 25.7,
+     "status_codes": {
+      "200": 243
+     }
+    },
+    "ask": {
+     "requests": 279,
+     "ok": 279,
+     "p50_ms": 57.8,
+     "p95_ms": 194.6,
+     "p99_ms": 802.8,
+     "mean_ms": 85.1,
+     "status_codes": {
+      "200": 279
+     }
+    },
+    "search": {
+     "requests": 74,
+     "ok": 74,
+     "p50_ms": 141.6,
+     "p95_ms": 206.0,
+     "p99_ms": 940.6,
+     "mean_ms": 176.1,
+     "status_codes": {
+      "200": 74
+     }
+    }
+   },
+   "totals": {
+    "requests": 1752,
+    "throughput_rps": 37.5,
+    "success_rate": 1.0,
+    "load_shed_503": 0
+   }
+  },
+  {
+   "measured_at": "2026-10-20T23:28:18+00:00",
+   "users": 500,
+   "duration_s": 45,
+   "wall_s": 53.3,
+   "base": "http://localhost:8080",
+   "host_note": "docker compose on one 4 vCPU / 15 GB cloud container; api = 2 uvicorn workers, FLO_MAX_INFLIGHT=32/worker, DB pool 20+20; load generator on the SAME host",
+   "by_kind": {
+    "dashboard": {
+     "requests": 2047,
+     "ok": 1633,
+     "p50_ms": 4759.2,
+     "p95_ms": 12411.7,
+     "p99_ms": 16403.2,
+     "mean_ms": 5516.1,
+     "status_codes": {
+      "200": 1633,
+      "503": 414
+     }
+    },
+    "ask": {
+     "requests": 506,
+     "ok": 411,
+     "p50_ms": 6342.3,
+     "p95_ms": 15104.5,
+     "p99_ms": 19238.0,
+     "mean_ms": 7021.0,
+     "status_codes": {
+      "200": 411,
+      "503": 95
+     }
+    },
+    "detail": {
+     "requests": 486,
+     "ok": 386,
+     "p50_ms": 4554.3,
+     "p95_ms": 12504.6,
+     "p99_ms": 16769.2,
+     "mean_ms": 5476.3,
+     "status_codes": {
+      "200": 386,
+      "503": 100
+     }
+    },
+    "search": {
+     "requests": 158,
+     "ok": 122,
+     "p50_ms": 6101.2,
+     "p95_ms": 13992.0,
+     "p99_ms": 17084.2,
+     "mean_ms": 6823.0,
+     "status_codes": {
+      "503": 36,
+      "200": 122
+     }
+    }
+   },
+   "totals": {
+    "requests": 3197,
+    "throughput_rps": 60.0,
+    "success_rate": 0.7982,
+    "load_shed_503": 645
+   }
+  },
+  {
+   "measured_at": "2026-10-20T23:29:18+00:00",
+   "users": 1000,
+   "duration_s": 45,
+   "wall_s": 60.2,
+   "base": "http://localhost:8080",
+   "host_note": "docker compose on one 4 vCPU / 15 GB cloud container; api = 2 uvicorn workers, FLO_MAX_INFLIGHT=32/worker, DB pool 20+20; load generator on the SAME host",
+   "by_kind": {
+    "dashboard": {
+     "requests": 2247,
+     "ok": 2110,
+     "p50_ms": 10525.1,
+     "p95_ms": 37968.2,
+     "p99_ms": 50735.6,
+     "mean_ms": 13677.5,
+     "status_codes": {
+      "200": 2110,
+      "503": 137
+     }
+    },
+    "ask": {
+     "requests": 544,
+     "ok": 504,
+     "p50_ms": 11823.4,
+     "p95_ms": 32287.0,
+     "p99_ms": 49901.8,
+     "mean_ms": 13931.2,
+     "status_codes": {
+      "200": 504,
+      "503": 40
+     }
+    },
+    "detail": {
+     "requests": 537,
+     "ok": 509,
+     "p50_ms": 9996.9,
+     "p95_ms": 38402.6,
+     "p99_ms": 53318.2,
+     "mean_ms": 12998.4,
+     "status_codes": {
+      "200": 509,
+      "503": 28
+     }
+    },
+    "search": {
+     "requests": 164,
+     "ok": 157,
+     "p50_ms": 10276.5,
+     "p95_ms": 37984.4,
+     "p99_ms": 51663.8,
+     "mean_ms": 14100.8,
+     "status_codes": {
+      "200": 157,
+      "503": 7
+     }
+    }
+   },
+   "totals": {
+    "requests": 3492,
+    "throughput_rps": 58.0,
+    "success_rate": 0.9393,
+    "load_shed_503": 212
+   }
+  },
+  {
+   "measured_at": "2026-10-20T23:31:29+00:00",
+   "users": 5000,
+   "duration_s": 45,
+   "wall_s": 130.6,
+   "base": "http://localhost:8080",
+   "host_note": "docker compose on one 4 vCPU / 15 GB cloud container; api = 2 uvicorn workers, FLO_MAX_INFLIGHT=32/worker, DB pool 20+20; load generator on the SAME host",
+   "by_kind": {
+    "dashboard": {
+     "requests": 4691,
+     "ok": 4270,
+     "p50_ms": 66091.1,
+     "p95_ms": 116762.6,
+     "p99_ms": 126896.4,
+     "mean_ms": 59108.0,
+     "status_codes": {
+      "200": 4270,
+      "503": 421
+     }
+    },
+    "detail": {
+     "requests": 1099,
+     "ok": 996,
+     "p50_ms": 65630.4,
+     "p95_ms": 113745.2,
+     "p99_ms": 126676.1,
+     "mean_ms": 58515.4,
+     "status_codes": {
+      "200": 996,
+      "503": 103
+     }
+    },
+    "ask": {
+     "requests": 1145,
+     "ok": 1023,
+     "p50_ms": 66723.6,
+     "p95_ms": 116893.4,
+     "p99_ms": 127482.8,
+     "mean_ms": 59368.3,
+     "status_codes": {
+      "200": 1023,
+      "503": 122
+     }
+    },
+    "search": {
+     "requests": 312,
+     "ok": 285,
+     "p50_ms": 58291.3,
+     "p95_ms": 112695.4,
+     "p99_ms": 126329.4,
+     "mean_ms": 54341.9,
+     "status_codes": {
+      "503": 27,
+      "200": 285
+     }
+    }
+   },
+   "totals": {
+    "requests": 7247,
+    "throughput_rps": 55.5,
+    "success_rate": 0.9071,
+    "load_shed_503": 673
+   }
+  }
+ ]
+}

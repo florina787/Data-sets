@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root, :root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 11 18 32;      /* #0B1220 */
+  --side: 16 27 45;    /* #101B2D */
+  --card: 22 35 56;    /* #162338 */
+  --line: 38 54 80;
+  --ink: 236 240 246;
+  --muted: 148 163 184;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: 238 240 248;   /* #EEF0F8 soft lavender-grey */
+  --side: 247 248 252;
+  --card: 255 255 255;
+  --line: 221 225 240;
+  --ink: 20 24 58;     /* #14183A */
+  --muted: 84 90 120;
+}
+html, body, #root { height: 100%; }
+body { background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: Inter, system-ui, sans-serif; }
+:focus-visible { outline: 2px solid #D4AF37; outline-offset: 2px; }
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 4px; }
+.maplibregl-canvas { outline: none; }
+
+/* FLO conversation workspace: motion that aids comprehension, disabled for reduced-motion users */
+@keyframes flo-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes flo-slide-in { from { transform: translateX(-16px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes flo-slide-left { from { transform: translateX(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.flo-rise { animation: flo-rise 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.flo-slide-in { animation: flo-slide-in 220ms ease-out both; }
+.flo-slide-left { animation: flo-slide-left 220ms ease-out both; }
+.flo-hero {
+  background:
+    radial-gradient(ellipse 55% 40% at 22% 0%, rgb(59 130 246 / 0.10), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 80% 6%, rgb(139 92 246 / 0.08), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgb(212 175 55 / 0.06), transparent 70%);
+}
+.flo-edge { background: linear-gradient(120deg, rgb(59 130 246 / 0.55), rgb(139 92 246 / 0.35) 45%, rgb(212 175 55 / 0.6)); padding: 1px; border-radius: 1.05rem; }
+@media (prefers-reduced-motion: reduce) {
+  .flo-rise, .flo-slide-in, .flo-slide-left { animation: none; }
+  * { scroll-behavior: auto !important; }
+}

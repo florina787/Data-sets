@@ -1,0 +1,13 @@
+# Financially consequential or outward-facing actions require durable human approval before execution.
+actions:
+  comms:send:              {action_type: client_communication,       approver_roles: [compliance_officer], risk: high,     expires_minutes: 1440}
+  recommendation:deliver:  {action_type: client_recommendation,      approver_roles: [compliance_officer], risk: high,     expires_minutes: 1440}
+  export:sensitive:        {action_type: sensitive_data_export,      approver_roles: [privacy_officer, compliance_officer], risk: high, expires_minutes: 240}
+  board:distribute:        {action_type: board_report_distribution,  approver_roles: [executive], risk: high, expires_minutes: 2880}
+  records:change:          {action_type: financial_record_change,    approver_roles: [executive], risk: critical, expires_minutes: 480}
+  portfolio:modify:        {action_type: portfolio_modification,     approver_roles: [cio], risk: critical, expires_minutes: 480}
+rules:
+  self_approval: false          # requester can never approve their own request
+  single_use: true              # an approval executes at most once (replay protection)
+  revalidate_on_execute: true   # requester authorization re-checked at execution time
+  payload_binding: sha256       # any payload change invalidates the approval

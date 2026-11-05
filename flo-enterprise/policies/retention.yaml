@@ -1,0 +1,5 @@
+# Retention rules for privacy-protected artefacts.
+token_vault_ttl_days: 30
+trace_payload_retention_days: 90
+export_file_ttl_hours: 24
+audit_retention_years: 7
