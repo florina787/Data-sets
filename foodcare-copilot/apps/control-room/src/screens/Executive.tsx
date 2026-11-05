@@ -4,6 +4,7 @@ import { Card, Empty, Notice } from "../components/ui";
 import { usePoll } from "../hooks";
 import { AskButton } from "./Copilot";
 import { FieldToFriesBanner } from "../components/Illustrations";
+import { PotatoDataSources } from "../components/DataSources";
 
 export const money = (cents: number) => `$${Math.round(cents / 100).toLocaleString()}`;
 export const pct = (v: number | null | undefined) => (v == null ? "n/a" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`);
@@ -97,6 +98,7 @@ export default function Executive() {
           )}
         </Card>
       </div>
+      <PotatoDataSources />
     </div>
   );
 }

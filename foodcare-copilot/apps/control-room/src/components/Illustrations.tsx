@@ -73,6 +73,19 @@ export function Fries({ width = 110 }: { width?: number }) {
   );
 }
 
+/** Potatoes orbiting Jerry: CSS transform animation, paused on hover, off with reduced motion. */
+export function PotatoOrbit() {
+  return (
+    <div className="orbit shrink-0" aria-hidden>
+      <div className="orbit-ring" />
+      <div className="orbit-center"><FriesCarton size={72} label="" /></div>
+      <div className="orbit-item"><div className="orbit-spin"><Potato size={40} /></div></div>
+      <div className="orbit-item"><div className="orbit-spin" style={{ animationDuration: "9s" }}><Potato size={36} /></div></div>
+      <div className="orbit-item"><div className="orbit-spin" style={{ animationDuration: "6s", animationDirection: "reverse" }}><Potato size={42} /></div></div>
+    </div>
+  );
+}
+
 /** Executive banner: the journey from a raw potato to finished fries. */
 export function FieldToFriesBanner() {
   return (
@@ -84,12 +97,7 @@ export function FieldToFriesBanner() {
           <p className="mt-1 text-lg font-semibold leading-snug text-navy-900">Inspect every potato, protect yield, and ship consistent fries, with every figure traceable to its data.</p>
           <p className="mt-1 text-xs text-navy-600">Illustration only. Figures on this page come from the synthetic dataset and live demo records.</p>
         </div>
-        <div className="flex items-center gap-3" aria-hidden>
-          <Potato size={58} />
-          <svg width="56" height="16" viewBox="0 0 56 16"><path d="M2 8 H48" stroke="#38bdf8" strokeWidth="2" strokeDasharray="4 4" /><path d="M46 3 L54 8 L46 13" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          <Fries width={92} />
-          <FriesCarton size={64} label="" />
-        </div>
+        <PotatoOrbit />
       </div>
     </div>
   );

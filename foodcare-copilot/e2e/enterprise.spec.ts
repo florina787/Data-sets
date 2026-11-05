@@ -9,6 +9,8 @@ test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
   await expect(page.getByText("Revenue, last 4 weeks")).toBeVisible();
   await expect(page.getByText(/FreshSip Apple/).first()).toBeVisible(); // campaign stock risk surfaced
   await page.getByLabel("Signed in as").selectOption({ label: "Val Park (Viewer)" });
+  await expect(page.getByRole("heading", { name: "Potato data sources" })).toBeVisible();
+  await expect(page.getByText("Storage sensors")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/20-executive-overview.png`, fullPage: true });
 
   // Copilot answers with citations from read-only tools.
@@ -42,6 +44,9 @@ test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/23-sales-promotions.png`, fullPage: true });
   await nav.getByRole("link", { name: "Inventory" }).click();
   await expect(page.getByText(/Days of cover, as of/)).toBeVisible();
+  await expect(page.getByText(/Stock shelf, as of/)).toBeVisible();
+  await page.getByRole("button", { name: /FreshSip Apple at DC-TOR/ }).click();
+  await expect(page.getByRole("dialog", { name: "FreshSip Apple at DC-TOR" })).toContainText("PO-55102");
   await page.screenshot({ path: `${SHOTS}/24-inventory.png`, fullPage: true });
   await nav.getByRole("link", { name: "Compliance & Food Safety" }).click();
   await expect(page.getByRole("main").getByText("listing is missing declared allergen(s): oats (gluten)")).toBeVisible();

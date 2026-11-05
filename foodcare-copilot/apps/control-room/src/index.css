@@ -51,6 +51,47 @@
   .kpi { @apply text-2xl font-semibold tracking-tight text-navy-900; }
 }
 
+/* Potatoes orbiting Jerry (transform/opacity only; disabled by prefers-reduced-motion above). */
+.orbit { position: relative; width: 260px; height: 132px; }
+.orbit-ring { position: absolute; left: 50%; top: 50%; width: 236px; height: 70px; transform: translate(-50%, -50%);
+  border: 1px solid rgba(56, 189, 248, 0.22); border-radius: 50%; box-shadow: 0 0 24px -6px rgba(56, 189, 248, 0.35) inset; }
+.orbit-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.55)); }
+.orbit-item { position: absolute; left: calc(50% - 22px); top: calc(50% - 24px); width: 44px; height: 48px;
+  animation: potato-orbit 12s linear infinite; will-change: transform; }
+.orbit-item:nth-child(4) { animation-delay: -4s; }
+.orbit-item:nth-child(5) { animation-delay: -8s; }
+.orbit-spin { animation: potato-spin 7s linear infinite; filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.45)); }
+.orbit:hover .orbit-item, .orbit:hover .orbit-spin { animation-play-state: paused; }
+@keyframes potato-spin { to { transform: rotate(360deg); } }
+@keyframes potato-orbit {
+  0.000% { transform: translate(104.0px, 0.0px) scale(0.860); opacity: 0.81; z-index: 1; }
+  4.167% { transform: translate(100.5px, 7.8px) scale(0.927); opacity: 0.86; z-index: 3; }
+  8.333% { transform: translate(90.1px, 15.0px) scale(0.990); opacity: 0.91; z-index: 3; }
+  12.500% { transform: translate(73.5px, 21.2px) scale(1.044); opacity: 0.94; z-index: 3; }
+  16.667% { transform: translate(52.0px, 26.0px) scale(1.085); opacity: 0.97; z-index: 3; }
+  20.833% { transform: translate(26.9px, 29.0px) scale(1.111); opacity: 0.99; z-index: 3; }
+  25.000% { transform: translate(0.0px, 30.0px) scale(1.120); opacity: 1.00; z-index: 3; }
+  29.167% { transform: translate(-26.9px, 29.0px) scale(1.111); opacity: 0.99; z-index: 3; }
+  33.333% { transform: translate(-52.0px, 26.0px) scale(1.085); opacity: 0.97; z-index: 3; }
+  37.500% { transform: translate(-73.5px, 21.2px) scale(1.044); opacity: 0.94; z-index: 3; }
+  41.667% { transform: translate(-90.1px, 15.0px) scale(0.990); opacity: 0.91; z-index: 3; }
+  45.833% { transform: translate(-100.5px, 7.8px) scale(0.927); opacity: 0.86; z-index: 3; }
+  50.000% { transform: translate(-104.0px, 0.0px) scale(0.860); opacity: 0.81; z-index: 3; }
+  54.167% { transform: translate(-100.5px, -7.8px) scale(0.793); opacity: 0.76; z-index: 1; }
+  58.333% { transform: translate(-90.1px, -15.0px) scale(0.730); opacity: 0.72; z-index: 1; }
+  62.500% { transform: translate(-73.5px, -21.2px) scale(0.676); opacity: 0.68; z-index: 1; }
+  66.667% { transform: translate(-52.0px, -26.0px) scale(0.635); opacity: 0.65; z-index: 1; }
+  70.833% { transform: translate(-26.9px, -29.0px) scale(0.609); opacity: 0.63; z-index: 1; }
+  75.000% { transform: translate(-0.0px, -30.0px) scale(0.600); opacity: 0.62; z-index: 1; }
+  79.167% { transform: translate(26.9px, -29.0px) scale(0.609); opacity: 0.63; z-index: 1; }
+  83.333% { transform: translate(52.0px, -26.0px) scale(0.635); opacity: 0.65; z-index: 1; }
+  87.500% { transform: translate(73.5px, -21.2px) scale(0.676); opacity: 0.68; z-index: 1; }
+  91.667% { transform: translate(90.1px, -15.0px) scale(0.730); opacity: 0.71; z-index: 1; }
+  95.833% { transform: translate(100.5px, -7.8px) scale(0.793); opacity: 0.76; z-index: 1; }
+  100.000% { transform: translate(104.0px, -0.0px) scale(0.860); opacity: 0.81; z-index: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

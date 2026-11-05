@@ -620,6 +620,22 @@ async def ml_evaluate_synthetic(user: User = Depends(current_user)) -> dict:
     return result
 
 
+@app.get("/api/quality/overview")
+def quality_overview(days: int | None = Query(default=None, ge=1, le=3650), supplier: str | None = None,
+                     user: User = Depends(current_user)) -> dict:
+    from app import quality
+
+    return quality.overview(user.username, days, supplier)
+
+
+@app.get("/api/data-sources")
+def data_sources(user: User = Depends(current_user)) -> dict:
+    """Which potato data sources feed the app, with live record counts and honest status."""
+    from app import datasources
+
+    return {"sources": datasources.sources(user.username)}
+
+
 @app.get("/api/system/resources")
 def system_resources() -> dict:
     """Measured CPU/RAM, the backend process, and the local-model and vision queues (no model probe)."""

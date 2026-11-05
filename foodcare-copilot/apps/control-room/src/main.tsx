@@ -15,6 +15,7 @@ import Incidents from "./screens/Incidents";
 import Inspection from "./screens/Inspection";
 import Observability from "./screens/Observability";
 import EvaluationLab from "./screens/EvaluationLab";
+import QualityIntelligence from "./screens/QualityIntelligence";
 import Inventory from "./screens/Inventory";
 import Overview from "./screens/Overview";
 import Quality from "./screens/Quality";
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/inspection" element={<Inspection />} />
             <Route path="/observability" element={<Observability />} />
             <Route path="/evaluation" element={<EvaluationLab />} />
+            <Route path="/quality-intel" element={<QualityIntelligence />} />
             <Route path="/delivery" element={<Overview />} />
             <Route path="/brief" element={<Brief />} />
             <Route path="/board" element={<Board />} />

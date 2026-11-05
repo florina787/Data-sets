@@ -33,6 +33,8 @@ test("potato inspection: upload, grade, inspect one potato, thresholds", async (
   await main.getByLabel(/Reason \(required/).fill("dark patch is soil, not rot");
   await main.getByRole("button", { name: "Save correction" }).click();
   await expect(main.getByText(/Inspector correction by val.viewer/)).toBeVisible();
+  await expect(main.getByRole("img", { name: /^Quality: Good/ })).toBeVisible();
+  await expect(main.getByText("Classical CV")).toBeVisible();
 
   // Loosening the dark-area limit re-grades from stored measurements.
   const goodBefore = await summary.locator(".card").nth(1).locator(".text-2xl").innerText();
@@ -59,4 +61,13 @@ test("potato inspection: upload, grade, inspect one potato, thresholds", async (
   await drawer.getByRole("button", { name: "Ask", exact: true }).click();
   await expect(drawer.getByText(/Potato #8/).last()).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/28-inspection-copilot.png` });
+  await drawer.getByRole("button", { name: "Close" }).click();
+
+  // Quality Intelligence aggregates the stored batches.
+  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Quality Intelligence" }).click();
+  await expect(main.getByText("Inspection recommendations")).toBeVisible();
+  await expect(main.getByText(/Reject candidate · needs approval/).first()).toBeVisible();
+  await main.getByRole("tab", { name: "Human review" }).click();
+  await expect(main.getByText("Corrections", { exact: true })).toBeVisible();
+  await page.screenshot({ path: `${SHOTS}/34-quality-intelligence.png`, fullPage: true });
 });

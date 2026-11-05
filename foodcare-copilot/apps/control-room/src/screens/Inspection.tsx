@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { api, apiBlobUrl, post, upload } from "../api";
 import { Card, Empty, Notice } from "../components/ui";
 import { useBlob } from "../hooks";
@@ -36,6 +36,51 @@ async function download(path: string, name: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+/** Viewfinder with corner brackets: shows the chosen photo, or the live webcam until captured. */
+function Scanner({ file, onCapture }: { file: File | null; onCapture: (f: File) => void }) {
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [camError, setCamError] = useState<string | null>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
+  useEffect(() => { if (video.current && stream) video.current.srcObject = stream; }, [stream]);
+  useEffect(() => () => stream?.getTracks().forEach((t) => t.stop()), [stream]);
+  const start = async () => {
+    setCamError(null);
+    try { setStream(await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 } }, audio: false })); }
+    catch (e) { setCamError(`Webcam unavailable: ${(e as Error).message}`); }
+  };
+  const stop = () => { stream?.getTracks().forEach((t) => t.stop()); setStream(null); };
+  const capture = () => {
+    const v = video.current;
+    if (!v || !v.videoWidth) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = v.videoWidth; canvas.height = v.videoHeight;
+    canvas.getContext("2d")?.drawImage(v, 0, 0);
+    canvas.toBlob((b) => { if (b) { onCapture(new File([b], `webcam-${Date.now()}.jpg`, { type: "image/jpeg" })); stop(); } }, "image/jpeg", 0.92);
+  };
+  const corner = "absolute h-7 w-7 border-ice-400";
+  return (
+    <div className="space-y-2">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-surface-line bg-[#06101f]">
+        {stream ? <video ref={video} autoPlay playsInline muted className="h-full w-full object-cover" aria-label="Live webcam preview" />
+          : preview ? <img src={preview} alt="Selected photo, ready to inspect" className="h-full w-full object-contain" />
+            : <div className="flex h-full flex-col items-center justify-center gap-2 text-xs text-navy-600"><Potato size={56} /><span>Choose a photo or start the webcam</span></div>}
+        <span className={`${corner} left-4 top-4 rounded-tl-xl border-l-2 border-t-2`} aria-hidden />
+        <span className={`${corner} right-4 top-4 rounded-tr-xl border-r-2 border-t-2`} aria-hidden />
+        <span className={`${corner} bottom-4 left-4 rounded-bl-xl border-b-2 border-l-2`} aria-hidden />
+        <span className={`${corner} bottom-4 right-4 rounded-br-xl border-b-2 border-r-2`} aria-hidden />
+        <span className="absolute right-3 top-3 rounded-lg border border-surface-line bg-surface-base/80 px-2 py-0.5 text-[10px] font-semibold text-ice-300" title="Classical computer vision, not a trained AI model">Classical CV</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {!stream ? <button type="button" className="btn-ghost text-xs" onClick={start}>Start webcam</button>
+          : <><button type="button" className="btn-primary text-xs" onClick={capture}>Capture photo</button><button type="button" className="btn-ghost text-xs" onClick={stop}>Stop webcam</button></>}
+      </div>
+      {camError && <p role="alert" className="text-xs text-brick-700">{camError}</p>}
+    </div>
+  );
+}
+
 function NewInspection({ onDone }: { onDone: (b: Batch) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState({ title: "", supplier: "", lot_code: "", mm_per_px: "" });
@@ -67,6 +112,7 @@ function NewInspection({ onDone }: { onDone: (b: Batch) => void }) {
   return (
     <Card title="New inspection">
       <form onSubmit={run} className="space-y-2">
+        <Scanner file={file} onCapture={setFile} />
         <label className="block text-xs text-navy-700">Photo of potatoes (JPEG, PNG or WebP; plain background, potatoes not touching)
           <input type="file" accept="image/jpeg,image/png,image/webp" className="mt-1 block w-full text-sm" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         </label>
@@ -105,6 +151,42 @@ function Thresholds({ batch, onChange }: { batch: Batch; onChange: (b: Batch) =>
       {error && <p role="alert" className="mt-1 text-brick-700">{error}</p>}
       <button className="btn-ghost mt-2" onClick={save}>Apply thresholds</button>
     </details>
+  );
+}
+
+/** Concentric quality rings: share of graded potatoes per grade, count in the centre. */
+function QualityRings({ s }: { s: any }) {
+  const rings = [
+    { label: "Good", pct: s.pct?.Good ?? 0, n: s.counts?.Good ?? 0, colour: "#10b981", r: 62 },
+    { label: "Moderate", pct: s.pct?.Moderate ?? 0, n: s.counts?.Moderate ?? 0, colour: "#f59e0b", r: 50 },
+    { label: "Not Good", pct: s.pct?.["Not Good"] ?? 0, n: s.counts?.["Not Good"] ?? 0, colour: "#ef4444", r: 38 },
+  ];
+  const sweep = 270;
+  const arc = (r: number, frac: number) => {
+    const start = (135 * Math.PI) / 180, end = start + (sweep * Math.PI / 180) * frac;
+    const p = (a: number) => `${70 + r * Math.cos(a)} ${70 + r * Math.sin(a)}`;
+    return `M ${p(start)} A ${r} ${r} 0 ${(sweep * frac) > 180 ? 1 : 0} 1 ${p(end)}`;
+  };
+  return (
+    <div className="card flex items-center gap-4" role="img" aria-label={`Quality: ${rings.map((r) => `${r.label} ${r.pct}%`).join(", ")} of ${s.graded} graded potatoes`}>
+      <svg width="150" height="140" viewBox="0 0 140 130" aria-hidden>
+        {rings.map((r) => (
+          <g key={r.label}>
+            <path d={arc(r.r, 1)} fill="none" stroke="#1e3654" strokeWidth="9" strokeLinecap="round" />
+            {r.pct > 0 && <path d={arc(r.r, Math.min(r.pct / 100, 0.999))} fill="none" stroke={r.colour} strokeWidth="9" strokeLinecap="round" />}
+          </g>
+        ))}
+        <text x="70" y="70" textAnchor="middle" fontSize="24" fontWeight="600" fill="#f8fafc">{s.detected ?? 0}</text>
+        <text x="70" y="86" textAnchor="middle" fontSize="9" fill="#94a3b8">potatoes</text>
+      </svg>
+      <ul className="space-y-1.5 text-sm">
+        {rings.map((r) => (
+          <li key={r.label} className="flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ background: r.colour }} aria-hidden />
+            <span className="w-20 text-navy-700">{r.label}</span><span className="font-mono text-navy-900">{r.pct}%</span><span className="text-xs text-navy-600">({r.n})</span></li>
+        ))}
+        <li className="pt-1 text-xs text-navy-600">of {s.graded} graded{s.not_graded ? ` · ${s.not_graded} not graded` : ""}{s.corrected ? ` · ${s.corrected} corrected by an inspector` : ""}</li>
+      </ul>
+    </div>
   );
 }
 
@@ -174,6 +256,7 @@ function BatchView({ batch, onChange }: { batch: Batch; onChange: (b: Batch) => 
           </div>
         ))}
       </div>
+      <QualityRings s={s} />
       <div className="grid gap-3 lg:grid-cols-[1fr_320px]">
         <Card title={`Annotated image${image ? ` · ${image.original_name || image.id} · ${image.width}×${image.height}px · ${image.duration_ms} ms` : ""}`}>
           {batch.images.length > 1 && (

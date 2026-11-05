@@ -16,7 +16,7 @@ async function signIn(page: Page, displayName: string) {
 }
 
 async function go(page: Page, label: string) {
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: label }).click();
+  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: label, exact: true }).click();
 }
 
 async function shot(page: Page, name: string) {

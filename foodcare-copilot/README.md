@@ -102,11 +102,12 @@ The same page at laptop width (1280 pixels) wraps neatly:
 
 What you see, from top to bottom:
 
-1. **"From field to fries" banner:** an illustration of the journey from potato to fries. It is decoration only; it shows no data.
+1. **"From field to fries" banner:** three potatoes orbit Jerry. It is decoration only and shows no data. The animation is cheap for the browser, pauses when you hover over it, and switches off if your system asks for reduced motion.
 2. **Five headline numbers:** revenue and units sold in the last 4 weeks (compared with the 4 weeks before), stock alerts, listing-compliance issues, and live demo-shop orders.
 3. **Weekly revenue chart** (16 weeks) and **revenue by region**. Every chart has a **"Show table"** button, so the numbers can be read without the picture (this helps screen-reader users too).
 4. **Needs attention:** for example, *FreshSip Apple may not cover the Ontario weekend campaign*.
 5. **Promotions** and **Digital delivery** status.
+6. **Potato data sources:** one card per source that feeds Jerry, each with a **live record count** from the database. Green-dot cards have data, gold-dot cards are synthetic demo data, and grey dashed cards are **planned sources that are not connected** (storage sensors, weather, ERP, weighing scales, conveyor video). Each grey card says exactly what it would need. *Why:* you can see at a glance which answers rest on real records and which cannot be given yet.
 
 ### 3.3 Ask Copilot
 
@@ -136,6 +137,10 @@ Before you choose a batch, the studio shows an empty state with drawn potatoes a
 5. **Download CSV / JSON** reports. **Quality thresholds** can be changed, and the whole batch re-grades instantly.
 6. The orange box at the top states the method honestly: *classical image processing, not a trained AI model*. [Section 7](#7-how-potato-inspection-works-step-by-step) explains what that means.
 
+**Scanner panel:** the capture area works like a phone camera viewfinder. You can choose a photo, or click **Start webcam**, then **Capture photo**, to take a picture with your computer's camera. The snapshot goes through exactly the same pipeline. The badge says **Classical CV**, not "AI", because no trained model is used.
+
+**Quality rings:** three rings show the share of graded potatoes that are Good (green), Moderate (amber) and Not Good (red), with the potato count in the middle. The same numbers appear as text next to the rings.
+
 ### 3.5 Asking about the inspection
 
 ![Copilot answering about potato #8](docs/screenshots/28-inspection-copilot.png)
@@ -146,16 +151,28 @@ Before you choose a batch, the studio shows an empty state with drawn potatoes a
 
 | Sales & promotions | Inventory | Compliance & food safety |
 |---|---|---|
-| ![Sales](docs/screenshots/23-sales-promotions.png) | ![Inventory](docs/screenshots/24-inventory.png) | ![Compliance](docs/screenshots/25-product-compliance.png) |
-| Promotion **uplift is measured** from sales before and after. One discount sold 10.7% more units but **lost 11.2% revenue**. | **Days of cover** (how long stock lasts) against the supplier's **lead time** (how long a reorder takes). | Every shop listing is compared, field by field, with the approved recipe. A retail feed is **missing "oats (gluten)"**. |
+| ![Sales](docs/screenshots/23-sales-promotions.png) | ![Inventory](docs/screenshots/35-inventory-shelf.png) | ![Compliance](docs/screenshots/25-product-compliance.png) |
+| Promotion **uplift is measured** from sales before and after. One discount sold 10.7% more units but **lost 11.2% revenue**. | A **stock shelf** per warehouse: each product is drawn on the shelf with **one floating tag** showing its most important fact (Critical, Reorder or OK, plus days of cover). The fill level shows days of cover relative to twice the supplier's lead time. Click a tag for on-hand stock, demand and inbound orders. Below it: **days of cover** against **lead time** for every product. | Every shop listing is compared, field by field, with the approved recipe. A retail feed is **missing "oats (gluten)"**. |
 
-### 3.7 System Observability
+### 3.7 Quality Intelligence
+
+![Quality Intelligence](docs/screenshots/34-quality-intelligence.png)
+
+A dashboard over **your own inspection records**, with four tabs (Overview, Recommendations, Model health, Human review) and filters for period and supplier:
+
+* **Inspection recommendations:** worst potatoes first, each with its top finding, its detection score (labelled *heuristic, not calibrated*) and a suggested action. Rejecting a potato always says **"needs approval"**: the system suggests, a person decides.
+* **Model health:** the latest recorded evaluation, with a **SYNTHETIC** badge when it was measured on drawn images.
+* **Human in the loop:** the review queue (Moderate and Not Good potatoes nobody has reviewed yet), the number of corrections, and how often inspectors kept the rules' grade.
+* **Quality trend:** the share graded Good per batch, oldest to newest.
+* **Needs attention:** for example *"No evaluation on real labelled photos yet"*.
+
+### 3.8 System Observability
 
 ![System observability](docs/screenshots/30-system-observability.png)
 
 This page shows only **measured** information: machine CPU and RAM, the app's own memory use, the image-inspection queue, the local-model queue, the size of the memory database, and a list of **recent agent runs**. Click a run to see each step and how many milliseconds it took.
 
-### 3.8 Model Evaluation Lab
+### 3.9 Model Evaluation Lab
 
 ![Model Evaluation Lab](docs/screenshots/33-model-evaluation-lab.png)
 
@@ -169,11 +186,11 @@ This page answers the question **"how good is the model, really?"**, honestly:
 
 *Why it matters:* a number such as "99% accurate" means nothing without knowing **which data it was measured on**. Here, every score carries its receipt.
 
-### 3.9 Inspector corrections (human in the loop)
+### 3.10 Inspector corrections (human in the loop)
 
 In the potato detail panel, **Correct this grade** lets an inspector override the rules' grade **with a required reason**. The original grade is kept next to the correction, the change is written to the audit log, the batch summary updates, and Jerry mentions the correction when asked about that potato. *Why:* the rules can mistake soil for rot; a person should be able to fix that, and the record should show who did and why. Corrections also become labelled examples for training a future model.
 
-### 3.10 Digital delivery workspace
+### 3.11 Digital delivery workspace
 
 | Clarify the brief | Tests catch a bug | Incident evidence |
 |---|---|---|
@@ -235,7 +252,7 @@ The server checks permissions on **every action**, not just in the screen. A rej
 
 ```bash
 scripts/reset_demo.sh     # back to a clean demo (your saved conversations and inspections are kept)
-scripts/test.sh           # code checks, 92 backend tests, interface build
+scripts/test.sh           # code checks, 94 backend tests, interface build
 npm run e2e               # 6 browser tests that click through the app
 .venv/bin/python scripts/eval_vision.py --synthetic 20   # measure the potato detector on drawn test images
 ```
@@ -597,7 +614,7 @@ pie showData
 
 | Test suite | Count | Result |
 |---|---|---|
-| Backend (Python) | 92 | all pass |
+| Backend (Python) | 94 | all pass |
 | Browser, clicking through the real app | 6 | all pass |
 | Of which use a **mock** model server instead of real Qwen | 14 | pass (no real Qwen run in the cloud) |
 
@@ -695,7 +712,7 @@ foodcare-copilot/
 │   ├── graph/, agents/         Delivery workflow (LangGraph) and its agents
 │   ├── resources.py            Measured CPU / RAM (psutil)
 │   └── main.py                 All web API endpoints
-├── backend/tests/              92 automated tests
+├── backend/tests/              94 automated tests
 ├── e2e/                        6 browser tests (Playwright) + a synthetic test image
 ├── fixtures/vision/            Default potato grading thresholds
 ├── fixtures/enterprise/        The fictional company's products, regions, warehouses
