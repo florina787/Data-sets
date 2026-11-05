@@ -21,13 +21,26 @@ function base(tk: Tokens, animate: boolean) {
     aria: { enabled: false }, color: tk.series, // the wrapper provides role="img" + label
     textStyle: { color: tk.muted, fontFamily: "Inter, system-ui, sans-serif" },
     grid: { left: 12, right: 18, top: 40, bottom: 24, containLabel: true },
-    tooltip: { backgroundColor: tk.surface, borderColor: tk.grid, textStyle: { color: tk.ink }, confine: true },
+    tooltip: { backgroundColor: tk.dark ? "rgba(17,24,39,0.94)" : "rgba(255,255,255,0.97)", borderColor: tk.grid, borderRadius: 12, padding: [8, 12],
+      textStyle: { color: tk.ink, fontSize: 12 }, extraCssText: "box-shadow:0 8px 24px rgba(0,0,0,0.35);", confine: true },
     legend: { textStyle: { color: tk.muted }, top: 0, icon: "roundRect", itemWidth: 10, itemHeight: 10, type: "scroll" as const },
   };
 }
 
-const axis = (tk: Tokens, extra: object = {}) => ({ axisLine: { lineStyle: { color: tk.grid } }, axisLabel: { color: tk.muted, hideOverlap: true },
-  splitLine: { lineStyle: { color: tk.grid } }, axisTick: { show: false }, ...extra });
+const axis = (tk: Tokens, extra: object = {}) => ({ axisLine: { show: false }, axisLabel: { color: tk.muted, hideOverlap: true, fontSize: 11 },
+  splitLine: { lineStyle: { color: tk.dark ? "rgba(148,163,184,0.07)" : "rgba(15,23,42,0.06)" } }, axisTick: { show: false }, ...extra });
+
+// LumaTrade-style hero line: gold-to-lime stroke with a soft glow and an area that fades to nothing
+export const HERO_STROKE = ["#D4AF37", "#E2C766", "#C8E06B"];
+const linear = (dir: "h" | "v", stops: [number, string][]) => ({ type: "linear", x: 0, y: 0, x2: dir === "h" ? 1 : 0, y2: dir === "v" ? 1 : 0,
+  colorStops: stops.map(([offset, color]) => ({ offset, color })) });
+const heroLine = () => linear("h", [[0, HERO_STROKE[0]], [0.55, HERO_STROKE[1]], [1, HERO_STROKE[2]]]);
+const fadeArea = (hex: string, a = 0.28) => linear("v", [[0, hexA(hex, a)], [1, hexA(hex, 0)]]);
+function hexA(hex: string, a: number) {
+  const h = hex.replace("#", "");
+  const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
 
 function refLines(spec: ChartSpec, tk: Tokens, axisKey: "yAxis" | "xAxis" = "yAxis") {
   const data = spec.reference_lines.flatMap((r) => (r.type === "average" ? [{ type: "average", name: String(r.label) }]
@@ -51,13 +64,23 @@ export function buildOption(spec: ChartSpec, tk: Tokens, animate = true): Record
   switch (spec.chart_type) {
     case "line":
     case "area":
-    case "stacked_area":
-      return { ...b, tooltip: tip, xAxis: axis(tk, { type: "category", data: cats, boundaryGap: false }),
-        yAxis: axis(tk, { type: "value", scale: u !== "CAD", axisLabel: { color: tk.muted, formatter: axisFmt(u) } }),
-        series: spec.series.map((s, i) => ({ name: s.name, type: "line", data: s.values, symbol: "none", smooth: false,
-          stack: spec.chart_type === "stacked_area" ? "total" : undefined, lineStyle: { width: 2, type: s.role === "baseline" ? "dashed" : "solid", color: seriesColor(s, i, tk) },
-          itemStyle: { color: seriesColor(s, i, tk) }, areaStyle: spec.chart_type === "line" ? undefined : { opacity: spec.chart_type === "stacked_area" ? 0.5 : 0.18 },
-          emphasis: { focus: "series" }, ...(i === 0 ? refLines(spec, tk) : {}) })) };
+    case "stacked_area": {
+      const solo = spec.series.filter((x) => x.role !== "baseline").length === 1 && spec.chart_type !== "stacked_area";
+      return { ...b, tooltip: { ...tip, axisPointer: { type: "line", lineStyle: { color: tk.muted, type: "dashed", width: 1 } } },
+        xAxis: axis(tk, { type: "category", data: cats, boundaryGap: false }),
+        yAxis: axis(tk, { type: "value", scale: u !== "CAD", position: "left", axisLabel: { color: tk.muted, fontSize: 11, formatter: axisFmt(u) } }),
+        series: spec.series.map((s, i) => {
+          const hero = solo && s.role !== "baseline" && i === spec.series.findIndex((x) => x.role !== "baseline");
+          const col = hero ? HERO_STROKE[1] : seriesColor(s, i, tk);
+          return { name: s.name, type: "line", data: s.values, smooth: 0.35, showSymbol: false, symbol: "circle", symbolSize: 9,
+            stack: spec.chart_type === "stacked_area" ? "total" : undefined,
+            lineStyle: { width: hero ? 2.6 : 2, type: s.role === "baseline" ? "dashed" : "solid", color: hero ? heroLine() : col,
+              shadowColor: hero ? hexA(HERO_STROKE[1], 0.45) : undefined, shadowBlur: hero ? 12 : 0 },
+            itemStyle: { color: col, borderColor: tk.surface, borderWidth: 2, shadowColor: hexA(col, 0.8), shadowBlur: 10 },
+            areaStyle: spec.chart_type === "stacked_area" ? { opacity: 0.45 } : hero || spec.chart_type === "area" ? { color: fadeArea(col, hero ? 0.3 : 0.18) } : undefined,
+            emphasis: { focus: "series" }, ...(i === 0 ? refLines(spec, tk) : {}) };
+        }) };
+    }
     case "bar":
     case "stacked_bar":
     case "grouped_bar":
@@ -66,9 +89,11 @@ export function buildOption(spec: ChartSpec, tk: Tokens, animate = true): Record
         yAxis: axis(tk, { type: "value", axisLabel: { color: tk.muted, formatter: axisFmt(u) } }),
         series: spec.series.map((s, i) => {
           const line = s.render === "line" || (spec.chart_type === "combo" && s.render === "auto" && i === spec.series.length - 1 && spec.series.length > 1);
-          return { name: s.name, type: line ? "line" : "bar", data: s.values, barMaxWidth: 36,
+          return { name: s.name, type: line ? "line" : "bar", data: s.values, barMaxWidth: 36, smooth: line ? 0.35 : undefined,
+            showBackground: !line && spec.series.length === 1, backgroundStyle: { color: tk.dark ? "rgba(148,163,184,0.06)" : "rgba(15,23,42,0.04)", borderRadius: 6 },
             stack: line ? undefined : spec.chart_type === "stacked_bar" || (spec.chart_type === "combo" && s.stack) ? s.stack ?? "total" : undefined,
-            symbolSize: 6, lineStyle: line ? { width: 2, color: tk.ink } : undefined, itemStyle: { color: line ? tk.ink : seriesColor(s, i, tk), borderRadius: line ? 0 : 3 },
+            symbolSize: 6, showSymbol: !line, lineStyle: line ? { width: 2.4, color: heroLine(), shadowColor: hexA(HERO_STROKE[1], 0.4), shadowBlur: 10 } : undefined,
+            itemStyle: { color: line ? HERO_STROKE[1] : seriesColor(s, i, tk), borderRadius: line ? 0 : [6, 6, 0, 0] },
             emphasis: { focus: "series" }, ...(i === 0 ? refLines(spec, tk) : {}) };
         }) };
     case "hbar":

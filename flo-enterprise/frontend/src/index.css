@@ -13,12 +13,12 @@
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: 244 246 250;
-  --side: 255 255 255;
+  --bg: 238 240 248;   /* #EEF0F8 soft lavender-grey */
+  --side: 247 248 252;
   --card: 255 255 255;
-  --line: 222 228 238;
-  --ink: 15 23 42;
-  --muted: 82 96 117;
+  --line: 221 225 240;
+  --ink: 20 24 58;     /* #14183A */
+  --muted: 84 90 120;
 }
 html, body, #root { height: 100%; }
 body { background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: Inter, system-ui, sans-serif; }

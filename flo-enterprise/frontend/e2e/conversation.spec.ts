@@ -72,7 +72,7 @@ test("demo 2 + 9: CEO investigates AUM vs profitability and follow-ups change th
   await ask(page, "Now show the last 24 months.");
   await expect(page.locator('[data-kpi="aum"]')).toContainText("over 24 months");
   // chart filter control sends a structured follow-up
-  await chart(page, "margin_trend").getByLabel(/Window for Operating margin trend/).selectOption("12");
+  await chart(page, "margin_trend").getByRole("radio", { name: "12m" }).click();
   await expect(await lastTurn(page)).toHaveAttribute("data-status", "complete");
   // explain-with-FLO from a chart
   await chart(page, "margin_trend").getByRole("button", { name: /Explain with FLO/ }).click();

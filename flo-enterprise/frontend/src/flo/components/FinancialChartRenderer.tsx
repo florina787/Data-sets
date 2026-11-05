@@ -8,7 +8,7 @@ import { Badge, Button, Select, cn } from "@/components/ui";
 import { useApp } from "@/lib/app";
 import { tokens } from "@/lib/chartTheme";
 import { buildOption, isRenderable, specRows } from "../chartOptions";
-import { formatValue, PROVENANCE_LABEL, prefersReducedMotion } from "../format";
+import { formatDelta, formatValue, PROVENANCE_LABEL, prefersReducedMotion } from "../format";
 import type { ChartSpec, MessageContext } from "../types";
 import { DataFreshnessIndicator } from "./DataFreshnessIndicator";
 
@@ -52,6 +52,17 @@ export function FinancialChartRenderer({ spec, onFollowup, index = 0, height = 2
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [spec, theme, ok]);
   const rows = useMemo(() => (ok ? specRows(spec) : []), [spec, ok]);
+  // LumaTrade-style headline: latest value of the primary line and its change across the window, from this chart's own data
+  const hero = useMemo(() => {
+    if (!ok || !["line", "area"].includes(spec.chart_type)) return null;
+    const s0 = spec.series.find((x) => x.role !== "baseline");
+    const vals = (s0?.values ?? []).filter((v): v is number => v != null);
+    if (!s0 || vals.length < 2) return null;
+    const first = vals[0], last = vals[vals.length - 1];
+    const unit = s0.unit || spec.unit;
+    const delta = unit === "%" ? last - first : first !== 0 ? last / first - 1 : null;
+    return { name: s0.name, last, unit, delta, deltaText: delta == null ? "" : unit === "%" ? formatDelta(delta, "pp") : formatDelta(delta, "%") };
+  }, [spec, ok]);
   if (!ok) {
     return <div className="rounded-xl border border-crit/40 bg-crit/10 p-3 text-sm" role="alert">Chart not shown: unsupported specification.</div>;
   }
@@ -64,15 +75,33 @@ export function FinancialChartRenderer({ spec, onFollowup, index = 0, height = 2
   const exportCsv = () => save(URL.createObjectURL(new Blob([toCSV(rows)], { type: "text/csv" })), `flo-${spec.chart_id}.csv`);
   const summary = `${spec.title}. ${spec.subtitle}`.trim();
   return (
-    <section className="flo-rise flex min-w-0 flex-col rounded-xl border border-line bg-card p-4" style={{ animationDelay: `${120 + index * 70}ms` }}
+    <section className="flo-rise flex min-w-0 flex-col rounded-2xl border border-line/70 bg-gradient-to-b from-card to-card/70 p-4 shadow-[0_12px_32px_-20px_rgb(0_0_0/0.6)]" style={{ animationDelay: `${120 + index * 70}ms` }}
       data-chart={inline ? undefined : spec.chart_id} data-inline-chart={inline ? spec.chart_id : undefined} aria-label={inline ? `${spec.title} (in answer)` : spec.title}>
       <header className="mb-2 flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="text-sm font-semibold">{spec.title}</h3>
           {spec.subtitle && <p className="text-xs text-muted">{spec.subtitle}</p>}
+          {hero && !inline && (
+            <div role="group" className="mt-2 flex items-baseline gap-2" aria-label={`Latest ${hero.name}: ${formatValue(hero.last, hero.unit)}`}>
+              <span className="text-2xl font-semibold tracking-tight tabular-nums">{formatValue(hero.last, hero.unit)}</span>
+              {hero.delta != null && (
+                <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium tabular-nums", hero.delta >= 0 ? "bg-pos/15 text-pos" : "bg-crit/15 text-crit")}>
+                  {hero.deltaText} <span className="font-normal opacity-80">over window</span></span>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-1">
-          {spec.available_filters.map((f) => (
+          {spec.available_filters.map((f) => f.id === "months" ? (
+            <div key={f.id} role="radiogroup" aria-label={`${f.label} for ${spec.title}`} className="flex rounded-full border border-line bg-bg/50 p-0.5">
+              {f.options.map((o) => (
+                <button key={String(o)} role="radio" aria-checked={String(f.value) === String(o)}
+                  onClick={() => String(f.value) !== String(o) && onFollowup(`Show ${spec.title.toLowerCase()} for the last ${o} months.`, { months: Number(o) })}
+                  className={cn("rounded-full px-2.5 py-0.5 text-[11px] tabular-nums transition-colors",
+                    String(f.value) === String(o) ? "bg-card text-ink shadow-sm ring-1 ring-line" : "text-muted hover:text-ink")}>{o}m</button>
+              ))}
+            </div>
+          ) : (
             <Select key={f.id} aria-label={`${f.label} for ${spec.title}`} value={String(f.value)} className="h-7 text-xs"
               onChange={(e) => {
                 const v = e.target.value;

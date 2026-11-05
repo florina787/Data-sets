@@ -588,7 +588,8 @@ def _agent_runs(intent: dict, ctx, agent_events: list[dict], rec: dict) -> list[
         rows.append({"agent": a, "responsibility": spec.description, "status": status, "duration_ms": (e or {}).get("duration_ms"),
                      "tool_calls": len(calls), "denied_calls": sum(1 for t in calls if t.get("decision") != "allow"),
                      "tools": sorted({t["tool"] for t in calls}),
-                     "data_sources": _sources([t["tool"] for t in calls]),
+                     # a cached result was produced earlier by this agent's own allowlisted tools
+                     "data_sources": _sources([t["tool"] for t in calls] or (list(spec.allowed_tools) if e and e["status"] == "succeeded" else [])),
                      "evidence_refs": cites.get(a, 0), "approval_actions": list(spec.approval_actions), "data_classification": spec.data_classification,
                      # an identical request (same user, roles, inputs, data and policy version) was answered from the harness cache
                      "cached": bool(e and e["status"] == "succeeded" and not calls and spec.data_classification not in ("confidential", "restricted"))})
