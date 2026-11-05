@@ -78,7 +78,7 @@ function Mermaid({ code }: { code: string }) {
       alive = false;
     };
   }, [code, id]);
-  if (error) return <pre className="rounded-xl bg-espresso p-4 text-xs text-cream">{code}</pre>;
+  if (error) return <pre className="tokens-original rounded-xl bg-espresso p-4 text-xs text-cream">{code}</pre>;
   return <div ref={ref} className="my-2 overflow-x-auto rounded-xl border border-cream bg-white p-3" aria-label="Diagram" />;
 }
 
@@ -107,7 +107,7 @@ export const Markdown = memo(function Markdown({ text, streaming }: { text: stri
             const code = textOf(children).replace(/\n$/, "");
             if (lang === "mermaid" && !streaming) return <Mermaid code={code} />;
             return (
-              <div className="group my-3 overflow-hidden rounded-xl bg-espresso">
+              <div className="tokens-original group my-3 overflow-hidden rounded-xl bg-espresso">
                 <div className="flex items-center justify-between border-b border-bark px-3 py-1.5">
                   <span className="font-mono text-[11px] uppercase tracking-wide text-sand">{lang ?? "code"}</span>
                   <CopyButton text={code} />

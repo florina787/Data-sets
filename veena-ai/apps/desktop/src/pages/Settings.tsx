@@ -91,7 +91,7 @@ function Diagnostics() {
           )}
         </tbody>
       </table>
-      {log && <pre className="mx-5 mb-5 max-h-64 overflow-auto rounded-xl bg-espresso p-3 font-mono text-[11px] text-cream">{log}</pre>}
+      {log && <pre className="tokens-original mx-5 mb-5 max-h-64 overflow-auto rounded-xl bg-espresso p-3 font-mono text-[11px] text-cream">{log}</pre>}
     </Card>
   );
 }

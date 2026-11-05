@@ -31,6 +31,81 @@
   --veena-focus: #75462d;
 }
 
+/* ---------- Night theme (default) ----------
+   The brown ramp is inverted, so every light-on-dark pair in the UI stays a
+   readable contrast pair: cards become bark on an espresso page, text becomes
+   warm white and cream, primary buttons become sand with dark text. */
+.night {
+  color-scheme: dark;
+  --veena-focus: #d6b79b;
+  --color-white: #4a2c1c;
+  --color-warm: #2c1a12;
+  --color-ivory: #2c1a12;
+  --color-cream: #75462d;
+  --color-sand: #99613e;
+  --color-ginger: #b87848;
+  --color-caramel: #d6b79b;
+  --color-mocha: #efe2d2;
+  --color-bark: #fcfaf7;
+  --color-espresso: #ffffff;
+}
+
+/* Islands that are dark in both themes (code, video, logs) keep the original tokens. */
+.tokens-original {
+  --color-white: #ffffff;
+  --color-warm: #fcfaf7;
+  --color-ivory: #f7f1e9;
+  --color-cream: #efe2d2;
+  --color-sand: #d6b79b;
+  --color-ginger: #b87848;
+  --color-caramel: #99613e;
+  --color-mocha: #75462d;
+  --color-bark: #4a2c1c;
+  --color-espresso: #2c1a12;
+}
+
+/* Soft ginger glow used behind hero elements and the listening orb. */
+.veena-glow {
+  background:
+    radial-gradient(60% 55% at 50% 38%, rgb(184 120 72 / 0.35), transparent 70%),
+    radial-gradient(40% 40% at 80% 10%, rgb(214 183 155 / 0.12), transparent 70%);
+}
+.veena-grid-lines {
+  background-image:
+    linear-gradient(rgb(214 183 155 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(214 183 155 / 0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.veena-outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(214 183 155 / 0.22);
+}
+@keyframes veena-wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.veena-wave-bar {
+  transform-origin: center;
+  animation: veena-wave 1.1s ease-in-out infinite;
+}
+@keyframes veena-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+.veena-float {
+  animation: veena-float 5s ease-in-out infinite;
+}
+
 html,
 body,
 #root {

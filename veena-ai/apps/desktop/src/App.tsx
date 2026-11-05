@@ -7,6 +7,7 @@ import { About } from "./pages/About";
 import { Analytics } from "./pages/Analytics";
 import { Interview } from "./pages/Interview";
 import { Knowledge } from "./pages/Knowledge";
+import { Library } from "./pages/Library";
 import { Meeting } from "./pages/Meeting";
 import { ScreenPage } from "./pages/Screen";
 import { Settings } from "./pages/Settings";
@@ -48,7 +49,7 @@ function BackendFailed({ error }: { error?: string }) {
           Show log
         </Button>
       </div>
-      {log !== null && <pre className="mt-4 max-h-72 w-full max-w-3xl overflow-auto rounded-xl bg-espresso p-3 text-left font-mono text-[11px] text-cream">{log || "(empty)"}</pre>}
+      {log !== null && <pre className="tokens-original mt-4 max-h-72 w-full max-w-3xl overflow-auto rounded-xl bg-espresso p-3 text-left font-mono text-[11px] text-cream">{log || "(empty)"}</pre>}
     </div>
   );
 }
@@ -93,6 +94,7 @@ export default function App() {
       <Sidebar />
       <main className="min-w-0 flex-1">
         {page === "welcome" && <Welcome onShare={openPicker} />}
+        {page === "library" && <Library />}
         {page === "workspace" && <Workspace />}
         {page === "screen" && <ScreenPage onShare={openPicker} />}
         {page === "interview" && <Interview />}

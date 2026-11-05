@@ -66,7 +66,7 @@ function Preview() {
     <div className="relative">
       <div
         ref={box}
-        className={cn("relative aspect-video overflow-hidden rounded-xl bg-espresso", selecting && "cursor-crosshair")}
+        className={cn("tokens-original relative aspect-video overflow-hidden rounded-xl bg-espresso", selecting && "cursor-crosshair")}
         onPointerDown={(e) => {
           if (!selecting) return;
           (e.target as HTMLElement).setPointerCapture(e.pointerId);

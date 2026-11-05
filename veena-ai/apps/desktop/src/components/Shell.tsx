@@ -3,9 +3,11 @@ import {
   BarChart3,
   BookOpen,
   BriefcaseBusiness,
+  FolderOpen,
   Info,
   MessagesSquare,
   Mic,
+  Moon,
   Monitor,
   PanelLeftClose,
   PanelLeftOpen,
@@ -14,6 +16,7 @@ import {
   Plus,
   Search,
   Settings as SettingsIcon,
+  Sun,
   Trash2,
   Users,
   X,
@@ -21,11 +24,13 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 import type { ScreenSource } from "../services/bridge";
 import { type Page, useApp } from "../stores/app";
+import { applyTheme, getTheme } from "../services/theme";
 import { useAudio, useScreen } from "../stores/media";
 import { CatMark, Wordmark } from "./CatMark";
 import { Badge, Button, cn, Input, Section, StatusDot, Switch } from "./ui";
 
 const NAV: { page: Page; label: string; icon: typeof MessagesSquare }[] = [
+  { page: "library", label: "Library", icon: FolderOpen },
   { page: "workspace", label: "Conversation", icon: MessagesSquare },
   { page: "screen", label: "Screen Intelligence", icon: Monitor },
   { page: "meeting", label: "Meeting Copilot", icon: Users },
@@ -39,6 +44,12 @@ const MODE_ICON = { conversation: MessagesSquare, screen: Monitor, meeting: User
 export function Sidebar() {
   const { page, setPage, sessions, loadSessions, openSession, deleteSession, currentSession, sidebarOpen, toggleSidebar, newSession, collections } = useApp();
   const [q, setQ] = useState("");
+  const [theme, setTheme] = useState(getTheme());
+  const flipTheme = () => {
+    const next = theme === "night" ? "day" : "night";
+    applyTheme(next);
+    setTheme(next);
+  };
   useEffect(() => {
     const t = setTimeout(() => void loadSessions(q), 250);
     return () => clearTimeout(t);
@@ -46,7 +57,7 @@ export function Sidebar() {
 
   if (!sidebarOpen) {
     return (
-      <aside className="flex w-14 flex-col items-center gap-2 border-r border-cream bg-white py-3">
+      <aside className="flex w-14 flex-col items-center gap-2 border-r border-cream bg-warm py-3">
         <button type="button" onClick={() => setPage("welcome")} aria-label="Home">
           <CatMark size={32} />
         </button>
@@ -68,7 +79,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-cream bg-white">
+    <aside className="flex w-64 shrink-0 flex-col border-r border-cream bg-warm">
       <div className="flex items-center gap-2 px-4 py-3">
         <button type="button" onClick={() => setPage("welcome")} className="flex items-center gap-2" aria-label="Home">
           <CatMark size={30} />
@@ -96,7 +107,7 @@ export function Sidebar() {
             key={n.page}
             type="button"
             onClick={() => setPage(n.page)}
-            className={cn("flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm", page === n.page ? "bg-ivory font-medium text-espresso" : "text-mocha hover:bg-warm")}
+            className={cn("flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm", page === n.page ? "bg-white font-medium text-espresso shadow-[var(--shadow-soft)]" : "text-mocha hover:bg-white/60")}
           >
             <n.icon size={16} />
             {n.label}
@@ -117,7 +128,7 @@ export function Sidebar() {
                 <button
                   type="button"
                   onClick={() => void openSession(s.id)}
-                  className={cn("flex w-full items-center gap-2 rounded-lg px-2 py-1.5 pr-8 text-left text-sm", currentSession?.id === s.id ? "bg-cream text-espresso" : "text-mocha hover:bg-warm")}
+                  className={cn("flex w-full items-center gap-2 rounded-lg px-2 py-1.5 pr-8 text-left text-sm", currentSession?.id === s.id ? "bg-white text-espresso" : "text-mocha hover:bg-white/60")}
                 >
                   <Icon size={14} className="shrink-0 text-caramel" />
                   <span className="truncate">{s.title}</span>
@@ -138,14 +149,17 @@ export function Sidebar() {
         </ul>
       </Section>
       <div className="border-t border-cream px-3 py-2 text-xs text-caramel">
-        <button type="button" onClick={() => setPage("knowledge")} className="mb-1 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-warm">
+        <button type="button" onClick={() => setPage("knowledge")} className="mb-1 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-white/60">
           <BookOpen size={14} /> {collections.length} knowledge collection{collections.length === 1 ? "" : "s"}
         </button>
         <div className="flex gap-1">
-          <button type="button" onClick={() => setPage("settings")} className="flex flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-warm">
+          <button type="button" onClick={() => setPage("settings")} className="flex flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-white/60">
             <SettingsIcon size={14} /> Settings
           </button>
-          <button type="button" onClick={() => setPage("about")} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-warm" aria-label="About">
+          <button type="button" onClick={flipTheme} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-white/60" aria-label={theme === "night" ? "Switch to day theme" : "Switch to night theme"} title="Theme">
+            {theme === "night" ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+          <button type="button" onClick={() => setPage("about")} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-mocha hover:bg-white/60" aria-label="About">
             <Info size={14} />
           </button>
         </div>
@@ -178,7 +192,7 @@ export function ContextPanel({ children }: { children?: ReactNode }) {
       {children}
       {screen.sharing && (
         <Section title="Screen preview">
-          <div className="overflow-hidden rounded-xl border border-cream bg-espresso">
+          <div className="tokens-original overflow-hidden rounded-xl border border-cream bg-espresso">
             {screen.lastFrame ? <img src={screen.lastFrame} alt="Last analysed frame" className="w-full" /> : <p className="p-3 text-xs text-sand">No frame analysed yet.</p>}
           </div>
           <p className="mt-1 truncate text-xs text-caramel">Sharing: {screen.sourceName}</p>
@@ -337,7 +351,7 @@ export function SourcePicker({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <AnimatePresence>
       {open && (
-        <motion.div className="fixed inset-0 z-40 flex items-center justify-center bg-espresso/40 p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="fixed inset-0 z-40 flex items-center justify-center p-6" style={{ background: "rgb(44 26 18 / 0.6)" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div role="dialog" aria-modal="true" aria-label="Choose what to share" className="flex max-h-full w-full max-w-4xl flex-col rounded-2xl bg-white shadow-[var(--shadow-lift)]" initial={{ y: 12 }} animate={{ y: 0 }}>
             <div className="flex items-center justify-between border-b border-cream px-5 py-4">
               <div>

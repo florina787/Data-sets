@@ -86,7 +86,7 @@ function AssistantBubble({ m }: { m: Message }) {
           <Citations items={m.citations} />
           <GovernanceNotes meta={m.meta} />
           <div className="mt-2 flex justify-end">
-            <span className="rounded-md bg-espresso">
+            <span className="tokens-original rounded-md bg-espresso">
               <CopyButton text={m.content} label="Copy answer" />
             </span>
           </div>

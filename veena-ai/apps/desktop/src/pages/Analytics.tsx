@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { CatMark } from "../components/CatMark";
 import { TopBar } from "../components/Shell";
-import { Button, Card, CardHeader } from "../components/ui";
+import { Button, Card, CardHeader, cn } from "../components/ui";
 import { useApp } from "../stores/app";
 
 interface Summary {
@@ -23,8 +23,9 @@ interface Metrics {
   embedding_cache_hits: number;
 }
 
-const AXIS = { stroke: "#D6B79B", fontSize: 11, tickLine: false };
-const TT = { contentStyle: { background: "#FFFFFF", border: "1px solid #EFE2D2", borderRadius: 10, fontSize: 12, color: "#4A2C1C" } };
+// Theme-aware: CSS variables follow the night/day theme.
+const AXIS = { stroke: "var(--color-caramel)", fontSize: 11, tickLine: false };
+const TT = { contentStyle: { background: "var(--color-white)", border: "1px solid var(--color-cream)", borderRadius: 10, fontSize: 12, color: "var(--color-bark)" } };
 
 const LATENCY: [string, string][] = [
   ["asr.partial_ms", "ASR partial"],
@@ -46,6 +47,51 @@ function fmt(v: number | undefined, unit = "ms") {
 
 function Empty({ text }: { text: string }) {
   return <p className="px-5 pb-5 text-sm text-caramel">{text}</p>;
+}
+
+/** Sessions per day over the last 12 weeks, GitHub-style. */
+function ActivityHeatmap() {
+  const { sessions } = useApp();
+  const weeks = 12;
+  const counts = new Map<string, number>();
+  for (const s of sessions) {
+    const d = new Date(s.created_at.endsWith("Z") || s.created_at.includes("+") ? s.created_at : s.created_at + "Z");
+    const key = d.toDateString();
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  // Columns are weeks (Sunday to Saturday); the last column is the current week.
+  const start = new Date(today);
+  start.setHours(0, 0, 0, 0);
+  start.setDate(today.getDate() - today.getDay() - (weeks - 1) * 7);
+  const days = Array.from({ length: weeks * 7 }, (_, i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    return d;
+  });
+  const max = Math.max(1, ...days.map((d) => counts.get(d.toDateString()) ?? 0));
+  const shade = (n: number) => (n === 0 ? "bg-ivory" : n / max < 0.34 ? "bg-cream" : n / max < 0.67 ? "bg-ginger" : "bg-caramel");
+  const total = days.reduce((a, d) => a + (counts.get(d.toDateString()) ?? 0), 0);
+  return (
+    <Card className="md:col-span-2">
+      <CardHeader title="Activity" subtitle={`${total} sessions in the last ${weeks} weeks`} />
+      <div className="flex gap-1.5 overflow-x-auto px-5 pt-5 pb-2" role="img" aria-label={`${total} sessions in the last ${weeks} weeks`}>
+        {Array.from({ length: weeks }, (_, w) => (
+          <div key={w} className="flex flex-col gap-1">
+            {days.slice(w * 7, w * 7 + 7).map((d) => {
+              const n = counts.get(d.toDateString()) ?? 0;
+              return <span key={d.toISOString()} title={`${d.toDateString()}: ${n} session${n === 1 ? "" : "s"}`} className={cn("h-6 w-6 rounded-md", d > today ? "opacity-0" : shade(n))} />;
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-1.5 px-5 pb-5 text-[11px] text-caramel" aria-hidden>
+        Less <span className="h-3 w-3 rounded-sm bg-ivory" /> <span className="h-3 w-3 rounded-sm bg-cream" /> <span className="h-3 w-3 rounded-sm bg-ginger" />{" "}
+        <span className="h-3 w-3 rounded-sm bg-caramel" /> More
+      </div>
+    </Card>
+  );
 }
 
 export function Analytics() {
@@ -106,18 +152,20 @@ export function Analytics() {
             </Card>
           ))}
 
+          <ActivityHeatmap />
+
           <Card className="md:col-span-2">
             <CardHeader title="Pipeline latency" subtitle="p50 and p95 in milliseconds" />
             {latencyRows.length ? (
               <div className="h-72 p-3">
                 <ResponsiveContainer>
                   <BarChart data={latencyRows} layout="vertical" margin={{ left: 40 }}>
-                    <CartesianGrid stroke="#EFE2D2" horizontal={false} />
+                    <CartesianGrid stroke="var(--color-cream)" horizontal={false} />
                     <XAxis type="number" {...AXIS} />
-                    <YAxis type="category" dataKey="label" width={130} {...AXIS} stroke="#75462D" />
+                    <YAxis type="category" dataKey="label" width={130} {...AXIS} stroke="var(--color-mocha)" />
                     <Tooltip {...TT} />
-                    <Bar dataKey="p50" fill="#99613E" radius={[0, 4, 4, 0]} />
-                    <Bar dataKey="p95" fill="#D6B79B" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="p50" fill="var(--color-ginger)" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="p95" fill="var(--color-sand)" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -132,11 +180,11 @@ export function Analytics() {
               <div className="h-72 p-3">
                 <ResponsiveContainer>
                   <LineChart data={daily}>
-                    <CartesianGrid stroke="#EFE2D2" vertical={false} />
+                    <CartesianGrid stroke="var(--color-cream)" vertical={false} />
                     <XAxis dataKey="day" {...AXIS} />
                     <YAxis {...AXIS} />
                     <Tooltip {...TT} />
-                    <Line type="monotone" dataKey="seconds" stroke="#75462D" strokeWidth={2} dot={{ r: 3, fill: "#75462D" }} />
+                    <Line type="monotone" dataKey="seconds" stroke="var(--color-ginger)" strokeWidth={2} dot={{ r: 3, fill: "var(--color-ginger)" }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -182,7 +230,7 @@ export function Analytics() {
                     <XAxis dataKey="k" {...AXIS} />
                     <YAxis allowDecimals={false} {...AXIS} />
                     <Tooltip {...TT} />
-                    <Bar dataKey="v" name="questions" fill="#B87848" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="v" name="questions" fill="var(--color-caramel)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -220,11 +268,11 @@ export function Analytics() {
               <div className="h-56 p-3">
                 <ResponsiveContainer>
                   <LineChart data={practice}>
-                    <CartesianGrid stroke="#EFE2D2" vertical={false} />
+                    <CartesianGrid stroke="var(--color-cream)" vertical={false} />
                     <XAxis dataKey="i" {...AXIS} />
                     <YAxis domain={[0, 10]} {...AXIS} />
                     <Tooltip {...TT} />
-                    <Line type="monotone" dataKey="score" stroke="#99613E" strokeWidth={2} dot={{ r: 3, fill: "#99613E" }} />
+                    <Line type="monotone" dataKey="score" stroke="var(--color-ginger)" strokeWidth={2} dot={{ r: 3, fill: "var(--color-ginger)" }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
