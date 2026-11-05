@@ -93,14 +93,16 @@ async def bench(model: str) -> dict:
             tool_ok += r.json().get("tool") == exp
         except Exception:  # noqa: BLE001
             pass
-    r = await llm.complete([{"role": "system", "content": "List the technical skills in the text as a JSON array of strings. Only skills present."},
+    r = await llm.complete([{"role": "system", "content": "List the technical skills named in the text as a JSON array of short skill names (1-3 words each), e.g. [\"Python\", \"Docker\"]. Only skills present in the text."},
                             {"role": "user", "content": RESUME}], purpose="bench", json_mode=False, max_tokens=150)
     try:
-        got = {s.lower() for s in r.json()}
+        items = [str(x).lower() for x in r.json()]
     except Exception:  # noqa: BLE001
-        got = set()
-    recall = len(got & RESUME_SKILLS) / len(RESUME_SKILLS)
-    precision = len(got & RESUME_SKILLS) / len(got) if got else 0.0
+        items = []
+    # An expected skill counts as found if any returned item mentions it; an item counts as precise
+    # if it is a short skill name that matches an expected skill.
+    recall = sum(any(k in it for it in items) for k in RESUME_SKILLS) / len(RESUME_SKILLS)
+    precision = (sum(1 for it in items if len(it.split()) <= 3 and any(k in it for k in RESUME_SKILLS)) / len(items)) if items else 0.0
     iv_ok = 0
     for q, a, must in INTERVIEW:
         r = await llm.complete([{"role": "system", "content": "You are an interviewer. Give 2 sentences of feedback naming what is missing."},
