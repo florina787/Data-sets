@@ -1,0 +1,60 @@
+name: Career_flo AI CI
+
+on:
+  pull_request:
+    paths: ["careerflo/**", ".github/workflows/careerflo-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["careerflo/**", ".github/workflows/careerflo-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: careerflo_test }
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: careerflo/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.12" }
+      - run: uv sync --frozen
+      # Deterministic tests: scripted Qwen stand-in, synthetic jobs, no network keys.
+      - name: Tests (SQLite)
+        run: uv run pytest
+      - name: Migrations + tests (PostgreSQL)
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/careerflo_test
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/careerflo_test
+        run: |
+          uv run alembic upgrade head
+          uv run pytest
+      - name: Dependency audit
+        run: uvx pip-audit --strict -r <(uv export --frozen --no-dev --no-hashes) || echo "::warning::pip-audit reported issues"
+        shell: bash
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: careerflo/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: careerflo/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --audit-level=high --omit=dev || echo "::warning::npm audit reported issues"

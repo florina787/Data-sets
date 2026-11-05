@@ -1,0 +1,47 @@
+{
+  "machine": {
+    "cpus": 4,
+    "ram_gb": 16.9
+  },
+  "results": [
+    {
+      "model": "qwen3:0.6b",
+      "load_seconds": 1.9,
+      "server_rss_gb": 6.53,
+      "cpu_percent_during_generation": 99.8,
+      "ttft_ms": 192,
+      "tokens_per_second": 33.3,
+      "structured_output_accuracy": "3/4",
+      "tool_selection_accuracy": "7/8",
+      "resume_skill_recall": 0.0,
+      "resume_skill_precision": 0.0,
+      "interview_feedback_relevance": "0/2"
+    },
+    {
+      "model": "qwen3:1.7b",
+      "load_seconds": 5.75,
+      "server_rss_gb": 6.45,
+      "cpu_percent_during_generation": 99.4,
+      "ttft_ms": 901,
+      "tokens_per_second": 10.1,
+      "structured_output_accuracy": "4/4",
+      "tool_selection_accuracy": "8/8",
+      "resume_skill_recall": 0.0,
+      "resume_skill_precision": 0.0,
+      "interview_feedback_relevance": "1/2"
+    },
+    {
+      "model": "qwen3:4b",
+      "load_seconds": 13.55,
+      "server_rss_gb": 6.65,
+      "cpu_percent_during_generation": 99.7,
+      "ttft_ms": 2156,
+      "tokens_per_second": 4.6,
+      "structured_output_accuracy": "4/4",
+      "tool_selection_accuracy": "8/8",
+      "resume_skill_recall": 0.0,
+      "resume_skill_precision": 0.0,
+      "interview_feedback_relevance": "1/2"
+    }
+  ]
+}
