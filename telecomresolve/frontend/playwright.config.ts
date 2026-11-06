@@ -16,6 +16,6 @@ export default defineConfig({
         `CHECKPOINT_URL=sqlite:///${db}/cp.db ${py} -m uvicorn app.main:app --port 8000`,
       url: "http://127.0.0.1:8000/ready", reuseExistingServer: false, timeout: 60_000,
     },
-    { command: "npx vite --port 5173 --strictPort", url: "http://127.0.0.1:5173", reuseExistingServer: false },
+    { command: "npx vite --host 127.0.0.1 --port 5173 --strictPort", url: "http://127.0.0.1:5173", reuseExistingServer: false },
   ],
 });
