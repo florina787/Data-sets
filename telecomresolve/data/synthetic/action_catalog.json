@@ -1,0 +1,113 @@
+{
+  "_notice": "SYNTHETIC configurable rules for an independent prototype. Not any operator's real policy.",
+  "version": "2026.10-synthetic.1",
+  "effective_date": "2026-10-01",
+  "actions": [
+    {
+      "action_type": "retrieve_diagnostics",
+      "label": "Retrieve diagnostics",
+      "classification": "read",
+      "mvp_behavior": "executable",
+      "risk": "low",
+      "approver_roles": [],
+      "executor_roles": ["specialist", "network_analyst", "supervisor"],
+      "separation_of_duties": false,
+      "evidence_requirements": [],
+      "connector": "diagnostics",
+      "description": "Read synthetic line telemetry and on-demand test results within the case's authorised scope."
+    },
+    {
+      "action_type": "suggest_customer_troubleshooting",
+      "label": "Suggest customer troubleshooting",
+      "classification": "write",
+      "mvp_behavior": "executable",
+      "risk": "low",
+      "approver_roles": ["specialist", "supervisor"],
+      "executor_roles": ["specialist", "supervisor"],
+      "separation_of_duties": false,
+      "evidence_requirements": ["fresh_diagnostics", "approved_guide_steps"],
+      "connector": "customer_message_preview",
+      "description": "Present approved guide steps to the specialist for the customer. Records the steps; does not send anything.",
+      "forbidden_when": ["active_mapped_incident", "guide_steps_already_failed"]
+    },
+    {
+      "action_type": "associate_case_with_incident",
+      "label": "Associate case with incident",
+      "classification": "write",
+      "mvp_behavior": "executable",
+      "risk": "low",
+      "approver_roles": ["specialist", "network_analyst", "supervisor"],
+      "executor_roles": ["specialist", "network_analyst", "supervisor"],
+      "separation_of_duties": false,
+      "evidence_requirements": ["mapped_incident", "incident_time_overlap"],
+      "connector": "incident_link",
+      "description": "Link the case to an incident on the service's mapped network path after specialist confirmation."
+    },
+    {
+      "action_type": "draft_customer_update",
+      "label": "Draft customer update",
+      "classification": "write",
+      "mvp_behavior": "executable",
+      "risk": "low",
+      "approver_roles": ["specialist", "supervisor"],
+      "executor_roles": ["specialist", "supervisor"],
+      "separation_of_duties": false,
+      "evidence_requirements": ["cited_facts_only"],
+      "connector": "customer_message_preview",
+      "description": "Generate a cited draft. Never sent in this prototype; sending requires a future connector and approval."
+    },
+    {
+      "action_type": "create_technician_dispatch",
+      "label": "Create technician dispatch",
+      "classification": "write",
+      "mvp_behavior": "executable",
+      "risk": "high",
+      "approver_roles": ["supervisor"],
+      "executor_roles": ["field_coordinator", "supervisor"],
+      "separation_of_duties": true,
+      "evidence_requirements": ["fresh_diagnostics", "line_or_equipment_fault", "no_active_mapped_incident"],
+      "connector": "dispatch",
+      "description": "Preview, then create a simulated technician appointment. Appointment availability is not inferred.",
+      "forbidden_when": ["active_mapped_incident", "insufficient_evidence"]
+    },
+    {
+      "action_type": "reset_equipment",
+      "label": "Reset equipment",
+      "classification": "write",
+      "mvp_behavior": "proposal_only",
+      "risk": "medium",
+      "approver_roles": ["supervisor"],
+      "executor_roles": [],
+      "separation_of_duties": true,
+      "evidence_requirements": ["fresh_diagnostics", "equipment_fault"],
+      "connector": "provisioning",
+      "description": "Shown as a proposal only. Requires explicit approval and a future provisioning connector."
+    },
+    {
+      "action_type": "modify_service",
+      "label": "Modify service",
+      "classification": "write",
+      "mvp_behavior": "proposal_only",
+      "risk": "high",
+      "approver_roles": ["supervisor"],
+      "executor_roles": [],
+      "separation_of_duties": true,
+      "evidence_requirements": ["fresh_diagnostics"],
+      "connector": "provisioning",
+      "description": "Shown as a proposal only. Requires explicit approval and a future provisioning connector."
+    },
+    {
+      "action_type": "apply_bill_credit",
+      "label": "Apply bill credit",
+      "classification": "write",
+      "mvp_behavior": "disabled",
+      "risk": "high",
+      "approver_roles": [],
+      "executor_roles": [],
+      "separation_of_duties": true,
+      "evidence_requirements": ["deterministic_eligibility", "financial_authority"],
+      "connector": "billing",
+      "description": "Disabled in the MVP. Credit eligibility is never inferred by a model."
+    }
+  ]
+}

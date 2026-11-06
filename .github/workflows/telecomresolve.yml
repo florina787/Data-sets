@@ -1,0 +1,63 @@
+name: telecomresolve
+on:
+  push:
+    paths: ["telecomresolve/**", ".github/workflows/telecomresolve.yml"]
+  pull_request:
+    paths: ["telecomresolve/**", ".github/workflows/telecomresolve.yml"]
+permissions:
+  contents: read
+defaults:
+  run:
+    working-directory: telecomresolve
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env: { POSTGRES_USER: tr, POSTGRES_PASSWORD: tr, POSTGRES_DB: tr }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U tr" --health-interval 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - run: pip install -r backend/requirements-dev.txt pip-audit
+      - name: Tests (SQLite)
+        run: cd backend && python -m pytest -q
+      - name: Tests (PostgreSQL)
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://tr:tr@localhost:5432/tr
+          TEST_CHECKPOINT_URL: postgresql+psycopg://tr:tr@localhost:5432/tr
+        run: cd backend && python -m pytest -q --deselect tests/test_migrations.py
+      - name: Evaluation release gates
+        run: cd backend && python -m app.evaluation.run --out /tmp/eval
+      - name: Dependency audit
+        run: pip-audit -r backend/requirements.txt
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - run: cd frontend && npm ci
+      - run: cd frontend && npm run typecheck && npm test && npm run build
+      - run: cd frontend && npm audit --omit=dev --audit-level=high
+      - name: End-to-end journey
+        run: |
+          pip install -r backend/requirements.txt
+          cd frontend && npx playwright install --with-deps chromium && npx playwright test
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+  containers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
