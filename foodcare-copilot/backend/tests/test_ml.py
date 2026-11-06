@@ -106,3 +106,10 @@ def test_import_merges_near_duplicates_and_splits_by_group(platform, tmp_path):
     with pytest.raises(PlatformError, match="checksum mismatch"):  # images are verified on every use
         for split in ("train", "val", "test"):
             datasets.load_items(report["dataset_id"], split)
+
+
+def test_roc_auc_and_average_precision_hand_checked():
+    y, s = [0, 0, 1, 1], [0.1, 0.4, 0.35, 0.8]
+    assert metrics.roc_auc(y, s) == 0.75  # 3 of 4 positive/negative pairs ranked correctly
+    assert metrics.average_precision(y, s) == pytest.approx((1 / 1 + 2 / 3) / 2, abs=1e-4)
+    assert metrics.roc_auc([1, 1], [0.2, 0.3]) is None

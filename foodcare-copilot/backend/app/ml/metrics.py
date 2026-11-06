@@ -155,3 +155,33 @@ def expected_calibration_error(y: Sequence[int], prob: Sequence[float], bins: in
         if mask.any():
             ece += mask.mean() * abs(p_arr[mask].mean() - y_arr[mask].mean())
     return round(float(ece), 4)
+
+
+def roc_auc(y: Sequence[int], score: Sequence[float]) -> float | None:
+    """Area under the ROC curve (rank formulation; ties get average ranks)."""
+    y_arr, s_arr = np.asarray(y, dtype=int), np.asarray(score, dtype=float)
+    pos, neg = int(y_arr.sum()), int(len(y_arr) - y_arr.sum())
+    if not pos or not neg:
+        return None
+    order = np.argsort(s_arr, kind="mergesort")
+    ranks = np.empty(len(s_arr))
+    sorted_s = s_arr[order]
+    i = 0
+    while i < len(sorted_s):
+        j = i
+        while j + 1 < len(sorted_s) and sorted_s[j + 1] == sorted_s[i]:
+            j += 1
+        ranks[order[i:j + 1]] = (i + j) / 2 + 1
+        i = j + 1
+    return round(float((ranks[y_arr == 1].sum() - pos * (pos + 1) / 2) / (pos * neg)), 4)
+
+
+def average_precision(y: Sequence[int], score: Sequence[float]) -> float | None:
+    """PR-AUC as average precision (step-wise, no interpolation)."""
+    y_arr, s_arr = np.asarray(y, dtype=int), np.asarray(score, dtype=float)
+    if not y_arr.sum():
+        return None
+    order = np.argsort(-s_arr, kind="mergesort")
+    hits = y_arr[order]
+    precision = np.cumsum(hits) / np.arange(1, len(hits) + 1)
+    return round(float((precision * hits).sum() / hits.sum()), 4)
