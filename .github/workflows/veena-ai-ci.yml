@@ -67,17 +67,17 @@ jobs:
             target: --win
             exe: release/win-unpacked/VEENA.AI.exe
             backend: packaging/backend-dist/veena-backend/veena-backend.exe
-            artifact: release/*.exe
+            artifact: release/VEENA.AI-Windows-Setup.exe
           - os: ubuntu-latest
             target: --linux
             exe: release/linux-unpacked/veena-ai
             backend: packaging/backend-dist/veena-backend/veena-backend
-            artifact: release/*.AppImage
+            artifact: release/VEENA.AI-Linux-x86_64.AppImage
           - os: macos-latest
             target: --mac
             exe: release/mac-arm64/VEENA.AI.app/Contents/MacOS/VEENA.AI
             backend: packaging/backend-dist/veena-backend/veena-backend
-            artifact: release/*.dmg
+            artifact: release/VEENA.AI-macOS-AppleSilicon.dmg
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -125,3 +125,4 @@ jobs:
           path: veena-ai/apps/desktop/${{ matrix.artifact }}
           retention-days: 7
           if-no-files-found: error
+

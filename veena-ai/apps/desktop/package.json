@@ -106,7 +106,7 @@
       "uninstallerSidebar": "build/installerSidebar.bmp",
       "createDesktopShortcut": true,
       "shortcutName": "VEENA.AI",
-      "artifactName": "VEENA.AI-Setup-${version}.${ext}"
+      "artifactName": "VEENA.AI-Windows-Setup.${ext}"
     },
     "mac": {
       "target": [
@@ -123,7 +123,8 @@
       }
     },
     "dmg": {
-      "background": "build/background.png"
+      "background": "build/background.png",
+      "artifactName": "VEENA.AI-macOS-AppleSilicon.${ext}"
     },
     "linux": {
       "target": [
@@ -135,7 +136,10 @@
       "maintainer": "VEENA.AI contributors",
       "synopsis": "Local-first AI conversation companion"
     },
-    "publish": null
+    "publish": null,
+    "appImage": {
+      "artifactName": "VEENA.AI-Linux-x86_64.${ext}"
+    }
   },
   "repository": {
     "type": "git",

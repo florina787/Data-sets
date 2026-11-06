@@ -3,8 +3,9 @@
 ## 1. Install
 
 1. **Install Ollama** (free): <https://ollama.com/download>. Start it once; it runs in the background.
-2. **Install VEENA.AI**: run `VEENA.AI-Setup-<version>.exe` (Windows), open the `.dmg`
-   and drag VEENA to Applications (macOS), or run the `.AppImage` (Linux).
+2. **Install VEENA.AI** from the [latest release](https://github.com/florina787/Data-sets/releases/latest):
+   run `VEENA.AI-Windows-Setup.exe` (Windows), open `VEENA.AI-macOS-AppleSilicon.dmg`
+   and drag VEENA to Applications (Apple Silicon Macs), or run `VEENA.AI-Linux-x86_64.AppImage` (Linux).
    Builds are unsigned for now, so Windows SmartScreen and macOS Gatekeeper will
    warn on first launch (Windows: *More info → Run anyway*; macOS: right-click →
    *Open*).
