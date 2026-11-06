@@ -14,10 +14,14 @@
 | `npm audit --omit=dev` | 0 vulnerabilities |
 | Labelled evaluation | 133/133 checks; all 4 release gates pass |
 
-**Not verified:** Docker image builds (Docker Hub returned HTTP 429 for base images), the GitHub Actions workflow
-(not run here), `pip-audit` and gitleaks (configured in CI only), LIVE/HYBRID generation against the real
-Anthropic API (no key available; covered only by scripted fake-provider tests), pgvector (extension not installed
-locally), and a full backup/restore drill.
+**Verified in CI (GitHub Actions, 2026-11-06):** the same backend and frontend checks, plus `pip-audit`
+(no known vulnerabilities after bumping `langgraph-checkpoint-postgres` to 3.1.3 for CVE-2026-115883),
+Playwright e2e on the GitHub runner, `docker compose build` of both images, and a gitleaks secret scan.
+
+**Not verified:** running the full Compose stack with `docker compose up` (images build in CI; the startup
+sequence was only run against a local PostgreSQL), LIVE/HYBRID generation against the real Anthropic API (no key
+available; covered only by scripted fake-provider tests), pgvector (extension not installed locally), and a full
+backup/restore drill.
 
 ## Known limitations
 

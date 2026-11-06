@@ -64,8 +64,9 @@ cp .env.example .env             # optional; defaults work for a local demo
 docker compose up --build        # UI: http://localhost:8080, API: http://localhost:8000
 ```
 
-> The Compose images were **not built in this environment** (Docker Hub rate-limited the base-image pulls).
-> The same startup sequence (`alembic upgrade head` → seed → uvicorn) was verified against a local PostgreSQL 16.
+> Both images build in CI (`docker compose build`). The full stack has not been brought up with
+> `docker compose up` end to end; its startup sequence (`alembic upgrade head` → seed → uvicorn) was verified
+> against a local PostgreSQL 16.
 
 ### Tests and evaluation
 
