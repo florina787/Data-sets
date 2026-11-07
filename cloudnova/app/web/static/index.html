@@ -7,13 +7,14 @@
   <link rel="icon" href="/static/brand/cloud-logo.svg">
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="stylesheet" href="/static/journey.css">
+  <link rel="stylesheet" href="/static/studio.css">
 </head>
 <body>
 <div class="watermark" id="watermark"></div>
 <div class="shell">
   <aside class="rail" aria-label="Main navigation">
     <div class="brand">
-      <img src="/static/brand/logo.png" alt="" onerror="this.onerror=null;this.src='/static/brand/cloud-logo.svg'">
+      <img src="/static/brand/cloud-logo.svg" alt="">
       <div>CloudNova<small>Revenue Intelligence</small></div>
     </div>
     <nav class="nav" id="nav">
@@ -24,6 +25,8 @@
       <a href="#/customers" data-page="customers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 4 6"/></svg>Customers</a>
       <div class="sep"></div>
       <a href="#/quality" data-page="quality"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Reconciliation &amp; Quality</a>
+      <a href="#/studio" data-page="studio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="6" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="13" r="2.5"/><circle cx="6" cy="19" r="2"/><circle cx="19" cy="18" r="2"/><path d="M6.6 7.2l3.8 4.2M16.4 6.2l-3 5M10.2 14.4l-2.6 3.2M14.2 14l3.4 2.8"/></svg>Investigation Studio</a>
+      <a href="#/evaluation" data-page="evaluation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20h16M7 16V9M12 16V5M17 16v-4"/></svg>AI Evaluation</a>
       <a href="#/decisions" data-page="decisions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Finance Decisions</a>
       <a href="#/tower" data-page="tower"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><circle cx="12" cy="12" r="2"/><path d="M7 12h3M14 11l3.5-4.5M14 13l3.5 4.5"/></svg>Agent Control Tower</a>
       <div class="sep"></div>
@@ -47,8 +50,7 @@
         <kbd>↵</kbd>
       </form>
       <div class="me">
-        <img class="avatar" id="avatar" src="/static/brand/avatar.png" alt="Profile"
-             onerror="this.outerHTML='<div class=&quot;avatar&quot;>FR</div>'">
+        <div class="avatar" id="avatar" aria-label="Profile">FR</div>
         <div class="who">Finance workspace<small>CloudNova · local-first</small></div>
       </div>
     </div>
@@ -57,6 +59,7 @@
 </div>
 <script src="/static/vendor/chart.umd.min.js"></script>
 <script src="/static/journey.js"></script>
+<script src="/static/studio.js"></script>
 <script src="/static/app.js"></script>
 </body>
 </html>

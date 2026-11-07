@@ -86,3 +86,20 @@ def test_identity_confirm_and_blocked_option(isolated):
     assert blocked["status"] == "recorded_blocked" and "master-data" in blocked["blocked_reason"]
     with pytest.raises(AppError):
         apply(blocked["decision_id"])
+
+
+def test_audit_history_is_persisted_with_who_why_and_outcome(isolated):
+    from app.policy import apply, decisions
+    d = _approve("fx_direction", "inverse")
+    apply(d["decision_id"])
+    _approve("account_identity", "account_name")
+    log = {x["id"]: x for x in decisions()}
+    a = log[d["decision_id"]]
+    assert a["approver"] == "Dana Finance" and a["role"] == "finance_owner" and "1,421" in a["rationale"]
+    assert a["status"] == "applied" and a["applied_at"] and a["policy_version"] and a["from_value"] == "documented"
+    assert any(x["status"] == "recorded_blocked" and x["to_value"] == "account_name" for x in log.values())
+    # the log survives a fresh connection (persisted, not in memory)
+    import sqlite3
+    from app.config import get_settings
+    con = sqlite3.connect(get_settings().runtime_dir / "copilot.db")
+    assert con.execute("SELECT COUNT(*) FROM policy_decisions").fetchone()[0] == len(log)

@@ -156,7 +156,7 @@
         <label>Speed <select id="j-speed">${[1, 1.5, 2, 3].map((v) => `<option ${v === 1.5 ? "selected" : ""}>${v}×</option>`).join("")}</select></label>
         <button id="j-mute">🔈 Unmute</button><button id="j-motion">${st.reduced ? "Motion on" : "Reduce motion"}</button>
         <div class="j-live">Events <select id="j-src"><option value="live">Live query run</option><option value="recorded">Recorded run (latest trace)</option></select>
-          <span class="j-pill reading" id="j-run">—</span><span class="j-pill working" id="j-status">PLAYING</span></div></div>
+          <span class="j-pill reading" id="j-run">—</span><span class="j-pill" id="j-llm">model…</span><span class="j-pill working" id="j-status">PLAYING</span></div></div>
         <div class="j-steps" id="j-steps">${S.map((s, i) => `<button data-i="${i}">${s.id} ${esc(s.title)}</button>`).join("")}</div></div>
       <div class="j-body"><div class="card j-stage-wrap" id="j-wrap"><div class="j-scene-head"><div><div class="k" id="j-k"></div><h3 id="j-title"></h3><p class="sub" id="j-sub"></p></div>
           <div class="j-state">Nova: <span class="j-pill" id="j-agent">—</span><br>Destination: <code id="j-dest"></code> · gesture: <span id="j-gest"></span></div></div>
@@ -164,6 +164,8 @@
         <div class="card"><h3>Narration</h3><div class="sub">everything Nova says and does, as text</div><div class="j-narr" id="j-narr" aria-live="polite"></div>
           <h3 style="margin-top:14px">Execution events</h3><div class="j-events" id="j-events"></div></div></div>`;
     const wrap = $("#j-wrap", el), guide = makeGuide(wrap, () => st);
+    fetch("/api/v1/health").then((r) => r.json()).then((h) => { const b = $("#j-llm", el); if (!b) return;
+      b.textContent = h.llm.reachable ? `QWEN ONLINE · ${h.llm.model}` : "QWEN OFFLINE · deterministic mode"; b.className = "j-pill " + (h.llm.reachable ? "completed" : "warn"); });
     const page = el.closest(".main") || el; if (st.reduced) page.classList.add("reduced");
     window.addEventListener("hashchange", () => { st.token++; if (window.speechSynthesis) speechSynthesis.cancel(); }, { once: true });
     const setAgent = (txt, cls) => { const a = $("#j-agent", el); if (!a) return; a.textContent = txt; a.className = "j-pill " + cls; };

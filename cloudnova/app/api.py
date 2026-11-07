@@ -180,6 +180,37 @@ def journey():
     return scenes()
 
 
+# ---------------------------------------------------------------- Financial Investigation Studio
+@v1.get("/studio/graph", tags=["studio"])
+def studio_graph(q: str = "", region: str = "", plan: str = "", flag: str = "", accounts: int = 12):
+    """Revenue Constellation: accounts, invoices, discrepancy checks and policies — every edge carries its evidence."""
+    from .studio import graph
+    return graph(q[:60], region[:10], plan[:20], flag[:40], accounts)
+
+
+@v1.get("/studio/invoices/{invoice_id}/replay", tags=["studio"])
+def studio_replay(invoice_id: str):
+    """Investigation Replay: imported → normalized → reconciled → calculated → evaluated, with an evidence hash."""
+    from .studio import replay
+    return replay(invoice_id)
+
+
+@v1.get("/studio/policies/{key}/impact", tags=["studio"])
+def studio_butterfly(key: str):
+    """Decision Butterfly: downstream metrics under each interpretation. Proposed ≠ approved."""
+    from .studio import butterfly
+    return butterfly(key)
+
+
+@v1.get("/evaluation/modes", tags=["evaluation"])
+def evaluation_modes():
+    """Hybrid vs Qwen-only comparison artifact (evals/results/mode_comparison.json), as measured."""
+    p = ROOT / "evals" / "results" / "mode_comparison.json"
+    if not p.exists():
+        raise AppError("not_found", "No comparison artifact. Run python -m evals.compare_modes with Qwen running.", 404)
+    return json.loads(p.read_text())
+
+
 @v1.get("/sessions/{session_id}")
 def session(session_id: str):
     return {"session_id": session_id, "turns": memory.history(session_id, 50)}

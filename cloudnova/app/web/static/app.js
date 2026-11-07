@@ -396,8 +396,22 @@ async function pageIntegrations(el) {
       { "Amount USD": (v) => usd(v, 2), "Expected USD": (v) => usd(v, 2), Flags: (v) => v.includes("pricing_violation") ? `<span class="flag">${esc(v)}</span>` : esc(v) })}</div>`;
 }
 
+/* ------------------------------------------------------------ AI evaluation (real artifact) */
+async function pageEvaluation(el) {
+  let d; try { d = await api("/api/v1/evaluation/modes"); } catch (e) { el.innerHTML = `<div class="card"><span class="chip err">${esc(e.code)}</span> ${esc(e.message)}</div>`; return; }
+  const by = {}; d.results.forEach((r) => { (by[r.q] ||= {})[r.mode] = r; });
+  const Q = ["Paid revenue 2024", "Region with highest avg MRR", "Refunds", "Churn Enterprise vs Starter", "Top 5 accounts + CSAT", "Pending/failed exposure"];
+  el.innerHTML = `<div class="section-title">AI evaluation · hybrid vs Qwen-only (measured)</div>
+  <div class="banner">Artifact <code>evals/results/mode_comparison.json</code> · run ${esc(d.meta.run_at)} · model <b>${esc(d.meta.model)}</b> · ${esc(d.meta.hardware)} · temperature ${d.meta.temperature}. Correctness judged by the independent oracle.</div>
+  <div class="grid g-2">${Object.entries(d.summary).map(([m, s]) => `<div class="card kpi"><div class="label">${m === "llm" ? "Qwen-only (Qwen writes all SQL)" : "Hybrid (approved metrics first)"}</div><div class="value">${s.correct} / ${s.total} correct</div><div class="def">median ${num(s.median_ms)} ms · max ${num(s.max_ms)} ms</div></div>`).join("")}</div>
+  <div style="margin-top:14px">${Object.keys(by).sort().map((q) => { const h = by[q].hybrid, l = by[q].llm; return `<div class="card" style="margin-bottom:12px"><div class="card-head"><h3>Q${q} · ${Q[q - 1]}</h3>
+    <span>${h.correct ? '<span class="chip">hybrid ✓</span>' : '<span class="chip err">hybrid ✗</span>'} ${l.correct ? '<span class="chip">Qwen ✓</span>' : '<span class="chip err">Qwen ✗</span>'}</span></div>
+    <div class="grid g-2"><div><div class="sub">hybrid · ${num(h.ms)} ms · ${esc(h.why)}</div><pre class="sql">${esc(h.sql || "")}</pre></div>
+    <div><div class="sub">Qwen-only · ${num(l.ms)} ms · ${esc(l.why)}</div><pre class="sql">${esc(l.sql || "(no SQL)")}</pre></div></div></div>`; }).join("")}</div>`;
+}
+
 /* ------------------------------------------------------------ router + chrome */
-const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations, journey: (el) => window.pageJourney(el), decisions: (el) => window.pageDecisions(el) };
+const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations, journey: (el) => window.pageJourney(el), decisions: (el) => window.pageDecisions(el), studio: (el, q) => window.pageStudio(el, q), evaluation: (el) => pageEvaluation(el) };
 async function route() {
   const [name, ...rest] = location.hash.replace(/^#\/?/, "").split("?");
   const key = PAGES[name] ? name : "";
@@ -410,7 +424,6 @@ async function route() {
 $("#topAsk").onsubmit = (e) => { e.preventDefault(); const q = $("#topInput").value.trim(); if (!q) return; $("#topInput").value = ""; location.hash = "#/ask?q=" + encodeURIComponent(q); };
 window.addEventListener("hashchange", route);
 (async function chrome() {
-  const img = new Image(); img.onload = () => { const w = $("#watermark"); w.classList.add("has-image"); w.style.setProperty("--wm", "url(/static/brand/background.png)"); }; img.src = "/static/brand/background.png";
   try {
     const h = await api("/api/v1/health"); const k = await cached("/api/v1/kpis");
     $("#railBar").style.width = (k.manifest.clean_invoices / k.manifest.raw_rows * 100).toFixed(1) + "%";
