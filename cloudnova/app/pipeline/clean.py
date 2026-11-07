@@ -33,11 +33,9 @@ class CleanResult:
 
 
 def load_raw(path) -> pd.DataFrame:
-    df = pd.read_csv(path, dtype=str, keep_default_na=False)
-    missing = set(RAW_COLUMNS) - set(df.columns)
-    if missing:
-        raise ValueError(f"raw CSV is missing columns: {sorted(missing)}")
-    df = df[RAW_COLUMNS].copy()
+    """Read the ledger through the source-adapter seam (app/sources) so other systems can feed the same contract."""
+    from ..sources.base import CsvLedgerAdapter
+    df = CsvLedgerAdapter(path).extract().rows
     df.insert(0, "raw_row_number", range(2, len(df) + 2))  # 1-based incl. header, as seen in a spreadsheet
     return df
 
@@ -166,8 +164,13 @@ def clean(raw: pd.DataFrame, fx: dict, direction: str = "documented", today: dat
 
     def reject(row: dict, reason: str, **extra) -> None:
         raw_rec = {c: row[c] for c in RAW_COLUMNS}
+        # best-effort financial view of the rejected row, so reconciliation can show what keeping it would have cost
+        st = R.norm_status(row["status"])
+        amt, _ = R.parse_amount(row["amount"])
+        ccy = row["currency"].strip().upper()
+        usd = float(R.to_usd(amt, fx[ccy], direction)) if amt is not None and ccy in fx else None
         rejected.append({"raw_row_number": row["raw_row_number"], "invoice_id": row["invoice_id"].strip(),
-                         "reason": reason, "raw_record": json.dumps(raw_rec), **extra})
+                         "reason": reason, "status": st, "amount_usd": usd, "raw_record": json.dumps(raw_rec), **extra})
 
     # 1. exact duplicates (all 19 raw columns identical after trimming)
     key = raw[RAW_COLUMNS].apply(lambda s: s.str.strip())
@@ -225,7 +228,8 @@ def clean(raw: pd.DataFrame, fx: dict, direction: str = "documented", today: dat
         out.append(row)
 
     invoices = pd.DataFrame(out).sort_values("invoice_id").reset_index(drop=True)
-    rejected_df = pd.DataFrame(rejected, columns=["raw_row_number", "invoice_id", "reason", "raw_record", "kept_raw_row"])
+    rejected_df = pd.DataFrame(rejected, columns=["raw_row_number", "invoice_id", "reason", "status", "amount_usd", "raw_record",
+                                                  "kept_raw_row"])
     rejected_df = rejected_df.sort_values("raw_row_number").reset_index(drop=True)
     conflicts_df = pd.DataFrame(conflicts, columns=["invoice_id", "candidate_statuses", "raw_statuses", "differing_columns",
                                                     "winner_status", "winner_raw_row", "rule", "usd_at_stake"])

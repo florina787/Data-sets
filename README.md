@@ -1,4 +1,7 @@
 # Data-sets
+
+> **CloudNova Revenue Intelligence Copilot (take-home, Track B)** lives in [`cloudnova/`](cloudnova/README.md) — start there. Run: `cd cloudnova && pip install -r requirements.txt && python -m app`.
+
 Different Data-set on various Important & Interesting topic
 These Datasets are classic and best to Implement to learn Machine Learning Algorithms.
 Will Add more Datasets in future for Developers, Data Scientist, Students and begineer's.

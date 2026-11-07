@@ -67,7 +67,7 @@ function heroCloud(canvas) {
 
 /* ------------------------------------------------------------ pages */
 async function pageHome(el) {
-  const [k, d] = await Promise.all([cached("/api/kpis"), cached("/api/dashboard")]);
+  const [k, d] = await Promise.all([cached("/api/v1/kpis"), cached("/api/v1/dashboard")]);
   const kpi = (icon, bg, label, value, def) => `<div class="card kpi"><div class="label"><i style="background:${bg}">${icon}</i>${label}</div><div class="value">${value}</div><div class="def">${esc(def)}</div></div>`;
   el.innerHTML = `
   <div class="grid g-hero">
@@ -111,7 +111,7 @@ async function pageHome(el) {
 }
 
 async function pageRevenue(el) {
-  const d = await cached("/api/dashboard");
+  const d = await cached("/api/v1/dashboard");
   el.innerHTML = `<div class="section-title">Revenue Intelligence</div>
   <div class="grid g-2">
     ${card("Net revenue by region", "paid + refunded (negative), USD", `<div class="chart-box"><canvas id="cRegion"></canvas></div>`)}
@@ -130,7 +130,7 @@ async function pageRevenue(el) {
 }
 
 async function pageCustomers(el) {
-  const d = await cached("/api/dashboard");
+  const d = await cached("/api/v1/dashboard");
   const t = d.top_accounts;
   el.innerHTML = `<div class="section-title">Customer Intelligence</div>
   ${card("Top 10 accounts by net revenue", "ranked by account_id · CSAT ≤ 2 flagged · blank CSAT shown as unknown, never as low",
@@ -149,26 +149,43 @@ async function pageCustomers(el) {
 }
 
 async function pageQuality(el) {
-  const q = await cached("/api/data-quality");
-  const m = q.manifest;
-  el.innerHTML = `<div class="section-title">Data Quality Studio</div>
-  <div class="grid g-4">
-    <div class="card kpi"><div class="label">Raw rows</div><div class="value">${num(m.raw_rows)}</div><div class="def">sha256 ${esc(m.raw_sha256.slice(0, 12))}…</div></div>
-    <div class="card kpi"><div class="label">Clean invoices</div><div class="value">${num(m.clean_invoices)}</div><div class="def">one row per invoice_id</div></div>
-    <div class="card kpi"><div class="label">Rejected (audited)</div><div class="value">${num(m.rejected_rows)}</div><div class="def">${Object.entries(m.rejected_by_reason).map(([k, v]) => `${v} ${k.replace(/_/g, " ")}`).join(" · ")}</div></div>
-    <div class="card kpi"><div class="label">Status conflicts</div><div class="value">${num(m.dedup_conflicts)}</div><div class="def">resolved refunded > paid > failed > void > pending</div></div>
+  const [q, rc] = await Promise.all([cached("/api/v1/data-quality"), cached("/api/v1/reconciliation")]);
+  const m = q.manifest, im = rc.impact;
+  const colors = { "Raw export rows": C.indigo, "exact duplicate": C.rose, "synonym duplicate": C.amber, "lost conflict": C.violet, "Clean invoices": C.teal };
+  let run = 0; const bars = rc.waterfall.map((s) => { if (s.kind === "total") { run = s.rows; return [0, s.rows]; } const a = run; run += s.rows; return [run, a]; });
+  el.innerHTML = `<div class="section-title">Reconciliation · where did ${num(rc.raw_rows)} rows go?</div>
+  <div class="grid g-21">
+    ${card(`${num(rc.raw_rows)} raw rows → ${num(rc.clean_invoices)} invoices + ${num(rc.rejected_rows)} audited`, "click a bar to see why those rows were removed and what keeping them would have done to revenue",
+      `<div class="chart-box"><canvas id="cWaterfall"></canvas></div><div id="wfInfo" class="sub" style="margin-top:10px;min-height:36px">Every raw row lands in exactly one place: <code>invoices</code> or <code>rejected_rows</code> (with its full raw record). Nothing is silently dropped.</div>`)}
+    ${card("Financial impact of deduplication", "same normalized rows summed without dedup (naive) vs one row per invoice (clean)",
+      table(["Metric", "Naive", "Clean", "Avoided"], [
+        ["Paid revenue", im.paid_revenue.naive_no_dedup, im.paid_revenue.clean, im.paid_revenue.overstatement_avoided],
+        ["Net revenue", im.net_revenue.naive_no_dedup, im.net_revenue.clean, im.net_revenue.overstatement_avoided],
+        ["Pending + failed exposure", im.exposure.naive_no_dedup, im.exposure.clean, im.exposure.overstatement_avoided]],
+        { Naive: (v) => usd(v), Clean: (v) => usd(v), Avoided: (v) => `<b>${usd(v)}</b>` }) +
+      `<p class="sub" style="margin-top:12px">Status conflicts: if every losing record had won instead, net revenue would move by <b>${usd(rc.conflicts.net_revenue_swing_if_all_losers_won)}</b> across ${rc.conflicts.count} invoices — the size of the decision the billing owner must confirm.</p>`)}
   </div>
-  <div class="grid g-21" style="margin-top:14px">
-    ${card("Issues found and what we did", "every flag is stored on the row (`dq_flags`); nothing is imputed", table(q.issues.columns, q.issues.rows))}
+  <div style="margin-top:14px">${card("Status conflicts — which record won, and what if the other one was right", "precedence refunded > paid > failed > void > pending (data contract §3)",
+    table(["Invoice", "Raw statuses", "Winner", "Loser", "Amount (USD)", "Δ net revenue if loser won"], rc.conflicts.rows.map((r) => [r.invoice_id, r.raw_statuses, r.winner, r.loser, r.amount_usd, r.net_revenue_delta_if_loser_won]),
+      { "Amount (USD)": (v) => usd(v, 2), "Δ net revenue if loser won": (v) => v ? `<span class="flag">${usd(v, 2)}</span>` : "<span class='muted'>no change</span>" }))}</div>
+  <div class="section-title">Data Quality Studio</div>
+  <div class="grid g-21">
+    ${card("Issues found and what we did", "every flag is stored on the row (<code>dq_flags</code>); nothing is imputed", table(q.issues.columns, q.issues.rows))}
     ${card("Open question: FX direction", "paid invoices · documented rule (× rate) vs inverse (÷ rate)",
       table(["Currency", "Invoices", "Local", "USD (documented)", "USD (inverse)"], q.fx.rows, { Local: (v) => num(Math.round(v)), "USD (documented)": (v) => usd(v), "USD (inverse)": (v) => usd(v) }) +
-      `<p class="sub" style="margin-top:10px">Every EUR/GBP amount equals the USD list price × the rate, so the documented conversion may apply FX twice. Kept the documented rule; flagged for the finance lead.</p>`)}
-  </div>
-  <div style="margin-top:14px">${card("Conflicting duplicates", "same invoice_id, different status across source systems — winner and $ at stake", table(q.conflicts.columns, q.conflicts.rows, { usd_at_stake: (v) => usd(v, 2) }))}</div>`;
+      `<p class="sub" style="margin-top:10px">Every EUR/GBP amount equals the USD list price × the rate, so the documented conversion may apply FX twice. Kept the documented rule; flagged for the finance lead. Raw file sha256 ${esc(m.raw_sha256.slice(0, 12))}…</p>`)}
+  </div>`;
+  const byReason = Object.fromEntries(rc.by_reason.map((r) => [r.reason.replace(/_/g, " "), r]));
+  chart($("#cWaterfall"), { type: "bar", data: { labels: rc.waterfall.map((s) => s.label), datasets: [{ data: bars, backgroundColor: rc.waterfall.map((s) => colors[s.label] || C.slate), borderRadius: 8, borderSkipped: false }] },
+    options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${num(rc.waterfall[c.dataIndex].rows)} rows` } } },
+      scales: { y: { min: 4800, title: { display: true, text: "rows (axis starts at 4,800)" } } },
+      onClick: (_, els) => { if (!els.length) return; const s = rc.waterfall[els[0].index], r = byReason[s.label];
+        $("#wfInfo").innerHTML = r ? `<b>${num(r.rows)} ${esc(s.label)} rows</b> (${num(r.invoice_ids)} invoice ids) — ${esc(r.explanation)} Keeping them would have added <b>${usd(r.paid_usd)}</b> paid revenue, ${usd(r.refunded_usd)} refunds and ${usd(r.exposure_usd)} pending/failed exposure.`
+          : `<b>${esc(s.label)}: ${num(s.rows)}</b>`; } } });
 }
 
 async function pageTower(el) {
-  const t = await api("/api/traces");
+  const t = await api("/api/v1/traces");
   const ev = t.evals;
   el.innerHTML = `<div class="section-title">Agent Control Tower</div>
   <div class="grid g-4">
@@ -231,13 +248,13 @@ async function pageAsk(el, initial) {
   renderSid();
   async function loadHistory() {
     if (!state.session) { msgs.innerHTML = `<div class="empty">Ask a question about CloudNova's revenue, MRR, churn, refunds or data quality.<br>Answers come from SQL over the cleaned data — the query is always shown.</div>`; $("#hist").innerHTML = ""; return; }
-    const h = await api(`/api/sessions/${state.session}`);
+    const h = await api(`/api/v1/sessions/${state.session}`);
     $("#hist").innerHTML = h.turns.map((t) => `<div class="history-item" data-q="${esc(t.question)}">${esc(t.question)}</div>`).join("") || "<div class='muted'>—</div>";
   }
   await loadHistory();
   if (!state.session) msgs.innerHTML = msgs.innerHTML;
   el.querySelectorAll("aside").forEach((a) => a.onclick = (e) => { const q = e.target.closest("[data-q]"); if (q) send(q.dataset.q); });
-  $("#newChat").onclick = async () => { if (state.session) await api(`/api/sessions/${state.session}`, { method: "DELETE" }).catch(() => {}); state.session = null; localStorage.removeItem("cn_session"); msgs.innerHTML = ""; renderSid(); loadHistory(); };
+  $("#newChat").onclick = async () => { if (state.session) await api(`/api/v1/sessions/${state.session}`, { method: "DELETE" }).catch(() => {}); state.session = null; localStorage.removeItem("cn_session"); msgs.innerHTML = ""; renderSid(); loadHistory(); };
   const form = $("#composer"), ta = $("#q");
   ta.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } };
   form.onsubmit = (e) => { e.preventDefault(); const q = ta.value.trim(); if (q) { ta.value = ""; send(q); } };
@@ -248,7 +265,7 @@ async function pageAsk(el, initial) {
     pending.innerHTML = `<div class="bubble"><span class="typing"><i></i><i></i><i></i></span> <span class="muted">thinking — Qwen-backed steps can take ~10–30 s on CPU</span></div>`;
     msgs.append(pending); msgs.scrollTop = msgs.scrollHeight;
     try {
-      const r = await api("/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, session_id: state.session }) });
+      const r = await api("/api/v1/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: q, session_id: state.session }) });
       state.session = r.session_id; localStorage.setItem("cn_session", r.session_id); renderSid();
       pending.innerHTML = renderAnswer(r); bindAnswer(pending, r, send); loadHistory();
     } catch (err) {
@@ -303,7 +320,7 @@ window.addEventListener("hashchange", route);
 (async function chrome() {
   const img = new Image(); img.onload = () => { const w = $("#watermark"); w.classList.add("has-image"); w.style.setProperty("--wm", "url(/static/brand/background.png)"); }; img.src = "/static/brand/background.png";
   try {
-    const h = await api("/health"); const k = await cached("/api/kpis");
+    const h = await api("/api/v1/health"); const k = await cached("/api/v1/kpis");
     $("#railBar").style.width = (k.manifest.clean_invoices / k.manifest.raw_rows * 100).toFixed(1) + "%";
     $("#railRows").textContent = `${num(k.manifest.clean_invoices)} / ${num(k.manifest.raw_rows)} rows`;
     $("#railPct").textContent = `${k.manifest.rejected_rows} audited`;

@@ -30,7 +30,7 @@ OUT_OF_SCOPE = [
     (re.compile(r"(live|current|today'?s|real.?time).{0,20}(exchange|fx|rate|price|stock)", re.I),
      "I don't have internet access or live rates; CloudNova uses fixed FX (EUR→USD 1.08, GBP→USD 1.27)."),
 ]
-DQ_PAT = re.compile(r"duplicate|data quality|dirty|cleaning|cleaned|ambiguous|date format|conflict|reject|quarantin|malformed|"
+DQ_PAT = re.compile(r"reconcil|5,?125|double.?count|duplicate|data quality|dirty|cleaning|cleaned|ambiguous|date format|conflict|reject|quarantin|malformed|"
                     r"\bfx\b.{0,20}(issue|question|direction|rule)|how (did|do) you (handle|treat|parse|clean)|emails?", re.I)
 EXPLAIN_PAT = re.compile(r"^\s*(explain|how (was|is|did you) (that|this|it) (calculated|computed|derived)|show (me )?the (sql|query)|"
                          r"how did you (get|calculate|compute)|where did (that|this) (number|come)|what does .{1,30} mean|"
@@ -144,6 +144,14 @@ def _dispatch(q: str, ctx: RunContext, out: dict) -> None:
         _general(q, ctx, out)
         return
 
+    from ..config import get_settings
+    if get_settings().query_mode == "llm" and not GREETING.search(q):  # comparison mode: no semantic layer at all
+        if not provider_status()["reachable"]:
+            raise AppError("llm_unavailable", "QUERY_MODE=llm needs the local Qwen model, which is not reachable.", 503, retryable=True)
+        ctx.note("route", "analytics (QUERY_MODE=llm: Qwen text-to-SQL for every data question)", (time.perf_counter() - t) * 1000)
+        _llm_sql(q, ctx, out)
+        return
+
     plan = None
     if prev_plan:
         plan = apply_followup(QueryPlan.from_dict(prev_plan), q)
@@ -170,6 +178,10 @@ def _dispatch(q: str, ctx: RunContext, out: dict) -> None:
                    suggestions=["Net revenue by industry", "Churn rate by region", "Refunds by month in 2024"])
         return
     ctx.note("route", "analytics (Qwen text-to-SQL; semantic planner had no confident plan)", (time.perf_counter() - t) * 1000)
+    _llm_sql(q, ctx, out)
+
+
+def _llm_sql(q: str, ctx: RunContext, out: dict) -> None:
     res = ctx.call("run_llm_sql", question=q)
     llm_ms = res["llm_ms"]
     answer = None

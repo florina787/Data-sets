@@ -34,6 +34,10 @@ def _print(resp: dict, show_sql: bool = True) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="python -m app", description="CloudNova Revenue Intelligence Copilot")
+    ap.add_argument("--host", help="startup: bind host (default CLOUDNOVA_HOST or 127.0.0.1)")
+    ap.add_argument("--port", type=int, help="startup: port (default CLOUDNOVA_PORT or 8000)")
+    ap.add_argument("--no-llm-start", action="store_true", help="startup: never run LLM_START_CMD")
+    ap.add_argument("--skip-checks", action="store_true", help="startup: skip the stakeholder readiness check")
     sub = ap.add_subparsers(dest="cmd")
     a = sub.add_parser("ask")
     a.add_argument("question")

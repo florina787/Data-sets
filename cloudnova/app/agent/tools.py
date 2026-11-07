@@ -10,6 +10,7 @@ from ..llm.provider import get_provider
 from ..semantic.catalog import METRICS, SCHEMA_DOC
 from ..semantic.planner import QueryPlan, compile_sql
 from .harness import tool
+from .render import fmt
 
 
 # ---------------------------------------------------------------- financial analytics (deterministic)
@@ -71,6 +72,7 @@ def scope_caveats(plan: dict) -> dict:
 
 # ---------------------------------------------------------------- data quality
 DQ_TOPICS = {
+    "reconciliation": r"reconcil|5,?125|raw (rows|records)|where did .* rows|financial impact|naive|double.?count",
     "duplicates": r"dup|conflict|disagree",
     "dates": r"date|ambiguous|format",
     "fx": r"fx|currenc|exchange",
@@ -83,6 +85,21 @@ DQ_TOPICS = {
 def data_quality_report(question: str) -> dict:
     q = question.lower()
     topic = next((t for t, pat in DQ_TOPICS.items() if re.search(pat, q)), "overview")
+    if topic == "reconciliation":
+        from ..reconciliation import reconciliation
+        rc = reconciliation()
+        sql = ("SELECT reason, COUNT(*) AS rows, SUM(amount_usd) FILTER (WHERE status='paid') AS paid_usd "
+               "FROM rejected_rows GROUP BY reason  -- trusted reconciliation query (rejected_rows is not chat-queryable)")
+        res = {"columns": ["reason", "rows", "paid_usd_if_kept", "refunded_usd", "exposure_usd"],
+               "rows": [[r["reason"], r["rows"], r["paid_usd"], r["refunded_usd"], r["exposure_usd"]] for r in rc["by_reason"]],
+               "row_count": len(rc["by_reason"]), "truncated": False, "sql": sql, "tables": ["rejected_rows"]}
+        im = rc["impact"]["paid_revenue"]
+        text = (f"**{rc['raw_rows']:,}** raw rows → **{rc['clean_invoices']:,}** invoices + **{rc['rejected_rows']}** audited rejects ("
+                + ", ".join(f"{r['rows']} {r['reason'].replace('_', ' ')}" for r in rc["by_reason"]) + "). Summing without dedup "
+                f"would report paid revenue of ${im['naive_no_dedup']:,.2f} instead of ${im['clean']:,.2f} — an overstatement of "
+                f"**${im['overstatement_avoided']:,.2f}**. The {rc['conflicts']['count']} status conflicts swing net revenue by "
+                f"{fmt(rc['conflicts']['net_revenue_swing_if_all_losers_won'], 'usd')} if every losing record had won.")
+        return {"text": text, "result": res, "topic": topic, "_trace": "data quality topic=reconciliation"}
     if topic == "duplicates":
         sql = ("SELECT invoice_id, raw_statuses, winner_status, usd_at_stake FROM dedup_conflicts ORDER BY usd_at_stake DESC")
         res = db.run_query(sql)

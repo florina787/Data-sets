@@ -6,7 +6,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -47,27 +47,59 @@ async def _unexpected(_: Request, exc: Exception):
                          "details": {}, "retryable": False}, status_code=500)
 
 
-@app.get("/")
+v1 = APIRouter(tags=["v1"])
+
+
+@app.get("/", include_in_schema=False)
 def index():
     return FileResponse(STATIC / "index.html")
 
 
-@app.get("/health")
+@v1.get("/health")
 def health():
+    """Liveness + readiness: data loaded, local Qwen reachable (analytics work without it)."""
     return supervisor.health()
 
 
-@app.post("/ask")
+@v1.post("/ask")
 def ask(req: AskRequest):
+    """Natural-language question → routed query agent → answer + executed SQL + caveats + trace."""
     return supervisor.ask(req.question, req.session_id)
 
 
-@app.get("/api/sessions/{session_id}")
+@v1.get("/reconciliation")
+def reconcile():
+    """Raw → clean row accounting and its financial impact (naive vs deduplicated revenue, conflict swing)."""
+    from .reconciliation import reconciliation
+    return reconciliation()
+
+
+@v1.get("/metrics")
+def metrics_catalog():
+    """The approved metric catalog (definitions + SQL) the semantic planner compiles from."""
+    from .semantic.catalog import DIMENSIONS, METRICS
+    return {"metrics": [{"id": m.id, "label": m.label, "grain": m.grain, "unit": m.unit, "definition": m.definition, "sql": m.sql}
+                        for m in METRICS.values()],
+            "dimensions": [{"id": d.id, "label": d.label, "invoice_grain": d.invoice_sql is not None,
+                            "account_grain": d.account_sql is not None} for d in DIMENSIONS.values()]}
+
+
+@v1.get("/sources")
+def sources():
+    """Configured source adapters and their provenance (see docs/INTEGRATION_ARCHITECTURE.md)."""
+    from .sources import get_source
+    src = get_source(get_settings())
+    m = json.loads((get_settings().data_dir / "manifest.json").read_text())
+    return {"active": [{"adapter": src.name, "system_type": src.system_type, "file": m["raw_csv"], "sha256": m["raw_sha256"],
+                        "rows": m["raw_rows"]}]}
+
+
+@v1.get("/sessions/{session_id}")
 def session(session_id: str):
     return {"session_id": session_id, "turns": memory.history(session_id, 50)}
 
 
-@app.delete("/api/sessions/{session_id}")
+@v1.delete("/sessions/{session_id}")
 def clear_session(session_id: str):
     return {"session_id": session_id, "deleted_turns": memory.clear(session_id)}
 
@@ -77,7 +109,7 @@ def _q(sql: str) -> dict:
     return {"columns": r["columns"], "rows": r["rows"], "sql": r["sql"]}
 
 
-@app.get("/api/kpis")
+@v1.get("/kpis")
 def kpis():
     inv = db.run_query("""SELECT SUM(amount_usd) FILTER (WHERE status='paid'), SUM(amount_usd) FILTER (WHERE status IN ('paid','refunded')),
         SUM(amount_usd) FILTER (WHERE status='refunded'), SUM(amount_usd) FILTER (WHERE status IN ('pending','failed')),
@@ -93,7 +125,7 @@ def kpis():
             "avg_csat": acc[4], "definitions": defs, "manifest": manifest}
 
 
-@app.get("/api/dashboard")
+@v1.get("/dashboard")
 def dashboard():
     return {
         "monthly": _q("SELECT invoice_month, paid_revenue_usd, refunds_usd, net_revenue_usd, exposure_usd FROM monthly_revenue "
@@ -115,7 +147,7 @@ def dashboard():
     }
 
 
-@app.get("/api/data-quality")
+@v1.get("/data-quality")
 def data_quality():
     manifest = json.loads((get_settings().data_dir / "manifest.json").read_text())
     return {"manifest": manifest,
@@ -125,7 +157,7 @@ def data_quality():
                      "SUM(amount_usd_alt) AS usd_inverse FROM invoices WHERE status='paid' GROUP BY currency ORDER BY currency")}
 
 
-@app.get("/api/traces")
+@v1.get("/traces")
 def traces(limit: int = 50):
     from .llm.provider import provider_status
     runs = memory.recent_runs(min(max(limit, 1), 200))
@@ -137,3 +169,10 @@ def traces(limit: int = 50):
                         "avg_total_ms": round(sum(r["total_ms"] for r in runs) / len(runs), 1) if runs else None,
                         "llm_requests": sum(1 for r in runs if r["llm_ms"]),
                         "by_planner": {p: sum(1 for r in runs if r["planner"] == p) for p in ("semantic", "llm_sql", "none")}}}
+
+
+# v1 is the contract; unversioned paths are kept as aliases (hidden from the schema) for the CLI docs and early clients.
+app.include_router(v1, prefix="/api/v1")
+app.include_router(v1, prefix="/api", include_in_schema=False)
+app.add_api_route("/ask", ask, methods=["POST"], include_in_schema=False)
+app.add_api_route("/health", health, methods=["GET"], include_in_schema=False)

@@ -28,11 +28,14 @@ natural-language query layer). Read this before touching code.
 ## Commands
 ```bash
 pip install -r requirements.txt
-python -m app                 # build data (if needed) + answer the six stakeholder questions
-python -m app serve           # API + UI on :8000
+python -m app                 # full startup: config, data (reuse/build), local Qwen, readiness, API + dashboard
+python -m app demo            # terminal-only: the six stakeholder questions with SQL
 python -m pytest -q           # unit tests (no LLM needed)
 python -m evals               # eval harness (no LLM needed); add --llm to include Qwen cases
 ```
+
+## Before committing
+Follow `docs/VERIFY.md` and paste the real output into the commit message or PR.
 
 ## Style
 Python 3.11+, type hints, small modules, no framework where 50 lines will do. Errors raised as
