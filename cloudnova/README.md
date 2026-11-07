@@ -47,7 +47,7 @@ READY in 2.0s
 | `python -m app demo` | terminal only: the six questions with answers, SQL and caveats, then exit |
 | `python -m app ask "revenue by region in 2025"` | one question (`--session ID` keeps follow-up context) |
 | `python -m app chat` | multi-turn terminal chat ("only Enterprise", "as a chart", "explain the calculation") |
-| `python -m pytest` | 114 unit tests, no LLM needed |
+| `python -m pytest` | unit tests, no LLM needed (114 on the submission branch; 130 with enhancements) |
 | `python -m evals` / `python -m evals --llm` | eval harness (deterministic / including local-Qwen cases) |
 | `python -m evals.compare_modes` | hybrid vs Qwen-only measurement (needs Qwen) |
 
@@ -204,6 +204,13 @@ plausible-but-wrong SQL and occasionally wrong general definitions (it described
 Claude Code built this from the specs, steered by [`CLAUDE.md`](CLAUDE.md); the session log with prompts, decisions
 and the places I overrode or corrected the AI is in [`.claude/prompt-history.md`](.claude/prompt-history.md).
 Demo walkthrough: [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md). Architecture: [`docs/architecture.md`](docs/architecture.md).
+
+## Enhancements (separate branch)
+
+On branch `claude/great-hamilton-8s8wk9-enhancements` only — the Track B submission above does not depend on them:
+Revenue Leakage Investigator, what-if simulator (Financial Digital Twin), and a simulated legacy-billing integration
+with schema mapping, validation and lineage. See [`docs/enhancements/README.md`](docs/enhancements/README.md);
+future ideas (not built) in [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Repository map
 

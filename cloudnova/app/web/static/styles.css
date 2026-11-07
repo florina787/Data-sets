@@ -135,3 +135,22 @@ pre.sql { background: var(--navy); color: #d7dbff; padding: 12px; border-radius:
 .graph .node rect { rx: 12; } .graph text { font-size: 11px; font-family: var(--font); }
 .empty { color: var(--ink-3); font-size: 13px; padding: 24px; text-align: center; }
 .toast { position: fixed; bottom: 22px; right: 22px; background: var(--navy); color: #fff; padding: 10px 16px; border-radius: 12px; z-index: 9; box-shadow: var(--shadow); }
+
+/* enhancements */
+.finding { border-left: 4px solid var(--line); }
+.finding.rule_violation { border-left-color: var(--rose); } .finding.decision_required { border-left-color: var(--amber); }
+.finding.needs_investigation { border-left-color: var(--sky); } .finding.needs_policy { border-left-color: var(--violet, #9b7bf0); }
+.finding.control_passed { border-left-color: var(--teal); }
+.kind { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--indigo-soft); color: var(--indigo); }
+.money { font-size: 20px; font-weight: 800; } .money small { font-size: 11px; color: var(--ink-3); font-weight: 500; display: block; }
+select, .field input { border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; background: #fff; }
+.slider-row { display: grid; grid-template-columns: 150px 1fr 70px; gap: 10px; align-items: center; margin: 8px 0; font-size: 12.5px; }
+.slider-row input[type=range] { width: 100%; accent-color: var(--indigo); }
+.banner { background: #fff8ea; color: #8a5a00; border-radius: 12px; padding: 10px 14px; font-size: 12.5px; margin-bottom: 14px; }
+.console { background: linear-gradient(160deg, #0d1424, #111b31 60%, #0b1220); color: #cfe1ff; border: 1px solid #1f2d4d; }
+.console h3 { color: #fff; } .console .sub { color: #7f93bd; }
+.console table th { color: #7f93bd; border-color: #1f2d4d; } .console table td { border-color: #18243f; color: #d7e4ff; }
+.console tr:hover td { background: #14203a; }
+.pipe { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 4px; }
+.pipe .node { background: #13213d; border: 1px solid #2a3f6b; border-radius: 10px; padding: 8px 12px; font-size: 12px; box-shadow: 0 0 18px rgba(80,160,255,.15); }
+.pipe .node b { display: block; color: #8fd0ff; font-size: 11px; } .pipe .arrow { color: #4f8ff7; }

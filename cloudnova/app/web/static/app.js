@@ -304,8 +304,100 @@ function bindAnswer(node, r, send) {
     options: { indexAxis: r.chart.type === "bar_h" ? "y" : "x", scales: isMoney ? { [r.chart.type === "bar_h" ? "x" : "y"]: moneyAxis } : {} } });
 }
 
+
+/* ------------------------------------------------------------ enhancements */
+const KIND_LABEL = { rule_violation: "rule violation", decision_required: "decision required", needs_investigation: "needs investigation", needs_policy: "needs policy", control_passed: "control passed" };
+async function pageLeakage(el) {
+  const d = await api("/api/v1/leakage/findings");
+  el.innerHTML = `<div class="section-title">Revenue Leakage Investigator</div>
+  <div class="banner">${esc(d.summary.note)}</div>
+  <div class="grid g-2">${d.findings.map((f) => `
+    <div class="card finding ${f.kind}">
+      <div class="card-head"><h3>${esc(f.title)}</h3><span class="kind">${esc(KIND_LABEL[f.kind])}</span></div>
+      <div class="sub">rule: ${esc(f.rule)}</div>
+      <div style="display:flex;gap:24px;margin:6px 0 10px"><div class="money">${num(f.count)}<small>invoices</small></div>
+        <div class="money">${usd(f.exposure_usd)}<small>at stake — not a confirmed loss</small></div></div>
+      <div style="font-size:12.5px;line-height:1.5">${esc(f.summary)}<br><span class="muted">${esc(f.why)}</span></div>
+      ${f.sample_invoice_ids.length ? `<div class="sub" style="margin-top:8px">evidence: ${f.sample_invoice_ids.map(esc).join(", ")}${f.count > f.sample_invoice_ids.length ? " …" : ""}</div>` : ""}
+      ${f.evidence_extra ? `<div class="sub">${esc(JSON.stringify(f.evidence_extra))}</div>` : ""}
+      <details><summary>SQL</summary><pre class="sql">${esc(f.sql)}</pre></details>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12px">investigation
+        <select data-id="${f.id}">${["open", "investigating", "resolved", "dismissed"].map((s) => `<option ${s === f.investigation.status ? "selected" : ""}>${s}</option>`).join("")}</select>
+        <span class="muted">${f.investigation.note ? esc(f.investigation.note) : ""}</span></div>
+    </div>`).join("")}</div>`;
+  el.querySelectorAll("select[data-id]").forEach((sel) => sel.onchange = async () => {
+    try { await api(`/api/v1/leakage/findings/${sel.dataset.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: sel.value, note: "" }) }); toast(`Marked ${sel.value} (ledger unchanged)`); }
+    catch (e) { toast(e.message); } });
+}
+
+async function pageSimulator(el) {
+  const plans = ["Starter", "Pro", "Enterprise"], base = { Starter: 49, Pro: 99, Enterprise: 299 };
+  const st = { price: { ...base }, seats: 0, disc: null, churn: 0 };
+  el.innerHTML = `<div class="section-title">Financial Digital Twin · What-if Simulator</div>
+  <div class="banner"><b>Hypothetical.</b> Scenarios are computed in memory from the observed active-account snapshot. They are not forecasts and never change the ledger.</div>
+  <div class="grid g-21">
+    <div class="card"><h3>Assumptions</h3><div class="sub">observed baseline = list price × seats × (1 − discount) for active accounts</div>
+      ${plans.map((p) => `<div class="slider-row"><span>${p} list price</span><input type="range" min="0" max="${base[p] * 2}" value="${base[p]}" data-price="${p}"><b id="pv-${p}">$${base[p]}</b></div>`).join("")}
+      <div class="slider-row"><span>Seats (all plans)</span><input type="range" min="-50" max="100" value="0" id="seats"><b id="sv">0%</b></div>
+      <div class="slider-row"><span>Discount override</span><input type="range" min="-1" max="40" value="-1" id="disc"><b id="dv">observed</b></div>
+      <div class="slider-row"><span>Assumed churn</span><input type="range" min="0" max="50" value="0" id="churn"><b id="cv">0%</b></div>
+      <button class="btn light sm" id="reset">Reset to observed</button></div>
+    <div class="card"><h3>Observed vs hypothetical</h3><div class="sub" id="label"></div><div id="simOut"></div></div>
+  </div>
+  <div style="margin-top:14px">${card("MRR by plan", "observed (solid) vs hypothetical (light)", `<div class="chart-box"><canvas id="cSim"></canvas></div>`)}</div>
+  <div class="sub" id="method" style="margin-top:10px"></div>`;
+  let timer, ch;
+  async function run() {
+    const body = { list_price_usd: st.price, seat_change_pct: { all: st.seats }, assumed_churn_pct: st.churn };
+    if (st.disc !== null) body.discount_pct = { all: st.disc };
+    let r; try { r = await api("/api/v1/simulator/scenarios", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); } catch (e) { toast(e.message); return; }
+    $("#label").textContent = r.label;
+    const row = (k, l, f) => `<tr><td>${l}</td><td class="num">${f(r.observed[k])}</td><td class="num">${f(r.hypothetical[k])}</td><td class="num ${r.delta[k] < 0 ? "flag" : ""}">${r.delta[k] >= 0 ? "+" : ""}${f(r.delta[k])}</td></tr>`;
+    $("#simOut").innerHTML = `<table><thead><tr><th></th><th>Observed</th><th>Hypothetical</th><th>Δ</th></tr></thead><tbody>
+      ${row("mrr", "MRR", (v) => usd(v))}${row("arr", "ARR (MRR × 12)", (v) => usd(v))}${row("billings_12m", "12-mo billings (annual = 10 mo)", (v) => usd(v))}
+      ${row("accounts", "Active accounts", (v) => num(Math.round(v)))}${row("seats", "Seats", (v) => num(Math.round(v)))}</tbody></table>`;
+    $("#method").textContent = "Method: " + Object.entries(r.method).map(([k, v]) => `${k}: ${v}`).join(" · ");
+    const data = { labels: r.by_plan.map((p) => p.plan), datasets: [
+      { label: "Observed MRR", data: r.by_plan.map((p) => p.observed.mrr), backgroundColor: C.indigo, borderRadius: 6 },
+      { label: "Hypothetical MRR", data: r.by_plan.map((p) => p.hypothetical.mrr), backgroundColor: "rgba(91,91,214,.3)", borderRadius: 6 }] };
+    if (ch) { ch.data = data; ch.update(); } else ch = chart($("#cSim"), { type: "bar", data, options: { scales: { y: moneyAxis } } });
+  }
+  const later = () => { clearTimeout(timer); timer = setTimeout(run, 150); };
+  el.querySelectorAll("[data-price]").forEach((i) => i.oninput = () => { st.price[i.dataset.price] = +i.value; $(`#pv-${i.dataset.price}`).textContent = "$" + i.value; later(); });
+  $("#seats").oninput = (e) => { st.seats = +e.target.value; $("#sv").textContent = st.seats + "%"; later(); };
+  $("#disc").oninput = (e) => { const v = +e.target.value; st.disc = v < 0 ? null : v; $("#dv").textContent = v < 0 ? "observed" : v + "%"; later(); };
+  $("#churn").oninput = (e) => { st.churn = +e.target.value; $("#cv").textContent = st.churn + "%"; later(); };
+  $("#reset").onclick = () => route();
+  run();
+}
+
+async function pageIntegrations(el) {
+  const p = await api("/api/v1/integrations/legacy-billing/preview", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+  const pv = p.provenance;
+  el.innerHTML = `<div class="section-title">Enterprise Integration · simulated legacy billing system</div>
+  <div class="card console">
+    <div class="card-head"><h3>legacy_billing_v1 → raw contract → same cleaning rules → preview</h3><span class="pill ok"><span class="dot"></span>read-only</span></div>
+    <div class="sub">${esc(p.mode)} · file ${esc(pv.file)} · sha256 ${esc(pv.sha256.slice(0, 12))}… · control total ${p.control_total.matches ? "✓" : "✗"} (${p.control_total.declared_records} declared / ${p.control_total.actual_records} actual)</div>
+    <div class="pipe"><div class="node"><b>SOURCE</b>${num(pv.rows_in_file)} legacy rows</div><span class="arrow">→</span>
+      <div class="node"><b>MAPPING</b>${num(pv.rows_mapped)} mapped · ${num(pv.rows_rejected_at_mapping)} rejected</div><span class="arrow">→</span>
+      <div class="node"><b>PIPELINE RULES</b>${num(p.cleaned.length)} clean · ${num(p.rejected_by_pipeline.length)} dedup-rejected</div><span class="arrow">→</span>
+      <div class="node"><b>FLAGS</b>${Object.entries(p.flags_summary).map(([k, v]) => `${esc(k)} ${v}`).join(" · ") || "none"}</div><span class="arrow">→</span>
+      <div class="node"><b>LEDGER</b>not written (approval step not built)</div></div>
+  </div>
+  <div class="grid g-2" style="margin-top:14px">
+    <div class="card console"><h3>Schema mapping</h3><div class="sub">app/sources/mappings/legacy_billing.yaml</div>
+      ${table(["Raw contract", "Legacy column"], Object.entries(p.mapping.columns))}</div>
+    <div class="card console"><h3>Rejected with reasons</h3><div class="sub">validation at mapping, then the ledger's own dedup rule</div>
+      ${table(["Line", "Reason"], [...p.rejected_at_mapping.map((r) => [r.source_line, r.reason]), ...p.rejected_by_pipeline.map((r) => [r.source_line, `${r.invoice_id}: ${r.reason}`])])}</div>
+  </div>
+  <div style="margin-top:14px" class="card console"><h3>Cleaned preview with lineage</h3><div class="sub">every row keeps source system, file, line and file hash</div>
+    ${table(["Invoice", "Plan", "Cycle", "Seats", "Ccy", "Amount USD", "Expected USD", "Status", "Flags", "Source line"],
+      p.cleaned.map((r) => [r.invoice_id, r.plan, r.billing_cycle, r.seats, r.currency, r.amount_usd, r.expected_amount_usd, r.status, r.dq_flags || "—", r.lineage.source_line]),
+      { "Amount USD": (v) => usd(v, 2), "Expected USD": (v) => usd(v, 2), Flags: (v) => v.includes("pricing_violation") ? `<span class="flag">${esc(v)}</span>` : esc(v) })}</div>`;
+}
+
 /* ------------------------------------------------------------ router + chrome */
-const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower };
+const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations };
 async function route() {
   const [name, ...rest] = location.hash.replace(/^#\/?/, "").split("?");
   const key = PAGES[name] ? name : "";

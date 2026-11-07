@@ -94,6 +94,53 @@ def sources():
                         "rows": m["raw_rows"]}]}
 
 
+# ---------------------------------------------------------------- enhancements (branch: enhancements)
+class StatusUpdate(BaseModel):
+    status: str = Field(pattern=r"^(open|investigating|resolved|dismissed)$")
+    note: str = Field(default="", max_length=500)
+
+
+@v1.get("/leakage/findings", tags=["enhancements"])
+def leakage_findings():
+    """Revenue Leakage Investigator: deterministic checks with evidence, $ at stake and investigation status."""
+    from .enhancements.leakage import run_checks, summary
+    fs = run_checks()
+    return {"findings": fs, "summary": summary(fs)}
+
+
+@v1.patch("/leakage/findings/{finding_id}", tags=["enhancements"])
+def leakage_update(finding_id: str, body: StatusUpdate):
+    """Update a finding's investigation status (stored in the runtime DB — the ledger is never modified)."""
+    from .enhancements.leakage import set_status
+    return set_status(finding_id, body.status, body.note)
+
+
+@v1.post("/simulator/scenarios", tags=["enhancements"])
+def simulate(scenario: dict):
+    """What-if simulator: hypothetical scenario vs observed baseline. Read-only."""
+    from pydantic import ValidationError
+
+    from .enhancements.simulator import Scenario
+    from .enhancements.simulator import simulate as run
+    try:
+        sc = Scenario.model_validate(scenario)
+    except ValidationError as exc:
+        raise AppError("invalid_scenario", "; ".join(f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in exc.errors()[:5]), 422) from exc
+    return run(sc)
+
+
+class LegacyPreview(BaseModel):
+    text: str | None = Field(default=None, description="pipe-delimited legacy export; omit to use the bundled simulated sample")
+
+
+@v1.post("/integrations/legacy-billing/preview", tags=["enhancements"])
+def legacy_preview(req: LegacyPreview):
+    """Map a (simulated) legacy billing export to the raw contract, validate, attach lineage, and preview it through
+    the ledger's cleaning rules. Read-only: nothing is written to the analytics database."""
+    from .sources.legacy_billing import LegacyBillingAdapter, preview
+    return preview(LegacyBillingAdapter.sample() if req.text is None else LegacyBillingAdapter(req.text, "uploaded.psv"))
+
+
 @v1.get("/sessions/{session_id}")
 def session(session_id: str):
     return {"session_id": session_id, "turns": memory.history(session_id, 50)}

@@ -1,0 +1,26 @@
+# Schema mapping: simulated legacy billing export (pipe-delimited, amounts in cents, coded fields) → raw contract.
+# Changing a mapping is a spec change: update this file, then a test in tests/test_enhancements.py.
+source_system: legacy_billing_v1
+delimiter: "|"
+trailer: {prefix: "TRL", count_field: 1}       # record-count control total, validated
+required_columns: [INV_NO, CUST_ID, PLAN_CODE, CYCLE, QTY, CCY, AMT_CENTS, STATUS_CD, INV_DT]
+columns:                                       # raw contract column ← legacy column (+ transform)
+  invoice_id:      {from: INV_NO}
+  account_id:      {from: CUST_ID}
+  account_name:    {from: CUST_NAME}
+  contact_email:   {from: CONTACT}
+  region:          {from: REGION_CD, map: {NAM: NA, EMA: EMEA, APC: APAC, LAT: LATAM}}
+  industry:        {from: IND}
+  plan:            {from: PLAN_CODE, map: {S1: Starter, P2: Pro, E3: Enterprise}}
+  billing_cycle:   {from: CYCLE, map: {M: monthly, A: annual}}
+  seats:           {from: QTY, type: int}
+  currency:        {from: CCY}
+  amount:          {from: AMT_CENTS, type: cents}
+  discount_pct:    {from: DISC, type: number}
+  status:          {from: STATUS_CD, map: {PD: paid, PN: pending, FL: failed, RF: refunded, VD: void}}
+  payment_method:  {from: PAY_CD, map: {CC: credit_card, AC: ach, WR: wire, IN: invoice}}
+  signup_date:     {from: SIGNUP_DT, type: yyyymmdd}
+  invoice_date:    {from: INV_DT, type: yyyymmdd}
+  churned:         {from: CHURN_FLG, map: {Y: "true", N: "false"}}
+  csat_score:      {from: CSAT}
+  support_tickets: {from: TICKETS}

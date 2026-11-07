@@ -77,3 +77,7 @@ chart spec, and a step trace. See `specs/query_interface.md`.
   and the configuration locked, *and* every statement is parsed and allow-listed before it runs.
 * **Audit tables, not deletes.** Every raw row is in `invoices` or `rejected_rows`; the reconciliation view is
   computed from them.
+
+## Enhancement branch additions
+`app/enhancements/leakage.py` and `simulator.py` read the same DuckDB tables through the same read-only connection;
+`app/sources/legacy_billing.py` feeds the same `pipeline.clean()` in memory. Diagrams: `docs/enhancements/README.md`.
