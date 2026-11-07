@@ -23,7 +23,10 @@ def _connect() -> duckdb.DuckDBPyConnection:
     con = duckdb.connect(str(s.db_path), read_only=True, config={
         "enable_external_access": False, "autoload_known_extensions": False, "autoinstall_known_extensions": False,
         "memory_limit": s.duckdb_memory_limit, "threads": 2})
-    con.execute("SET lock_configuration = true")
+    try:
+        con.execute("SET lock_configuration = true")
+    except duckdb.InvalidInputException:
+        pass  # DuckDB shares one instance per file per process: already locked by an earlier connection
     return con
 
 
@@ -104,3 +107,9 @@ def run_query(sql: str, max_rows: int | None = None) -> dict:
         out_rows.append(r)
     return {"columns": cols, "rows": out_rows, "row_count": len(out_rows), "truncated": truncated,
             "sql": guarded.sql, "tables": sorted(guarded.tables), "ms": round((time.perf_counter() - t0) * 1000, 1)}
+
+
+def internal_scalar(sql: str):
+    """Trusted, read-only scalar query for evals/tests/admin views — bypasses the chat allow-list (e.g. to count
+    `rejected_rows`, which holds raw PII and is never exposed to conversational SQL). Never call with user input."""
+    return connection().execute(sql).fetchone()[0]
