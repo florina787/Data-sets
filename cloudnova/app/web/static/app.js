@@ -335,7 +335,7 @@ async function pageSimulator(el) {
   const st = { price: { ...base }, seats: 0, disc: null, churn: 0 };
   el.innerHTML = `<div class="section-title">Financial Digital Twin · What-if Simulator</div>
   <div class="banner"><b>Hypothetical.</b> Scenarios are computed in memory from the observed active-account snapshot. They are not forecasts and never change the ledger.</div>
-  <div class="grid g-21">
+  <div class="grid g-2">
     <div class="card"><h3>Assumptions</h3><div class="sub">observed baseline = list price × seats × (1 − discount) for active accounts</div>
       ${plans.map((p) => `<div class="slider-row"><span>${p} list price</span><input type="range" min="0" max="${base[p] * 2}" value="${base[p]}" data-price="${p}"><b id="pv-${p}">$${base[p]}</b></div>`).join("")}
       <div class="slider-row"><span>Seats (all plans)</span><input type="range" min="-50" max="100" value="0" id="seats"><b id="sv">0%</b></div>

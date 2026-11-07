@@ -4,6 +4,8 @@ Built **after** the Track B submission was verified and pushed on `claude/great-
 same pipeline, DuckDB tables, business rules, governance and harness; the core eval suite is unchanged and still
 passes on this branch (see bottom). One query agent; no new LLM paths.
 
+<img src="../media/enhancements.gif" width="900" alt="Leakage investigator, what-if simulator, legacy billing integration (recorded from the running app)">
+
 | # | Enhancement | Code | API | Dashboard | Tests |
 |---|---|---|---|---|---|
 | 1 | Revenue Leakage Investigator | `app/enhancements/leakage.py` | `GET /api/v1/leakage/findings` · `PATCH /api/v1/leakage/findings/{id}` | Leakage Investigator | `tests/test_enhancements.py` (4) |
