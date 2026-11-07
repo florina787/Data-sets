@@ -88,14 +88,16 @@ def render(plan: QueryPlan, result: dict, context: dict | None = None) -> str:
         vals = [(name(r), r[idx[plan.primary]]) for r in rows if r[idx[plan.primary]] is not None]
         if not vals:
             return f"No {m0.label} values{fp}."
-        peak = max(vals, key=lambda x: x[1])
-        low = min(vals, key=lambda x: x[1])
+        mag = all(v <= 0 for _, v in vals)  # e.g. refunds: rank by size, not by signed value
+        peak = max(vals, key=lambda x: abs(x[1]) if mag else x[1])
+        low = min(vals, key=lambda x: abs(x[1]) if mag else x[1])
         body = " · ".join(f"{k}: {fmt(v, m0.unit)}" for k, v in vals) if len(vals) <= 12 else ""
-        return (f"{m0.label} by {label.lower()}{fp} across {len(vals)} periods. Peak: **{peak[0]}** at {fmt(peak[1], m0.unit)}; "
-                f"lowest: {low[0]} at {fmt(low[1], m0.unit)}." + (f"\n{body}" if body else ""))
+        hi, lo = ("Largest", "smallest") if mag else ("Peak", "lowest")
+        return (f"{m0.label} by {label.lower()}{fp} across {len(vals)} periods. {hi}: **{peak[0]}** at {fmt(peak[1], m0.unit)}; "
+                f"{lo}: {low[0]} at {fmt(low[1], m0.unit)}." + (f"\n{body}" if body else ""))
 
     ranked = [(name(r), r[idx[plan.primary]]) for r in rows]
-    if len(ranked) == 2 and len(plan.filters.get(dim, [])) == 2:
+    if len(ranked) == 2 and (len(plan.filters.get(dim, [])) == 2 or dim == "billing_cycle"):
         (a, va), (b, vb) = ranked
         diff = (va or 0) - (vb or 0)
         unit = m0.unit

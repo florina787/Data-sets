@@ -1,9 +1,9 @@
 """Single entry point.
 
-    python -m app                      build data if needed + answer the six stakeholder questions
+    python -m app                      START EVERYTHING: preflight, data, local Qwen, agent readiness, API + dashboard
+    python -m app demo                 terminal-only: answer the six stakeholder questions with SQL, then exit
     python -m app ask "question" [--session ID]
-    python -m app chat                 interactive multi-turn session
-    python -m app serve [--port 8000]  API + UI
+    python -m app chat                 interactive multi-turn session in the terminal
     python -m app build [--force]      rebuild the cleaned DuckDB from the raw CSV
 """
 from __future__ import annotations
@@ -39,25 +39,28 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("question")
     a.add_argument("--session")
     sub.add_parser("chat")
-    s = sub.add_parser("serve")
-    s.add_argument("--host", default="127.0.0.1")
-    s.add_argument("--port", type=int, default=8000)
+    sub.add_parser("demo")
+    for name in ("up", "serve"):
+        s = sub.add_parser(name)
+        s.add_argument("--host")
+        s.add_argument("--port", type=int)
+        s.add_argument("--no-llm-start", action="store_true", help="never run LLM_START_CMD")
+        s.add_argument("--skip-checks", action="store_true", help="skip the stakeholder readiness check")
     b = sub.add_parser("build")
     b.add_argument("--force", action="store_true")
     args = ap.parse_args(argv)
+    if args.cmd in (None, "up", "serve"):
+        from .startup import up
+        return up(getattr(args, "host", None), getattr(args, "port", None),
+                  allow_llm_start=not getattr(args, "no_llm_start", False), open_checks=not getattr(args, "skip_checks", False))
 
     from .agent import supervisor
     from .errors import AppError
     from .llm.provider import provider_status
     from .pipeline.build import build
 
-    m = build(force=getattr(args, "force", False), quiet=False)
+    m = build(force=getattr(args, "force", False), quiet=args.cmd != "build")
     if args.cmd == "build":
-        return 0
-    if args.cmd == "serve":
-        import uvicorn
-        print(f"CloudNova Copilot → http://{args.host}:{args.port}  (API docs at /docs)")
-        uvicorn.run("app.api:app", host=args.host, port=args.port, log_level="warning")
         return 0
     if args.cmd == "ask":
         try:
@@ -89,7 +92,7 @@ def main(argv: list[str] | None = None) -> int:
             except AppError as exc:
                 print(f"✖ {exc.code}: {exc.message}")
 
-    # default: the demo
+    # demo: terminal-only walkthrough
     st = provider_status()
     print(f"\nCloudNova Revenue Intelligence Copilot — data: {m['clean_invoices']:,} invoices / {m['accounts']:,} accounts "
           f"(raw {m['raw_rows']:,} rows, {m['rejected_rows']} moved to rejected_rows) · LLM: {st['label']}\n")
@@ -99,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Q{i}. {q}\n")
         _print(supervisor.ask(q, sid))
         print()
-    print("Next: `python -m app serve` for the UI, `python -m app chat` to ask your own questions, `python -m evals` to run the evals.")
+    print("Next: `python -m app` for the dashboard + API, `python -m app chat` to ask your own questions, `python -m evals` to run the evals.")
     return 0
 
 

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CloudNova · Revenue Intelligence Copilot</title>
+  <link rel="icon" href="/static/brand/cloud-logo.svg">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="watermark" id="watermark"></div>
+<div class="shell">
+  <aside class="rail" aria-label="Main navigation">
+    <div class="brand">
+      <img src="/static/brand/logo.png" alt="" onerror="this.onerror=null;this.src='/static/brand/cloud-logo.svg'">
+      <div>CloudNova<small>Revenue Intelligence</small></div>
+    </div>
+    <nav class="nav" id="nav">
+      <a href="#/" data-page="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Command Center</a>
+      <a href="#/ask" data-page="ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>Ask CloudNova AI</a>
+      <a href="#/revenue" data-page="revenue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"/></svg>Revenue</a>
+      <a href="#/customers" data-page="customers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 4 6"/></svg>Customers</a>
+      <div class="sep"></div>
+      <a href="#/quality" data-page="quality"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Data Quality Studio</a>
+      <a href="#/tower" data-page="tower"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><circle cx="12" cy="12" r="2"/><path d="M7 12h3M14 11l3.5-4.5M14 13l3.5 4.5"/></svg>Agent Control Tower</a>
+    </nav>
+    <div class="rail-card" id="railCard">
+      <div style="color:#fff;font-weight:600">Data health</div>
+      <div class="bar"><i id="railBar" style="width:0%"></i></div>
+      <div class="row"><span id="railRows">—</span><span id="railPct"></span></div>
+      <div style="margin-top:10px" id="railLlm"><span class="pill off"><span class="dot"></span>checking model…</span></div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <form class="search" id="topAsk" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9a9db8" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="topInput" placeholder="Ask about revenue, MRR, churn, refunds… e.g. “revenue by region in 2025”" aria-label="Ask a question">
+        <kbd>↵</kbd>
+      </form>
+      <div class="me">
+        <img class="avatar" id="avatar" src="/static/brand/avatar.png" alt="Profile"
+             onerror="this.outerHTML='<div class=&quot;avatar&quot;>FR</div>'">
+        <div class="who">Finance workspace<small>CloudNova · local-first</small></div>
+      </div>
+    </div>
+    <div id="page"></div>
+  </main>
+</div>
+<script src="/static/vendor/chart.umd.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

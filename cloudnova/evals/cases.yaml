@@ -78,6 +78,26 @@
   question: How many invoices by status?
   checks: [{type: number, column: invoice_count, where: {status: pending}, expected: "oracle:invoice_count_pending"}]
 
+- id: OE-annual-vs-monthly
+  category: open_ended
+  question: How much revenue came from annual vs monthly billing?
+  checks: [{type: number, column: net_revenue, where: {billing_cycle: annual}, expected: "oracle:net_annual", tol: 0.01}]
+
+- id: OE-voided-count
+  category: open_ended
+  question: How many invoices were voided?
+  checks: [{type: number, column: invoice_count, expected: "oracle:invoice_count_void"}]
+
+- id: OE-2023-vs-2024
+  category: open_ended
+  question: Revenue in 2023 vs 2024
+  checks: [{type: number, column: net_revenue, where: {invoice_year: 2023}, expected: "oracle:net_2023", tol: 0.01}]
+
+- id: OE-avg-discount-by-plan
+  category: open_ended
+  question: Average discount by plan
+  checks: [{type: number, column: avg_discount_pct, where: {plan: Starter}, expected: "oracle:avg_discount_paid_starter", tol: 0.0001}]
+
 # ---------------------------------------------------------------- multi-turn
 - id: FU-1-revenue-by-region
   category: follow_up

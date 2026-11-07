@@ -13,7 +13,7 @@ from ..errors import AppError
 from ..governance.guards import MAX_QUESTION_CHARS, instruction_like, write_intent
 from ..llm.provider import provider_status
 from ..semantic.catalog import METRICS
-from ..semantic.planner import CONCEPT, QueryPlan, apply_followup, describe_filters, detect_metrics, plan_question
+from ..semantic.planner import CONCEPT, UNMODELED, QueryPlan, apply_followup, describe_filters, detect_metrics, plan_question
 from . import memory
 from . import tools as T
 from .harness import RunContext
@@ -30,10 +30,11 @@ OUT_OF_SCOPE = [
     (re.compile(r"(live|current|today'?s|real.?time).{0,20}(exchange|fx|rate|price|stock)", re.I),
      "I don't have internet access or live rates; CloudNova uses fixed FX (EUR→USD 1.08, GBP→USD 1.27)."),
 ]
-DQ_PAT = re.compile(r"duplicate|data quality|dirty|cleaning|cleaned|ambiguous|date format|conflict|rejected|quarantin|malformed|"
+DQ_PAT = re.compile(r"duplicate|data quality|dirty|cleaning|cleaned|ambiguous|date format|conflict|reject|quarantin|malformed|"
                     r"\bfx\b.{0,20}(issue|question|direction|rule)|how (did|do) you (handle|treat|parse|clean)|emails?", re.I)
 EXPLAIN_PAT = re.compile(r"^\s*(explain|how (was|is|did you) (that|this|it) (calculated|computed|derived)|show (me )?the (sql|query)|"
                          r"how did you (get|calculate|compute)|where did (that|this) (number|come)|what does .{1,30} mean|"
+                         r"how (is|are) .{1,40} (calculated|computed|defined|derived|measured)|"
                          r"how (is|do you) (define|calculate|compute)|definition of|define\b)", re.I)
 GREETING = re.compile(r"^\s*(hi|hello|hey|yo|thanks|thank you|good (morning|afternoon|evening)|how are you|who are you|what can you do)\b", re.I)
 DATA_WORDS = re.compile(r"invoice|account|customer|client|revenue|region|plan|seat|csat|status|currency|discount|industr|payment|"
@@ -132,6 +133,13 @@ def _dispatch(q: str, ctx: RunContext, out: dict) -> None:
         return
 
     if CONCEPT.search(q) and not re.search(r"invoices?|accounts?|customers?|clients?|churned|\bactive\b", q, re.I):
+        ms = [] if UNMODELED.search(q) else detect_metrics(q)
+        if ms:  # a term we define: answer from the approved catalog, not from model memory
+            ctx.note("route", "concept question about a catalog metric → explain definition", (time.perf_counter() - t) * 1000)
+            defs = [{"id": m, "label": METRICS[m].label, "definition": METRICS[m].definition, "sql": METRICS[m].sql} for m in ms[:2]]
+            out.update(intent="explain", metric_definitions=defs,
+                       answer="At CloudNova (per the business rules):\n" + "\n".join(f"**{d['label']}** — {d['definition']}\n`{d['sql']}`" for d in defs))
+            return
         ctx.note("route", "concept question (no CloudNova scope) → general", (time.perf_counter() - t) * 1000)
         _general(q, ctx, out)
         return

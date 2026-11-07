@@ -14,6 +14,8 @@ REGION_WORDS = {"na": "NA", "north america": "NA", "emea": "EMEA", "europe": "EM
                 "latam": "LATAM", "latin america": "LATAM", "south america": "LATAM"}
 PLAN_WORDS = {"starter": "Starter", "pro": "Pro", "professional": "Pro", "enterprise": "Enterprise"}
 INDUSTRIES = ["Travel", "Manufacturing", "Education", "Healthcare", "Retail", "Gaming", "Media", "Energy", "Logistics", "Fintech"]
+STATUS_WORDS = {"paid": r"\bpaid\b", "pending": r"\bpending\b|in review|awaiting", "failed": r"\bfail(ed|ing|s)?\b|declined",
+                "refunded": r"\brefund(ed|s)?\b|charged? ?back", "void": r"\bvoid(ed)?\b|cancell?ed"}
 DIM_WORDS = [
     ("region", r"regions?|geograph(?:y|ies)|geo"), ("plan", r"plans?|tiers?|products?"),
     ("industry", r"industr(?:y|ies)|verticals?|sectors?"), ("billing_cycle", r"billing cycles?|cycles?"),
@@ -69,6 +71,8 @@ def detect_metrics(q: str) -> list[str]:
         return ["refund_count", "refunds"] if count_q and "how much" not in s else ["refunds", "refund_count"]
     if re.search(r"pending|failed|stuck|exposure|exposed|outstanding|uncollected|unpaid|at risk", s) and not re.search(r"\bpaid invoices\b.*revenue|revenue.*\bpaid\b", s):
         return ["exposure_count", "exposure"] if count_q else ["exposure", "exposure_count"]
+    if re.search(r"(average|avg|mean|typical) discount|discount (rate|%|percent)", s):
+        return ["avg_discount_pct", "discount_given"]
     if re.search(r"discount", s):
         return ["discount_given"]
     if re.search(r"average (paid )?invoice|avg invoice|invoice value|deal size|ticket size", s):
@@ -116,7 +120,10 @@ def detect_filters(q: str, metrics: list[str]) -> tuple[dict[str, list], bool]:
         f["industry"] = inds
     if m := re.findall(r"\b(eur|gbp|usd)[- ]?(?:denominated|invoices|customers|accounts|billing)", s):
         f["currency"] = sorted({c.upper() for c in m})
-    if re.search(r"\bannual (invoices|plans|billing|subscriptions|contracts)\b", s):
+    both_cycles = re.search(r"\bannual", s) and re.search(r"\bmonthly (billing|invoices|plans|subscriptions)|\bmonthly\b.*\b(vs|versus|and)\b|\b(vs|versus|and)\b.*\bmonthly\b", s)
+    if both_cycles:
+        pass
+    elif re.search(r"\bannual (invoices|plans|billing|subscriptions|contracts)\b", s):
         f["billing_cycle"] = ["annual"]
     elif re.search(r"\bmonthly (invoices|plans|billing|subscriptions)\b", s):
         f["billing_cycle"] = ["monthly"]
@@ -132,7 +139,7 @@ def detect_filters(q: str, metrics: list[str]) -> tuple[dict[str, list], bool]:
         elif re.search(r"\bactive (accounts|customers)\b", s) and metrics[0] not in ("active_accounts",):
             f["churned"] = [False]
     if metrics and metrics[0] in ("invoice_count", "avg_invoice_value"):
-        sts = [st for st in ("paid", "pending", "failed", "refunded", "void") if re.search(rf"\b{st}\b", s)]
+        sts = [st for st, pat in STATUS_WORDS.items() if re.search(pat, s)]
         if sts:
             f["status"] = sts
     if metrics and metrics[0] in ("exposure", "exposure_count"):
@@ -159,9 +166,11 @@ def detect_dimension(q: str, metrics: list[str], filters: dict) -> tuple[str | N
                 if not re.search(r"top|bottom|which (accounts|customers)", s):
                     continue
             return dim, order or ("desc" if re.search(r"which|highest|most|largest|biggest|top", s) else None), limit
-    # "Enterprise vs Starter" → compare by plan
+    # "Enterprise vs Starter" / "2023 vs 2024" / "annual vs monthly" → compare along that dimension
     if re.search(r"\bvs\.?\b|versus|compar(e|ed|ing|ison)|against|\band\b", s):
-        for fld in ("plan", "region", "industry"):
+        if re.search(r"\bannual", s) and re.search(r"\bmonthly\b", s):
+            return "billing_cycle", None, None
+        for fld in ("plan", "region", "industry", "invoice_year"):
             if len(filters.get(fld, [])) >= 2:
                 return fld, None, None
     return None, order, limit
@@ -208,7 +217,7 @@ def validate_plan(plan: QueryPlan) -> QueryPlan:
 UNMODELED = re.compile(r"support tickets?|\btickets?\b|signup|sign-up|tenure|lifetime|email|median|percentile|correlat|"
                        r"standard deviation|variance|days (between|to|from)|growth rate|retention|cohort|per seat|seats per", re.I)
 CONCEPT = re.compile(r"^\s*(what is|what's|what are|define|explain|tell me about|how does)\b(?!.*\b(our|we|us|cloudnova|20\d\d|"
-                     r"by (region|plan|industry|month)|which|top \d|how much|how many)\b)", re.I)
+                     r"by (region|plan|industry|month)|which|top \d|how much|how many|total|average|current)\b)", re.I)
 
 
 FOLLOWUP_HINT = re.compile(r"^\s*(only|just|now|and|what about|how about|same|instead|but|filter|exclude|limit|show (only|just)|"

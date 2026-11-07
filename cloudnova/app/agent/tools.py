@@ -111,9 +111,11 @@ def data_quality_report(question: str) -> dict:
         res = db.run_query(sql)
         text = "Emails with `_at_` were repaired to `@`; blank emails stay NULL. Emails are masked in query results."
     elif topic == "rejected":
-        sql = "SELECT reason, COUNT(*) AS rows_moved FROM rejected_rows GROUP BY reason ORDER BY rows_moved DESC"
+        sql = "SELECT replace(issue_code, 'rejected:', '') AS reason, n_rows AS rows_moved FROM dq_issues WHERE issue_code LIKE 'rejected:%' ORDER BY n_rows DESC"
         res = db.run_query(sql)
-        text = "No raw row is silently dropped: every row is either in `invoices` or in `rejected_rows` with a reason."
+        parts = ", ".join(f"{r[1]:,} {r[0].replace('_', ' ')}" for r in res["rows"])
+        text = (f"{sum(r[1] for r in res['rows']):,} raw rows were moved to `rejected_rows` ({parts}). No raw row is silently "
+                f"dropped: every row is either in `invoices` or in `rejected_rows` with its reason and full raw record.")
     else:
         sql = "SELECT issue_code, \"column\", n_rows, action FROM dq_issues ORDER BY n_rows DESC"
         res = db.run_query(sql)

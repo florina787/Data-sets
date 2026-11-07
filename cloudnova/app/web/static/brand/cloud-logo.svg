@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 84" role="img" aria-label="CloudNova">
+  <defs>
+    <linearGradient id="gL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8db8ff"/><stop offset="1" stop-color="#3f6fe6"/></linearGradient>
+    <linearGradient id="gM" x1="0.1" y1="0.1" x2="0.9" y2="0.9"><stop offset="0" stop-color="#a7c8ff"/><stop offset="0.55" stop-color="#5b8cf5"/><stop offset="1" stop-color="#3a62e0"/></linearGradient>
+    <linearGradient id="gR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d7cf0"/><stop offset="1" stop-color="#9cc0ff"/></linearGradient>
+  </defs>
+  <circle cx="30" cy="54" r="22" fill="url(#gL)"/>
+  <circle cx="60" cy="40" r="32" fill="url(#gM)"/>
+  <circle cx="90" cy="56" r="22" fill="url(#gR)"/>
+  <rect x="30" y="56" width="60" height="20" fill="url(#gM)"/>
+  <path d="M74 38 a20 20 0 0 1 2 -6" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none" opacity=".95"/>
+  <path d="M70.5 49 a22 22 0 0 1 16 -12" stroke="#fff" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M40 66 a18 18 0 0 0 8 8" stroke="#fff" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+</svg>

@@ -63,7 +63,7 @@ def build(force: bool = False, quiet: bool = False) -> dict:
     if not force and s.db_path.exists() and manifest_path.exists():
         m = json.loads(manifest_path.read_text())
         if m.get("raw_sha256") == digest and m.get("fx_direction") == s.fx_direction:
-            return m
+            return {**m, "reused": True}
     t0 = time.perf_counter()
     result = clean(load_raw(s.raw_csv), s.fx_to_usd, s.fx_direction, today=date.today())
     tmp = s.db_path.with_suffix(".tmp.duckdb")
@@ -94,4 +94,4 @@ def build(force: bool = False, quiet: bool = False) -> dict:
     if not quiet:
         print(f"built {s.db_path.name}: {result.stats['clean_invoices']} invoices, {result.stats['accounts']} accounts, "
               f"{result.stats['rejected_rows']} rejected rows ({manifest['build_seconds']}s)")
-    return manifest
+    return {**manifest, "reused": False}

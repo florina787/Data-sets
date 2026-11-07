@@ -39,6 +39,10 @@ class Settings:
     query_timeout_s: float = 10.0
     duckdb_memory_limit: str = "1GB"
     allow_pii: bool = False
+    llm_start_cmd: str = ""
+    llm_start_timeout_s: float = 120.0
+    host: str = "127.0.0.1"
+    port: int = 8000
 
     @property
     def db_path(self) -> Path:
@@ -71,4 +75,8 @@ def get_settings() -> Settings:
         query_timeout_s=float(_env("QUERY_TIMEOUT_S", "10")),
         duckdb_memory_limit=_env("DUCKDB_MEMORY_LIMIT", "1GB"),
         allow_pii=_env("ALLOW_PII", "false").lower() in ("1", "true", "yes"),
+        llm_start_cmd=_env("LLM_START_CMD", ""),
+        llm_start_timeout_s=float(_env("LLM_START_TIMEOUT_S", "120")),
+        host=_env("CLOUDNOVA_HOST", "127.0.0.1"),
+        port=int(_env("CLOUDNOVA_PORT", "8000")),
     )

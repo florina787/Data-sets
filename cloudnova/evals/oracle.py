@@ -150,6 +150,10 @@ def expected() -> dict:
     exp["avg_paid_invoice"] = float(sum(r["usd"] for r in paid) / len(paid))
     exp["discount_given"] = float(sum((PRICE[r["plan"]] * r["seats"] * r["months"] * r["disc"] / 100 for r in paid), Decimal("0")))
     exp["emea_enterprise_paid"] = float(_sum([r for r in inv if r["region"] == "EMEA" and r["plan"] == "enterprise"], {"paid"}))
+    exp["net_annual"] = float(_sum([r for r in inv if r["months"] == 10], {"paid", "refunded"}))
+    exp["invoice_count_void"] = sum(1 for r in inv if r["status"] == "void")
+    exp["net_2023"] = float(_sum([r for r in inv if r["date"].year == 2023], {"paid", "refunded"}))
+    exp["avg_discount_paid_starter"] = float(sum(r["disc"] for r in paid if r["plan"] == "starter") / sum(1 for r in paid if r["plan"] == "starter"))
     exp["invoice_count_pending"] = sum(1 for r in inv if r["status"] == "pending")
     ent_region = defaultdict(lambda: Decimal("0"))
     for r in inv:
