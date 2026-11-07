@@ -113,7 +113,7 @@ def _dispatch(q: str, ctx: RunContext, out: dict) -> None:
             defs = T.metric_definitions(p)
             out.update(intent="explain", sql=prev_sql, planner="semantic", metric_definitions=defs, filters=describe_filters(p),
                        answer="Here is how the previous answer was computed:\n" + "\n".join(f"- **{d['label']}** = {d['definition']} "
-                              f"SQL: `{d['sql']}`" for d in defs) + f"\n- Filters: {describe_filters(p) or 'none'}. "
+                              f"SQL: `{d['sql']}`" for d in defs) + f"\n- Filters: {', '.join(f'{k} = {v}' for k, v in describe_filters(p).items()) or 'none'}. "
                               "The full SQL that ran is shown below; it executed read-only on the cleaned `invoices`/`accounts` tables.",
                        sources=["invoices", "accounts"])
             out["_plan"] = prev_plan
