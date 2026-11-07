@@ -1,0 +1,11 @@
+# Runtime (versions verified by the test suite on 2026-11-07, Python 3.13)
+pandas==3.0.5
+duckdb==2.0.0
+sqlglot==30.30.0
+fastapi==0.162.2
+uvicorn==0.54.0
+pydantic==2.13.5
+httpx==0.28.1
+pyyaml==6.0.3
+# Dev
+pytest==9.2.0
