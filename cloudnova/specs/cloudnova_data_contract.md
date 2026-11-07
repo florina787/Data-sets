@@ -156,3 +156,4 @@ Additional flags: `invoice_before_signup`, `future_invoice_date` (> pipeline run
 
 ## Change log
 * v1.0 — initial spec, derived from BUSINESS_CONTEXT.md + measured profile above.
+* v1.1 — §5.2: day == month in DD-MM-YYYY is not flagged ambiguous (both readings agree).

@@ -56,3 +56,12 @@ broken out by status.
 ## Pricing-rule check (used by Data Quality + anomaly view)
 `pricing_delta = amount_local − expected_amount_usd × fx_rate_to_usd` for non-refunds;
 `|delta| > 1.00` → `pricing_violation`.
+
+## Change log
+* v1.1 (during planner build) — **word → metric rule made explicit**: a bare "revenue / sales /
+  billings" means `net_revenue` (BUSINESS_CONTEXT: refunds "net against revenue"); the question must
+  say "paid invoices", "paid" or "gross" to get `paid_revenue`. Q1 says "for **paid** invoices" →
+  `paid_revenue` (net reported alongside); Q5 "by revenue" → `net_revenue`. Previously this was
+  implicit per question; now it is one rule the planner applies everywhere.
+* v1.1 — DD-MM-YYYY with day == month is *not* ambiguous (both readings give the same date), so
+  `date_was_ambiguous` excludes it (data contract §5.2 clarified).
