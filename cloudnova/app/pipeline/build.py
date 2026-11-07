@@ -85,7 +85,10 @@ def build(force: bool = False, quiet: bool = False) -> dict:
     finally:
         con.close()
     tmp.replace(s.db_path)
+    from ..policy import active as _active_policy
+    pol = _active_policy()
     manifest = {
+        "policy_version": pol["version"], "policy_decision_id": pol.get("decision_id"),
         "raw_csv": str(s.raw_csv.name), "raw_sha256": digest, "fx_direction": s.fx_direction,
         "fx_to_usd": s.fx_to_usd, "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "build_seconds": round(time.perf_counter() - t0, 2), **result.stats,

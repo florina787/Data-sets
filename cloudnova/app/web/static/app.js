@@ -397,7 +397,7 @@ async function pageIntegrations(el) {
 }
 
 /* ------------------------------------------------------------ router + chrome */
-const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations };
+const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations, journey: (el) => window.pageJourney(el), decisions: (el) => window.pageDecisions(el) };
 async function route() {
   const [name, ...rest] = location.hash.replace(/^#\/?/, "").split("?");
   const key = PAGES[name] ? name : "";

@@ -141,6 +141,45 @@ def legacy_preview(req: LegacyPreview):
     return preview(LegacyBillingAdapter.sample() if req.text is None else LegacyBillingAdapter(req.text, "uploaded.psv"))
 
 
+# ---------------------------------------------------------------- financial policy decisions (approval-gated)
+class PolicyApproval(BaseModel):
+    key: str = Field(max_length=40)
+    option: str = Field(max_length=40)
+    approver: str = Field(min_length=2, max_length=80)
+    role: str = Field(max_length=40)
+    rationale: str = Field(min_length=20, max_length=2000)
+    impact_hash: str = Field(max_length=32)
+    pin: str = Field(max_length=64)
+
+
+@v1.get("/policy", tags=["decisions"])
+def policy_overview():
+    """Active vs original policy, open decisions with live impact reports, and the decision log."""
+    from .policy import overview
+    return overview()
+
+
+@v1.post("/policy/decisions", tags=["decisions"])
+def policy_approve(body: PolicyApproval):
+    """Record a finance-owner decision. Does NOT change anything until applied."""
+    from .policy import approve
+    return approve(body.key, body.option, body.approver, body.role, body.rationale, body.impact_hash, body.pin)
+
+
+@v1.post("/policy/decisions/{decision_id}/apply", tags=["decisions"])
+def policy_apply(decision_id: int):
+    """Apply an approved decision: write a new policy version and rebuild from the raw CSV."""
+    from .policy import apply
+    return apply(decision_id)
+
+
+@v1.get("/journey", tags=["journey"])
+def journey():
+    """Nova's Guided Journey: seven scenes whose narration is generated from the live engine and eval artifacts."""
+    from .journey import scenes
+    return scenes()
+
+
 @v1.get("/sessions/{session_id}")
 def session(session_id: str):
     return {"session_id": session_id, "turns": memory.history(session_id, 50)}

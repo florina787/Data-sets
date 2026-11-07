@@ -1,0 +1,15 @@
+# Financial policy — the ORIGINAL rules from BUSINESS_CONTEXT.md and the data contract.
+# This file is never edited by the application. An approved decision creates a NEW version as a runtime override
+# (data/runtime/policy_active.json) that records who approved it, why, and which version it replaces.
+version: "1.0"
+status: active-original
+source: data/raw/BUSINESS_CONTEXT.md + specs/cloudnova_data_contract.md
+rules:
+  fx_direction: documented          # amount_usd = amount_local × rate (EUR 1.08, GBP 1.27), as written in the brief
+  account_identity: account_id      # one account = one account_id; account_name is a display attribute
+  status_precedence: [refunded, paid, failed, void, pending]
+  annual_billed_months: 10
+  list_price_usd: {Starter: 49, Pro: 99, Enterprise: 299}
+open_decisions:
+  - PDR-001 fx_direction        (docs/decisions/PDR-001-fx-direction.md)
+  - PDR-002 account_identity    (docs/decisions/PDR-002-account-identity.md)

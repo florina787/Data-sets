@@ -1,0 +1,147 @@
+{
+  "meta": {
+    "run_at": "2026-11-07T18:45:41+00:00",
+    "model": "qwen2.5-coder:3b",
+    "served": [
+      "qwen2.5-coder:3b"
+    ],
+    "hardware": "x86_64 \u00b7 4 CPU threads \u00b7 CPU-only inference",
+    "temperature": 0.0
+  },
+  "summary": {
+    "hybrid": {
+      "correct": 6,
+      "total": 6,
+      "median_ms": 10,
+      "max_ms": 61
+    },
+    "llm": {
+      "correct": 2,
+      "total": 6,
+      "median_ms": 20619,
+      "max_ms": 42858
+    }
+  },
+  "results": [
+    {
+      "q": 1,
+      "mode": "hybrid",
+      "correct": true,
+      "why": "paid 2024 found",
+      "planner": "semantic",
+      "sql": "SELECT SUM(i.amount_usd) FILTER (WHERE i.status = 'paid') AS paid_revenue, SUM(i.amount_usd) FILTER (WHERE i.status IN ('paid','refunded')) AS net_revenue\nFROM invoices i\nWHERE i.invoice_year = 2024",
+      "ms": 61,
+      "llm_ms": 0.0
+    },
+    {
+      "q": 2,
+      "mode": "hybrid",
+      "correct": true,
+      "why": "APAC + avg MRR correct",
+      "planner": "semantic",
+      "sql": "SELECT a.region AS region, AVG(a.current_mrr_usd) FILTER (WHERE a.is_active) AS avg_mrr, COUNT(*) FILTER (WHERE a.is_active) AS active_accounts\nFROM accounts a\nGROUP BY a.region\nORDER BY avg_mrr DESC NULLS LAST, region",
+      "ms": 8,
+      "llm_ms": 0.0
+    },
+    {
+      "q": 3,
+      "mode": "hybrid",
+      "correct": true,
+      "why": "refund total found",
+      "planner": "semantic",
+      "sql": "SELECT SUM(i.amount_usd) FILTER (WHERE i.status = 'refunded') AS refunds, COUNT(*) FILTER (WHERE i.status = 'refunded') AS refund_count\nFROM invoices i",
+      "ms": 7,
+      "llm_ms": 0.0
+    },
+    {
+      "q": 4,
+      "mode": "hybrid",
+      "correct": true,
+      "why": "both churn rates found",
+      "planner": "semantic",
+      "sql": "SELECT a.plan AS plan, AVG(CASE WHEN a.churned THEN 1.0 ELSE 0.0 END) FILTER (WHERE a.churned IS NOT NULL) AS churn_rate, COUNT(*) FILTER (WHERE a.churned) AS churned_accounts, COUNT(*) AS account_count\nFROM accounts a\nWHERE a.plan IN ('Enterprise', 'Starter')\nGROUP BY a.plan\nORDER BY churn_rate DESC NULLS LAST, plan",
+      "ms": 7,
+      "llm_ms": 0.0
+    },
+    {
+      "q": 5,
+      "mode": "hybrid",
+      "correct": true,
+      "why": "top-5 ids in order",
+      "planner": "semantic",
+      "sql": "SELECT i.account_id AS account_id, ANY_VALUE(a.account_name) AS account_name, ANY_VALUE(a.csat_score) AS csat_score, COALESCE(ANY_VALUE(a.csat_score) <= 2, FALSE) AS low_csat_flag, SUM(i.amount_usd) FILTER (WHERE i.status IN ('paid','refunded')) AS net_revenue, SUM(i.amount_usd) FILTER (WHERE i.status = 'paid') AS paid_revenue, SUM(i.amount_usd) FILTER (WHERE i.status = 'refunded') AS refunds\nFROM invoices i JOIN accounts a ON a.account_id = i.account_id\nGROUP BY i.account_id\nORDER BY net_revenue DESC NULLS LAST, account_id\nLIMIT 5",
+      "ms": 12,
+      "llm_ms": 0.0
+    },
+    {
+      "q": 6,
+      "mode": "hybrid",
+      "correct": true,
+      "why": "count + exposure found",
+      "planner": "semantic",
+      "sql": "SELECT COUNT(*) FILTER (WHERE i.status IN ('pending','failed')) AS exposure_count, SUM(i.amount_usd) FILTER (WHERE i.status IN ('pending','failed')) AS exposure\nFROM invoices i",
+      "ms": 10,
+      "llm_ms": 0.0
+    },
+    {
+      "q": 1,
+      "mode": "llm",
+      "correct": true,
+      "why": "paid 2024 found",
+      "planner": "llm_sql",
+      "sql": "SELECT SUM(amount_usd) AS total_revenue FROM invoices WHERE status = 'paid' AND invoice_year = 2024",
+      "ms": 15452,
+      "llm_ms": 15431.3
+    },
+    {
+      "q": 2,
+      "mode": "llm",
+      "correct": false,
+      "why": "sql_error: The database could not run this query: Binder Error: Ambiguous reference to column name \"region\" (use: 'accounts.region'",
+      "planner": "llm_sql",
+      "sql": "SELECT region, AVG(accounts.current_mrr_usd) AS avg_mrr_per_account FROM accounts JOIN invoices ON accounts.account_id = invoices.account_id WHERE accounts.is_active GROUP BY region ORDER BY avg_mrr_per_account DESC LIMIT 1",
+      "ms": 20619,
+      "llm_ms": null
+    },
+    {
+      "q": 3,
+      "mode": "llm",
+      "correct": true,
+      "why": "refund total found",
+      "planner": "llm_sql",
+      "sql": "SELECT SUM(amount_usd) AS total_refunds FROM invoices WHERE status = 'refunded'",
+      "ms": 6733,
+      "llm_ms": 6704.0
+    },
+    {
+      "q": 4,
+      "mode": "llm",
+      "correct": false,
+      "why": "sql_error: The database could not run this query: Binder Error: Ambiguous reference to column name \"plan\" (use: 'accounts.plan' or ",
+      "planner": "llm_sql",
+      "sql": "SELECT \n    CASE WHEN plan = 'Enterprise' THEN 1 ELSE 0 END AS is_enterprise,\n    COUNT(*) AS account_count,\n    SUM(CASE WHEN invoices.status = 'churned' THEN 1 ELSE 0 END) AS churned_accounts,\n    (SUM(CASE WHEN invoices.status = 'churned' THEN 1 ELSE 0 END) * 1.0 / COUNT(*)) * 100 AS churn_rate\nFROM \n    accounts\nJOIN \n    invoices ON accounts.account_id = invoices.account_id\nGROUP BY \n    is_enterprise\nORDER BY \n    churn_rate DESC",
+      "ms": 42858,
+      "llm_ms": null
+    },
+    {
+      "q": 5,
+      "mode": "llm",
+      "correct": false,
+      "why": "got ['ACC-7509', 'ACC-1420', 'ACC-9946', 'ACC-5211', 'ACC-1196']",
+      "planner": "llm_sql",
+      "sql": "SELECT account_id, SUM(amount_usd) AS total_revenue, csat_score \nFROM invoices \nWHERE status = 'paid' \nGROUP BY account_id, csat_score \nORDER BY total_revenue DESC \nLIMIT 5",
+      "ms": 27033,
+      "llm_ms": 27005.5
+    },
+    {
+      "q": 6,
+      "mode": "llm",
+      "correct": false,
+      "why": "sql_rejected: Query rejected: unknown column 'status'.",
+      "planner": "llm_sql",
+      "sql": "SELECT COUNT(*) AS pending_failed_invoices, SUM(exposure_usd) AS exposed_dollars FROM monthly_revenue WHERE status IN ('pending', 'failed')",
+      "ms": 17791,
+      "llm_ms": null
+    }
+  ]
+}

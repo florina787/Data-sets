@@ -5,6 +5,7 @@ __pycache__/
 data/processed/
 data/runtime/
 evals/results/*.json
+!evals/results/mode_comparison.json
 !evals/results/.gitkeep
 *.gguf
 .venv/

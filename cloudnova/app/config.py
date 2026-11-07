@@ -59,6 +59,11 @@ def _path(name: str, default: str) -> Path:
 def get_settings() -> Settings:
     _load_dotenv()
     direction = _env("FX_DIRECTION", "documented")
+    runtime = _path("CLOUDNOVA_RUNTIME_DIR", "data/runtime")
+    override = runtime / "policy_active.json"
+    if override.exists() and "FX_DIRECTION" not in os.environ:  # an APPROVED policy decision (app/policy.py) wins
+        import json
+        direction = json.loads(override.read_text())["rules"]["fx_direction"]
     if direction not in ("documented", "inverse"):
         raise ValueError("FX_DIRECTION must be 'documented' or 'inverse'")
     return Settings(

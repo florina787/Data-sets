@@ -1,0 +1,80 @@
+/* Nova's Guided Journey — CloudNova design tokens (styles.css), layout pattern after the FLO Bank reference. */
+.j-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.j-head .badge { width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, var(--indigo), var(--sky)); display: grid; place-items: center; box-shadow: var(--shadow); }
+.j-head h2 { margin: 0; font-size: 22px; letter-spacing: -.3px; } .j-head p { margin: 2px 0 0; color: var(--ink-2); font-size: 12.5px; }
+.j-demo { background: #fff8ea; color: #8a5a00; border-radius: 10px; padding: 6px 12px; font-size: 11.5px; margin-bottom: 10px; }
+.j-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.j-controls button, .j-controls select { border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.j-controls button.primary { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+.j-controls label { font-size: 12px; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; }
+.j-live { margin-left: auto; display: flex; gap: 6px; align-items: center; font-size: 11px; }
+.j-steps { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
+.j-steps button { border: 1px solid var(--line); background: #faf9ff; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; text-align: left; color: var(--ink-2); }
+.j-steps button.on { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+.j-steps button.done { background: var(--indigo-soft); color: var(--indigo); }
+.j-body { display: grid; grid-template-columns: 1fr 300px; gap: 14px; margin-top: 14px; }
+@media (max-width: 1150px) { .j-body { grid-template-columns: 1fr; } }
+.j-stage-wrap { position: relative; min-height: 560px; padding-bottom: 40px; }
+.j-scene-head { display: flex; justify-content: space-between; gap: 12px; }
+.j-scene-head .k { font-size: 10.5px; letter-spacing: 1px; color: var(--indigo); font-weight: 700; }
+.j-scene-head h3 { margin: 2px 0; font-size: 21px; } .j-scene-head .sub { margin: 0; }
+.j-state { text-align: right; font-size: 11.5px; color: var(--ink-2); } .j-state code { font-size: 11px; }
+.j-pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-weight: 700; font-size: 10.5px; letter-spacing: .4px; }
+.j-pill.reading { background: var(--indigo-soft); color: var(--indigo); } .j-pill.awaiting { background: #fff1d6; color: #9a6400; }
+.j-pill.completed { background: rgba(25,179,148,.15); color: #0f8f75; } .j-pill.working { background: var(--sky-soft); color: #2565cf; }
+.j-pill.warn { background: #fde9ec; color: var(--rose); }
+.j-scene { margin-top: 14px; }
+.j-narr { max-height: 640px; overflow-y: auto; }
+.j-narr .msg { font-size: 12px; line-height: 1.5; padding: 7px 9px; border-radius: 10px; background: #f5f4fd; margin-bottom: 6px; }
+.j-narr .msg b { color: var(--indigo); font-size: 10.5px; margin-right: 4px; }
+.j-narr .msg.now { background: var(--indigo-soft); outline: 1px solid #cfcdf8; }
+.j-events { font: 11px/1.55 var(--mono); color: var(--ink-2); max-height: 220px; overflow-y: auto; }
+.j-events div span { color: var(--indigo); }
+.j-examples { display: grid; gap: 8px; }
+.j-ex { display: grid; grid-template-columns: 150px 1fr 24px 1fr; gap: 8px; align-items: center; font: 11.5px/1.5 var(--mono); }
+.j-ex .r { background: #fff5f6; border: 1px solid #f6d3d9; border-radius: 10px; padding: 6px 10px; } .j-ex .r b { color: #c2364c; }
+.j-ex .c { background: #effaf6; border: 1px solid #c7ecdf; border-radius: 10px; padding: 6px 10px; } .j-ex .c b { color: #0f8f75; }
+.j-ex .lbl { font-family: var(--font); font-weight: 700; color: var(--indigo); font-size: 12px; }
+.j-target { transition: box-shadow .3s, outline-color .3s; outline: 2px solid transparent; outline-offset: 3px; border-radius: 12px; }
+.j-target.hl { outline-color: var(--indigo-2); box-shadow: 0 0 0 6px rgba(124,124,240,.15); }
+.j-graph { position: relative; height: 330px; border: 1px solid var(--line); border-radius: 14px; background: radial-gradient(circle at 30% 30%, #f6f5ff, #fff); }
+.j-node { position: absolute; transform: translate(-50%, -50%); background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: 7px 11px; font-size: 11.5px; min-width: 120px; text-align: center; transition: border-color .3s, background .3s; }
+.j-node small { display: block; color: var(--ink-3); font-size: 10px; } .j-node.active { border-color: var(--indigo); background: var(--indigo-soft); }
+.j-node.ok { border-color: var(--teal); } .j-node.err { border-color: var(--rose); }
+.j-desk { display: grid; grid-template-columns: 1fr 1.2fr; gap: 14px; }
+.j-deskart { border: 2px solid var(--teal); border-radius: 16px; display: grid; place-items: center; min-height: 240px; background: linear-gradient(#fafffd, #effaf6); font-size: 12px; color: var(--ink-2); }
+.j-form label { display: block; font-size: 11.5px; color: var(--ink-2); margin: 8px 0 3px; }
+.j-form input, .j-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; font: inherit; font-size: 12.5px; }
+.j-form .opts { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12.5px; }
+.j-honest td { vertical-align: top; } .j-honest ul { margin: 0; padding-left: 16px; }
+/* ---------------- the guide */
+.guide { position: absolute; left: 20px; top: 60px; width: 74px; height: 150px; pointer-events: none; z-index: 5;
+  transition-property: left, top; transition-timing-function: linear; }
+.guide svg { width: 100%; height: 100%; overflow: visible; }
+.guide.flip svg { transform: scaleX(-1); }
+.guide .bubble { position: absolute; bottom: 118px; left: 66px; width: 250px; background: #fff; border: 1px solid var(--line); border-radius: 12px 12px 12px 3px;
+  padding: 8px 11px; font-size: 11.5px; line-height: 1.45; box-shadow: var(--shadow); color: var(--ink); }
+.guide.bubble-left .bubble { left: auto; right: 66px; border-radius: 12px 12px 3px 12px; }
+.guide .bubble:empty { display: none; }
+.g-arm, .g-leg { transform-box: fill-box; transition: transform .35s ease; }
+.g-arm.l { transform-origin: 50% 6%; } .g-arm.r { transform-origin: 50% 6%; } .g-leg { transform-origin: 50% 0%; }
+.g-prop { opacity: 0; transition: opacity .25s; }
+.guide[data-pose="walk"] .g-leg.l, .guide[data-pose="walk"] .g-arm.r { animation: gswing .5s ease-in-out infinite alternate; }
+.guide[data-pose="walk"] .g-leg.r, .guide[data-pose="walk"] .g-arm.l { animation: gswing .5s ease-in-out infinite alternate-reverse; }
+@keyframes gswing { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+.guide[data-pose="point"] .g-arm.r { transform: rotate(-125deg); }
+.guide[data-pose="think"] .g-arm.r { transform: rotate(-150deg) translate(2px, 4px); } .guide[data-pose="think"] .p-think { opacity: 1; }
+.guide[data-pose="work"] .g-arm.l, .guide[data-pose="work"] .g-arm.r { transform: rotate(-55deg); } .guide[data-pose="work"] .p-laptop { opacity: 1; }
+.guide[data-pose="success"] .g-arm.l { transform: rotate(150deg); } .guide[data-pose="success"] .g-arm.r { transform: rotate(-150deg); } .guide[data-pose="success"] .p-spark { opacity: 1; }
+.guide[data-pose="warn"] .g-arm.r { transform: rotate(-110deg); } .guide[data-pose="warn"] .p-warn { opacity: 1; }
+.guide[data-pose="wait"] .g-arm.l, .guide[data-pose="wait"] .g-arm.r { transform: rotate(-40deg); } .guide[data-pose="wait"] .p-clip, .guide[data-pose="wait"] .p-hour { opacity: 1; }
+.guide[data-pose="error"] .p-err { opacity: 1; } .guide[data-pose="error"] .g-head { transform: rotate(-6deg); transform-box: fill-box; transform-origin: 50% 90%; }
+.guide[data-pose="turn"] svg { transform: scaleX(.75); }
+.reduced .guide { transition: none !important; } .reduced .guide * { animation: none !important; transition: none !important; }
+/* launcher on every page */
+.nova-launch { position: fixed; right: 20px; bottom: 18px; z-index: 8; display: flex; align-items: flex-end; gap: 6px; pointer-events: none; }
+.nova-launch .mini { width: 34px; height: 68px; pointer-events: none; }
+.nova-launch a { pointer-events: auto; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 7px 13px; font-size: 12px; font-weight: 600; color: var(--indigo); text-decoration: none; box-shadow: var(--shadow); }
+.poses { display: grid; grid-template-columns: repeat(11, 1fr); gap: 8px; }
+.poses .pc { background: #f5f4fd; border-radius: 12px; padding: 8px 4px; text-align: center; font-size: 10.5px; font-weight: 600; }
+.poses .guide { position: relative; left: 0; top: 0; margin: 0 auto; width: 46px; height: 92px; }
