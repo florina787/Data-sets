@@ -1,0 +1,156 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>CloudNova — FDE Engineering Case Study</title>
+<style>
+@page { size: Letter; margin: 0.65in 0.7in 0.7in 0.7in; }
+body { font-family: "Liberation Sans", Arial, sans-serif; color: #2a2f45; font-size: 10.2pt; line-height: 1.45; }
+h1 { color: #141b3a; font-size: 24pt; margin: 0 0 4pt; } h2 { color: #141b3a; font-size: 15pt; margin: 18pt 0 6pt; border-left: 4pt solid #b88a2e; padding-left: 8pt; }
+h3 { color: #141b3a; font-size: 11.5pt; margin: 10pt 0 4pt; } .kicker { color: #b88a2e; font-weight: 700; font-size: 9pt; letter-spacing: 1pt; }
+p { margin: 4pt 0 7pt; } .muted { color: #6b708a; } code, pre { font-family: "Liberation Mono", "Courier New", monospace; font-size: 8.8pt; }
+code { background: #f1f2f7; padding: 0 3pt; border-radius: 3pt; }
+pre { background: #141b3a; color: #e6e9f5; padding: 8pt 10pt; border-radius: 5pt; white-space: pre-wrap; margin: 6pt 0 8pt; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 9pt; font-size: 9.4pt; } th { background: #141b3a; color: #fff; text-align: left; padding: 4pt 6pt; }
+td { border-bottom: 1px solid #d9dce6; padding: 4pt 6pt; vertical-align: top; } tr:nth-child(even) td { background: #f6f7fa; }
+img { width: 100%; border: 1px solid #d9dce6; border-radius: 4pt; } figure { margin: 6pt 0 10pt; } figcaption { color: #6b708a; font-size: 8.8pt; margin-top: 3pt; }
+.prompt { border-left: 3pt solid #b88a2e; background: #fbf8f1; padding: 3pt 8pt; margin: 4pt 0; font-size: 9.2pt; break-inside: avoid; } .prompt .tag { font-size: 8pt; font-weight: 700; color: #8a6a1e; display: block; margin-bottom: 2pt; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; } .pb { break-before: page; } .avoid { break-inside: avoid; }
+.bad { color: #b4232c; font-weight: 700; } .ok { color: #1f7a4d; font-weight: 700; }
+.cover { border-bottom: 1px solid #d9dce6; padding-bottom: 8pt; margin-bottom: 8pt; }
+</style></head><body>
+
+<div class="cover"><div class="kicker">FORWARD DEPLOYED ENGINEERING · TAKE-HOME CASE STUDY</div>
+<h1>CloudNova: from a messy invoice export to answers finance can audit</h1>
+<p class="muted">Florina · November 2026 · Track B (spec-driven pipeline + natural-language query agent) · repo <code>github.com/florina787/Data-sets</code>, folder <code>cloudnova/</code>.
+Submission branch <code>claude/great-hamilton-8s8wk9</code>; extensions on <code>claude/great-hamilton-8s8wk9-assurance</code>. All figures come from the provided synthetic dataset.</p></div>
+
+<h2>1. The customer problem and the requirements</h2>
+<p>CloudNova's finance lead exported their invoice ledger and asked for one thing: <i>"We want to ask questions about our revenue and customers in plain English and actually trust the answers."</i>
+The export (<code>data/raw/cloudnova_invoices.csv</code>) is stitched together from an old billing tool, a CRM and a spreadsheet that finance keeps by hand. Nobody owned data quality.</p>
+<p>The briefing (<code>data/raw/BUSINESS_CONTEXT.md</code>) gave hard rules — list prices $49 / $99 / $299 per seat, annual invoices bill 10 months, only <code>paid</code> is revenue,
+refunds are negative and net against revenue, MRR = list price × seats × (1 − discount) — and six questions a stakeholder would ask. The assignment asked for a spec written first,
+evidence of how I steered the AI, an eval harness with at least one expected failure, production instincts, and one command to run it.</p>
+<p>I picked <b>Track B</b>. All six questions are aggregations: sums, averages, rankings. A retrieval system returns rows, not totals, and the totals are only right after
+duplicates are removed and the business rules are applied. SQL over cleaned data gives exact answers, and finance can read the SQL.</p>
+
+<h2>2. Initial investigation and data quality</h2>
+<p>Before writing any rules I tested each hypothesis against the CSV with small pandas scripts. The design came from these answers, not from assumptions.</p>
+<table class="avoid"><tr><th>Question</th><th>What the data showed</th><th>Decision (data contract)</th></tr>
+<tr><td>Is <code>01/05/2024</code> January or May?</td><td>First part never &gt; 12 in 1,320 slash dates; second part &gt; 12 in 786</td><td>NN/NN/YYYY = MM/DD</td></tr>
+<tr><td>And <code>05-01-2024</code>?</td><td>First part &gt; 12 in 151 rows, second never</td><td>NN-NN-YYYY = DD-MM; 81 still-ambiguous rows flagged</td></tr>
+<tr><td>How many duplicates really conflict?</td><td>82 exact duplicate rows; 43 duplicated invoice ids, 27 differ only by status spelling</td><td>16 real conflicts, resolved refunded &gt; paid &gt; failed &gt; void &gt; pending</td></tr>
+<tr><td>Do amounts match the price book?</td><td>Every row equals list × seats × months × (1 − disc) × FX rate</td><td>0 pricing violations — but see §5</td></tr>
+<tr><td>Is <code>account_id</code> the customer?</td><td>3,815 ids, only 200 names</td><td>account_id is the key (see §5)</td></tr></table>
+<figure class="avoid"><img src="../media/raw-vs-clean.png"><figcaption>Six real invoices: the raw string on the left, the clean row on the right (from <code>app/pipeline/rules.py</code>).</figcaption></figure>
+<p>The result: 5,125 raw rows → 5,000 invoices + 125 rows in an audit table (<code>rejected_rows</code>: 82 exact duplicates, 27 synonym duplicates, 16 lost conflicts).
+Summing without deduplication would overstate paid revenue by <b>$2,121,660.87</b> ($122,268,789.42 vs $120,147,128.55). The 16 conflicts would move net revenue by −$168,441.54 if every losing record had won.</p>
+
+<h2>3. Architecture and technology choices</h2>
+<pre>raw CSV (5,125 rows, read as strings)
+  → app/sources/base.py      CsvLedgerAdapter: enforces the 19-column raw contract, records sha256
+  → app/pipeline/rules.py    lookup maps (no fuzzy matching), date/amount parsers, FX, MRR
+  → app/pipeline/clean.py    exact dups → synonym dups → status precedence; unknown values quarantined
+  → app/pipeline/build.py    typed DuckDB: invoices 5,000 · accounts 3,815 · rejected_rows 125 · dedup_conflicts 16
+  → app/agent/supervisor.py  one query agent (harness adapted from my FloPilot project)
+       ├─ semantic planner (app/semantic/catalog.py + planner.py): metric × dimension × filter → SQL
+       ├─ Qwen text-to-SQL fallback (app/agent/tools.py::run_llm_sql) — only when no approved metric fits
+       └─ every SQL: app/governance/sql_guard.py (sqlglot) → app/db.py (read-only DuckDB, no external access)
+  → python -m app (CLI + FastAPI /api/v1/* + static dashboard) · python -m evals (independent oracle)</pre>
+<div class="two avoid"><div><h3>Choices I'd make again</h3>
+<p><b>Hand-written semantic layer</b> (~300 lines) instead of a framework: every metric is one SQL expression I can test. <b>pandas for cleaning, DuckDB for serving</b>: rule functions are easy to unit-test;
+DuckDB gives typed, read-only SQL with no server. <b>Static dashboard</b> (vanilla JS + vendored Chart.js): reviewers don't need a Node toolchain.</p></div>
+<div><h3>Safety I built in from the start</h3>
+<p>The SQL guard parses each statement and allows only a single SELECT over allow-listed tables and columns — not a keyword blacklist. DuckDB is also opened <code>read_only</code>
+with external access disabled and the config locked, and a test proves writes fail even if the guard were bypassed. Answers that come from Qwen are checked so they can't contain numbers that aren't in the result rows.</p></div></div>
+<pre>STATUS_PRECEDENCE = ["refunded", "paid", "failed", "void", "pending"]  # app/pipeline/rules.py
+BILLED_MONTHS = {"monthly": 1, "annual": 10}                          # annual = 12 months for the price of 10
+
+def check_sql(sql: str, schema: dict[str, set[str]]) -> GuardResult:  # app/governance/sql_guard.py
+    ...  # parse with sqlglot; reject anything that is not one SELECT over allowed tables/columns</pre>
+<p><b>Single command.</b> <code>python -m app</code> validates config, reuses or builds the data (keyed on the raw file's sha256), connects to local Qwen (or starts it via <code>LLM_START_CMD</code>),
+answers the six questions as a readiness check, then serves the API and dashboard. Measured from a clean shell: READY in 2.0 s (fresh build, Qwen running), 0.8 s (Qwen down → deterministic mode),
+4.5 s (Qwen started by the app). Ctrl+C and SIGTERM shut down cleanly.</p>
+
+<h2>4. AI model evaluation and limitations</h2>
+<p>I used <b>Qwen2.5-Coder-3B</b> (Q4 GGUF) locally: no API keys, no per-query cost, and the invoice data never leaves the machine. Ollama was my first choice, but its download was blocked in my build container,
+so I served the model with llama.cpp's OpenAI-compatible server. The adapter (<code>app/llm/provider.py</code>) talks the same API as Ollama, vLLM and LM Studio.</p>
+<p>To find out how far the model could go on its own, I added <code>QUERY_MODE=llm</code> — Qwen writes the SQL for every question — and scored both modes against the independent oracle
+(<code>evals/compare_modes.py</code>, artifact <code>evals/results/mode_comparison.json</code>, measured 2026-11-07, temperature 0, 4 CPU threads):</p>
+<table class="avoid"><tr><th>Mode</th><th>Correct on the six questions</th><th>Median latency</th><th>Max</th></tr>
+<tr><td>Hybrid (approved metrics first, Qwen fallback) — default</td><td class="ok">6 / 6</td><td>10 ms</td><td>61 ms</td></tr>
+<tr><td>Qwen-only</td><td class="bad">2 / 6</td><td>20,619 ms</td><td>42,858 ms</td></tr></table>
+<div class="two avoid"><div><pre>-- Q5 top 5 accounts, written by Qwen
+SELECT account_id, SUM(amount_usd) AS total_revenue,
+       csat_score
+FROM invoices WHERE status = 'paid'
+GROUP BY account_id, csat_score
+ORDER BY total_revenue DESC LIMIT 5
+-- ignores refunds: ACC-5211 / ACC-1196 swap</pre></div>
+<div><p>Q2 and Q4 failed with ambiguous joins. Q4 also invented <code>status = 'churned'</code> — churn is not a status. Q6 referenced a column that doesn't exist and the guard blocked it.
+The one that worried me was <b>Q5</b>: valid SQL, a plausible answer, and wrong. A guard checks safety, not meaning. That is why approved metrics never go through the model.</p></div></div>
+
+<h2>5. Financial policy decisions</h2>
+<p>Two things in the data were not cleaning problems — they were accounting policy, and the brief didn't settle them.</p>
+<h3>FX direction (docs/decisions/PDR-001-fx-direction.md)</h3>
+<p>The brief says EUR→USD 1.08 and GBP→USD 1.27. But every EUR/GBP amount already equals the USD list price × the rate. Applying the rate again converts twice.</p>
+<table class="avoid"><tr><th>1,421 non-USD, non-refund invoices</th><th>× rate (brief, active)</th><th>÷ rate (recommended)</th></tr>
+<tr><td>Match the USD price book within $1</td><td>0 / 1,421</td><td>1,421 / 1,421</td></tr>
+<tr><td>Q1 paid revenue 2024</td><td>$32,686,371.16</td><td>$29,595,624.38</td></tr>
+<tr><td>Refunds</td><td>−$8,925,163.80</td><td>−$8,200,645.87</td></tr></table>
+<h3>Account identity (docs/decisions/PDR-002-account-identity.md)</h3>
+<p>Every one of the 200 names spans several regions, plans and signup dates (100% of name groups are inconsistent, vs 24.4% of account_id groups). Names are not a customer master,
+so I recommend keeping <code>account_id</code>. A company-level roll-up needs a mapping from CloudNova's CRM.</p>
+<p><b>I did not let the AI — or myself — pick silently.</b> The inverse FX rule moves 2024 revenue by $3.09M; that is the finance owner's decision. So the original rules stay in
+<code>policies/financial_policy.yaml</code> (v1.0) and are never edited by the app. A change needs the approver's name, the <code>finance_owner</code> role, a rationale, the operator's PIN,
+and the hash of the impact report they were shown (<code>app/policy.py::approve</code>). Approving only records. Applying is a separate rebuild, and reverting is itself a decision.
+The eval expectations are not updated automatically — a changed policy shows up as eval differences, on purpose.</p>
+<div class="two avoid"><figure><img src="../media/finance-decisions.png"><figcaption>Finance Decisions page: live impact evidence, approval form and decision log.</figcaption></figure>
+<table><tr><th>Status</th><th>What</th></tr><tr><td class="ok">Implemented, 11 tests</td><td>record, apply (rebuild), revert, audit log; wrong PIN / wrong role / stale impact hash rejected</td></tr>
+<tr><td>Recommended, not applied</td><td>FX inverse rule</td></tr><tr><td>Blocked</td><td>name-based identity (needs master data)</td></tr><tr><td class="bad">Not built</td><td>real sign-in (SSO) — the PIN is demo-grade</td></tr></table></div>
+
+<h2>6. Enterprise integration and product design</h2>
+<p>CloudNova's export is really three systems. So the pipeline reads through a <b>source adapter</b> seam (<code>app/sources/</code>): each adapter emits the same 19 string columns plus lineage,
+and all cleaning happens once in <code>rules.py</code>. The CSV adapter is real. To show how a legacy system would plug in, I built a <b>simulated</b> legacy-billing adapter
+(<code>app/sources/legacy_billing.py</code> + <code>mappings/legacy_billing.yaml</code>): pipe-delimited, amounts in cents, coded statuses, a trailer control total.
+On its 12-row sample it checked the trailer, mapped 9 rows, rejected 3 with reasons (unknown code <code>ZZ</code>, amount <code>N/A</code>, date <code>20241341</code>), lost 1 to the ledger's own
+dedup rule, and flagged a planted 10× over-billing. It is preview-only: nothing is written to the ledger. CRM and Stripe mappings are designed in <code>docs/INTEGRATION_ARCHITECTURE.md</code>, not built.</p>
+<p>For the UI I started from the finance questions, not from components: <i>what did we earn, where did the rows go, what is at risk, what happens if we change a price, how was this invoice handled.</i></p>
+<div class="two avoid"><figure><img src="../media/reconciliation.png"><figcaption>Reconciliation: 5,125 → 5,000, with the dollar impact.</figcaption></figure>
+<figure><img src="../media/studio-replay.png"><figcaption>Investigation Replay of INV-102104: imported → normalized → reconciled → calculated → evaluated.</figcaption></figure></div>
+<div class="two avoid"><figure><img src="../media/studio-butterfly.png"><figcaption>Decision Butterfly: every metric under the active vs the proposed FX rule. Proposed is never shown as approved.</figcaption></figure>
+<figure><img src="../media/journey-scene-6.png"><figcaption>Guided journey, scene 6: the walk pauses at the finance owner's desk until a decision is recorded.</figcaption></figure></div>
+
+<h2>7. Testing, deployment and lessons learned</h2>
+<table class="avoid"><tr><th>Check (re-run 2026-11-07 before writing this)</th><th>Result</th></tr>
+<tr><td>Unit tests, extension branch (10 files)</td><td>156 passed</td></tr><tr><td>Unit tests, submission branch</td><td>114 passed</td></tr>
+<tr><td><code>python -m evals</code> (no LLM, as in CI)</td><td>PASS 31 · FAIL 0 · XFAIL 2 · SKIP 3</td></tr><tr><td><code>python -m evals --llm</code> (local Qwen)</td><td>PASS 33 · FAIL 0 · XFAIL 3</td></tr>
+<tr><td>Six stakeholder answers vs independent oracle</td><td>6 / 6, to the cent</td></tr>
+<tr><td>Browser checks (Playwright)</td><td>0 console errors / HTTP ≥ 400; guide inside the stage at 1920×1080, 1440×900, 1280×800, 900×1000</td></tr></table>
+<p>The oracle (<code>evals/oracle.py</code>) re-implements the spec with only the standard library and never imports the app, so the two can disagree. The three expected failures are deliberate:
+the name-based top-5, Q1 under the inverse FX rule, and one Qwen SQL case. CI (<code>.github/workflows/cloudnova-ci.yml</code>) runs build → tests → evals → demo on every push.</p>
+<h3>Mistakes I made, and what changed</h3>
+<ul><li>My planner matched "account<b>s</b>" as a count keyword, so Q5 came back as an account count. Fixed with word boundaries; caught by running all six end to end.</li>
+<li>"Average <b>support tickets</b> for churned vs active" silently answered churn rate. Now any measure outside the catalog drops the planner's confidence and goes to Qwen or "please clarify".</li>
+<li>A 24-question battery built from the briefing found 8 phrasing gaps ("annual vs monthly", "voided", "2023 vs 2024"…). I fixed them with general rules, not per-question templates.</li>
+<li>Approval buttons in the guided journey were wired only after the narration finished, so early clicks were ignored. Found in a browser test.</li>
+<li>Two of my own doc claims were wrong ("could change years", "shares 2 of 5"). I now re-check every number against the database before it goes into a document.</li></ul>
+<div><h3>Representative prompts from the build</h3>
+<p class="muted">"Verbatim" = copied from my messages to Claude Code in this session (excerpts). "Reconstructed" = a faithful paraphrase of an instruction, not the original wording.</p>
+<div class="prompt"><span class="tag">VERBATIM (excerpt)</span>Use the exact provided business rules, not assumed SaaS accounting rules.</div>
+<div class="prompt"><span class="tag">VERBATIM (excerpt)</span>These must be answered using reusable, schema-aware query functionality. Do not implement them as a collection of hardcoded question-and-answer templates.</div>
+<div class="prompt"><span class="tag">VERBATIM</span>use this excel copilot https://github.com/florina787/Data-sets/tree/claude/keen-hopper-an50uq/flopilot</div>
+<div class="prompt"><span class="tag">VERBATIM</span>can it answer all this questions</div>
+<div class="prompt"><span class="tag">VERBATIM (excerpt)</span>Optimize CloudNova for the Forward Deployed Engineer hiring evaluation, not for maximum feature count.</div>
+<div class="prompt"><span class="tag">VERBATIM (excerpt)</span>Do not claim single-command startup works until it has been tested end to end.</div>
+<div class="prompt"><span class="tag">VERBATIM (excerpt)</span>For the Decisions page, require explicit finance-owner approval before changing FX or account-identity rules. Preserve the original rules, record the decision and rationale, and rebuild only after approval.</div>
+<div class="prompt"><span class="tag">VERBATIM (excerpt)</span>Use actual CloudNova records, approved policy definitions, and deterministic calculations. Never invent financial relationships or imply a proposed policy has been approved.</div>
+<div class="prompt"><span class="tag">RECONSTRUCTED</span>Before we write any cleaning rule, check the data: which date order is it, how many duplicate invoices really disagree, and do the amounts match the price list?</div>
+<div class="prompt"><span class="tag">RULE IN CLAUDE.md (verbatim)</span>Numbers come from DuckDB, never from the LLM. Do not weaken app/governance/sql_guard.py to make a test pass.</div></div>
+<h3>What I learned</h3>
+<p>I started by trying to understand the customer and their data. The model was only one part of the solution. The harder decisions involved financial definitions, system integration,
+validation, and making sure the customer could trust the results. Next I would get the two policy decisions from CloudNova, let Qwen fill a structured query plan instead of free SQL,
+and add support-ticket, tenure and cohort metrics.</p>
+<table class="avoid"><tr><th>Key commits</th><th></th></tr>
+<tr><td><code>dbcd542</code></td><td>specs, reuse matrix, CLAUDE.md — before any pipeline code</td></tr><tr><td><code>dad83db</code></td><td>spec-driven cleaning and DuckDB build</td></tr>
+<tr><td><code>d9952fa</code></td><td>SQL guard, semantic planner, Qwen provider, supervisor</td></tr><tr><td><code>c33e355</code></td><td>independent oracle, eval harness, unit tests</td></tr>
+<tr><td><code>0f27119</code> / <code>64e8750</code></td><td>single-command startup, dashboard, reconciliation, /api/v1, hybrid-vs-Qwen measurement</td></tr>
+<tr><td><code>e205b47</code> / <code>bb02947</code></td><td>approval-gated policy, guided journey, Investigation Studio</td></tr></table>
+</body></html>

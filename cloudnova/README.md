@@ -298,6 +298,21 @@ cloudnova/
 ```
 </details>
 
+## Guided journey, Investigation Studio & finance decisions (this branch)
+
+<img src="docs/media/nova-journey.gif" width="900" alt="Nova's guided journey: the guide walks to each chart and follows a live query run">
+
+* **Nova's Guided Journey** (`#/journey`) — seven scenes narrated from live data; scene 5 follows a real `/ask` trace; scene 6 pauses
+  until a finance owner records a decision; scene 7 lists where each answer could be wrong. Full recording:
+  [`docs/media/nova-guided-journey.mp4`](docs/media/nova-guided-journey.mp4).
+* **Financial Investigation Studio** (`#/studio`) — Revenue Constellation → Investigation Replay → Decision Butterfly; every link is a
+  database fact, proposed policies are never shown as approved.
+* **Finance Decisions** (`#/decisions`) — original rules in `policies/financial_policy.yaml`; FX (PDR-001) and identity (PDR-002)
+  decisions need finance-owner approval, then a separate rebuild. Evidence: [`docs/decisions/`](docs/decisions/).
+* **Showcase:** [PowerPoint](docs/showcase/CloudNova_FDE_Engineering_Showcase.pptx) ·
+  [case study PDF](docs/showcase/CloudNova_FDE_Engineering_Case_Study.pdf) · [Medium draft](docs/showcase/MEDIUM_ARTICLE.md) ·
+  [evidence](docs/showcase/EVIDENCE.md).
+
 ## Enhancements (this branch only)
 
 <img src="docs/media/enhancements.gif" width="900" alt="Leakage investigator, what-if simulator and simulated legacy billing integration">
