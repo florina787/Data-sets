@@ -11,7 +11,7 @@ A local-first desktop AI copilot that listens, reads the screen you choose, answ
   <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-99613E?style=flat-square" />
   <img alt="Platforms" src="https://img.shields.io/badge/platforms-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-75462D?style=flat-square" />
   <img alt="License GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-B87848?style=flat-square" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-140%20passing-99613E?style=flat-square" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-153%20passing-99613E?style=flat-square" />
 </p>
 
 <h3 align="center">Download</h3>
@@ -74,7 +74,7 @@ those together.
 </tr>
 <tr>
 <td><b>Agent scorecard</b><br/>Every answer is measured along a semantic spine: ontology, knowledge graph, context graph, procedural graph. <i>Shown: real traces from the 1.5B model.</i><br/><img src="docs/images/agents.png" alt="Agent scorecard with the semantic spine and procedural graph" /></td>
-<td><b>It catches made-up facts</b><br/>Asked who built a project its document never mentions, the 1.5B model named Anthropic, OpenAI and "10 engineers". The answer is flagged with exactly those words.<br/><img src="docs/images/agents-answer.png" alt="An answer flagged for claims not in its inputs" /></td>
+<td><b>It catches made-up facts</b><br/>Asked who built a project and what it costs, which its document never says, the 1.5B model answered "Anthropic, part of the Meta Group, $100,000 a month". The answer is flagged with exactly those claims.<br/><img src="docs/images/agents-answer.png" alt="An answer flagged for claims not in its inputs" /></td>
 </tr>
 <tr>
 <td><b>Hardware-aware setup</b><br/>Detects CPU, RAM, GPU and disk, recommends a profile, downloads free models, and benchmarks your machine.<br/><img src="docs/images/setup.png" alt="Setup wizard" /></td>
