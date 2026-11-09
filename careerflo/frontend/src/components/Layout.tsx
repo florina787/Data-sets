@@ -121,7 +121,7 @@ export function AppLayout() {
   const [dark, setDark] = useTheme();
   const [open, setOpen] = useState(false);
   const loc = useLocation();
-  useEffect(() => setOpen(false), [loc.pathname]);
+  useEffect(() => { setOpen(false); }, [loc.pathname]);
   return (
     <div className="bloom relative min-h-dvh">
       <div className="relative z-10 flex">

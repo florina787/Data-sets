@@ -94,6 +94,14 @@ export function AgentCard({ card }: { card: any }) {
             <ul className="text-[12px]">{card.citations.map((c: any) => <li key={c.url}><a className="text-violet underline" href={c.url} target="_blank" rel="noreferrer">{c.label}</a></li>)}</ul>
           </div>
         );
+      case "resume_analysis":
+        return (
+          <div className="grid gap-3 text-[13px] sm:grid-cols-2">
+            <div><p className="font-medium text-emerald-700">Strengths</p><ul className="mt-1 list-disc pl-4">{card.strengths.map((s: string) => <li key={s}>{s}</li>)}</ul></div>
+            <div><p className="font-medium text-amber-700">To improve</p><ul className="mt-1 list-disc pl-4">{card.issues.length ? card.issues.map((s: string) => <li key={s}>{s}</li>) : <li>Nothing flagged</li>}</ul></div>
+            <p className="muted sm:col-span-2">{card.years_experience ? `${card.years_experience} verified years · ` : ""}{card.skills?.length ?? 0} skills on file</p>
+          </div>
+        );
       case "letter": return <pre className="whitespace-pre-wrap text-[12.5px]">{card.letter}</pre>;
       default:
         return <pre className="max-h-56 overflow-auto rounded-2xl bg-slate-50 p-3 text-[11.5px] dark:bg-white/5">{JSON.stringify(card, null, 2).slice(0, 3000)}</pre>;

@@ -36,3 +36,12 @@ test("heatmap and agent cursor render", () => {
   expect(container.querySelectorAll("span[title]").length).toBe(28);
   expect(screen.getByText("Job Discovery")).toBeInTheDocument();
 });
+
+test("model markdown renders bold and lists without raw asterisks or HTML injection", async () => {
+  const { Markdown } = await import("./components/Markdown");
+  const { container } = render(<Markdown text={"**Summary:**\n- one **two**\n1. first\n<img src=x onerror=alert(1)>"} />);
+  expect(container.querySelector("strong")?.textContent).toBe("Summary:");
+  expect(container.querySelectorAll("li").length).toBe(2);
+  expect(container.textContent).not.toContain("**");
+  expect(container.querySelector("img")).toBeNull();
+});

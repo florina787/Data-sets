@@ -4,6 +4,7 @@ import { ArrowUp, Paperclip, Plus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AgentCursor, type Tone } from "@/components/art/AgentCursor";
 import { AgentCard } from "@/components/Cards";
+import { Markdown } from "@/components/Markdown";
 import { TrialMeter } from "@/components/career";
 import { IntelPanel } from "@/components/Layout";
 import { Button, Pill } from "@/components/ui";
@@ -25,7 +26,7 @@ export default function Assistant() {
   const [llm, setLlm] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ behavior: "smooth" }), [msgs, agents]);
+  useEffect(() => { end.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, agents]);
 
   async function send(text: string) {
     if (!text.trim() || busy) return;
@@ -77,7 +78,7 @@ export default function Assistant() {
                 {m.role === "user" ? <p className="max-w-[80%] rounded-3xl bg-ink px-5 py-3 text-[14px] text-white dark:bg-white dark:text-ink">{m.content}</p> : (
                   <div className="space-y-3">
                     {(m.cards ?? []).map((c, j) => <AgentCard key={j} card={c} />)}
-                    {m.content && <div className="whitespace-pre-wrap text-[14.5px] leading-relaxed">{m.content}</div>}
+                    {m.content && <div className="text-[14.5px] leading-relaxed"><Markdown text={m.content} /></div>}
                     {(m.warnings ?? []).map((w) => <p key={w} className="rounded-xl bg-amber/10 px-3 py-2 text-[12px] text-amber-800 dark:text-amber-300">{w}</p>)}
                     {(m.approvals ?? []).map((a) => <p key={a.approval_id} className="text-[12.5px]">Waiting for your approval: {a.summary} — <a className="text-violet" href="/app/governance">review</a></p>)}
                   </div>

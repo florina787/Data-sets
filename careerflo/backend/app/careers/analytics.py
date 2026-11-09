@@ -71,7 +71,7 @@ def dashboard(db: Session, user_id: uuid.UUID, include_synthetic: bool = True) -
     timeline = Counter(a.applied_at.isoformat()[:7] for a in apps if a.applied_at)
     events = list(db.scalars(select(ApplicationEvent).where(ApplicationEvent.user_id == user_id)
                              .where(ApplicationEvent.kind == "followup_scheduled")))
-    match_hist = Counter(int(m.score // 10 * 10) for m in matches)
+    match_hist = Counter(min(90, int(m.score // 10 * 10)) for m in matches)  # 100 belongs in 90-100
     return {
         "jobs_discovered": db.query(Job).count(),
         "saved_jobs": len(saved),
@@ -79,7 +79,7 @@ def dashboard(db: Session, user_id: uuid.UUID, include_synthetic: bool = True) -
         "interviews": interview_conversion(interviews, apps),
         "offers": sum(1 for a in apps if a.status in ("offer", "accepted")),
         "salary_distribution": salary_distribution(jd),
-        "match_distribution": [{"bucket": f"{b}-{b + 9}", "count": match_hist[b]} for b in range(0, 100, 10)],
+        "match_distribution": [{"bucket": f"{b}-{b + 9 if b < 90 else 100}", "count": match_hist[b]} for b in range(0, 100, 10)],
         "skill_gaps": skill_gaps(skills, jd),
         "recruiter_activity": {"recruiters": len(recruiters), "interactions": len(interactions),
                                "by_channel": dict(Counter(i.channel for i in interactions))},
