@@ -6,6 +6,11 @@ on:
   push:
     paths: ["veena-ai/**", ".github/workflows/veena-ai-ci.yml"]
   workflow_dispatch:
+    inputs:
+      create_draft_release:
+        description: "After all builds and tests pass, create a DRAFT GitHub Release (not public until you publish it)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -73,7 +78,7 @@ jobs:
             exe: release/linux-unpacked/veena-ai
             backend: packaging/backend-dist/veena-backend/veena-backend
             artifact: release/VEENA.AI-Linux-x86_64.AppImage
-          - os: macos-latest
+          - os: macos-15
             target: --mac
             exe: release/mac-arm64/VEENA.AI.app/Contents/MacOS/VEENA.AI
             backend: packaging/backend-dist/veena-backend/veena-backend
@@ -106,8 +111,25 @@ jobs:
       - name: Build desktop app and installer
         working-directory: veena-ai/apps/desktop
         env:
-          CSC_IDENTITY_AUTO_DISCOVERY: "false" # unsigned build
+          # Code signing activates only when the owner adds these repository secrets:
+          #   Windows: WIN_CSC_LINK (base64 .pfx) + WIN_CSC_KEY_PASSWORD
+          #   macOS:   MAC_CSC_LINK (base64 Developer ID .p12) + MAC_CSC_KEY_PASSWORD,
+          #            APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID (notarization)
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
+          # Each OS uses only its own certificate (electron-builder falls back to CSC_LINK on Windows).
+          if [ "$RUNNER_OS" != "macOS" ]; then unset CSC_LINK CSC_KEY_PASSWORD; fi
+          if [ "$RUNNER_OS" != "Windows" ]; then unset WIN_CSC_LINK WIN_CSC_KEY_PASSWORD; fi
+          if [ -z "${WIN_CSC_LINK:-}${CSC_LINK:-}" ]; then
+            echo "No signing certificate configured for $RUNNER_OS: building an UNSIGNED installer."
+            export CSC_IDENTITY_AUTO_DISCOVERY=false
+          fi
           npm ci
           npm run build
           npx electron-builder ${{ matrix.target }} --publish never
@@ -119,10 +141,188 @@ jobs:
         if: runner.os != 'Linux'
         working-directory: veena-ai/apps/desktop
         run: node scripts/smoke-packaged.mjs "${{ matrix.exe }}"
+      - name: Report installer signature status
+        working-directory: veena-ai/apps/desktop
+        run: |
+          case "$RUNNER_OS" in
+            Windows) powershell -NoProfile -Command "(Get-AuthenticodeSignature '${{ matrix.artifact }}').Status" | tee signature.txt ;;
+            macOS) (codesign -dv --verbose=2 "${{ matrix.exe }}" 2>&1 | grep -E "Authority|Signature" || echo "unsigned") | tee signature.txt
+                   (xcrun stapler validate "${{ matrix.artifact }}" 2>&1 || true) | tail -1 | tee -a signature.txt ;;
+            Linux) echo "AppImage: integrity via SHA-256 (no OS signing scheme)" | tee signature.txt ;;
+          esac
+          echo "### Signature ($RUNNER_OS): $(head -1 signature.txt)" >> "$GITHUB_STEP_SUMMARY"
+
+      # ---- Customer path: install the real installer, launch the installed app, first-run AI, uninstall ----
+      - name: Install with the Windows installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        working-directory: veena-ai/apps/desktop
+        run: |
+          $p = Start-Process -FilePath "release\VEENA.AI-Windows-Setup.exe" -ArgumentList "/S" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "installer exited with $($p.ExitCode)" }
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Filter "VEENA.AI.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $exe) { throw "installed VEENA.AI.exe not found under $env:LOCALAPPDATA\Programs" }
+          $dir = $exe.DirectoryName
+          $start = Get-ChildItem "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Recurse -Filter "VEENA.AI*.lnk"
+          if (-not $start) { throw "Start menu shortcut missing" }
+          $desktop = Join-Path ([Environment]::GetFolderPath("Desktop")) "VEENA.AI.lnk"
+          if (-not (Test-Path $desktop)) { throw "desktop shortcut missing: $desktop" }
+          "INSTALLED_EXE=$($exe.FullName)" >> $env:GITHUB_ENV
+          "INSTALLED_DIR=$dir" >> $env:GITHUB_ENV
+          "INSTALLED_BACKEND=$dir\resources\backend\veena-backend.exe" >> $env:GITHUB_ENV
+          "### Windows installer: installed to $dir; Start menu and desktop shortcuts created" >> $env:GITHUB_STEP_SUMMARY
+      - name: Install from the macOS disk image
+        if: runner.os == 'macOS'
+        working-directory: veena-ai/apps/desktop
+        run: |
+          hdiutil attach "${{ matrix.artifact }}" -nobrowse -mountpoint /Volumes/veena
+          cp -R /Volumes/veena/VEENA.AI.app /Applications/
+          hdiutil detach /Volumes/veena
+          echo "INSTALLED_EXE=/Applications/VEENA.AI.app/Contents/MacOS/VEENA.AI" >> "$GITHUB_ENV"
+          echo "INSTALLED_BACKEND=/Applications/VEENA.AI.app/Contents/Resources/backend/veena-backend" >> "$GITHUB_ENV"
+          echo "### macOS disk image: VEENA.AI.app copied to /Applications" >> "$GITHUB_STEP_SUMMARY"
+      - name: Unpack the Linux AppImage
+        if: runner.os == 'Linux'
+        working-directory: veena-ai/apps/desktop
+        run: |
+          chmod +x "${{ matrix.artifact }}"
+          mkdir -p /tmp/appimage && cd /tmp/appimage && "$GITHUB_WORKSPACE/veena-ai/apps/desktop/${{ matrix.artifact }}" --appimage-extract >/dev/null
+          echo "INSTALLED_EXE=/tmp/appimage/squashfs-root/veena-ai" >> "$GITHUB_ENV"
+          echo "INSTALLED_BACKEND=/tmp/appimage/squashfs-root/resources/backend/veena-backend" >> "$GITHUB_ENV"
+      - name: Launch the installed app
+        working-directory: veena-ai/apps/desktop
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then xvfb-run -a node scripts/smoke-packaged.mjs "$INSTALLED_EXE"; else node scripts/smoke-packaged.mjs "$INSTALLED_EXE"; fi
+      - name: First run on a machine without Ollama (real runtime download, real model answer)
+        working-directory: veena-ai
+        timeout-minutes: 45
+        run: |
+          python packaging/smoke_runtime.py "$INSTALLED_BACKEND" --model qwen2.5:0.5b --out "runtime-smoke-${RUNNER_OS}.json"
+          python -c "import json,sys; d=json.load(open(sys.argv[1])); print('### First run:', 'PASS' if d['passed'] else 'FAIL', json.dumps(d.get('steps')))" "runtime-smoke-${RUNNER_OS}.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Uninstall (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $un = Get-ChildItem $env:INSTALLED_DIR -Filter "Uninstall*.exe" | Select-Object -First 1
+          if (-not $un) { throw "uninstaller not found" }
+          Start-Process -FilePath $un.FullName -ArgumentList "/S" -Wait
+          for ($i = 0; $i -lt 60 -and (Test-Path $env:INSTALLED_EXE); $i++) { Start-Sleep -Seconds 1 }
+          if (Test-Path $env:INSTALLED_EXE) { throw "VEENA.AI.exe still present after uninstall" }
+          "### Windows uninstaller removed the app" >> $env:GITHUB_STEP_SUMMARY
+      - name: Uninstall (macOS)
+        if: runner.os == 'macOS'
+        run: rm -rf /Applications/VEENA.AI.app && test ! -e /Applications/VEENA.AI.app
+
+      - name: Checksum
+        working-directory: veena-ai/apps/desktop
+        run: |
+          cd release && f="$(basename "${{ matrix.artifact }}")"
+          if command -v sha256sum >/dev/null; then sha256sum "$f" > "$f.sha256"; else shasum -a 256 "$f" > "$f.sha256"; fi
+          cat "$f.sha256" | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: veena-ai-${{ runner.os }}
-          path: veena-ai/apps/desktop/${{ matrix.artifact }}
-          retention-days: 7
+          path: |
+            veena-ai/apps/desktop/${{ matrix.artifact }}
+            veena-ai/apps/desktop/${{ matrix.artifact }}.sha256
+          retention-days: 14
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: first-run-evidence-${{ runner.os }}
+          path: |
+            veena-ai/runtime-smoke-*.json
+            veena-ai/apps/desktop/signature.txt
+          retention-days: 30
+          if-no-files-found: ignore
+
+  # Dependency vulnerabilities, software bill of materials and licence inventory.
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: veena-ai/pyproject.toml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: veena-ai/apps/desktop/package-lock.json
+      - name: Python dependencies
+        working-directory: veena-ai
+        run: pip install -e . pip-audit==2.9.0 cyclonedx-bom==7.2.1 pip-licenses==5.0.0
+      - name: Python vulnerability audit
+        working-directory: veena-ai
+        run: |
+          pip freeze --exclude-editable | grep -v "^-e" > installed.txt
+          pip-audit -r installed.txt --no-deps --disable-pip --progress-spinner off
+      - name: npm vulnerability audit (shipped dependencies)
+        working-directory: veena-ai/apps/desktop
+        run: |
+          npm ci
+          npm audit --omit=dev --audit-level=high
+      - name: Software bill of materials (CycloneDX)
+        run: |
+          cd veena-ai && cyclonedx-py environment -o ../sbom-python.cdx.json
+          cd apps/desktop && npx --yes @cyclonedx/cyclonedx-npm@4.0.0 --omit dev --output-file ../../../sbom-npm.cdx.json
+      - name: Licence inventory
+        working-directory: veena-ai
+        run: |
+          pip-licenses --format=markdown --with-urls > ../licenses-python.md
+          python -c "import backend.models.profiles as p; bad=[m for m,v in p.PROFILES.items() for k in ('text_model','vision_model') if not (p.license_of(v[k]) or {}).get('commercial')]; print('profiles with non-commercial default models:', bad); raise SystemExit(1 if bad else 0)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: veena-ai-sbom-and-licences
+          path: |
+            sbom-python.cdx.json
+            sbom-npm.cdx.json
+            licenses-python.md
+          retention-days: 30
+
+  # Creates a DRAFT GitHub Release from a manual run only. A draft is not public:
+  # the owner reviews it on GitHub and presses "Publish release" themselves.
+  # Protect it further with Settings > Environments > release > Required reviewers.
+  draft-release:
+    needs: [package, security]
+    if: github.event_name == 'workflow_dispatch' && inputs.create_draft_release
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: veena-ai-*
+          path: dist
+          merge-multiple: true
+      - name: Create draft release (never overwrites a published one)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./veena-ai/apps/desktop/package.json').version")
+          tag="veena-ai-v$version"
+          if gh release view "$tag" --json isDraft -q .isDraft 2>/dev/null | grep -q false; then
+            echo "Release $tag is already published. Bump the version in package.json; published releases are never overwritten." >&2
+            exit 1
+          fi
+          cd dist
+          files="VEENA.AI-Windows-Setup.exe VEENA.AI-macOS-AppleSilicon.dmg VEENA.AI-Linux-x86_64.AppImage"
+          for f in $files; do test -s "$f"; done
+          sha256sum $files > SHA256SUMS.txt
+          cd ..
+          { cat veena-ai/packaging/RELEASE_NOTES.md; echo; echo "Built from commit \`${GITHUB_SHA::7}\` by [this CI run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; echo; echo '```'; cat dist/SHA256SUMS.txt; echo '```'; } > notes.md
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/VEENA.AI-* dist/SHA256SUMS.txt dist/*.cdx.json --clobber
+            gh release edit "$tag" --notes-file notes.md --draft
+          else
+            gh release create "$tag" --draft --target "$GITHUB_SHA" --title "VEENA.AI $version" --notes-file notes.md \
+              dist/VEENA.AI-Windows-Setup.exe dist/VEENA.AI-macOS-AppleSilicon.dmg dist/VEENA.AI-Linux-x86_64.AppImage dist/SHA256SUMS.txt
+          fi
+          echo "### Draft release $tag created. Review it on GitHub, then publish manually." >> "$GITHUB_STEP_SUMMARY"
 

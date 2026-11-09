@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VEENA.AI Privacy</title>
+<link rel="icon" type="image/png" href="images/icon-64.png" />
+<link rel="stylesheet" href="site.css" />
+<script>try{if(localStorage.getItem("veena.site.theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}</script>
+</head>
+<body>
+<header class="top"><a class="brand" href="index.html"><img src="images/icon-64.png" alt="" width="32" height="32" /><span>veena<span class="dot">.ai</span></span></a><button class="theme" type="button" onclick="var l=document.documentElement.dataset.theme==='light';document.documentElement.dataset.theme=l?'dark':'light';try{localStorage.setItem('veena.site.theme',l?'dark':'light')}catch(e){}">Light / dark</button></header>
+<main class="policy">
+<h1>Privacy policy</h1>
+<p class="fine">Applies to the VEENA.AI desktop application and this website. Last updated 9 November 2026.</p>
+
+<h2>The short version</h2>
+<p>VEENA runs on your computer. It has no accounts and no telemetry, and it does not send your conversations, recordings, screens or documents to us or to any cloud AI service.</p>
+
+<h2>What stays on your computer</h2>
+<ul>
+  <li>Conversations, meeting transcripts, interview practice and documents you add, stored in a local database in your user folder.</li>
+  <li>AI models and the AI runtime, stored in VEENA's own folder.</li>
+  <li>Microphone audio is transcribed on your computer and never saved as a recording. Screenshots are analysed in memory and never saved; detected secrets are masked first.</li>
+</ul>
+<p>History older than 30 days is deleted automatically by default. You can change this, export a conversation, or delete all history in Settings. Uninstalling VEENA removes the application; your data folder can be deleted as described in the support guide.</p>
+
+<h2>When VEENA uses the internet</h2>
+<ul>
+  <li><b>Setup downloads</b>, only when you start them: the AI runtime from Ollama's official GitHub release, AI models from the Ollama model library, and the speech and document-search models from Hugging Face. These services see an ordinary download request (your IP address and the file requested), under their own privacy policies.</li>
+  <li><b>Update check</b>, only if you allow it: once a day VEENA asks GitHub's public API for the latest release version. It sends no identifier and no usage data.</li>
+</ul>
+<p>Nothing else is sent. After setup, chat, document answers, meeting notes and screen analysis work without an internet connection.</p>
+
+<h2>This website</h2>
+<p>This site is static and sets no cookies. Your browser asks GitHub's public API which installers are available, so the download buttons only appear for files that exist. The hosting provider keeps standard server logs under its own policy. We do not run analytics on this site.</p>
+
+<h2>Your responsibilities</h2>
+<p>Only capture meetings, calls or screens you are authorised to capture, and follow the laws and policies that apply to you, including telling other participants when that is required. VEENA is designed for open use, not covert assistance.</p>
+
+<h2>Contact</h2>
+<p>Questions or concerns: open an issue on <a href="https://github.com/florina787/Data-sets/issues">GitHub</a>.</p>
+<p><a href="index.html">Back to VEENA.AI</a></p>
+</main>
+</body>
+</html>
