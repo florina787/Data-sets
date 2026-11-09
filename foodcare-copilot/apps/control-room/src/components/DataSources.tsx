@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { usePoll } from "../hooks";
-import { FriesCarton, Potato } from "./Illustrations";
+import { PotatoOrbit } from "./Illustrations";
 
 type Source = { key: string; name: string; kind: string; status: string; records: number; unit: string; detail: string; to: string | null; needs: string | null };
 
@@ -53,14 +53,7 @@ export function PotatoDataSources() {
       <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
         <div className="grid gap-3 sm:grid-cols-2">{live.map((s) => <SourceCard key={s.key} s={s} />)}</div>
         <div className="flex flex-col items-center gap-1 px-2 py-4">
-          <div className="relative h-36 w-52" aria-hidden>
-            <div className="absolute inset-x-6 bottom-2 h-16 rounded-full bg-gold-400/15 blur-xl" />
-            <div className="absolute left-2 top-2 rotate-[-18deg]"><Potato size={38} /></div>
-            <div className="absolute right-3 top-0 rotate-[24deg]"><Potato size={32} /></div>
-            <div className="absolute left-0 bottom-6 rotate-[8deg]"><Potato size={34} /></div>
-            <div className="absolute right-0 bottom-8 rotate-[-30deg]"><Potato size={40} /></div>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-xl"><FriesCarton size={92} label="" /></div>
-          </div>
+          <PotatoOrbit />
           <span className="text-xs text-navy-600">All sources flow into Jerry's cited answers</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">{right.map((s) => <SourceCard key={s.key} s={s} />)}</div>

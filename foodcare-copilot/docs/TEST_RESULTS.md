@@ -1,6 +1,6 @@
 # Test results
 
-Recorded on 2026-10-09 in the build container (backend and browser test counts updated 2026-11-05): Linux, Python 3.13.16, Node 22.22, Chromium 141 (Playwright 1.56.1). Every number below comes from commands that actually ran. Re-run them with `scripts/test.sh` and `npm run e2e`.
+Recorded on 2026-10-09 in the build container (backend and browser test counts updated 2026-11-09): Linux, Python 3.13.16, Node 22.22, Chromium 141 (Playwright 1.56.1). Every number below comes from commands that actually ran. Re-run them with `scripts/test.sh` and `npm run e2e`.
 
 ## Summary
 
@@ -9,10 +9,10 @@ Recorded on 2026-10-09 in the build container (backend and browser test counts u
 | Platform lint | `ruff check backend scripts` | passed |
 | Storefront lint (policy config) | `ruff check` in `v1.2-timeout-repair` | passed |
 | Fixture patches in sync with stage trees | `python scripts/regen_fixture_patches.py --check` | passed |
-| Backend tests | `python -m pytest` | **94 passed** in 174 s (23 delivery platform + 20 enterprise/copilot + 11 memory + 14 local model + 11 vision + 7 inspection Q&A + 6 metrics/registry/datasets + 2 dashboards) |
+| Backend tests | `python -m pytest` | **99 passed** in 164 s (23 delivery platform + 20 enterprise/copilot + 11 memory + 14 local model + 11 vision + 7 inspection Q&A + 7 metrics/registry/datasets + 2 dashboards + 4 graphs) |
 | UI typecheck | `npm run typecheck` (strict TS, both apps) | passed |
 | UI build | `npm run build` | passed (control room 234 kB JS / 71 kB gzip) |
-| Browser end-to-end | `npm run e2e` | **6 passed** (flagship delivery, guided demo, enterprise copilot, conversation memory, potato inspection + correction + copilot, model evaluation lab) |
+| Browser end-to-end | `npm run e2e` | **7 passed** (incl. agent intelligence); (flagship delivery, guided demo, enterprise copilot, conversation memory, potato inspection + correction + copilot, model evaluation lab) |
 | Vision on SYNTHETIC rendered images | `scripts/eval_vision.py --synthetic 20` | precision 1.0, recall 1.0, F1 1.0, grade agreement 99.2%, ~340 ms/image. Drawn shapes only; **accuracy on real potatoes is not measured** |
 | Performance and persistence | see [LOCAL_LLM_AND_MEMORY.md](LOCAL_LLM_AND_MEMORY.md#measured-results) | measured, DEMO mode |
 | Guided demo via API (13 checked steps) | `POST /api/demo/run` | **13/13 done** in about 40 s (latest run 42.1 s) |

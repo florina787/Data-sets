@@ -51,6 +51,20 @@
   .kpi { @apply text-2xl font-semibold tracking-tight text-navy-900; }
 }
 
+/* Cinematic hero: static starfield, deep night gradient, giant wordmark. */
+.hero { background: radial-gradient(900px 380px at 75% 10%, rgba(91, 140, 255, 0.28), transparent 60%),
+  radial-gradient(700px 300px at 10% 100%, rgba(56, 189, 248, 0.12), transparent 60%),
+  linear-gradient(180deg, #0b1b38 0%, #081326 70%, #050d1b 100%); }
+.hero-stars { opacity: 0.55; background-image:
+  radial-gradient(1px 1px at 8% 18%, #fff, transparent), radial-gradient(1px 1px at 22% 8%, #cfe0ff, transparent),
+  radial-gradient(1.5px 1.5px at 36% 26%, #fff, transparent), radial-gradient(1px 1px at 48% 12%, #dbe8ff, transparent),
+  radial-gradient(1px 1px at 61% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 72% 6%, #fff, transparent),
+  radial-gradient(1px 1px at 84% 22%, #cfe0ff, transparent), radial-gradient(1px 1px at 93% 10%, #fff, transparent),
+  radial-gradient(1px 1px at 15% 40%, #fff, transparent), radial-gradient(1px 1px at 55% 44%, #cfe0ff, transparent); }
+.hero-word { font-size: clamp(56px, 9vw, 148px);
+  background: linear-gradient(180deg, #ffffff 0%, #dbe7ff 55%, rgba(219, 231, 255, 0.35) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+
 /* Potatoes orbiting Jerry (transform/opacity only; disabled by prefers-reduced-motion above). */
 .orbit { position: relative; width: 260px; height: 132px; }
 .orbit-ring { position: absolute; left: 50%; top: 50%; width: 236px; height: 70px; transform: translate(-50%, -50%);

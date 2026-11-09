@@ -20,6 +20,7 @@ from typing import Callable
 
 from pydantic import BaseModel, Field
 
+from app import graphs
 from app.auth import User
 from app.config import get_settings
 from app.copilot.router import Parsed, parse
@@ -614,7 +615,10 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
         "status": "ok" if answered else "declined", "started_at": started_at, "finished_at": now_iso(),
         "duration_ms": round((time.perf_counter() - t0) * 1000, 2), "input_summary": question,
         "output_summary": result["answer"][:500],
-        "detail": {"intents": intents, "mode": answer_mode, "follow_up": follow_up, "username": user.username},
+        "detail": {"intents": intents, "mode": answer_mode, "follow_up": follow_up, "username": user.username,
+                   "entities": p.entities(),
+                   "sources": [{k: src.get(k) for k in ("id", "kind", "label", "ref")} for src in c.sources],
+                   "context": graphs.scope(p.entities(), intents, c.sources)},
     }, c.tool_calls)
     return result
 

@@ -628,6 +628,34 @@ def quality_overview(days: int | None = Query(default=None, ge=1, le=3650), supp
     return quality.overview(user.username, days, supplier)
 
 
+@app.get("/api/graphs/knowledge")
+def graph_knowledge(user: User = Depends(current_user)) -> dict:
+    from app import graphs
+
+    return graphs.knowledge(user.username)
+
+
+@app.get("/api/graphs/context")
+def graph_context(run: str | None = None, user: User = Depends(current_user)) -> dict:
+    from app import graphs
+
+    return graphs.context(user.username, run)
+
+
+@app.get("/api/graphs/procedure")
+def graph_procedure(user: User = Depends(current_user)) -> dict:
+    from app import graphs
+
+    return graphs.procedure(user.username)
+
+
+@app.get("/api/agents/activity")
+def agents_activity(limit: int = Query(default=60, ge=1, le=300), user: User = Depends(current_user)) -> dict:
+    from app import graphs
+
+    return graphs.activity(limit)
+
+
 @app.get("/api/data-sources")
 def data_sources(user: User = Depends(current_user)) -> dict:
     """Which potato data sources feed the app, with live record counts and honest status."""

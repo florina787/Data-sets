@@ -25,6 +25,7 @@ const NAV: [string, [string, string][]][] = [
     ["/compliance", "Compliance & Food Safety"],
   ]],
   ["AI Platform", [
+    ["/agents", "Agent Intelligence"],
     ["/observability", "System Observability"],
   ]],
   ["Digital Delivery", [

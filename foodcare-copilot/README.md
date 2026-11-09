@@ -102,7 +102,7 @@ The same page at laptop width (1280 pixels) wraps neatly:
 
 What you see, from top to bottom:
 
-1. **"From field to fries" banner:** three potatoes orbit Jerry. It is decoration only and shows no data. The animation is cheap for the browser, pauses when you hover over it, and switches off if your system asks for reduced motion.
+1. **Cinematic hero:** a night-sky panel with a giant "Flo & Jerry" wordmark and an original inspection camera whose glass "eye" scans a potato inside corner brackets. It is decoration only and shows no data. The starfield is static, so it costs nothing to draw.
 2. **Five headline numbers:** revenue and units sold in the last 4 weeks (compared with the 4 weeks before), stock alerts, listing-compliance issues, and live demo-shop orders.
 3. **Weekly revenue chart** (16 weeks) and **revenue by region**. Every chart has a **"Show table"** button, so the numbers can be read without the picture (this helps screen-reader users too).
 4. **Needs attention:** for example, *FreshSip Apple may not cover the Ontario weekend campaign*.
@@ -166,13 +166,29 @@ A dashboard over **your own inspection records**, with four tabs (Overview, Reco
 * **Quality trend:** the share graded Good per batch, oldest to newest.
 * **Needs attention:** for example *"No evaluation on real labelled photos yet"*.
 
-### 3.8 System Observability
+### 3.8 Agent Intelligence: knowledge, context and procedural graphs
+
+![Agent Intelligence](docs/screenshots/36-agent-intelligence.png)
+
+This page shows **how Jerry thinks**, in four layers, following the idea *what is true → what matters now → what do I do next*:
+
+| Layer | Plain meaning | What you see | Where the data comes from |
+|---|---|---|---|
+| **Semantic spine** | The five layers at a glance | Ontology → Knowledge → Context → Procedure → Agents, each with a live count | All of the below |
+| **1. Knowledge graph** *(what is true)* | Everything the company "knows", and how things connect | Clusters of products, warehouses, campaigns, suppliers, inspection batches, policies and models, with lines for real relationships (*stocked at*, *promotes*, *supplied by*, *inspected by*, *evaluated on*). Hover a node to see its links; click a type to hide it. | Sales, stock, campaign, inspection, policy and model tables |
+| **2. Context graph** *(what matters now)* | The small slice of knowledge **one answer actually used** | Question → what Jerry understood (intents, entities) → the tools it ran → the evidence it returned. The knowledge nodes it touched are ringed in blue in graph 1. Pick any earlier answer from the menu. | Recorded with **every** answer by the supervisor agent (`agent_runs`) |
+| **3. Procedural graph** *(what do I do next)* | The rules for what happens to each potato | Inspect → detect → grade → accept, review, re-image, or reject. **Reject always leads to human approval**, and corrections feed *Trace & learn*. Each step shows a live count; steps the latest answer touched are outlined. | Inspection results and corrections |
+| **4. Agent activity** *(reason → act → learn)* | What the agents actually did, and how long it took | Swimlanes per agent over time, a step-by-step timing breakdown of any run, per-agent statistics and the most-used tools | Every recorded agent run and tool call |
+
+*Why it matters:* a trustworthy agent should not just answer. It should show **what it knew, what it looked at, which rule it followed and what it did**. *Why not use a graph database?* At this size, SQLite and plain tables are faster and simpler; the graphs are computed on request from the same records.
+
+### 3.9 System Observability
 
 ![System observability](docs/screenshots/30-system-observability.png)
 
 This page shows only **measured** information: machine CPU and RAM, the app's own memory use, the image-inspection queue, the local-model queue, the size of the memory database, and a list of **recent agent runs**. Click a run to see each step and how many milliseconds it took.
 
-### 3.9 Model Evaluation Lab
+### 3.10 Model Evaluation Lab
 
 ![Model Evaluation Lab](docs/screenshots/33-model-evaluation-lab.png)
 
@@ -186,11 +202,11 @@ This page answers the question **"how good is the model, really?"**, honestly:
 
 *Why it matters:* a number such as "99% accurate" means nothing without knowing **which data it was measured on**. Here, every score carries its receipt.
 
-### 3.10 Inspector corrections (human in the loop)
+### 3.11 Inspector corrections (human in the loop)
 
 In the potato detail panel, **Correct this grade** lets an inspector override the rules' grade **with a required reason**. The original grade is kept next to the correction, the change is written to the audit log, the batch summary updates, and Jerry mentions the correction when asked about that potato. *Why:* the rules can mistake soil for rot; a person should be able to fix that, and the record should show who did and why. Corrections also become labelled examples for training a future model.
 
-### 3.11 Digital delivery workspace
+### 3.12 Digital delivery workspace
 
 | Clarify the brief | Tests catch a bug | Incident evidence |
 |---|---|---|
@@ -252,8 +268,8 @@ The server checks permissions on **every action**, not just in the screen. A rej
 
 ```bash
 scripts/reset_demo.sh     # back to a clean demo (your saved conversations and inspections are kept)
-scripts/test.sh           # code checks, 94 backend tests, interface build
-npm run e2e               # 6 browser tests that click through the app
+scripts/test.sh           # code checks, 99 backend tests, interface build
+npm run e2e               # 7 browser tests that click through the app
 .venv/bin/python scripts/eval_vision.py --synthetic 20   # measure the potato detector on drawn test images
 ```
 
@@ -614,8 +630,8 @@ pie showData
 
 | Test suite | Count | Result |
 |---|---|---|
-| Backend (Python) | 94 | all pass |
-| Browser, clicking through the real app | 6 | all pass |
+| Backend (Python) | 99 | all pass |
+| Browser, clicking through the real app | 7 | all pass |
 | Of which use a **mock** model server instead of real Qwen | 14 | pass (no real Qwen run in the cloud) |
 
 ---
@@ -712,8 +728,8 @@ foodcare-copilot/
 │   ├── graph/, agents/         Delivery workflow (LangGraph) and its agents
 │   ├── resources.py            Measured CPU / RAM (psutil)
 │   └── main.py                 All web API endpoints
-├── backend/tests/              94 automated tests
-├── e2e/                        6 browser tests (Playwright) + a synthetic test image
+├── backend/tests/              99 automated tests
+├── e2e/                        7 browser tests (Playwright) + a synthetic test image
 ├── fixtures/vision/            Default potato grading thresholds
 ├── fixtures/enterprise/        The fictional company's products, regions, warehouses
 ├── scripts/                    start, reset, test, eval_vision

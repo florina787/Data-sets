@@ -102,3 +102,71 @@ export function FieldToFriesBanner() {
     </div>
   );
 }
+
+
+/** Original inspection camera on a gimbal; its lens is drawn as a glass eye. */
+export function InspectionCamera({ width = 340 }: { width?: number }) {
+  const id = useId().replace(/:/g, "");
+  return (
+    <svg width={width} height={width * 0.95} viewBox="0 0 360 340" aria-hidden>
+      <defs>
+        <linearGradient id={`${id}body`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3a4658" /><stop offset="0.5" stopColor="#1f2733" /><stop offset="1" stopColor="#0b1018" /></linearGradient>
+        <linearGradient id={`${id}arm`} x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#141b26" /><stop offset="0.6" stopColor="#2b3545" /><stop offset="1" stopColor="#10161f" /></linearGradient>
+        <radialGradient id={`${id}glass`} cx="0.4" cy="0.35" r="0.75"><stop offset="0" stopColor="#dbe9ff" stopOpacity="0.9" /><stop offset="0.35" stopColor="#5b8cff" /><stop offset="0.75" stopColor="#1d3c8f" /><stop offset="1" stopColor="#081633" /></radialGradient>
+        <radialGradient id={`${id}glow`} cx="0.5" cy="0.5" r="0.5"><stop offset="0" stopColor="#7fb2ff" stopOpacity="0.45" /><stop offset="1" stopColor="#7fb2ff" stopOpacity="0" /></radialGradient>
+      </defs>
+      <ellipse cx="190" cy="318" rx="120" ry="14" fill="#000" opacity="0.45" />
+      <path d="M110 300 L150 262 H230 L270 300 Z" fill={`url(#${id}arm)`} />
+      <rect x="168" y="196" width="44" height="70" rx="10" fill={`url(#${id}arm)`} />
+      <path d="M212 120 h34 a12 12 0 0 1 12 12 v74 a12 12 0 0 1 -12 12 h-46 v-26 h32 v-46 h-20 z" fill={`url(#${id}arm)`} />
+      <rect x="60" y="70" width="170" height="130" rx="26" fill={`url(#${id}body)`} />
+      <rect x="66" y="76" width="158" height="18" rx="9" fill="#ffffff" opacity="0.06" />
+      <circle cx="122" cy="138" r="70" fill={`url(#${id}glow)`} />
+      <circle cx="122" cy="138" r="50" fill="#0a0f17" stroke="#3a4658" strokeWidth="3" />
+      <circle cx="122" cy="138" r="38" fill={`url(#${id}glass)`} />
+      <circle cx="122" cy="138" r="14" fill="#06102a" />
+      <circle cx="110" cy="124" r="7" fill="#ffffff" opacity="0.85" />
+      <circle cx="134" cy="152" r="3" fill="#ffffff" opacity="0.5" />
+      <circle cx="206" cy="96" r="4" fill="#38bdf8" />
+    </svg>
+  );
+}
+
+/** Executive hero: night field, giant wordmark, the camera scanning a potato. Decorative only. */
+export function CinematicHero() {
+  return (
+    <section className="hero relative overflow-hidden rounded-3xl border border-white/10" aria-label="Flo & Jerry">
+      <div className="hero-stars pointer-events-none absolute inset-0" aria-hidden />
+      <svg className="pointer-events-none absolute inset-x-0 bottom-0 w-full" viewBox="0 0 1200 160" preserveAspectRatio="none" height="120" aria-hidden>
+        <path d="M0 120 C 200 70, 380 110, 560 80 S 900 60, 1200 100 V160 H0 Z" fill="#0a1a33" />
+        <path d="M0 140 C 260 110, 520 150, 780 118 S 1050 110, 1200 130 V160 H0 Z" fill="#06101f" />
+      </svg>
+      <div className="relative grid min-h-[340px] items-end gap-6 px-6 pb-8 pt-10 md:px-10 lg:grid-cols-[1fr_auto]">
+        <div className="relative z-10">
+          <div className="label text-ice-300">Food Copilot 2.0</div>
+          <h2 className="hero-word mt-2 select-none font-semibold leading-[0.85] tracking-[-0.045em]">Flo &amp; Jerry</h2>
+          <p className="mt-4 max-w-xl text-base text-navy-700">Inspect every potato. Protect yield. Trace every figure to its data.</p>
+          <p className="mt-1 text-xs text-navy-600">Illustration only. Figures below come from the synthetic dataset and live demo records.</p>
+        </div>
+        <div className="relative hidden h-[300px] w-[460px] lg:block" aria-hidden>
+          <svg className="absolute inset-0" viewBox="0 0 460 300" width="460" height="300">
+            <defs>
+              <linearGradient id="hero-beam" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#bcd6ff" stopOpacity="0.38" /><stop offset="1" stopColor="#bcd6ff" stopOpacity="0" /></linearGradient>
+            </defs>
+            <polygon points="300,118 40,200 120,290" fill="url(#hero-beam)" />
+            <line x1="300" y1="118" x2="40" y2="200" stroke="#bcd6ff" strokeOpacity="0.5" strokeDasharray="3 5" />
+            <line x1="300" y1="118" x2="120" y2="290" stroke="#bcd6ff" strokeOpacity="0.5" strokeDasharray="3 5" />
+            {[[38, 196, 1, 1], [128, 196, -1, 1], [38, 288, 1, -1], [128, 288, -1, -1]].map(([x, y, dx, dy]) => (
+              <path key={`${x}-${y}`} d={`M${x} ${y + 14 * dy} V${y} H${x + 14 * dx}`} fill="none" stroke="#e8f0ff" strokeWidth="2.5" strokeLinecap="round" />
+            ))}
+          </svg>
+          <div className="absolute left-[52px] top-[206px]"><Potato size={66} /></div>
+          <div className="absolute right-0 top-0"><InspectionCamera width={250} /></div>
+          <div className="absolute bottom-1 right-6 flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] text-navy-800 backdrop-blur-sm">
+            <FriesCarton size={22} label="" /> Jerry is watching the line
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

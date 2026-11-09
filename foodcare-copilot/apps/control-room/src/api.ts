@@ -53,12 +53,15 @@ function setSession(t: string | null, user: User | null) {
 
 export async function api<T = any>(path: string, init: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (token) headers.Authorization = `Bearer ${token}`;
+  const sentToken = token;  // the session this request was sent with
+  if (sentToken) headers.Authorization = `Bearer ${sentToken}`;
   const response = await fetch(path, { ...init, headers: { ...headers, ...(init.headers as object) } });
   const text = await response.text();
   const body = text ? JSON.parse(text) : {};
   if (!response.ok) {
-    if (response.status === 401 && token) setSession(null, null); // e.g. after Reset Demo
+    // Sign out only when the session that was used is rejected (e.g. after Reset Demo). A request that
+    // started before a sign-in finished has no session and must not sign the new session out.
+    if (response.status === 401 && sentToken && sentToken === token) setSession(null, null);
     throw new ApiError(response.status, body.error ?? "error", body.message ?? response.statusText, body.details ?? {});
   }
   return body as T;

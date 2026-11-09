@@ -223,8 +223,13 @@ def test_one_shared_client_per_configuration(enterprise, mock_model):
 def test_no_external_or_second_inference_dependency():
     root = Path(__file__).resolve().parents[2]
     pyproject = (root / "pyproject.toml").read_text()
-    for banned in ("anthropic", "openai", "ollama", "llama", "transformers", "torch", "vllm"):
+    for banned in ("anthropic", "openai", "ollama", "llama", "transformers", "vllm", "accelerate", "sentencepiece"):
         assert banned not in pyproject.lower()
+    # PyTorch is approved for the potato vision classifier only: no LLM code may import it.
+    app_dir = root / "backend" / "app"
+    torch_users = sorted(str(p.relative_to(app_dir)) for p in app_dir.rglob("*.py")
+                         if "import torch" in p.read_text() or "from torch" in p.read_text())
+    assert torch_users == ["ml/classifier.py"]
     with pytest.raises(LiveModeUnavailable):
         config.configure(llm_base_url=None, llm_model=None)
         local.LocalLLM(config.get_settings())
