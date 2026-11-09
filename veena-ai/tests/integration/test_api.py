@@ -453,3 +453,26 @@ def test_answers_have_a_length_cap(app):
     from backend.agents.graph import MAX_ANSWER_TOKENS
 
     assert app.state.veena.engine._options({"profile": "lite"})["num_predict"] == MAX_ANSWER_TOKENS
+
+
+def test_model_download_refused_up_front_when_disk_is_too_small(client, monkeypatch):
+    from collections import namedtuple
+
+    from backend.api import routes_system
+
+    usage = namedtuple("usage", "total used free")
+    monkeypatch.setattr(routes_system.shutil, "disk_usage", lambda p: usage(10**12, 10**12 - 10**8, 10**8))
+    r = client.post("/api/models/pull", json={"model": "qwen2.5:1.5b"})
+    assert r.status_code == 507 and "Not enough free disk space" in r.json()["detail"]
+
+
+def test_runtime_status_and_healthcheck_endpoints(client, llm):
+    rt = client.get("/api/runtime").json()
+    assert {"running", "supported", "download"} <= set(rt) and rt["download"]["license"] == "MIT"
+    client.patch("/api/settings", json={"text_model": "qwen2.5:1.5b"})
+    llm.reply = "ready"
+    hc = client.post("/api/system/healthcheck", json={}).json()
+    assert hc["ok"] is True and hc["answer"] == "ready" and hc["model"] == "qwen2.5:1.5b"
+    llm.up = False
+    hc = client.post("/api/system/healthcheck", json={}).json()
+    assert hc["ok"] is False and "error" in hc
