@@ -12,8 +12,11 @@ _INSTRUCTION_LIKE = re.compile(
     r"ignore (all |any )?(previous|prior|above) (instructions|rules)|system override|you are now|"
     r"(reveal|print|show|send) (me |us )?(your |the )?(api[ _-]?key|password|secret|system prompt)|"
     r"disregard (the )?(rules|policy)|act as (an? )?(admin|administrator)|developer mode", re.I)
-_WRITE_INTENT = re.compile(r"\b(delete|drop|truncate|update|insert|alter|overwrite|modify|change|edit|remove)\b.{0,40}"
-                           r"\b(rows?|records?|invoices?|accounts?|tables?|data(base)?|amounts?|status(es)?)\b", re.I)
+# the verb must be an instruction (start of the request, or after "please" / "can you" …), so "the change in revenue" is not a write
+_WRITE_INTENT = re.compile(r"(^\s*|\b(please|can you|could you|i want to|go ahead and|let's)\s+)"
+                           r"(delete|drop|truncate|update|insert|alter|overwrite|modify|change|edit|remove)\b.{0,40}"
+                           r"\b(rows?|records?|invoices?|accounts?|tables?|data(base)?|amounts?|status(es)?|refunds?|payments?|revenue|customers?|"
+                           r"ledger|everything)\b", re.I)
 MAX_QUESTION_CHARS = 1000
 
 

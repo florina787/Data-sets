@@ -12,3 +12,9 @@ position, recovered-revenue figure or prediction accuracy is claimed. Each item 
 | **Human-approved workflows** | Promote a previewed source into the ledger, or push a finding to collections/billing, only after an approver signs off | integration preview, investigation status | approval audit trail, role-based permissions, reversible promotion | write paths break today's read-only guarantee — needs its own threat model |
 | **Statistical anomaly detection** (e.g. Isolation Forest) | Rank unusual invoices for review | pricing check, leakage checks | labelled review outcomes to measure precision; explanations per flag | on this synthetic ledger the deterministic check finds 0 pricing errors, so a model would mostly flag big Enterprise deals |
 | **LLM → QueryPlan routing** | Qwen maps phrasing to the metric catalog (JSON) instead of free SQL | semantic catalog, eval harness | beat the keyword planner on a held-out phrasing set without losing the six stakeholder answers | latency on CPU |
+
+## Built since this roadmap was written
+* **Semantic Spine** (knowledge graph → context graph → procedural graph → trace & learn) — `app/semantic_graph.py`,
+  page `#/spine`, tests `tests/test_semantic_spine.py`. The "learn" step only *proposes* (e.g. "add support tickets to the
+  metric catalog"); a person decides. Building it surfaced a real gap — "delete all refunds" was not refused — now fixed
+  and covered by tests.

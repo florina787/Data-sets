@@ -211,6 +211,39 @@ def evaluation_modes():
     return json.loads(p.read_text())
 
 
+# ---------------------------------------------------------------- Semantic Spine
+class ContextRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+
+
+@v1.get("/graph/knowledge", tags=["semantic spine"])
+def graph_knowledge():
+    """Knowledge graph — what is true: entity types and relationships counted from the ledger."""
+    from .semantic_graph import knowledge
+    return knowledge()
+
+
+@v1.post("/graph/context", tags=["semantic spine"])
+def graph_context(req: ContextRequest):
+    """Context graph — what matters now: the subgraph one real agent run used, plus its procedural path."""
+    from .semantic_graph import context
+    return context(req.question)
+
+
+@v1.get("/graph/procedure", tags=["semantic spine"])
+def graph_procedure():
+    """Procedural graph — what to do next: the supervisor's routing as triplets."""
+    from .semantic_graph import procedure
+    return procedure()
+
+
+@v1.get("/graph/learn", tags=["semantic spine"])
+def graph_learn():
+    """Trace & learn — improvement proposals mined from recorded runs (never auto-applied)."""
+    from .semantic_graph import learn
+    return learn()
+
+
 @v1.get("/sessions/{session_id}")
 def session(session_id: str):
     return {"session_id": session_id, "turns": memory.history(session_id, 50)}

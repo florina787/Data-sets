@@ -411,7 +411,7 @@ async function pageEvaluation(el) {
 }
 
 /* ------------------------------------------------------------ router + chrome */
-const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations, journey: (el) => window.pageJourney(el), decisions: (el) => window.pageDecisions(el), studio: (el, q) => window.pageStudio(el, q), evaluation: (el) => pageEvaluation(el) };
+const PAGES = { "": pageHome, ask: pageAsk, revenue: pageRevenue, customers: pageCustomers, quality: pageQuality, tower: pageTower, leakage: pageLeakage, simulator: pageSimulator, integrations: pageIntegrations, journey: (el) => window.pageJourney(el), decisions: (el) => window.pageDecisions(el), studio: (el, q) => window.pageStudio(el, q), spine: (el) => window.pageSpine(el), evaluation: (el) => pageEvaluation(el) };
 async function route() {
   const [name, ...rest] = location.hash.replace(/^#\/?/, "").split("?");
   const key = PAGES[name] ? name : "";

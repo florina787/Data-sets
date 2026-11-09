@@ -309,6 +309,12 @@ cloudnova/
   database fact, proposed policies are never shown as approved.
 * **Finance Decisions** (`#/decisions`) — original rules in `policies/financial_policy.yaml`; FX (PDR-001) and identity (PDR-002)
   decisions need finance-owner approval, then a separate rebuild. Evidence: [`docs/decisions/`](docs/decisions/).
+* **Semantic Spine** (`#/spine`) — *what's true → what matters now → what do I do next*: a knowledge graph counted from the ledger,
+  a context graph scoped to one real agent run (its metric, filters, tables, in-scope data-quality facts and policies), and the
+  supervisor's procedural graph with the run's actual path highlighted. Trace & learn turns recorded runs into *proposals* only.
+  Tests replay real questions and check every trace is a valid path through the procedural graph.
+
+  <img src="docs/media/semantic-spine.png" width="900" alt="Semantic Spine: knowledge graph and context graph">
 * **Showcase:** [PowerPoint](docs/showcase/CloudNova_FDE_Engineering_Showcase.pptx) ·
   [case study PDF](docs/showcase/CloudNova_FDE_Engineering_Case_Study.pdf) · [Medium draft](docs/showcase/MEDIUM_ARTICLE.md) ·
   [evidence](docs/showcase/EVIDENCE.md).
