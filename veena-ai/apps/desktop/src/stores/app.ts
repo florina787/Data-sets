@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { Api, type ChatEvent, type ChatRequest, type Citation, type Collection, type Governance, type Message, type ModelInfo, type Session, type Settings } from "../services/api";
 import { bridge, hasBridge, type AppInfo, type BackendInfo } from "../services/bridge";
 
-export type Page = "welcome" | "library" | "workspace" | "screen" | "interview" | "knowledge" | "meeting" | "analytics" | "settings" | "setup" | "about";
+export type Page = "welcome" | "library" | "workspace" | "screen" | "interview" | "knowledge" | "meeting" | "analytics" | "agents" | "settings" | "setup" | "about";
 
 export interface Status {
   ollama: { running: boolean; version: string | null; url: string };

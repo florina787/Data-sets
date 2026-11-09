@@ -105,7 +105,7 @@ export type ChatEvent =
       timings: Record<string, number>;
     }
   | { type: "token"; t: string }
-  | { type: "done"; message_id: number; stats: GenerationStats; total_ms: number; governance: Governance; cancelled: boolean }
+  | { type: "done"; message_id: number; stats: GenerationStats; total_ms: number; governance: Governance; cancelled: boolean; spine?: SpineSummary | null }
   | { type: "error"; code: string; message: string }
   | { type: "paused_sensitive"; message: string };
 
@@ -117,6 +117,20 @@ export interface GenerationStats {
   prompt_tokens: number;
   tokens_per_second: number | null;
   cancelled: boolean;
+}
+
+/** Per-answer scores along the semantic spine (see backend/agents/spine.py). */
+export interface SpineSummary {
+  outcome: "resolved" | "flagged" | "escalated" | "cancelled" | "failed";
+  adherent: boolean;
+  path: string[];
+  support_rate: number | null;
+  grounded_context: boolean;
+  claims: number;
+  unsupported: string[];
+  utilization: number | null;
+  citation_rate: number | null;
+  context_nodes: number;
 }
 
 export interface Governance {

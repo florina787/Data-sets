@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { AudioLines, BookOpen, CircleStop, Eye, FileText, MessageSquareQuote, Monitor, ShieldAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import type { Citation, Message } from "../services/api";
+import type { Citation, Message, SpineSummary } from "../services/api";
 import { type LiveAnswer, useApp } from "../stores/app";
 import { CatMark } from "./CatMark";
 import { CopyButton, Markdown } from "./Markdown";
@@ -65,6 +65,19 @@ function GovernanceNotes({ meta }: { meta: Record<string, unknown> }) {
   );
 }
 
+/** How this answer scored: are its names and figures backed by what it was given? */
+function SpineLine({ meta }: { meta: Record<string, unknown> }) {
+  const s = meta.spine as SpineSummary | undefined;
+  if (!s || s.claims === 0 || s.support_rate == null) return null;
+  const backed = Math.round(s.support_rate * 100);
+  return (
+    <p className="mt-2 text-[11px] text-caramel" title="Names, acronyms, identifiers and figures in this answer that appear in what VEENA was given">
+      Facts backed: {backed}% of {s.claims}
+      {s.unsupported.length > 0 && <> · not in its inputs: {s.unsupported.slice(0, 4).join(", ")}</>}
+    </p>
+  );
+}
+
 function AssistantBubble({ m }: { m: Message }) {
   const stats = m.meta.stats as { first_token_ms?: number; tokens_per_second?: number } | undefined;
   return (
@@ -85,6 +98,7 @@ function AssistantBubble({ m }: { m: Message }) {
           <Markdown text={m.content} />
           <Citations items={m.citations} />
           <GovernanceNotes meta={m.meta} />
+          <SpineLine meta={m.meta} />
           <div className="mt-2 flex justify-end">
             <span className="tokens-original rounded-md bg-espresso">
               <CopyButton text={m.content} label="Copy answer" />

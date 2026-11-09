@@ -23,7 +23,7 @@ from ..rag.index import VectorIndex
 from ..rag.service import KnowledgeBase
 from ..security.auth import TokenAuthMiddleware
 from ..security.redact import install_log_redaction
-from . import routes_chat, routes_knowledge, routes_practice, routes_system, ws_audio
+from . import routes_agents, routes_chat, routes_knowledge, routes_practice, routes_system, ws_audio
 from .state import AppState
 
 log = logging.getLogger("veena")
@@ -100,6 +100,7 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
     app.include_router(routes_chat.router)
     app.include_router(routes_knowledge.router)
     app.include_router(routes_practice.router)
+    app.include_router(routes_agents.router)
     app.include_router(ws_audio.router)
     return app
 

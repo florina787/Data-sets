@@ -73,13 +73,43 @@ those together.
 <td><b>Analytics from real measurements</b><br/>Pipeline latency, per-model speed, question categories, practice scores. Nothing is estimated.<br/><img src="docs/images/analytics.png" alt="Analytics" /></td>
 </tr>
 <tr>
+<td><b>Agent scorecard</b><br/>Every answer is measured along a semantic spine: ontology, knowledge graph, context graph, procedural graph. <i>Shown: real traces from the 1.5B model.</i><br/><img src="docs/images/agents.png" alt="Agent scorecard with the semantic spine and procedural graph" /></td>
+<td><b>It catches made-up facts</b><br/>Asked who built a project its document never mentions, the 1.5B model named Anthropic, OpenAI and "10 engineers". The answer is flagged with exactly those words.<br/><img src="docs/images/agents-answer.png" alt="An answer flagged for claims not in its inputs" /></td>
+</tr>
+<tr>
 <td><b>Hardware-aware setup</b><br/>Detects CPU, RAM, GPU and disk, recommends a profile, downloads free models, and benchmarks your machine.<br/><img src="docs/images/setup.png" alt="Setup wizard" /></td>
 <td><b>Settings and privacy</b><br/>Choose models, speech model, retention period; clear all history in one click.<br/><img src="docs/images/settings.png" alt="Settings" /></td>
 </tr>
 </table>
 
 All screenshots were captured from the real app with real local models by
-[`apps/desktop/scripts/screenshots.mjs`](apps/desktop/scripts/screenshots.mjs).
+[`apps/desktop/scripts/screenshots.mjs`](apps/desktop/scripts/screenshots.mjs) and
+[`screenshots-agents.mjs`](apps/desktop/scripts/screenshots-agents.mjs).
+
+## Measuring the agents
+
+> Knowledge graphs tell an agent what's true, context graphs tell it what matters now, and procedural graphs tell it what to do next.
+
+VEENA scores **every answer** along that spine and keeps the result as a trace. The **Agents** page shows the totals.
+
+| Layer | Question | What VEENA measures on each answer |
+|---|---|---|
+| **Ontology** | What things are | Entities in the answer, typed as names, acronyms, code identifiers and figures |
+| **Knowledge graph** | What's true | **Facts backed:** share of those entities found in the material the agent was given (documents, screen, transcript, resume). Per collection, a graph of entities that appear together in a passage |
+| **Context graph** | What matters now | The scoped subgraph of entities this turn was given, how much of it the answer **used**, and the share of retrieved passages it **cited** |
+| **Procedural graph** | What to do next | The steps actually taken (Route → Read screen → Retrieve → Compose → Generate → Govern), checked against the steps the inputs called for and the allowed transitions |
+| **Agent** | Acting, writing it back | Outcome: resolved, flagged, escalated (nothing matched, so the decision goes back to you), stopped or failed; per agent, per day |
+
+<p align="center"><img src="docs/images/agents-graphs.png" width="900" alt="Context graph of the latest answer and knowledge graph of a collection" /></p>
+
+How it is measured, and its limits:
+
+* **Rules, not an AI judge.** Each number is computed by deterministic rules from the turn's real inputs and output, so it is fast, repeatable and explainable. Code is in [`backend/agents/spine.py`](backend/agents/spine.py).
+* **Lexical.** An entity is "backed" when the same name or figure appears in what the agent was given. That catches invented names and numbers. It cannot tell whether a backed entity was used correctly, and it misses a proper noun that only appears as the first word of a sentence.
+* **Only grounded turns get a fact score.** A general question with no documents, screen or transcript gets no "facts backed" number, because the model may simply know the answer.
+* **Its own earlier answers are not evidence.** Otherwise an invention would count as backed the next time it was repeated.
+* **It feeds governance.** An answer that states unbacked figures, or mostly unbacked names, gets an "unbacked claims" flag and counts as flagged.
+* **Trace & learn is measurement, not self-training.** Traces drive the scorecard and the daily trend; VEENA does not rewrite its own prompts or procedures from them.
 
 ## How it works
 
@@ -135,6 +165,7 @@ What has been built and verified, and how:
 | Secret redaction in screenshots | Done, best effort | Integration test with real Tesseract |
 | Documents (PDF, DOCX, TXT, MD, CSV, JSON) with citations and evidence checks | Done | E2E (real embeddings) + integration |
 | LangGraph routing to specialist agents + governance checks | Done | Integration |
+| Agent measurement: semantic spine (ontology, knowledge, context, procedural graphs), traces, scorecard | Done | Unit + integration; real-model run captured in the screenshots |
 | Interview practice (8 roles, generated questions, scored feedback, analytics) | Done | Integration (simulated model); not yet run end to end with a real model |
 | Meeting copilot (notes, decisions, action items) | Done | Integration (simulated model); not yet run end to end with a real model |
 | History search, export, delete, clear-all, retention | Done | Unit + integration + E2E |

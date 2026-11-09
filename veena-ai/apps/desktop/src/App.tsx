@@ -4,6 +4,7 @@ import { CatMark, Wordmark } from "./components/CatMark";
 import { Sidebar, SourcePicker, Toasts } from "./components/Shell";
 import { Button } from "./components/ui";
 import { About } from "./pages/About";
+import { Agents } from "./pages/Agents";
 import { Analytics } from "./pages/Analytics";
 import { Interview } from "./pages/Interview";
 import { Knowledge } from "./pages/Knowledge";
@@ -101,6 +102,7 @@ export default function App() {
         {page === "knowledge" && <Knowledge />}
         {page === "meeting" && <Meeting onShare={openPicker} />}
         {page === "analytics" && <Analytics />}
+        {page === "agents" && <Agents />}
         {page === "settings" && <Settings />}
         {page === "about" && <About />}
       </main>

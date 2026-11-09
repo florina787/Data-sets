@@ -12,6 +12,7 @@ from sqlmodel import col, select
 
 from .db import session as db_session
 from .tables import (
+    AgentTrace,
     ChatSession,
     InterviewSession,
     InterviewTurn,
@@ -157,6 +158,7 @@ class Store:
             s.exec(delete(InterviewTurn).where(col(InterviewTurn.interview_id).in_(iv_ids)))
             s.exec(delete(InterviewSession).where(col(InterviewSession.id).in_(iv_ids)))
         s.exec(delete(Message).where(col(Message.session_id).in_(ids)))
+        s.exec(delete(AgentTrace).where(col(AgentTrace.session_id).in_(ids)))
         s.exec(delete(ChatSession).where(col(ChatSession.id).in_(ids)))
 
     # ---------- messages ----------
@@ -249,6 +251,34 @@ class Store:
             if names:
                 stmt = stmt.where(col(MetricEvent.name).in_(names))
             return list(s.exec(stmt.order_by(col(MetricEvent.id))))
+
+    def merge_message_meta(self, message_id: int, patch: dict[str, Any]) -> None:
+        with db_session(self.engine) as s:
+            m = s.get(Message, message_id)
+            if m is None:
+                return
+            m.meta_json = json.dumps({**json.loads(m.meta_json or "{}"), **patch})
+            s.add(m)
+            s.commit()
+
+    # ---------- agent traces ----------
+    def add_trace(self, **fields: Any) -> AgentTrace:
+        with db_session(self.engine) as s:
+            t = AgentTrace(**fields)
+            s.add(t)
+            s.commit()
+            s.refresh(t)
+            return t
+
+    def traces(self, since: datetime | None = None, limit: int | None = None) -> list[AgentTrace]:
+        with db_session(self.engine) as s:
+            stmt = select(AgentTrace)
+            if since:
+                stmt = stmt.where(AgentTrace.created_at >= since)
+            stmt = stmt.order_by(col(AgentTrace.id).desc())
+            if limit:
+                stmt = stmt.limit(limit)
+            return list(s.exec(stmt))
 
     def counts(self) -> dict[str, Any]:
         with db_session(self.engine) as s:

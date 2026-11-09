@@ -102,3 +102,22 @@ class InterviewTurn(SQLModel, table=True):
     score: float | None = None
     feedback_json: str | None = None
     created_at: datetime = Field(default_factory=_now)
+
+
+class AgentTrace(SQLModel, table=True):
+    """One agent turn measured along the semantic spine (see agents/spine.py)."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    session_id: str = Field(index=True)
+    message_id: int | None = None
+    agent: str = Field(index=True)
+    mode: str = "conversation"
+    outcome: str = Field(index=True)  # resolved | flagged | escalated | cancelled | failed
+    adherent: bool = True
+    support_rate: float | None = None
+    utilization: float | None = None
+    citation_rate: float | None = None
+    total_ms: float | None = None
+    path_json: str = "[]"
+    measures_json: str = "{}"
+    created_at: datetime = Field(default_factory=_now, index=True)

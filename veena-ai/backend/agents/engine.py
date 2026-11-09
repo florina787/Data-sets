@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import json
+import logging
 import time
 from collections.abc import AsyncIterator
 from typing import Any
@@ -12,8 +14,10 @@ from ..llm.ollama import GenerationStats, LLMUnavailable, ModelInfo, OllamaClien
 from ..memory.store import Store
 from ..models.profiles import PROFILES
 from ..rag.service import KnowledgeBase
-from . import governance
+from . import governance, spine
 from .graph import GraphDeps, UnifiedRequest, build_graph
+
+log = logging.getLogger("veena.engine")
 
 
 class ModelCatalog:
@@ -53,6 +57,73 @@ class Engine:
     def _options(self, settings: dict[str, Any]) -> dict[str, Any]:
         prof = PROFILES.get(settings.get("profile") or "balanced", PROFILES["balanced"])
         return {"num_ctx": prof["num_ctx"], "temperature": 0.3}
+
+    def _measure(
+        self,
+        req: UnifiedRequest,
+        state: dict[str, Any],
+        history: list[dict[str, str]],
+        answer: str,
+        gov: dict | None,
+        *,
+        cancelled: bool,
+        failed: bool = False,
+        extra_steps: list[dict[str, Any]] | None = None,
+        total_ms: float | None = None,
+        message_id: int | None = None,
+    ) -> dict[str, Any] | None:
+        """Scores the turn along the semantic spine and stores it as an agent trace.
+        Measurement must never break a conversation, so failures are swallowed."""
+        try:
+            steps = [*state.get("trace", []), *(extra_steps or [])]
+            path = [t["node"] for t in steps]
+            outcome = spine.classify_outcome(gov, cancelled, failed)
+            evidence = state.get("evidence", [])
+            measures = spine.measure_turn(
+                question=req.text,
+                answer=answer,
+                context_blocks={
+                    "question": req.text,
+                    # Only the user's own words: the model's past answers are not evidence,
+                    # or an earlier invention would count as backed later.
+                    "history": "\n".join(h.get("content", "") for h in history if h.get("role") == "user"),
+                    "transcript": "\n".join(req.transcript_context),
+                    "screen": state.get("ocr_text", ""),
+                    "documents": "\n\n".join(e.get("text", "") for e in evidence),
+                    "resume": state.get("resume_text", ""),
+                    "job": req.job_description or "",
+                },
+                evidence=evidence,
+                cited=(gov or {}).get("cited", []),
+                path=path,
+                has_image=bool(req.image_b64),
+                needs_retrieval=bool(req.collection_ids or req.resume_collection_id),
+                outcome=outcome,
+            )
+            flag = spine.unbacked_flag(measures["knowledge"])
+            if flag and gov is not None:
+                gov["flags"].append(flag)
+                outcome = spine.classify_outcome(gov, cancelled, failed)
+                measures["procedure"]["outcome"] = outcome
+            measures["procedure"]["step_ms"] = {t["node"]: t["ms"] for t in steps}
+            self.store.add_trace(
+                session_id=req.session_id,
+                message_id=message_id,
+                agent=state.get("agent", "unknown"),
+                mode=req.mode,
+                outcome=outcome,
+                adherent=measures["procedure"]["adherent"],
+                support_rate=measures["knowledge"]["support_rate"],
+                utilization=measures["context"]["utilization"],
+                citation_rate=measures["context"]["citation_rate"],
+                total_ms=total_ms,
+                path_json=json.dumps(path),
+                measures_json=json.dumps(measures),
+            )
+            return measures
+        except Exception:  # noqa: BLE001
+            log.exception("agent measurement failed")
+            return None
 
     async def run(self, req: UnifiedRequest, request_id: str) -> AsyncIterator[dict[str, Any]]:
         cancel = self._cancel.setdefault(request_id, asyncio.Event())
@@ -120,6 +191,7 @@ class Engine:
                 "timings": timings,
             }
             stats = GenerationStats(model=state["model"])
+            t_gen = time.perf_counter()
             stream = self.llm.chat_stream(state["model"], state["messages"], options=self._options(settings), stats=stats)
             try:
                 async for delta in stream:
@@ -131,10 +203,16 @@ class Engine:
             except LLMUnavailable as e:
                 yield {"type": "error", "code": "llm_unavailable", "message": str(e)}
                 if not answer_parts:
+                    gen_ms = round((time.perf_counter() - t_gen) * 1000, 2)
+                    self._measure(
+                        req, state, history, "", None, cancelled=False, failed=True, extra_steps=[{"node": "generate", "ms": gen_ms}]
+                    )
                     return
             finally:
                 await stream.aclose()
+            gen_step = {"node": "generate", "ms": round((time.perf_counter() - t_gen) * 1000, 2)}
             answer = "".join(answer_parts)
+            t_gov = time.perf_counter()
             gov = governance.review(
                 answer,
                 evidence=evidence,
@@ -143,6 +221,7 @@ class Engine:
                 resume_evidence=bool(state.get("resume_text")),
                 notes=state.get("notes", []),
             )
+            gov_ms = round((time.perf_counter() - t_gov) * 1000, 2)
             total_ms = (time.perf_counter() - t_start) * 1000
             meta = {"model": stats.model}
             if stats.first_token_ms is not None:
@@ -170,8 +249,16 @@ class Engine:
                 },
             )
             saved = True
+            steps = [gen_step] if stats.cancelled else [gen_step, {"node": "govern", "ms": gov_ms}]
+            measures = self._measure(
+                req, state, history, answer, gov, cancelled=stats.cancelled, extra_steps=steps, total_ms=total_ms, message_id=msg.id
+            )
+            spine_summary = _spine_summary(measures)
+            if spine_summary:
+                self.store.merge_message_meta(msg.id, {"spine": spine_summary, "governance": gov})
             yield {
                 "type": "done",
+                "spine": spine_summary,
                 "message_id": msg.id,
                 "stats": stats.to_dict(),
                 "total_ms": total_ms,
@@ -191,3 +278,22 @@ class Engine:
                     meta={"agent": state.get("agent"), "cancelled": True},
                 )
             self._cancel.pop(request_id, None)
+
+
+def _spine_summary(m: dict[str, Any] | None) -> dict[str, Any] | None:
+    """The per-answer slice of the spine the UI shows next to an answer."""
+    if not m:
+        return None
+    k, c, p = m["knowledge"], m["context"], m["procedure"]
+    return {
+        "outcome": p["outcome"],
+        "adherent": p["adherent"],
+        "path": p["path"],
+        "support_rate": k["support_rate"],
+        "grounded_context": k["grounded_context"],
+        "claims": k["claims"],
+        "unsupported": k["unsupported"],
+        "utilization": c["utilization"],
+        "citation_rate": c["citation_rate"],
+        "context_nodes": c["nodes"],
+    }

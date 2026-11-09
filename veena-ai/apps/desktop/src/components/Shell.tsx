@@ -7,6 +7,7 @@ import {
   Info,
   MessagesSquare,
   Mic,
+  Network,
   Moon,
   Monitor,
   PanelLeftClose,
@@ -37,6 +38,7 @@ const NAV: { page: Page; label: string; icon: typeof MessagesSquare }[] = [
   { page: "interview", label: "Interview Practice", icon: BriefcaseBusiness },
   { page: "knowledge", label: "Knowledge", icon: BookOpen },
   { page: "analytics", label: "Analytics", icon: BarChart3 },
+  { page: "agents", label: "Agents", icon: Network },
 ];
 
 const MODE_ICON = { conversation: MessagesSquare, screen: Monitor, meeting: Users, interview: BriefcaseBusiness };

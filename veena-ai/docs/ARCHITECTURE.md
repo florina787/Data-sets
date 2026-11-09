@@ -113,11 +113,23 @@ mic / system audio → AudioWorklet (16 kHz, 1024-sample frames, 8-byte timestam
   sensitive content.
 * Frames are never written to disk.
 
+## Agent measurement: the semantic spine
+
+Every turn is scored after governance by `backend/agents/spine.py`. There is no LLM judge.
+
+1. **Ontology.** `extract_entities` finds names, acronyms, code identifiers and figures in text. It skips code blocks, citation markers, list numbers and single capitalised sentence openers.
+2. **Knowledge graph.** For an answer, each entity is *backed* if it appears in the material the turn was given: documents, screen OCR, transcript, resume, job description, and the user's own earlier messages. The model's earlier answers do not count. `support_rate` is reported only when such material existed. `knowledge_graph(passages)` builds an entity co-occurrence graph per collection (`GET /api/agents/knowledge-graph`).
+3. **Context graph.** The entities in the turn's inputs form a scoped subgraph. Edges link entities in the same passage or block. `utilization` is the share of it the answer mentions, and `citation_rate` is cited passages over retrieved ones.
+4. **Procedural graph.** Each LangGraph node is wrapped by `_traced`, which appends `{node, ms}` to `state.trace`. The engine adds `generate` and `govern`. The path is checked against `PROCEDURE`, the allowed transitions, and against `expected_path(has_image, needs_retrieval)`.
+5. **Outcome.** resolved, flagged, escalated (`no_evidence`), cancelled or failed. If `unbacked_flag` fires, it adds an `unbacked_claims` governance flag first.
+
+Each turn is stored as an `AgentTrace` row: outcome, path, rates and the full measures as JSON. Deleting a session deletes its traces. `backend/analytics/agents.py` aggregates them for `GET /api/agents/scorecard`: outcomes, per-agent rates, transition counts, a daily trend and recent traces. The answer's summary is also merged into the message's `meta.spine` for the per-answer line.
+
 ## Data model (SQLite)
 
 `ChatSession`, `Message` (roles user / assistant / transcript), `Collection`,
 `Document`, `Chunk` (its id is the FAISS vector id), `Setting`, `MetricEvent`,
-`InterviewSession`, `InterviewTurn`. WAL journaling, foreign keys, and
+`InterviewSession`, `InterviewTurn`, `AgentTrace`. WAL journaling, foreign keys, and
 `secure_delete` so deleted history is overwritten. A retention job deletes
 sessions older than the configured number of days.
 
@@ -126,7 +138,7 @@ sessions older than the configured number of days.
 | Path | Purpose |
 |---|---|
 | `backend/api/` | FastAPI app factory, routes, audio WebSocket, shared state |
-| `backend/agents/` | LangGraph graph, engine, prompts, question detection, governance, interview, meeting |
+| `backend/agents/` | LangGraph graph, engine, prompts, question detection, governance, semantic-spine measurement, interview, meeting |
 | `backend/llm/` | Ollama client (streaming, pull, capabilities), model selection |
 | `backend/transcription/` | Whisper wrapper, Silero/energy VAD, streaming transcriber |
 | `backend/audio/` | PCM frame codec |
@@ -135,7 +147,7 @@ sessions older than the configured number of days.
 | `backend/rag/` | Extraction, chunking, embeddings, FAISS index, knowledge base |
 | `backend/memory/` | Tables, engine, store (sessions, settings, export, retention) |
 | `backend/security/` | Token auth, path safety, prompt-injection guard, redaction |
-| `backend/analytics/` | Metrics recording, summaries, resource usage |
+| `backend/analytics/` | Metrics recording, summaries, resource usage, agent scorecard |
 | `backend/models/` | Hardware detection, profiles, benchmark |
 | `apps/desktop/electron/` | Main process, backend supervisor, preload |
 | `apps/desktop/src/` | React pages, components, stores, services, brand |

@@ -79,6 +79,7 @@ class VeenaState(TypedDict, total=False):
     model: str
     notes: list[str]
     timings: dict[str, float]
+    trace: list[dict[str, Any]]  # steps actually taken, for the procedural-graph measures
 
 
 @dataclass
@@ -88,6 +89,28 @@ class GraphDeps:
     installed: list[ModelInfo]
     history: list[dict[str, str]] = field(default_factory=list)
     max_image_side: int = 1280
+
+
+def _traced(name: str, fn):
+    """Wraps a node so the path it takes is recorded, step by step, with timings."""
+
+    def _step(state: VeenaState, out: VeenaState, t0: float) -> VeenaState:
+        entry = {"node": name, "ms": round((time.perf_counter() - t0) * 1000, 2)}
+        return {**out, "trace": [*state.get("trace", []), entry]}
+
+    if asyncio.iscoroutinefunction(fn):
+
+        async def run_async(state: VeenaState) -> VeenaState:
+            t0 = time.perf_counter()
+            return _step(state, await fn(state), t0)
+
+        return run_async
+
+    def run_sync(state: VeenaState) -> VeenaState:
+        t0 = time.perf_counter()
+        return _step(state, fn(state), t0)
+
+    return run_sync
 
 
 def build_graph(deps: GraphDeps):
@@ -232,10 +255,10 @@ def build_graph(deps: GraphDeps):
         return "retrieve" if state.get("needs_retrieval") else "compose"
 
     g = StateGraph(VeenaState)
-    g.add_node("supervisor", supervisor)
-    g.add_node("screen_prep", screen_prep)
-    g.add_node("retrieve", retrieve)
-    g.add_node("compose", compose)
+    g.add_node("supervisor", _traced("supervisor", supervisor))
+    g.add_node("screen_prep", _traced("screen_prep", screen_prep))
+    g.add_node("retrieve", _traced("retrieve", retrieve))
+    g.add_node("compose", _traced("compose", compose))
     g.add_edge(START, "supervisor")
     g.add_conditional_edges("supervisor", after_supervisor, ["screen_prep", "retrieve", "compose"])
     g.add_conditional_edges("screen_prep", after_screen, ["retrieve", "compose"])

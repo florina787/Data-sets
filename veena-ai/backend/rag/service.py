@@ -226,6 +226,12 @@ class KnowledgeBase:
                 break
         return out
 
+    def passages(self, collection_id: str, limit: int = 2000) -> list[str]:
+        """Chunk texts of a collection, in document order (for the knowledge graph)."""
+        with db_session(self.engine) as s:
+            stmt = select(Chunk.text).where(Chunk.collection_id == collection_id).order_by(Chunk.document_id, Chunk.ordinal).limit(limit)
+            return list(s.exec(stmt))
+
     def collection_text(self, collection_id: str, max_chars: int = 6000) -> str:
         """Concatenated text of a small collection (e.g. one resume) for prompts."""
         with db_session(self.engine) as s:
