@@ -223,13 +223,21 @@ def transitions(path: list[str], outcome: str) -> list[tuple[str, str]]:
     return list(zip(seq, seq[1:], strict=False))
 
 
-def unbacked_flag(knowledge: dict[str, Any]) -> dict[str, str] | None:
+def unbacked_flag(knowledge: dict[str, Any], sources: list[str] | None = None) -> dict[str, str] | None:
     """A governance flag when an answer built on given material states figures,
-    or mostly names, that the material does not contain."""
+    or mostly names, that the material does not contain.
+
+    When a screen is the only material, explanations legitimately name things
+    that are not visible ("Python", "dictionary"), which made every screen
+    explanation flagged in evaluation; there, only unbacked figures count."""
     rate = knowledge.get("support_rate")
     if rate is None or not knowledge.get("unsupported"):
         return None
-    if knowledge.get("unsupported_figures", 0) == 0 and rate >= 0.5:
+    figures = knowledge.get("unsupported_figures", 0)
+    grounding = {s for s in (sources or []) if s in GROUNDING_SOURCES}
+    if grounding == {"screen"} and figures == 0:
+        return None
+    if figures == 0 and rate >= 0.5:
         return None
     shown = ", ".join(knowledge["unsupported"][:5])
     return {"kind": "unbacked_claims", "detail": f"the answer states things not found in what VEENA was given: {shown}"}

@@ -252,14 +252,18 @@ jobs:
           node-version: "22"
           cache: npm
           cache-dependency-path: veena-ai/apps/desktop/package-lock.json
-      - name: Python dependencies
+      - name: Python dependencies (the app's environment only)
         working-directory: veena-ai
-        run: pip install -e . pip-audit==2.9.0 cyclonedx-bom==7.2.1 pip-licenses==5.0.0
+        run: pip install -e .
+      - name: Security tools in a separate environment (so they cannot change what is audited)
+        run: |
+          python -m venv /tmp/sectools
+          /tmp/sectools/bin/pip install --quiet pip-audit==2.9.0 cyclonedx-bom==7.2.1 pip-licenses==5.0.0
       - name: Python vulnerability audit
         working-directory: veena-ai
         run: |
           pip freeze --exclude-editable | grep -v "^-e" > installed.txt
-          pip-audit -r installed.txt --no-deps --disable-pip --progress-spinner off
+          /tmp/sectools/bin/pip-audit -r installed.txt --no-deps --disable-pip --progress-spinner off
       - name: npm vulnerability audit (shipped dependencies)
         working-directory: veena-ai/apps/desktop
         run: |
@@ -267,12 +271,12 @@ jobs:
           npm audit --omit=dev --audit-level=high
       - name: Software bill of materials (CycloneDX)
         run: |
-          cd veena-ai && cyclonedx-py environment -o ../sbom-python.cdx.json
+          cd veena-ai && /tmp/sectools/bin/cyclonedx-py environment "$(python -c 'import sys; print(sys.executable)')" -o ../sbom-python.cdx.json
           cd apps/desktop && npx --yes @cyclonedx/cyclonedx-npm@4.0.0 --omit dev --output-file ../../../sbom-npm.cdx.json
       - name: Licence inventory
         working-directory: veena-ai
         run: |
-          pip-licenses --format=markdown --with-urls > ../licenses-python.md
+          /tmp/sectools/bin/pip-licenses --python "$(python -c 'import sys; print(sys.executable)')" --format=markdown --with-urls > ../licenses-python.md
           python -c "import backend.models.profiles as p; bad=[m for m,v in p.PROFILES.items() for k in ('text_model','vision_model') if not (p.license_of(v[k]) or {}).get('commercial')]; print('profiles with non-commercial default models:', bad); raise SystemExit(1 if bad else 0)"
       - uses: actions/upload-artifact@v4
         with:

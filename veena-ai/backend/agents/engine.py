@@ -100,7 +100,7 @@ class Engine:
                 needs_retrieval=bool(req.collection_ids or req.resume_collection_id),
                 outcome=outcome,
             )
-            flag = spine.unbacked_flag(measures["knowledge"])
+            flag = spine.unbacked_flag(measures["knowledge"], measures["context"]["sources"])
             if flag and gov is not None:
                 gov["flags"].append(flag)
                 outcome = spine.classify_outcome(gov, cancelled, failed)

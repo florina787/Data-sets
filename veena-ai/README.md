@@ -11,7 +11,7 @@ A local-first desktop AI copilot that listens, reads the screen you choose, answ
   <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-99613E?style=flat-square" />
   <img alt="Platforms" src="https://img.shields.io/badge/platforms-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-75462D?style=flat-square" />
   <img alt="License GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-B87848?style=flat-square" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-153%20passing-99613E?style=flat-square" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-175%20passing-99613E?style=flat-square" />
 </p>
 
 <h3 align="center">Download</h3>
@@ -25,7 +25,7 @@ A local-first desktop AI copilot that listens, reads the screen you choose, answ
 <p align="center"><sub>
   Also for <a href="https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Linux-x86_64.AppImage">Linux (AppImage)</a> ·
   <a href="https://github.com/florina787/Data-sets/releases/latest">All files and checksums</a> ·
-  Free · Unsigned builds: see <a href="#install-users">first launch</a>
+  Free · Ollama is optional: VEENA's setup installs it for you · Unsigned beta builds: see <a href="#install-users">first launch</a>
 </sub></p>
 
 <p align="center">
@@ -123,7 +123,7 @@ flowchart LR
     QD --> G["LangGraph router<br/>specialist agents"]
     OCR --> G
     EMB --> G
-    G --> LLM["Ollama<br/>Qwen2.5 / Qwen2.5-VL"]
+    G --> LLM["Ollama<br/>Qwen2.5 / Qwen3 / Qwen3-VL"]
     LLM --> GOV["Governance check<br/>citations · unsupported claims"]
     GOV --> UI["Streamed answer"]
     GOV --> DB[("SQLite")]
@@ -134,7 +134,7 @@ No step leaves the machine. Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md
 
 | Speech | Screen | Documents | Models | App |
 |---|---|---|---|---|
-| faster-whisper + Silero VAD | Electron capture + Tesseract + Qwen2.5-VL | sentence-transformers + FAISS | Ollama (Qwen2.5 family) | Electron + React + FastAPI |
+| faster-whisper + Silero VAD | Electron capture + Tesseract + Qwen3-VL | sentence-transformers + FAISS | Ollama (Apache-2.0 Qwen models) | Electron + React + FastAPI |
 
 ## Measured performance
 
@@ -159,45 +159,53 @@ What has been built and verified, and how:
 | Local chat with streaming, stop, answer styles, Markdown/code/tables/Mermaid | Done | E2E against qwen2.5:1.5b |
 | Microphone transcription, partials, question detection, auto-answer | Done | E2E with synthetic speech through Chromium's fake mic → real Whisper |
 | System-audio capture | Windows only (Electron loopback) | Not exercised in automated tests |
-| User-selected screen/window sharing, region crop, screenshot analysis | Done | E2E: real capture → OCR → qwen2.5vl:3b |
+| User-selected screen/window sharing, region crop, screenshot analysis | Done | E2E: real capture → OCR → qwen3-vl:2b-instruct |
 | Refusal of screen capture without a user pick | Done | E2E |
 | Continuous screen understanding with change detection and sensitive-content pause | Done | Integration tests (sensitive pause, redaction); the sampling loop itself is not covered by automated tests |
 | Secret redaction in screenshots | Done, best effort | Integration test with real Tesseract |
 | Documents (PDF, DOCX, TXT, MD, CSV, JSON) with citations and evidence checks | Done | E2E (real embeddings) + integration |
 | LangGraph routing to specialist agents + governance checks | Done | Integration |
 | Agent measurement: semantic spine (ontology, knowledge, context, procedural graphs), traces, scorecard | Done | Unit + integration; real-model run captured in the screenshots |
-| Interview practice (8 roles, generated questions, scored feedback, analytics) | Done | Integration (simulated model); not yet run end to end with a real model |
-| Meeting copilot (notes, decisions, action items) | Done | Integration (simulated model); not yet run end to end with a real model |
+| Interview practice (8 roles, generated questions, scored feedback, analytics) | Done | Integration + real-model evaluation and offline check ([report](reports/REAL_MODEL_EVALUATION.md)) |
+| Meeting copilot (notes, decisions, action items) | Done, small models misfile some action items | Integration + real-model evaluation and offline check ([report](reports/REAL_MODEL_EVALUATION.md)) |
 | History search, export, delete, clear-all, retention | Done | Unit + integration + E2E |
 | Hardware detection, profiles, model downloads, measured benchmark | Done | E2E (real benchmark) |
 | Analytics and developer diagnostics from real measurements | Done | Integration |
-| Installers | Windows NSIS, macOS DMG (unsigned), Linux AppImage/deb | CI builds all three and smoke-tests the packaged app on each OS |
+| Installers | Windows NSIS, macOS DMG, Linux AppImage/deb; **unsigned** | CI installs the real installer, launches the installed app and uninstalls ([results](reports/CLEAN_INSTALL_TEST_RESULTS.md)) |
+| Automatic AI runtime | Reuses Ollama or downloads the pinned official release (SHA-256 checked) with consent | Unit tests; real binary locally; CI first run on Windows, macOS and Linux |
+| Licensed default models | All defaults Apache-2.0; non-commercial defaults blocked by a test | [Model licence audit](reports/MODEL_LICENSE_AUDIT.md) |
+| Works offline after setup | Chat, documents, meetings, interview, screen, speech | Real models in a network-disconnected namespace ([audit](reports/SECURITY_AND_PRIVACY_AUDIT.md)) |
 | Optional Piper TTS / Parakeet ASR / code sandbox | Not built | See limitations |
 
 ## Install (users)
 
-1. Install [Ollama](https://ollama.com/download) (free) and start it.
-2. Download VEENA.AI for your computer:
+1. Download VEENA.AI for your computer:
    * **Windows 10/11:** [VEENA.AI-Windows-Setup.exe](https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Windows-Setup.exe)
    * **Mac with Apple Silicon (M1–M4):** [VEENA.AI-macOS-AppleSilicon.dmg](https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-macOS-AppleSilicon.dmg). No Intel Mac build yet.
    * **Linux x86_64:** [VEENA.AI-Linux-x86_64.AppImage](https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Linux-x86_64.AppImage)
-3. First launch. The builds are not code-signed, so the system warns once:
+2. First launch. The beta builds are not code-signed yet, so the system warns once:
    * **Windows:** SmartScreen "Windows protected your PC" → **More info → Run anyway**.
    * **macOS:** drag VEENA.AI to Applications, then **right-click → Open → Open**.
-4. Launch it. The setup wizard checks your hardware, recommends a profile,
-   downloads models through Ollama, and benchmarks your machine.
+3. Follow the setup wizard. It checks your computer, sets up the free local AI
+   runtime (reusing Ollama if you have it, otherwise downloading it with your
+   permission), downloads an Apache-2.0 model, and says **"VEENA is ready."**
+   only after the model has answered on your computer. No terminal needed.
 
-Full walkthrough: [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
+Full walkthrough: [customer installation guide](docs/CUSTOMER_INSTALLATION_GUIDE.md) ·
+[hardware requirements](docs/HARDWARE_REQUIREMENTS.md) ·
+[troubleshooting](docs/SUPPORT_AND_TROUBLESHOOTING.md) · [user guide](docs/USER_GUIDE.md).
 
 ### What it costs
 
 No money is required. You do pay in resources:
 
-* **Downloads:** about 1–11 GB of models depending on profile (one time).
+* **Downloads:** the AI runtime (about 1.6 GB on Windows/Linux, 0.2 GB on macOS, unless you already have Ollama) and about 3–11 GB of models depending on profile (one time).
 * **Disk:** the same, plus about 1.5 GB for the app (it bundles CPU PyTorch for embeddings).
 * **Hardware time and electricity:** models run on your CPU/GPU. On the 4-core
   CPU-only test machine a text answer starts in about 0.2 s and streams at about
-  21 tokens/s; a screen analysis takes about a minute. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
+  21 tokens/s; a full-screen analysis with the licensed 2B vision model takes
+  about 2.4 minutes. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) and
+  [the real-model evaluation](reports/REAL_MODEL_EVALUATION.md).
 
 ## Develop
 
@@ -207,7 +215,7 @@ ffmpeg (for the speech tests).
 ```bash
 cd veena-ai
 ./scripts/setup.sh            # Windows: .\scripts\setup.ps1
-ollama pull qwen2.5:1.5b && ollama pull qwen2.5vl:3b
+ollama pull qwen2.5:1.5b && ollama pull qwen3-vl:2b-instruct
 cd apps/desktop && npm run dev
 ```
 
@@ -268,14 +276,19 @@ and the animated in-app mascot (blink, listening, thinking; reduced motion respe
 
 ## Known limitations
 
-* **Speed on CPU:** vision analysis takes about a minute per screenshot without
-  a GPU; Whisper partials arrive every 2–3 s on a 4-core CPU.
+* **Speed on CPU:** a full-screen analysis takes about 2.4 minutes without a GPU
+  (licensed qwen3-vl:2b-instruct; the research-only model it replaced took about
+  one minute); Whisper partials arrive every 2–3 s on a 4-core CPU.
 * **Unsigned builds:** Windows SmartScreen and macOS Gatekeeper warn on first launch.
   Code signing needs certificates the project does not have.
 * **Platform coverage:** the full E2E suite with real models ran on Linux only. On
-  Windows and macOS, CI verified the packaged app starts its bundled backend and
-  renders, but no model answers were tested there (no Ollama on the runners) and
-  the NSIS installer was built but not run.
+  Windows and macOS, CI installs the real installer, launches the installed app
+  and runs a first-run test (runtime download, real model answer). CI runners are
+  not consumer PCs; a manual test on everyday Windows and Mac machines is still
+  needed ([results](reports/CLEAN_INSTALL_TEST_RESULTS.md)).
+* **Fact check is lexical:** "facts backed" flags names and figures missing from
+  the inputs; it cannot judge whether a backed name is used correctly. On
+  screen-only answers it flags invented figures, not general terms.
 * **System audio** capture is Windows only.
 * **Redaction is best effort:** it masks only what OCR can read.
 * **Scanned PDFs** without a text layer are not OCR'd at upload.
@@ -286,6 +299,21 @@ and the animated in-app mascot (blink, listening, thinking; reduced motion respe
   ONNX embedding path would cut this substantially.
 * **Mid-size model accuracy:** small local models make mistakes; answers show
   their model, sources and governance notes so you can judge them.
+
+## Launch and release documents
+
+| Reports | Docs |
+|---|---|
+| [Release readiness (go / no-go)](reports/RELEASE_READINESS.md) | [Customer installation guide](docs/CUSTOMER_INSTALLATION_GUIDE.md) |
+| [Production gap analysis](reports/PRODUCTION_GAP_ANALYSIS.md) | [Hardware requirements](docs/HARDWARE_REQUIREMENTS.md) |
+| [Security and privacy audit](reports/SECURITY_AND_PRIVACY_AUDIT.md) | [Support and troubleshooting](docs/SUPPORT_AND_TROUBLESHOOTING.md) |
+| [Clean-install test results](reports/CLEAN_INSTALL_TEST_RESULTS.md) | [Zero-cost deployment architecture](docs/ZERO_COST_DEPLOYMENT_ARCHITECTURE.md) |
+| [Model licence audit](reports/MODEL_LICENSE_AUDIT.md) | [Free website deployment](docs/FREE_WEBSITE_DEPLOYMENT.md) |
+| [Real-model evaluation](reports/REAL_MODEL_EVALUATION.md) | [Installer storage and delivery](docs/INSTALLER_STORAGE_AND_DELIVERY.md) |
+| [Free-tier cloud research](reports/FREE_TIER_CLOUD_RESEARCH.md) | [Cloud migration strategy](docs/CLOUD_MIGRATION_STRATEGY.md) |
+| [Free-tier cost simulation](reports/FREE_TIER_COST_SIMULATION.md) | [SaaS commercialization roadmap](docs/SAAS_COMMERCIALIZATION_ROADMAP.md) |
+
+The public website lives in [`site/`](site) and deploys to GitHub Pages only when the owner runs it.
 
 ## Ethics
 

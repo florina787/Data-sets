@@ -2,14 +2,15 @@
 
 ## 1. Install
 
-1. **Install Ollama** (free): <https://ollama.com/download>. Start it once; it runs in the background.
-2. **Install VEENA.AI** from the [latest release](https://github.com/florina787/Data-sets/releases/latest):
+1. **Install VEENA.AI** from the [latest release](https://github.com/florina787/Data-sets/releases/latest):
    run `VEENA.AI-Windows-Setup.exe` (Windows), open `VEENA.AI-macOS-AppleSilicon.dmg`
    and drag VEENA to Applications (Apple Silicon Macs), or run `VEENA.AI-Linux-x86_64.AppImage` (Linux).
    Builds are unsigned for now, so Windows SmartScreen and macOS Gatekeeper will
    warn on first launch (Windows: *More info → Run anyway*; macOS: right-click →
    *Open*).
-3. **Optional: Tesseract OCR** improves reading text on screen.
+   You do not need to install Ollama yourself: Setup reuses it if present and otherwise downloads it for you.
+   Step-by-step: [customer installation guide](CUSTOMER_INSTALLATION_GUIDE.md).
+2. **Optional: Tesseract OCR** improves reading text on screen.
    Windows: [UB Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki) (default folder is detected automatically).
    macOS: `brew install tesseract`. Linux: `sudo apt install tesseract-ocr`.
 
@@ -17,21 +18,26 @@
 
 The wizard:
 
-1. explains what runs locally and what it costs (downloads, disk, electricity);
-2. detects your OS, CPU, RAM, GPU and free disk, and recommends a profile:
+1. explains what runs locally and what setup will download;
+2. detects your OS, CPU, RAM, GPU and free disk, and recommends a profile (all models Apache-2.0):
 
    | Profile | For | Text model | Vision model | Speech |
    |---|---|---|---|---|
-   | Lite | 8 GB RAM, CPU | qwen2.5:1.5b | qwen2.5vl:3b (on demand) | whisper tiny |
-   | Balanced | 16 GB RAM | qwen2.5:3b | qwen2.5vl:3b | whisper base |
+   | Lite | 8 GB RAM, CPU | qwen2.5:1.5b | qwen3-vl:2b-instruct (on demand) | whisper tiny |
+   | Balanced | 16 GB RAM | qwen3:1.7b | qwen3-vl:2b-instruct | whisper base |
    | Performance | 32 GB RAM or 8 GB+ GPU | qwen2.5:7b | qwen2.5vl:7b | whisper small |
 
-3. downloads the models you choose through Ollama, with progress;
-4. benchmarks your machine (tokens per second, first-token time, speech
-   real-time factor). If speech runs slower than real time (factor above 1),
+3. sets up the local AI runtime: reuses a running or installed Ollama, or downloads the
+   pinned official release with your permission and checks its SHA-256;
+4. downloads the models you choose, with progress, cancel and retry;
+5. explains where your data is stored and asks whether VEENA may check for updates;
+6. lets you allow and test the microphone (optional);
+7. asks the model a first question and shows **"VEENA is ready."** only when it answers.
+   An optional benchmark measures tokens per second, first-token time and speech
+   real-time factor. If speech runs slower than real time (factor above 1),
    pick a smaller speech model in Settings.
 
-You can re-run setup from Settings at any time.
+Setup resumes at the same step if you close VEENA. You can re-run it from Settings at any time.
 
 ## 3. Conversation
 
@@ -116,9 +122,9 @@ live metrics, and the backend log, and can restart the backend.
 | Symptom | Fix |
 |---|---|
 | "Ollama offline" | Start Ollama, then Settings → Local models → Refresh. |
-| "No local model is installed" | Run Setup again or `ollama pull qwen2.5:3b`. |
+| "No local AI model is installed yet" | Run Setup again (Settings → Models) and download a recommended model. |
 | Microphone does nothing | Check the OS microphone permission for VEENA and the device in Settings → Speech. |
 | Speech lags behind | Choose a smaller speech model (tiny/base). |
 | Screen list is empty (macOS) | Grant Screen Recording permission and restart VEENA. |
-| Screen answers ignore the image | No vision model installed: VEENA uses OCR text only and says so. Download qwen2.5vl:3b. |
+| Screen answers ignore the image | No vision model installed: VEENA uses OCR text only and says so. Download qwen3-vl:2b-instruct in Settings → Models. |
 | Backend did not start | Press *Show log* on the error screen. |

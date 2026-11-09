@@ -120,3 +120,11 @@ def test_unbacked_flag_rules():
     assert spine.unbacked_flag({"support_rate": 0.8, "unsupported": ["redis"], "unsupported_figures": 0}) is None
     assert spine.unbacked_flag({"support_rate": 0.9, "unsupported": ["42%"], "unsupported_figures": 1})["kind"] == "unbacked_claims"
     assert spine.unbacked_flag({"support_rate": 0.25, "unsupported": ["anthropic", "openai"], "unsupported_figures": 0}) is not None
+
+
+def test_screen_only_answers_are_flagged_for_figures_not_general_names():
+    k = {"support_rate": 0.2, "unsupported": ["python", "dictionary"], "unsupported_figures": 0}
+    assert spine.unbacked_flag(k, ["question", "screen"]) is None
+    assert spine.unbacked_flag(k, ["documents", "question"]) is not None  # documents: names still count
+    k2 = {"support_rate": 0.5, "unsupported": ["99%"], "unsupported_figures": 1}
+    assert spine.unbacked_flag(k2, ["question", "screen"]) is not None  # an invented figure on screen still counts

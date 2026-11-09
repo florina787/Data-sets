@@ -67,7 +67,7 @@ Every invented answer was caught by VEENA's semantic-spine check, which showed "
 
 ## Known limitations (not fixed)
 
-- **`unbacked_claims` false positives on screen explanations.** Explaining code naturally names things that are not on screen (for example "Python"), so every vision model's code explanation was flagged. On screen answers, treat the flag as a hint.
+- **`unbacked_claims` false positives on screen explanations: fixed after run 2.** Explaining code naturally names things that are not on screen (for example "Python"), so every vision model's code explanation was flagged. When a screen is the only material, only unbacked *figures* now raise the flag. Real-model recheck: neither screen task flagged.
 - **Meeting notes miss action items.** Both small text models put the runbook task under decisions instead of action items. The notes are a draft.
 - **Full-screen analysis takes about 2.4 minutes** on this 4-vCPU CPU-only machine with the licensed 2B vision model, compared with about 1 minute for the research-only model it replaced. A GPU or Apple Silicon should be much faster, but that was **not measured**.
 
