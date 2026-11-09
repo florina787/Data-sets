@@ -82,3 +82,18 @@ def test_chunking_overlap_and_pages():
 
 def test_lexical_score():
     assert lexical_score("faiss vector index", "We used a FAISS vector index") > lexical_score("faiss", "nothing here")
+
+
+def test_packaged_app_uses_the_bundled_embedding_model(tmp_path, monkeypatch):
+    import sys
+
+    from backend.rag import embed
+
+    model_dir = tmp_path / "models" / embed.BUNDLED_DIR
+    model_dir.mkdir(parents=True)
+    monkeypatch.delenv("VEENA_EMBEDDER_PATH", raising=False)
+    monkeypatch.setattr(sys, "frozen", True, raising=False)
+    monkeypatch.setattr(sys, "_MEIPASS", str(tmp_path), raising=False)
+    assert embed.bundled_model_path() is None  # incomplete folder is not used
+    (model_dir / "modules.json").write_text("[]")
+    assert embed.bundled_model_path() == model_dir

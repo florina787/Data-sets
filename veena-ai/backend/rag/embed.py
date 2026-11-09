@@ -3,12 +3,28 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import sys
 import threading
 from collections import OrderedDict
+from pathlib import Path
 
 import numpy as np
 
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+BUNDLED_DIR = "all-MiniLM-L6-v2"
+
+
+def bundled_model_path() -> Path | None:
+    """The embedding model shipped inside the installer (Apache-2.0, about 90 MB),
+    so document search never needs a download. VEENA_EMBEDDER_PATH overrides."""
+    candidates = [os.environ.get("VEENA_EMBEDDER_PATH")]
+    if getattr(sys, "frozen", False):
+        candidates.append(str(Path(getattr(sys, "_MEIPASS", Path(sys.executable).parent)) / "models" / BUNDLED_DIR))
+    for c in candidates:
+        if c and (Path(c) / "modules.json").is_file():
+            return Path(c)
+    return None
 
 
 class Embedder:
@@ -27,6 +43,10 @@ class Embedder:
             if self._model is None:
                 from sentence_transformers import SentenceTransformer
 
+                bundled = bundled_model_path() if self.model_name == DEFAULT_MODEL else None
+                if bundled is not None:
+                    self._model = SentenceTransformer(str(bundled), device="cpu", local_files_only=True)
+                    return self._model
                 try:
                     # Cached weights load without touching the network (offline use).
                     self._model = SentenceTransformer(self.model_name, device="cpu", local_files_only=True)

@@ -102,6 +102,16 @@ jobs:
       - name: Install backend dependencies
         working-directory: veena-ai
         run: pip install -e . pyinstaller==6.22.3
+      - name: Diagnose Hugging Face downloads (plain Python, not the packaged app)
+        # A first-use model download hung inside the packaged app on Windows (run 42717356914).
+        # This isolates whether the same download hangs in plain Python on this runner.
+        timeout-minutes: 4
+        continue-on-error: true
+        working-directory: veena-ai
+        run: python -c "import time, filelock, huggingface_hub as h; t=time.time(); p=h.hf_hub_download('Systran/faster-whisper-tiny','config.json', cache_dir='hf-diag'); print('download OK in', round(time.time()-t,1), 's; filelock', filelock.__version__, '; huggingface_hub', h.__version__)"
+      - name: Bundle the document-search model (no download on first use)
+        working-directory: veena-ai
+        run: python packaging/fetch_models.py
       - name: Freeze backend (PyInstaller)
         working-directory: veena-ai
         run: pyinstaller packaging/backend.spec --noconfirm --distpath packaging/backend-dist --workpath packaging/build
@@ -126,6 +136,11 @@ jobs:
           # Each OS uses only its own certificate (electron-builder falls back to CSC_LINK on Windows).
           if [ "$RUNNER_OS" != "macOS" ]; then unset CSC_LINK CSC_KEY_PASSWORD; fi
           if [ "$RUNNER_OS" != "Windows" ]; then unset WIN_CSC_LINK WIN_CSC_KEY_PASSWORD; fi
+          # Secrets that are not configured arrive as empty strings; electron-builder treats an
+          # empty CSC_LINK as a certificate path and fails ("not a file"), so drop empty ones.
+          for v in CSC_LINK CSC_KEY_PASSWORD WIN_CSC_LINK WIN_CSC_KEY_PASSWORD APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+            if [ -z "${!v:-}" ]; then unset "$v"; fi
+          done
           if [ -z "${WIN_CSC_LINK:-}${CSC_LINK:-}" ]; then
             echo "No signing certificate configured for $RUNNER_OS: building an UNSIGNED installer."
             export CSC_IDENTITY_AUTO_DISCOVERY=false

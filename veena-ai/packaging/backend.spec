@@ -27,6 +27,10 @@ datas = (
     + collect_data_files("langgraph")
     + collect_data_files("pymupdf")
 )
+# Document-search model shipped inside the installer (packaging/fetch_models.py).
+_models = os.path.join(ROOT, "packaging", "models", "all-MiniLM-L6-v2")
+if os.path.isdir(_models):
+    datas.append((_models, os.path.join("models", "all-MiniLM-L6-v2")))
 
 a = Analysis(
     [os.path.join(SPECPATH, "veena_backend_entry.py")],

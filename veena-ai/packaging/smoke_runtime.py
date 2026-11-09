@@ -62,7 +62,7 @@ class Api:
             + content
             + f"\r\n--{boundary}--\r\n".encode()
         )
-        with self._req("POST", path, body, ctype=f"multipart/form-data; boundary={boundary}", timeout=600) as r:
+        with self._req("POST", path, body, ctype=f"multipart/form-data; boundary={boundary}", timeout=300) as r:
             return json.loads(r.read())
 
 
@@ -158,6 +158,19 @@ def main() -> int:
         # The retrieval itself must work; the 0.5B model's wording is recorded, not judged here.
         meta_cites = [e for e in done.get("governance", {}).get("cited", [])]
         results["rag"]["cited"] = meta_cites
+
+        # Speech model: downloaded from Hugging Face on first use (not bundled), so
+        # this exercises the same download path that hung for documents on Windows.
+        t0 = time.time()
+        bench = api.json("POST", "/api/system/benchmark", {"text_model": args.model, "asr_model": "tiny"}, timeout=420)
+        results["speech"] = {
+            "ok": bench["asr"].get("ok"),
+            "real_time_factor": bench["asr"].get("real_time_factor"),
+            "error": bench["asr"].get("error"),
+        }
+        results["steps"]["speech_model_and_benchmark_s"] = round(time.time() - t0, 1)
+        print("speech:", results["speech"])
+        assert bench["asr"].get("ok"), f"speech model failed: {bench['asr']}"
 
         stopped = api.json("POST", "/api/runtime/stop")
         assert stopped["stopped"], "VEENA did not stop the runtime it started"
