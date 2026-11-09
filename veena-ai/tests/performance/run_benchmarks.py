@@ -28,7 +28,7 @@ from tests.conftest import ollama_model_available, speech_wav
 from tests.unit.test_screen_and_vision import text_image
 
 TEXT_MODEL = "qwen2.5:1.5b"
-VISION_MODEL = "qwen2.5vl:3b"
+VISION_MODEL = "qwen3-vl:2b-instruct"
 
 
 def stats(xs: list[float]) -> dict:

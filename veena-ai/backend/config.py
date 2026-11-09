@@ -42,6 +42,8 @@ class Settings:
     ollama_url: str = "http://127.0.0.1:11434"
     allowed_origins: tuple[str, ...] = ()
     max_upload_mb: int = 50
+    # Start/stop a local Ollama process. On for the real app (from_env), off for tests.
+    manage_runtime: bool = False
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -55,6 +57,7 @@ class Settings:
         origins = os.environ.get("VEENA_ALLOWED_ORIGINS", "")
         s.allowed_origins = tuple(o.strip() for o in origins.split(",") if o.strip())
         s.max_upload_mb = int(os.environ.get("VEENA_MAX_UPLOAD_MB", s.max_upload_mb))
+        s.manage_runtime = os.environ.get("VEENA_MANAGE_RUNTIME", "1") != "0"
         s.validate()
         return s
 

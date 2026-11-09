@@ -431,3 +431,25 @@ def test_audio_ws_origin_rules(settings, llm, tmp_path):
                 f"/ws/audio?session_id={sid}", subprotocols=["veena", TOKEN], headers={"Origin": "https://evil.example"}
             ) as ws:
                 ws.receive_json()
+
+
+def test_busy_screen_ocr_is_capped_when_the_image_goes_to_the_vision_model(client, llm, monkeypatch):
+    """Regression: full OCR of a busy screen plus the image overflowed a 4k context and the answer ran for 5 minutes."""
+    from backend.agents import graph
+    from backend.vision import ocr as ocr_mod
+
+    long_text = "word " * 4000
+    monkeypatch.setattr(graph, "run_ocr", lambda img: ocr_mod.OCRResult(text=long_text, words=[], available=True))
+    sid = new_session(client)
+    img = encode_png_b64(text_image(["hello"]))
+    ndjson(client.post("/api/chat", json={"session_id": sid, "text": "What is on screen?", "image_b64": img}))
+    call = llm.calls[-1]
+    content = call["messages"][-1]["content"]
+    assert call["messages"][-1].get("images"), "image should go to the vision model"
+    assert content.count("word") <= graph.OCR_CHARS_WITH_IMAGE // 5 + 5
+
+
+def test_answers_have_a_length_cap(app):
+    from backend.agents.graph import MAX_ANSWER_TOKENS
+
+    assert app.state.veena.engine._options({"profile": "lite"})["num_predict"] == MAX_ANSWER_TOKENS

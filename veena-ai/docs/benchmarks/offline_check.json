@@ -1,0 +1,44 @@
+{
+  "internet_reachable": false,
+  "features": {
+    "chat": {
+      "ok": true,
+      "seconds": 2.9,
+      "detail": "42"
+    },
+    "documents": {
+      "ok": true,
+      "seconds": 6.1,
+      "detail": {
+        "answer": "Falcon's latency budget for search is 300 ms.",
+        "citations": 1
+      }
+    },
+    "meeting_notes": {
+      "ok": true,
+      "seconds": 4.6,
+      "detail": "Asha confirmed the shipping date for Friday, while Ravi plans to update the runbook by Thursday."
+    },
+    "interview": {
+      "ok": true,
+      "seconds": 3.7,
+      "detail": {
+        "source": "model",
+        "question": "Could you describe the key components and communication protocols utilized in the architecture of the system you have designed for ensuring high security and ef"
+      }
+    },
+    "screen": {
+      "ok": true,
+      "seconds": 29.4,
+      "detail": {
+        "vision": true,
+        "answer": "The error shown is a `KeyError: 'user_id'`. This indicates that the code attempted to access a key named 'user_id' in a dictionary or similar data structure, but the key was not found."
+      }
+    },
+    "speech_to_text": {
+      "ok": true,
+      "seconds": 3.4,
+      "detail": "What's in a hash map?"
+    }
+  }
+}

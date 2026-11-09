@@ -1,7 +1,33 @@
 import { CatMark, Wordmark } from "../components/CatMark";
 import { TopBar } from "../components/Shell";
-import { Card, Kbd } from "../components/ui";
+import { useState } from "react";
+import { Button, Card, Kbd } from "../components/ui";
 import { useApp } from "../stores/app";
+
+function UpdateCheck() {
+  const [state, setState] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
+  const check = async () => {
+    if (!window.veena?.checkForUpdates) return;
+    setState("Checking…");
+    const u = await window.veena.checkForUpdates();
+    setUrl(u.newer ? u.url : null);
+    setState(u.error ? `Could not check: ${u.error}` : u.newer ? `VEENA ${u.latest} is available.` : u.latest ? `You have the latest version (${u.current}).` : "No published release yet.");
+  };
+  return (
+    <Card className="mt-4 flex flex-wrap items-center gap-3 p-5 text-sm text-mocha">
+      <Button size="sm" onClick={() => void check()}>
+        Check for updates
+      </Button>
+      {state && <span role="status">{state}</span>}
+      {url && (
+        <Button size="sm" variant="primary" onClick={() => void window.veena?.openExternal(url)}>
+          View release
+        </Button>
+      )}
+    </Card>
+  );
+}
 
 export function About() {
   const { appInfo, status } = useApp();
@@ -28,8 +54,12 @@ export function About() {
               <li>Documents: sentence-transformers embeddings and FAISS</li>
               <li>Screen text: Tesseract OCR {status?.tesseract ? "" : "(not installed)"}</li>
             </ul>
-            <p>No telemetry is sent anywhere. Model downloads are the only network traffic, and only when you start them.</p>
+            <p>
+              No telemetry is sent anywhere. VEENA uses the internet only to download the AI runtime and models when you ask it to, and, if allowed in Setup, to check GitHub once a day for a newer
+              version number.
+            </p>
           </Card>
+          <UpdateCheck />
           <Card className="mt-4 p-5 text-sm text-mocha">
             <h3 className="mb-2 font-semibold text-espresso">Keyboard shortcuts</h3>
             <ul className="space-y-1.5">

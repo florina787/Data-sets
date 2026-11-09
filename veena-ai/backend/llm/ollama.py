@@ -148,6 +148,10 @@ class OllamaClient:
             payload["options"] = options
         if fmt:
             payload["format"] = fmt
+        # Reasoning models (e.g. Qwen3) "think" before answering by default,
+        # which multiplies latency on a laptop CPU. VEENA wants direct answers.
+        if "thinking" in await self.capabilities(model):
+            payload["think"] = False
         stats = stats if stats is not None else GenerationStats(model=model)
         t0 = time.perf_counter()
         try:

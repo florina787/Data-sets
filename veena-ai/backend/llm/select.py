@@ -17,7 +17,7 @@ def resolve_text_model(preferred: str | None, installed: list[ModelInfo]) -> str
     if preferred and f"{preferred}:latest" in names:
         return f"{preferred}:latest"
     if not installed:
-        raise LLMUnavailable("No local model is installed. Open Setup and download a recommended model, or run: ollama pull qwen2.5:3b")
+        raise LLMUnavailable("No local AI model is installed yet. Open Setup and download a recommended model.")
     text_models = [m for m in installed if "embed" not in m.name.lower()]
     if not text_models:
         raise LLMUnavailable("Only embedding models are installed. Download a chat model in Setup.")

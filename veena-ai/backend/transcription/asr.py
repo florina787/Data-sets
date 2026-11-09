@@ -11,6 +11,9 @@ import numpy as np
 WHISPER_SIZES = ("tiny", "base", "small", "medium", "large-v3", "distil-large-v3")
 
 
+AUTO_LANGUAGE_MIN_P = 0.5
+
+
 @dataclass
 class ASRResult:
     text: str
@@ -39,6 +42,7 @@ class WhisperTranscriber:
             raise ValueError(f"unknown whisper size {model_size!r}")
         self.model_size = model_size
         self.language = language
+        self.fallback_language: str | None = "en"  # overridden per session from settings
         self.cpu_threads = cpu_threads
         self._model = None
         self._lock = threading.Lock()
@@ -69,10 +73,20 @@ class WhisperTranscriber:
         initial_prompt: str | None = None,
     ) -> ASRResult:
         self.load()
+        result = self._run(audio, self.language, beam_size, use_vad, initial_prompt)
+        # Language auto-detection is unreliable on short clips (measured: "What is
+        # a hash map?" detected as Japanese at p=0.33). When it is unsure, use the
+        # user's own language instead.
+        fallback = self.fallback_language
+        if self.language is None and fallback and result.language != fallback and result.language_probability < AUTO_LANGUAGE_MIN_P:
+            result = self._run(audio, fallback, beam_size, use_vad, initial_prompt)
+        return result
+
+    def _run(self, audio: np.ndarray, language: str | None, beam_size: int, use_vad: bool, initial_prompt: str | None) -> ASRResult:
         with self._lock:
             segments, info = self._model.transcribe(
                 audio.astype(np.float32),
-                language=self.language,
+                language=language,
                 beam_size=beam_size,
                 vad_filter=use_vad,
                 condition_on_previous_text=False,

@@ -54,6 +54,11 @@ class UnifiedRequest(BaseModel):
     model: str | None = None
 
 
+# OCR text kept alongside an image sent to a vision model (about 600 tokens).
+OCR_CHARS_WITH_IMAGE = 2500
+# Hard cap on any answer, so a model can never generate indefinitely.
+MAX_ANSWER_TOKENS = 1024
+
 SCREEN_ACTIONS = {
     "explain_code": ("code", "code", "Explain the code visible on the screen."),
     "find_errors": ("code", "code", "Identify bugs or error messages visible on the screen and how to fix them."),
@@ -218,7 +223,10 @@ def build_graph(deps: GraphDeps):
         if req.get("transcript_context"):
             blocks.append(wrap_untrusted("transcript", "\n".join(req["transcript_context"][-20:])))
         if state.get("ocr_text"):
-            blocks.append(wrap_untrusted("screen_ocr", state["ocr_text"]))
+            # With the image itself going to a vision model, OCR text is only a hint;
+            # a busy screen's full OCR plus the image overflowed a 4k context (measured).
+            ocr = state["ocr_text"] if not image else state["ocr_text"][:OCR_CHARS_WITH_IMAGE]
+            blocks.append(wrap_untrusted("screen_ocr", ocr))
         if state.get("evidence"):
             ev = "\n\n".join(
                 f"[{e['n']}] ({e['filename']}{', p.' + str(e['page']) if e.get('page') else ''})\n{e['text']}" for e in state["evidence"]

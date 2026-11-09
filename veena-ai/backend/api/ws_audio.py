@@ -79,6 +79,7 @@ async def audio_ws(ws: WebSocket):
         await send(ev)
 
     asr = st.asr(settings.get("asr_model") or "base", settings.get("asr_language"))
+    asr.fallback_language = settings.get("asr_fallback_language") or "en"
     if not asr.loaded:
         await send({"type": "status", "state": "loading_model", "model": asr.model_size})
         try:

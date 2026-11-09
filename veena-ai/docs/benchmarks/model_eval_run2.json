@@ -1,0 +1,437 @@
+{
+  "generated_at": "2026-11-09T22:22:39+00:00",
+  "machine": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "ram_gb": 16.9,
+    "gpu": "none"
+  },
+  "models": {
+    "qwen2.5:1.5b": [
+      {
+        "task": "arithmetic",
+        "pass": true,
+        "rule": "answer contains 42",
+        "answer": "42",
+        "seconds": 3.09,
+        "ok": true,
+        "first_token_ms": 2920.107370000096,
+        "tokens_per_second": 27.25315455263947,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": null,
+          "grounded_context": false,
+          "claims": 1,
+          "unsupported": [
+            "42"
+          ],
+          "utilization": 0.0,
+          "citation_rate": null,
+          "context_nodes": 2
+        },
+        "error": null
+      },
+      {
+        "task": "rag_grounded",
+        "pass": true,
+        "rule": "mentions HNSW and 300 ms and cites [1]",
+        "answer": "Project Falcon uses a FAISS HNSW index. The latency budget for search requests is 300 ms. This information is provided in the Falcon design document, [1] and [2].",
+        "seconds": 3.42,
+        "ok": true,
+        "first_token_ms": 1093.4351969999625,
+        "tokens_per_second": 19.422477262984504,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "retrieve",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 5,
+          "unsupported": [],
+          "utilization": 0.6667,
+          "citation_rate": 1.0,
+          "context_nodes": 6
+        },
+        "error": null
+      },
+      {
+        "task": "rag_trap_no_invention",
+        "pass": true,
+        "rule": "does not state names or figures absent from the document (no unbacked_claims flag)",
+        "answer": "The provided information does not contain the answer to the question about the number of engineers, the company owning Falcon, or the monthly cost. Please provide additional relevant information or clarify the question.",
+        "seconds": 2.19,
+        "ok": true,
+        "first_token_ms": 158.01907200011556,
+        "tokens_per_second": 19.611486137775852,
+        "flags": [
+          "uncited"
+        ],
+        "spine": {
+          "outcome": "flagged",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "retrieve",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 1,
+          "unsupported": [],
+          "utilization": 0.2,
+          "citation_rate": 0.0,
+          "context_nodes": 5
+        },
+        "error": null
+      },
+      {
+        "task": "meeting_notes",
+        "pass": false,
+        "rule": "the Friday release is a decision, and both the runbook update and the Redis check are action items",
+        "answer": "{\"summary\": \"The team has decided to ship the Falcon search update on Friday, with Ravi updating the runbook by Thursday and Mei confirming the Redis memory limit.\", \"key_points\": [\"Falcon search update for Friday release\", \"Ravi updates runbook by Thursday\", \"Mei confirms Redis memory limit\"], \"decisions\": [\"Friday release for Falcon search update\"], \"action_items\": [], \"open_questions\": [], \"chunks\": 1}",
+        "seconds": 5.8,
+        "ok": true
+      },
+      {
+        "task": "interview_practice",
+        "pass": true,
+        "rule": "model generated the questions (not the fallback bank) and returned a numeric score",
+        "answer": "{\"question\": \"Can you describe the key components and their interactions in the proposed AI system architecture you are designing for our company's new application?\", \"feedback\": {\"score\": 2.0, \"strengths\": [\"Provides a general overview of the proposed architecture\"], \"improvements\": [\"Provide specific details on the components and interactions\"], \"model_answer_outline\": [\"I would chunk documents, embed them with a sentence transformer, store vectors in FAISS, retrieve the top passages and pass them to the model with citations, then evaluate retrieval with a labelled question set.\"], \"follow_up_question\": \"Could you elaborate on the specific components and how they interact within the architecture?\", \"model\": \"qwen2.5:1.5b\"}}",
+        "seconds": 12.22,
+        "ok": true
+      }
+    ],
+    "qwen3:1.7b": [
+      {
+        "task": "arithmetic",
+        "pass": true,
+        "rule": "answer contains 42",
+        "answer": "42",
+        "seconds": 3.43,
+        "ok": true,
+        "first_token_ms": 3296.010168000066,
+        "tokens_per_second": 25.541261908613365,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": null,
+          "grounded_context": false,
+          "claims": 1,
+          "unsupported": [
+            "42"
+          ],
+          "utilization": 0.0,
+          "citation_rate": null,
+          "context_nodes": 2
+        },
+        "error": null
+      },
+      {
+        "task": "rag_grounded",
+        "pass": true,
+        "rule": "mentions HNSW and 300 ms and cites [1]",
+        "answer": "Project Falcon uses a FAISS HNSW index, and its latency budget is set to 300 ms. This is specified in the documentation [1] and [2].",
+        "seconds": 3.75,
+        "ok": true,
+        "first_token_ms": 1417.2707799998534,
+        "tokens_per_second": 16.525367526348177,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "retrieve",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 4,
+          "unsupported": [],
+          "utilization": 0.6667,
+          "citation_rate": 1.0,
+          "context_nodes": 6
+        },
+        "error": null
+      },
+      {
+        "task": "rag_trap_no_invention",
+        "pass": true,
+        "rule": "does not state names or figures absent from the document (no unbacked_claims flag)",
+        "answer": "The uploaded documents do not cover the number of engineers who built Falcon, the company that owns it, or the monthly cost.",
+        "seconds": 1.85,
+        "ok": true,
+        "first_token_ms": 475.2920930000073,
+        "tokens_per_second": 19.336706349058787,
+        "flags": [
+          "uncited"
+        ],
+        "spine": {
+          "outcome": "flagged",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "retrieve",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 1,
+          "unsupported": [],
+          "utilization": 0.2,
+          "citation_rate": 0.0,
+          "context_nodes": 5
+        },
+        "error": null
+      },
+      {
+        "task": "meeting_notes",
+        "pass": false,
+        "rule": "the Friday release is a decision, and both the runbook update and the Redis check are action items",
+        "answer": "{\"summary\": \"Discussion about shipping a Falcon search update, confirming a Redis memory limit, and assigning ownership of the Redis check.\", \"key_points\": [\"Asha and Ravi agree to ship the Falcon search update on Friday.\", \"Mei needs to confirm the Redis memory limit with infra.\", \"Asha decides to make the Redis check owned by Mei.\"], \"decisions\": [\"Ship the Falcon search update on Friday.\", \"Confirm Redis memory limit with infra.\", \"Assign Redis check ownership to Mei.\"], \"action_items\": [{\"owner\": \"Mei\", \"task\": \"Confirm Redis memory limit with infra\", \"due\": \"Friday\"}], \"open_questions\": [\"What is the exact memory limit for Redis?\", \"Are there any other requirements for the Falcon search update?\"], \"chunks\": 1}",
+        "seconds": 13.47,
+        "ok": true
+      },
+      {
+        "task": "interview_practice",
+        "pass": true,
+        "rule": "model generated the questions (not the fallback bank) and returned a numeric score",
+        "answer": "{\"question\": \"What considerations should be taken into account when designing a distributed AI system for real-time data processing?\", \"feedback\": {\"score\": 4.0, \"strengths\": [\"The answer addresses key components of real-time data processing in a distributed AI system.\", \"It mentions chunking documents, embedding, FAISS, retrieval, and evaluation, which are relevant to distributed systems.\"], \"improvements\": [\"The answer lacks specific details about system architecture, scalability, fault tolerance, or distributed computing considerations.\", \"It does not discuss the challenges of real-time processing, such as latency, data consistency, or parallelism.\", \"The answer is too vague and does not provide a comprehensive framework for designing such a system.\"], \"model_answer_outline\": [\"When designing a distributed AI system for real-time data processing, key considerations include: 1) data partitioning and chunking to ensure even distribution, 2) efficient embedding and vector storage (e.g., FAISS), 3) real-time retrieval and filtering mechanisms, 4) distributed evaluation and model inference, 5) handling latency and consistency, 6) fault tolerance and data replication, 7) scalable comm",
+        "seconds": 23.04,
+        "ok": true
+      }
+    ],
+    "qwen2.5vl:3b": [
+      {
+        "task": "screen_error",
+        "pass": true,
+        "rule": "names the KeyError or user_id",
+        "answer": "The error shown is a `KeyError: 'user_id'`, which indicates that the dictionary `users` does not contain a key with the value `'user_id'`. This is likely because the key `'user_id'` is not present in the dictionary when the code tries to access it.\n\nTo fix this, you need to ensure that the key `'user_id'` is present in the dictionary before attempting to access it. Here is an example of how you can modify the code to handle this:\n\n```python\n# Assuming users is a dictionary\nif 'user_id' in users:\n    return users['user_id']\nelse:\n    # Handle the case where user_id is not in the dictionary\n    return None  # or any other appropriate default value\n```\n\nThis code checks if the key `'user_id'` is in the dictionary before attempting to access it, and returns `None` if it is not found.",
+        "seconds": 17.62,
+        "ok": true,
+        "first_token_ms": 170.7174660000419,
+        "tokens_per_second": 11.038082255208014,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "screen_prep",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 0.6667,
+          "grounded_context": true,
+          "claims": 3,
+          "unsupported": [
+            "none"
+          ],
+          "utilization": 0.5,
+          "citation_rate": null,
+          "context_nodes": 4
+        },
+        "error": null
+      },
+      {
+        "task": "screen_code",
+        "pass": true,
+        "rule": "explains it as a palindrome/reverse check",
+        "answer": "The code defines a function `is_palindrome(s)` that checks if a given string `s` is a palindrome. Here's a step-by-step explanation:\n\n1. The function takes a single argument `s`, which is the string to be checked.\n2. The string `s` is converted to lowercase using `s.lower()`. This ensures that the palindrome check is case-insensitive.\n3. The function then returns `True` if the string `s` is equal to its reverse (`s[::-1]`), which is created by slicing the string from the end to the start.\n4. If the string is a palindrome, the function returns `True`; otherwise, it returns `False`.\n\nThis code is a simple implementation of checking if a string is a palindrome, which is a common problem in computer science and programming.",
+        "seconds": 15.84,
+        "ok": true,
+        "first_token_ms": 181.07442700011234,
+        "tokens_per_second": 10.885225856520742,
+        "flags": [
+          "unbacked_claims"
+        ],
+        "spine": {
+          "outcome": "flagged",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "screen_prep",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 0.3333,
+          "grounded_context": true,
+          "claims": 3,
+          "unsupported": [
+            "true",
+            "false"
+          ],
+          "utilization": 1.0,
+          "citation_rate": null,
+          "context_nodes": 1
+        },
+        "error": null
+      }
+    ],
+    "qwen3-vl:2b-instruct": [
+      {
+        "task": "screen_error",
+        "pass": true,
+        "rule": "names the KeyError or user_id",
+        "answer": "The error shown is a `KeyError: 'user_id'` which occurs when trying to access a dictionary key `'user_id'` that does not exist in the `users` dictionary.\n\nThe likely cause is that the `users` dictionary does not contain a key named `'user_id'`. This could be due to:\n- A missing key in the dictionary\n- A typo in the key name\n- A missing or incorrectly defined dictionary\n\nTo fix this, we need to ensure that the dictionary contains the key `'user_id'` before attempting to access it. The fix is to check if the key exists before trying to access it.\n\n```python\n# Example of fixing the error\nif 'user_id' in users:\n    return users['user_id']\nelse:\n    # Handle the case where 'user_id' is not in users\n    return None\n```",
+        "seconds": 40.21,
+        "ok": true,
+        "first_token_ms": 25645.24243300002,
+        "tokens_per_second": 12.395321337215622,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "screen_prep",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 2,
+          "unsupported": [],
+          "utilization": 0.5,
+          "citation_rate": null,
+          "context_nodes": 4
+        },
+        "error": null
+      },
+      {
+        "task": "screen_code",
+        "pass": true,
+        "rule": "explains it as a palindrome/reverse check",
+        "answer": "The code defines a function `is_palindrome` that checks if a string is a palindrome.\n\n- The function takes a string `s` as input.\n- It converts the string to lowercase using `s.lower()` to handle case-insensitive comparison.\n- It then compares the string with its reverse using `s[::-1]`, which creates a reversed version of the string.\n- The function returns `True` if the string is a palindrome (equal to its reverse), and `False` otherwise.\n\nThe code is correct and works as intended for checking palindromes.",
+        "seconds": 33.31,
+        "ok": true,
+        "first_token_ms": 23333.90081399989,
+        "tokens_per_second": 11.796994471582618,
+        "flags": [
+          "unbacked_claims"
+        ],
+        "spine": {
+          "outcome": "flagged",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "screen_prep",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 0.3333,
+          "grounded_context": true,
+          "claims": 3,
+          "unsupported": [
+            "true",
+            "false"
+          ],
+          "utilization": 1.0,
+          "citation_rate": null,
+          "context_nodes": 1
+        },
+        "error": null
+      }
+    ],
+    "granite3.2-vision:2b": [
+      {
+        "task": "screen_error",
+        "pass": true,
+        "rule": "names the KeyError or user_id",
+        "answer": "The error message indicates a KeyError, which means that the key 'user_id' is not found in the dictionary 'users'. This could be due to a few reasons:\n\n1. The 'user_id' key is not present in the 'users' dictionary.\n2. The 'user_id' key is present in the 'users' dictionary, but the value associated with it is not a dictionary.\n\nTo fix this error, you need to ensure that the 'user_id' key is present in the 'users' dictionary and that the value associated with it is a dictionary. You can do this by checking if the 'user_id' key exists in the 'users' dictionary and then checking if the value associated with it is a dictionary. If the 'user_id' key does not exist, you can add it to the 'users' dictionary. If the 'user_id' key exists but the value associated with it is not a dictionary, you can convert the value to a dictionary before accessing it.\n\nHere is an example of how to fix the error:\n```python\nif 'user_id' not in users:\n    users['user_id'] = {}\n\nuser_id = users['user_id']['user_id']\n```\nIn this example, the 'user_id' key is added to the 'users' dictionary if it does not exist. The value associated with the 'user_id' key is then accessed and assigned to the 'user_id' variable.",
+        "seconds": 89.34,
+        "ok": true,
+        "first_token_ms": 47361.2371690001,
+        "tokens_per_second": 7.635455493695866,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "screen_prep",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 2,
+          "unsupported": [],
+          "utilization": 0.5,
+          "citation_rate": null,
+          "context_nodes": 4
+        },
+        "error": null
+      },
+      {
+        "task": "screen_code",
+        "pass": true,
+        "rule": "explains it as a palindrome/reverse check",
+        "answer": "The code provided is a Python function named `is_palindrome`. This function checks if a given string is a palindrome, which means it reads the same backward as forward.\n\nHere's a breakdown of the code:\n\n1. The function takes a single argument, `s`, which is the string to be checked.\n2. The function first converts the string to lowercase using the `lower()` method. This is done to ensure that the function is case-insensitive.\n3. The function then checks if the lowercase string `s` is equal to its reverse, `s[::-1]`. If they are equal, the function returns `True`, indicating that the string is a palindrome. Otherwise, it returns `False`.\n\nThe code is written in a simple and straightforward manner, making it easy to understand and use. The use of the `return` statement at the end of the function allows it to be called and used in other parts of the code.\n\nHere's an example of how to use the `is_palindrome` function:\n\n```python\nprint(is_palindrome(\"racecar\"))  # Output: True\nprint(is_palindrome(\"hello\"))  # Output: False\n```\n\nIn the first example, the string \"racecar\" is a palindrome, so the function returns `True`. In the second example, the string \"hello\" is not a palindrome, so the function returns `False`.",
+        "seconds": 82.19,
+        "ok": true,
+        "first_token_ms": 40941.59450999996,
+        "tokens_per_second": 7.518378054706054,
+        "flags": [
+          "unbacked_claims"
+        ],
+        "spine": {
+          "outcome": "flagged",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "screen_prep",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 0.25,
+          "grounded_context": true,
+          "claims": 4,
+          "unsupported": [
+            "python",
+            "true",
+            "false"
+          ],
+          "utilization": 1.0,
+          "citation_rate": null,
+          "context_nodes": 1
+        },
+        "error": null
+      }
+    ]
+  }
+}

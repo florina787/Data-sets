@@ -153,6 +153,23 @@ export class BackendSupervisor {
     await this.start();
   }
 
+  /** Asks the backend to stop the AI runtime it started, then stops the backend.
+   * A plain kill skips the backend's own cleanup on Windows (TerminateProcess). */
+  async shutdown(timeoutMs = 4000): Promise<void> {
+    if (this.info.status === "ready" && this.info.url && this.info.token) {
+      try {
+        await fetch(`${this.info.url}/api/runtime/stop`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${this.info.token}` },
+          signal: AbortSignal.timeout(timeoutMs),
+        });
+      } catch {
+        /* backend already gone or slow: fall through to kill */
+      }
+    }
+    this.stop();
+  }
+
   stop(): void {
     this.stopping = true;
     if (this.proc && this.proc.exitCode === null) {

@@ -21,6 +21,7 @@ from ..memory.store import Store
 from ..rag.embed import Embedder
 from ..rag.index import VectorIndex
 from ..rag.service import KnowledgeBase
+from ..runtime.ollama_runtime import OllamaRuntime
 from ..security.auth import TokenAuthMiddleware
 from ..security.redact import install_log_redaction
 from . import routes_agents, routes_chat, routes_knowledge, routes_practice, routes_system, ws_audio
@@ -64,6 +65,7 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
         engine=Engine(store, llm, kb, metrics, catalog),
         coach=InterviewCoach(db, llm),
         detector=QuestionDetector(llm=llm),
+        runtime=OllamaRuntime(settings.data_dir, settings.ollama_url),
     )
     if transcriber_factory is not None:
         state.transcriber_factory = transcriber_factory
@@ -75,8 +77,15 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
         if purged:
             log.info("retention: removed %d expired sessions", purged)
         task = asyncio.create_task(_retention_loop(store))
+        # Start the local AI runtime if one is installed but not running.
+        # Only real deployments manage a process; tests inject their own LLM.
+        manage_runtime = settings.manage_runtime and isinstance(llm, OllamaClient)
+        if manage_runtime:
+            asyncio.create_task(_autostart_runtime(state))
         yield
         task.cancel()
+        if manage_runtime and state.runtime:
+            state.runtime.stop()
         await llm.aclose()
 
     app = FastAPI(title="VEENA.AI local backend", version=__version__, lifespan=lifespan, docs_url=None, redoc_url=None)
@@ -103,6 +112,14 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
     app.include_router(routes_agents.router)
     app.include_router(ws_audio.router)
     return app
+
+
+async def _autostart_runtime(state: AppState) -> None:
+    try:
+        await state.runtime.ensure_running()
+        state.catalog.invalidate()
+    except Exception as e:  # noqa: BLE001 - not installed yet is normal on first run
+        log.info("local AI runtime not started: %s", e)
 
 
 async def _retention_loop(store: Store) -> None:

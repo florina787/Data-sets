@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import shutil
+import time
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -13,7 +15,8 @@ from pydantic import BaseModel, Field
 from ..llm.ollama import LLMUnavailable
 from ..models import hardware
 from ..models.benchmark import run_benchmark
-from ..models.profiles import PROFILES, recommend_profile
+from ..models.profiles import MODEL_CATALOG, PROFILES, recommend_profile
+from ..runtime.ollama_runtime import RuntimeError_
 from ..vision.ocr import tesseract_available
 from .state import AppState, get_state
 
@@ -45,7 +48,7 @@ async def status(st: AppState = Depends(get_state)):
 @router.get("/system/hardware")
 async def system_hardware(st: AppState = Depends(get_state)):
     hw = await asyncio.to_thread(hardware.detect, st.settings.data_dir)
-    return {"hardware": hw, "recommendation": recommend_profile(hw), "profiles": PROFILES}
+    return {"hardware": hw, "recommendation": recommend_profile(hw), "profiles": PROFILES, "catalog": MODEL_CATALOG}
 
 
 class BenchmarkReq(BaseModel):
@@ -70,7 +73,81 @@ async def models(st: AppState = Depends(get_state)):
         running = True
     except LLMUnavailable:
         installed, running = [], False
-    return {"ollama_running": running, "installed": installed, "profiles": PROFILES}
+    return {"ollama_running": running, "installed": installed, "profiles": PROFILES, "catalog": MODEL_CATALOG}
+
+
+# ---------------- local AI runtime ----------------
+
+
+class WarmReqOptional(BaseModel):
+    model: str | None = None
+
+
+@router.get("/runtime")
+async def runtime_status(st: AppState = Depends(get_state)):
+    return await st.runtime.status()
+
+
+@router.post("/runtime/start")
+async def runtime_start(st: AppState = Depends(get_state)):
+    try:
+        out = await st.runtime.ensure_running()
+    except RuntimeError_ as e:
+        raise HTTPException(409, str(e)) from e
+    st.catalog.invalidate()
+    return out
+
+
+@router.post("/runtime/install")
+async def runtime_install(st: AppState = Depends(get_state)):
+    """Downloads the pinned runtime after the user agreed in Setup. Streams NDJSON progress."""
+
+    async def gen():
+        try:
+            async for ev in st.runtime.install():
+                yield json.dumps(ev) + "\n"
+            yield json.dumps({"status": "starting"}) + "\n"
+            await st.runtime.ensure_running()
+            st.catalog.invalidate()
+            yield json.dumps({"status": "ready", "done": True}) + "\n"
+        except RuntimeError_ as e:
+            yield json.dumps({"error": str(e)}) + "\n"
+
+    return StreamingResponse(gen(), media_type="application/x-ndjson")
+
+
+@router.post("/runtime/stop")
+async def runtime_stop(st: AppState = Depends(get_state)):
+    """Stops the runtime only if VEENA started it; a user's own Ollama keeps running."""
+    was_ours = st.runtime.proc is not None
+    st.runtime.stop()
+    return {"stopped": was_ours}
+
+
+@router.post("/runtime/cancel")
+async def runtime_cancel(st: AppState = Depends(get_state)):
+    st.runtime.cancel()
+    return {"cancelled": True}
+
+
+@router.post("/system/healthcheck")
+async def healthcheck(body: WarmReqOptional | None = None, st: AppState = Depends(get_state)):
+    """A real inference request. Setup only says "VEENA is ready" when this succeeds."""
+    model = (body.model if body else None) or st.store.get_settings().get("text_model")
+    if not model:
+        raise HTTPException(400, "No text model selected yet.")
+    t0 = time.perf_counter()
+    try:
+        answer = await st.llm.chat(
+            model, [{"role": "user", "content": "Reply with exactly one word: ready"}], options={"num_predict": 8, "temperature": 0}
+        )
+    except LLMUnavailable as e:
+        return {"ok": False, "model": model, "error": str(e)}
+    ms = (time.perf_counter() - t0) * 1000
+    ok = bool(answer.strip())
+    if ok:
+        st.metrics.record("setup.healthcheck_ms", ms, meta={"model": model})
+    return {"ok": ok, "model": model, "answer": answer.strip()[:80], "ms": round(ms, 1)}
 
 
 class PullReq(BaseModel):
@@ -79,6 +156,16 @@ class PullReq(BaseModel):
 
 @router.post("/models/pull")
 async def pull_model(body: PullReq, st: AppState = Depends(get_state)):
+    # Refuse up front when the disk cannot hold the model, rather than failing midway.
+    size = MODEL_CATALOG.get(body.model, {}).get("bytes")
+    if size:
+        free = shutil.disk_usage(st.settings.data_dir).free
+        if free < size + 1_000_000_000:
+            raise HTTPException(
+                507,
+                f"Not enough free disk space for {body.model}: it needs about {(size + 1e9) / 1e9:.1f} GB and {free / 1e9:.1f} GB is free.",
+            )
+
     async def gen():
         try:
             async for ev in st.llm.pull(body.model):

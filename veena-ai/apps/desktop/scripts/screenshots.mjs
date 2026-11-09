@@ -1,5 +1,5 @@
 // Captures README screenshots from the REAL app with real local models.
-// Needs Ollama with qwen2.5:1.5b and qwen2.5vl:3b. Linux: run under xvfb-run.
+// Needs Ollama with qwen2.5:1.5b and qwen3-vl:2b-instruct. Linux: run under xvfb-run.
 //   npm run build && xvfb-run -a -s "-screen 0 1440x900x24" node scripts/screenshots.mjs
 import { _electron as electron } from "@playwright/test";
 import fs from "node:fs";
@@ -26,9 +26,14 @@ await page.getByRole("button", { name: "Check my computer" }).click();
 await page.getByText("Recommended", { exact: true }).waitFor();
 await shot("setup");
 await page.getByRole("button", { name: "Continue" }).click();
-await page.getByLabel("Use for text").selectOption("qwen2.5:1.5b");
-await page.getByLabel("Use for vision").selectOption("qwen2.5vl:3b");
+await page.getByText(/Local AI runtime \(Ollama .*\) is running/).waitFor({ timeout: 60_000 });
 await page.getByRole("button", { name: "Continue" }).click();
+await page.getByLabel("Use for text").selectOption("qwen2.5:1.5b");
+await page.getByLabel("Use for vision").selectOption("qwen3-vl:2b-instruct");
+await page.getByRole("button", { name: "Continue" }).click();
+await page.getByRole("button", { name: "Continue" }).click(); // privacy
+await page.getByRole("button", { name: "Continue" }).click(); // permissions
+await page.getByText("VEENA is ready.").waitFor({ timeout: 300_000 });
 await page.getByRole("button", { name: "Finish setup" }).click();
 await page.getByText("Recent sessions").waitFor();
 await page.waitForTimeout(1500); // let the hero fade in

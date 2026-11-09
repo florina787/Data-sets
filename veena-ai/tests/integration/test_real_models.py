@@ -18,7 +18,7 @@ from tests.conftest import TOKEN, ndjson, ollama_model_available, speech_wav
 from tests.unit.test_screen_and_vision import text_image
 
 TEXT_MODEL = "qwen2.5:1.5b"
-VISION_MODEL = "qwen2.5vl:3b"
+VISION_MODEL = "qwen3-vl:2b-instruct"
 
 
 @pytest.fixture
@@ -153,3 +153,17 @@ def test_real_embeddings_rank_and_threshold(tmp_path):
     hits = kb.search("experience with vector search", [col.id])
     assert hits and "FAISS" in hits[0].text
     assert kb.search("recipe for chocolate cake", [col.id]) == []
+
+
+@pytest.mark.asr
+def test_real_short_question_uses_fallback_language_when_detection_is_unsure(tmp_path):
+    """Regression: auto-detection labelled "What is a hash map?" as Japanese (p=0.33)."""
+    from backend.transcription.asr import WhisperTranscriber
+
+    audio = speech_wav("What is a hash map?", tmp_path / "q.wav")
+    if audio is None:
+        pytest.skip("espeak-ng/ffmpeg not installed")
+    asr = WhisperTranscriber("base", None)
+    asr.fallback_language = "en"
+    r = asr.transcribe(audio)
+    assert r.language == "en" and "hash map" in r.text.lower(), r

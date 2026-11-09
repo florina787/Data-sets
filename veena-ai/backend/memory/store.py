@@ -36,6 +36,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "vision_model": None,
     "asr_model": "base",
     "asr_language": None,  # None = auto-detect
+    "asr_fallback_language": "en",  # used when auto-detection is unsure; Setup sets it from the system language
     "answer_style": "quick",
     "retention_days": 30,  # 0 keeps history until deleted by the user
     "redact_screens": True,
@@ -45,6 +46,8 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "context_turns": 8,
     "continuous_interval_s": 5,
     "speak_interviewer": False,
+    "setup_step": 0,  # resumes the setup wizard where the user left it
+    "check_updates": True,  # once a day, asks GitHub for the latest version number only
 }
 
 

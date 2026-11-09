@@ -15,7 +15,7 @@ from ..memory.store import Store
 from ..models.profiles import PROFILES
 from ..rag.service import KnowledgeBase
 from . import governance, spine
-from .graph import GraphDeps, UnifiedRequest, build_graph
+from .graph import MAX_ANSWER_TOKENS, GraphDeps, UnifiedRequest, build_graph
 
 log = logging.getLogger("veena.engine")
 
@@ -56,7 +56,7 @@ class Engine:
 
     def _options(self, settings: dict[str, Any]) -> dict[str, Any]:
         prof = PROFILES.get(settings.get("profile") or "balanced", PROFILES["balanced"])
-        return {"num_ctx": prof["num_ctx"], "temperature": 0.3}
+        return {"num_ctx": prof["num_ctx"], "temperature": 0.3, "num_predict": MAX_ANSWER_TOKENS}
 
     def _measure(
         self,

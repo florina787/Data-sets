@@ -29,6 +29,10 @@ dependencies = [
   "transformers==5.20.2",
   "torch==2.14.1",
   "langgraph==1.2.17",
+  "zstandard==0.25.0",
+  # Security floors for transitive dependencies (pip-audit, 2026-11-09).
+  "filelock==4.2.1",
+  "setuptools==84.1.0",
 ]
 
 [project.optional-dependencies]

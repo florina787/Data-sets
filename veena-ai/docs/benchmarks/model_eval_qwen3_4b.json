@@ -1,0 +1,124 @@
+{
+  "generated_at": "2026-11-09T22:30:04+00:00",
+  "machine": {
+    "platform": "Linux-6.18.44-fc-v310-x86_64-with-glibc2.39",
+    "cpu_count": 4,
+    "ram_gb": 16.9,
+    "gpu": "none"
+  },
+  "models": {
+    "qwen3:4b": [
+      {
+        "task": "arithmetic",
+        "pass": true,
+        "rule": "answer contains 42",
+        "answer": "Okay, the user is asking what 12 plus 30 is and wants just the number as the reply. Let me think. 12 plus 30 equals 42. I need to make sure I don't add any extra text. The instructions say to reply with only the number. So I should output 42 without any other words or explanations. Let me check again\u201412 + 30 is indeed 42. Yep, that's correct. I'll just write 42 in the response.\n</think>\n\n42",
+        "seconds": 18.05,
+        "ok": true,
+        "first_token_ms": 3281.710955000108,
+        "tokens_per_second": 8.056386370400004,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": null,
+          "grounded_context": false,
+          "claims": 3,
+          "unsupported": [
+            "42"
+          ],
+          "utilization": 1.0,
+          "citation_rate": null,
+          "context_nodes": 2
+        },
+        "error": null
+      },
+      {
+        "task": "rag_grounded",
+        "pass": true,
+        "rule": "mentions HNSW and 300 ms and cites [1]",
+        "answer": "Okay, let me tackle this question. The user is asking about Project Falcon's vector index and its latency budget. I need to check the provided evidence.\n\nFirst, looking at the untrusted documents section. There are two entries from falcon-design.md. \n\nEntry [1] says: \"Falcon stores document embeddings in a FAISS HNSW index with 32 neighbours per node, rebuilt nightly.\" So that tells me the vector index is FAISS HNS. The 32 neighbours per node is a detail, but the main index type is FAISS HNSW.\n\nEntry [2] states: \"Search requests have a p95 latency budget of 300 ms; cache hits are served from Redis.\" Here, the latency budget is 300 ms at p95. \n\nThe question asks for the vector index and latency budget. So from [1], the index is FAISS HNSW. From [2], the latency budget is 300 ms p95. \n\nI need to cite the sources correctly. The answer should mention FAISS HNSW index and 300 ms p95 latency budget, with [1] and [2] as references. \n\nWait, the user wants to know which vector index and the latency budget. The evidence clearly states both. So the answer is straightforward. \n\nCheck if there's any missing info. The latency budget is p95, which is specified in [2]. The index is FAISS HNSW from [1]. \n\nSo the answer should be concise: Project Falcon uses FAISS HNSW index with 32 neighbours per node, and has a p95 latency budget of 300 ms. Cites [1] and [2].\n\nWait, the question says \"which vector index does Project Falcon use\" so the answer is FAISS HNSW. The latency budget is 300 ms p95. \n\nYes, that's covered in the evidence. No need for general knowledge here. So the answer is as per the evidence.\n</think>\n\nProject Falcon uses a **FAISS HNSW index** (with 32 neighbours per node) [1] and has a **p95 latency budget of 300 ms** for search requests [2].",
+        "seconds": 64.03,
+        "ok": true,
+        "first_token_ms": 3266.378087999783,
+        "tokens_per_second": 7.830137771686206,
+        "flags": [],
+        "spine": {
+          "outcome": "resolved",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "retrieve",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 1.0,
+          "grounded_context": true,
+          "claims": 7,
+          "unsupported": [],
+          "utilization": 1.0,
+          "citation_rate": 1.0,
+          "context_nodes": 6
+        },
+        "error": null
+      },
+      {
+        "task": "rag_trap_no_invention",
+        "pass": true,
+        "rule": "does not state names or figures absent from the document (no unbacked_claims flag)",
+        "answer": "We are given a single untrusted document block with content [1] from falcon-design.md. The content says: \"Falcon stores document embeddings in a FAISS HNSW index with 32 neighbours per node, rebuilt nightly.\"\n\nThe question asks: \"How many engineers built Falcon, which company owns it, and what does it cost per month?\"\n\nWe must answer only from the numbered evidence passages provided (here, [1]). We cannot use any external knowledge.\n\nLet's check the evidence:\n\n- [1] only describes the storage mechanism of Falcon (using FAISS HNSW index with 3 and rebuilt nightly). It does not mention:\n   - How many engineers built Falcon\n   - Which company owns it\n   - What it costs per month\n\nTherefore, the evidence does not cover the question.\n\nAccording to the security rules and the instructions: \"If the evidence does not contain the answer, say clearly that the uploaded documents do not cover it, then optionally give general knowledge labelled as such.\"\n\nWe must not invent any information. So we state that the uploaded documents do not cover the question.\n\nWe are to answer in Markdown, be concise (2-5 sentences or a short list), lead with the answer.\n\nAnswer structure:\n- Lead with: The uploaded documents do not cover the question.\n- Then, optionally, we can add general knowledge but only if it's labeled as such. However, the question asks for specific facts and we don't have them. But note: the instruction says \"optionally give general knowledge labelled as such\". Since we don't have the answer, we don't want to give unverified general knowledge.\n\nBut note: the problem says \"Answer only from the numbered evidence passages provided\". We don't have the answer in the evidence.\n\nSo:\n\nThe uploaded documents do not cover the question about the number of engineers, company ownership, and monthly cost of Falcon.\n\nWe are to be concise.\n\nLet me write:\n\nThe uploaded documents do not cover the question.\n\nBut to be more precise and follow the instruction to lead with the answer:\n\nAnswer: The uploaded documents do not cover the question.\n\nWe are not to add general knowledge because the evidence doesn't have it and we are not supposed to invent.\n\nHowever, note: the instruction says \"optionally give general knowledge labelled as such\". But in this case, we don't have the answer so we don't give general knowledge. We just state the evidence doesn't cover it.\n\nSo:\n\nThe uploaded documents do not cover the question.\n\nBut let's see if we can be a bit more specific? The evidence [1] is the only one and it doesn't have the information.\n\nWe can say: The evidence [1] does not mention the number of engineers, company ownership, or monthly cost of Falcon.\n\nBut the instruction says: \"Cite passages inline as [1], [2] matching their numbers\". We have only [1] and it doesn't have the info.\n\nSo:\n\nThe uploaded documents do not cover the question.\n\nWe'll write it as:\n\nThe uploaded documents do not cover the question.\n\nBut to be precise and follow the style: lead with the answer (which is that the evidence doesn't cover it).\n\nLet me write in 2-5 sentences:\n\nThe evidence provided does not include information about how many engineers built Falcon, which company owns it, or the monthly cost. Specifically, the only document [1] describes Falcon's storage mechanism but does not address these questions.\n\nThis is 2 sentences.\n\nAlternatively, we can be more concise:\n\nThe uploaded documents do not cover the question.\n\nBut the problem says: \"Answer style: quick answer. 2-5 sentences or a short list.\"\n\nI think the concise version is acceptable.\n\nHowever, note: the instruction says \"Lead with the answer\". So we start with the answer.\n\nSo:\n\nThe uploaded documents do not cover the question.\n\nBut to be a bit more helpful without adding unverified info, we can say:\n\nThe evidence [1] only describes Falcon's storage mechanism and does not provide information on the number of engineers, company ownership, or monthly cost.\n\nThis is 1 sentence and leads with the answer.\n\nLet me check the rules: \"Never claim to have done things you cannot do\". We are not claiming to have done anything, we are stating the evidence doesn't cover it.\n\nSo I'll go with:\n\nThe evidence [1] does not cover the question about the number of engineers, company ownership, or monthly cost of Falcon.\n\nBut note: the question says \"which company owns it\" - the evidence doesn't have that.\n\nWe are to be concise.\n\nFinal answer:\n\nThe uploaded documents do not cover the question.\n\nBut to be more specific to the evidence:\n\nThe evidence [1] only describes Falcon's storage mechanism and does not include information on the number of engineers, company ownership, or monthly cost.\n\nThis is 1 sentence and meets the requirement.\n\nLet's write it in Markdown.\n\nWe don't need code blocks or mermaid diagrams because the question doesn't require them.\n\nSo:\n\nThe evidence [1] does not cover the question about the number of engineers, company ownership, or monthly cost of Falcon.\n\nBut note: the instruction says \"Cite passages inline as [1], [2] matching their numbers\". We have [1] so we cite it.\n\nWe can write:\n\nThe evidence [1] does not cover the question.\n\nBut to be clear, we can say:\n\nThe uploaded documents do not cover the question.\n\nI think that's acceptable.\n\nHowever, the problem says: \"Answer only from the numbered evidence passages provided\". We have [1] and it doesn't have the info.\n\nSo I'll write:\n\nThe evidence [1] does not provide information on the number of engineers, company ownership, or monthly cost of Falcon.\n\nThis is 1 sentence and leads with the answer.\n\nLet me check the length: 1 sentence.\n\nYes.\n\nSo in Markdown:\n\n**The evidence [1] does not provide information on the number of engineers, company ownership, or monthly cost of Falcon.**\n\nBut the instruction says: \"Be concise by default\". This is concise.\n\nAlternatively, we can say:\n\nThe uploaded documents do not cover the question.\n\nBut to be specific about the evidence, I think the above is better.\n\nI'll go with:\n\nThe evidence [1] does not cover the question.\n\nBut to be more precise and avoid being too vague, we can say:\n\nThe evidence [1] only describes Falcon's storage mechanism and does not address the number of engineers, company ownership, or monthly cost.\n\nThis is 1 sentence.\n\nLet me write that.\n\nFinal decision:\n\nThe evidence [1] only describes Falcon's storage mechanism and does not address the number of engineers, company ownership, or monthly cost.\n\nThis is concise and leads with the answer.\n\nWe don't add general knowledge because the question asks for specific facts and we don't have them.\n\nSo in Markdown:\n\n**The evidence [1] only describes Falcon's storage mechanism and does not address the number of engineers, company ownership, or monthly cost.**\n</think>\n\nThe evidence [1] only describes Falcon's storage mechanism and does not address the number of engineers, company ownership, or monthly cost.",
+        "seconds": 196.77,
+        "ok": true,
+        "first_token_ms": 819.279669000025,
+        "tokens_per_second": 7.4976498979019786,
+        "flags": [
+          "invalid_citation"
+        ],
+        "spine": {
+          "outcome": "flagged",
+          "adherent": true,
+          "path": [
+            "supervisor",
+            "retrieve",
+            "compose",
+            "generate",
+            "govern"
+          ],
+          "support_rate": 0.8,
+          "grounded_context": true,
+          "claims": 5,
+          "unsupported": [
+            "markdown"
+          ],
+          "utilization": 0.8,
+          "citation_rate": 1.0,
+          "context_nodes": 5
+        },
+        "error": null
+      },
+      {
+        "task": "meeting_notes",
+        "pass": true,
+        "rule": "the Friday release is a decision, and both the runbook update and the Redis check are action items",
+        "answer": "{\"summary\": \"Asha, Ravi, and Mei discussed the Falcon search update release schedule and responsibilities. Asha confirmed the release for Friday, Ravi agreed to update the runbook by Thursday, and Mei noted the need to confirm Redis memory limit with infrastructure team. Asha assigned Mei to handle the Redis check.\", \"key_points\": [\"Falcon search update scheduled for Friday release\", \"Ravi to update runbook by Thursday\", \"Mei needs to confirm Redis memory limit with infra\", \"Asha assigned Mei to handle Redis check\"], \"decisions\": [\"Falcon search update release on Friday\"], \"action_items\": [{\"owner\": \"Ravi\", \"task\": \"Update runbook\", \"due\": \"Thursday\"}, {\"owner\": \"Mei\", \"task\": \"Handle Redis check\", \"due\": null}], \"open_questions\": [\"How will the Redis memory limit be confirmed with infra?\"], \"chunks\": 1}",
+        "seconds": 33.35,
+        "ok": true
+      },
+      {
+        "task": "interview_practice",
+        "pass": false,
+        "rule": "model generated the questions (not the fallback bank) and returned a numeric score",
+        "answer": "{\"question\": \"Design a retrieval-augmented generation system for 10 million internal documents.\", \"feedback\": {\"score\": 0.0, \"strengths\": [], \"improvements\": [\"Answer lacks technical specifics on chunking strategy (e.g., sliding window size, overlap), embedding model selection (e.g., all-M365, sentence-transformers/all-mpnet-base-v2), FAISS index parameters (e.g., index type, metric), and evaluation metrics (e.g., precision@k, recall@k) for 10M documents\", \"No mention of handling document metadata, indexing performance for 10M documents, or scalability considerations (e.g., distributed indexing, incremental updates)\", \"Missing critical components like document preprocessing (e.g., removing noise, handling special characters), retrieval pipeline optimization (e.g., query expansion), and integration with existing systems (e.g., authentication, rate limiting)\"], \"model_answer_outline\": [\"1.\", \"Document preprocessing: Clean and normalize documents (e.g., remove headers, footers, special characters)\", \"2.\", \"Chunking: Split into fixed-size chunks with 10-20% overlap using sliding window\", \"3.\", \"Embedding: Use sentence-transformers/all-mpnet-base-v2 for semantic similarity\", \"4.\", \"Inde",
+        "seconds": 48.67,
+        "ok": true
+      }
+    ]
+  }
+}

@@ -35,6 +35,7 @@ export interface VeenaBridge {
   selectScreenSource(id: string, audio: boolean): Promise<boolean>;
   saveFile(name: string, content: string): Promise<{ saved: boolean; path?: string }>;
   openExternal(url: string): Promise<void>;
+  checkForUpdates(): Promise<{ current: string; latest: string | null; newer: boolean; url: string | null; notes: string | null; error?: string }>;
   onBackendStatus(cb: (info: BackendInfo) => void): () => void;
   onShortcut(cb: (action: string) => void): () => void;
 }

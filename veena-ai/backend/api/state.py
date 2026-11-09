@@ -15,6 +15,7 @@ from ..config import Settings
 from ..llm.ollama import OllamaClient
 from ..memory.store import Store
 from ..rag.service import KnowledgeBase
+from ..runtime.ollama_runtime import OllamaRuntime
 from ..transcription.asr import WhisperTranscriber
 
 
@@ -29,6 +30,7 @@ class AppState:
     engine: Engine
     coach: InterviewCoach
     detector: QuestionDetector
+    runtime: OllamaRuntime | None = None
     transcriber_factory: type = WhisperTranscriber
     _asr: dict[tuple[str, str | None], WhisperTranscriber] = field(default_factory=dict)
     _asr_lock: threading.Lock = field(default_factory=threading.Lock)

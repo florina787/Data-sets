@@ -63,6 +63,7 @@ export type Settings = {
   vision_model: string | null;
   asr_model: string;
   asr_language: string | null;
+  asr_fallback_language: string;
   answer_style: string;
   retention_days: number;
   redact_screens: boolean;
@@ -72,6 +73,8 @@ export type Settings = {
   context_turns: number;
   continuous_interval_s: number;
   speak_interviewer: boolean;
+  setup_step: number;
+  check_updates: boolean;
 };
 
 export interface ChatRequest {

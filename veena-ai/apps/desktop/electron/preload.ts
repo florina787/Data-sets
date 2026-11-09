@@ -19,6 +19,7 @@ const api = {
   selectScreenSource: (id: string, audio: boolean) => ipcRenderer.invoke("screen:select-source", id, audio),
   saveFile: (name: string, content: string) => ipcRenderer.invoke("file:save", name, content),
   openExternal: (url: string) => ipcRenderer.invoke("shell:open-external", url),
+  checkForUpdates: () => ipcRenderer.invoke("app:check-updates"),
   onBackendStatus: (cb: Listener<unknown>) => subscribe("backend:status", cb),
   onShortcut: (cb: Listener<string>) => subscribe("shortcut", cb),
 };

@@ -76,3 +76,13 @@ def test_interview_feedback_lists_tolerate_strings():
     assert _as_list("- first\n- second") == ["first", "second"]
     assert _as_list(["a", " ", 3]) == ["a", "3"]
     assert _as_list(None) == []
+
+
+def test_every_recommended_model_allows_commercial_use():
+    from backend.models.profiles import PROFILES, license_of
+
+    for name, prof in PROFILES.items():
+        for key in ("text_model", "vision_model"):
+            lic = license_of(prof[key])
+            assert lic is not None, f"{name}.{key} {prof[key]} has no verified licence in MODEL_CATALOG"
+            assert lic["commercial"], f"{name}.{key} {prof[key]} is {lic['license']}"

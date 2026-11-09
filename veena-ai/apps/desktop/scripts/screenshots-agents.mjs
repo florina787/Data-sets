@@ -30,8 +30,13 @@ await page.getByRole("heading", { name: "Welcome to VEENA" }).waitFor({ timeout:
 await page.getByRole("button", { name: "Check my computer" }).click();
 await page.getByText("Recommended", { exact: true }).waitFor();
 await page.getByRole("button", { name: "Continue" }).click();
+await page.getByText(/Local AI runtime \(Ollama .*\) is running/).waitFor({ timeout: 60_000 });
+await page.getByRole("button", { name: "Continue" }).click();
 await page.getByLabel("Use for text").selectOption("qwen2.5:1.5b");
 await page.getByRole("button", { name: "Continue" }).click();
+await page.getByRole("button", { name: "Continue" }).click(); // privacy
+await page.getByRole("button", { name: "Continue" }).click(); // permissions
+await page.getByText("VEENA is ready.").waitFor({ timeout: 300_000 });
 await page.getByRole("button", { name: "Finish setup" }).click();
 await page.getByText("Recent sessions").waitFor();
 

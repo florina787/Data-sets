@@ -18,7 +18,7 @@ hidden = (
         "sqlmodel", "faiss", "pytesseract", "multipart", "python_multipart",
         "sentence_transformers", "torch", "transformers",
         "faster_whisper", "ctranslate2", "onnxruntime",
-        "pymupdf", "docx", "markdown_it", "PIL.Image",
+        "pymupdf", "docx", "markdown_it", "PIL.Image", "zstandard",
     ]
 )
 datas = (

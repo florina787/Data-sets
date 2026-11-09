@@ -13,6 +13,7 @@ import {
   shell,
   systemPreferences,
 } from "electron";
+import { checkForUpdates } from "./updates";
 import { BackendInfo, BackendSupervisor } from "./backend";
 
 // Tests and portable installs can isolate all app data in one folder.
@@ -187,6 +188,8 @@ function registerIpc() {
     return { saved: true, path: res.filePath };
   });
 
+  handle("app:check-updates", () => checkForUpdates(app.getVersion()));
+
   handle("shell:open-external", (_e, url) => {
     if (typeof url !== "string" || !/^https:\/\/[^\s]+$/.test(url)) throw new Error("only https links can be opened");
     return shell.openExternal(url);
@@ -231,6 +234,13 @@ if (!app.requestSingleInstanceLock()) {
     await backend.start();
   });
 
+  let shuttingDown = false;
+  app.on("before-quit", (e) => {
+    if (shuttingDown || !backend) return;
+    e.preventDefault();
+    shuttingDown = true;
+    void backend.shutdown().finally(() => app.quit());
+  });
   app.on("will-quit", () => {
     globalShortcut.unregisterAll();
     backend?.stop();

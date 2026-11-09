@@ -1,6 +1,6 @@
 /**
  * End-to-end tests of the packaged-equivalent desktop app against the REAL
- * local stack: Electron + Python backend + Ollama (qwen2.5:1.5b, qwen2.5vl:3b)
+ * local stack: Electron + Python backend + Ollama (qwen2.5:1.5b, qwen3-vl:2b-instruct)
  * + faster-whisper + Tesseract. Nothing here is mocked.
  *
  * The microphone is Chromium's fake capture device playing a clearly labelled
@@ -16,7 +16,7 @@ import path from "node:path";
 
 const APP_DIR = path.resolve(__dirname, "../../apps/desktop");
 const TEXT_MODEL = "qwen2.5:1.5b";
-const VISION_MODEL = "qwen2.5vl:3b";
+const VISION_MODEL = "qwen3-vl:2b-instruct";
 
 let app: ElectronApplication;
 let page: Page;
@@ -66,7 +66,7 @@ test("renderer is isolated from Node and exposes only the narrow bridge", async 
   expect(r.require).toBe("undefined");
   expect(r.process).toBe("undefined");
   expect(r.bridge).toEqual(
-    ["appInfo", "backendInfo", "backendLog", "listScreenSources", "mediaAccess", "onBackendStatus", "onShortcut", "openExternal", "restartBackend", "saveFile", "selectScreenSource"].sort(),
+    ["appInfo", "backendInfo", "backendLog", "checkForUpdates", "listScreenSources", "mediaAccess", "onBackendStatus", "onShortcut", "openExternal", "restartBackend", "saveFile", "selectScreenSource"].sort(),
   );
 });
 
@@ -86,10 +86,19 @@ test("first-run setup detects hardware, models, and measures a real benchmark", 
   await expect(page.getByText("Memory", { exact: true })).toBeVisible();
   await expect(page.getByText("Recommended", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.getByText(/Ollama .* is running/)).toBeVisible();
+  // AI runtime step: the already-running Ollama is detected and reused.
+  await expect(page.getByText(/Local AI runtime \(Ollama .*\) is running/)).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
   await page.getByLabel("Use for text").selectOption(TEXT_MODEL);
   await page.getByLabel("Use for vision").selectOption(VISION_MODEL);
   await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByRole("heading", { name: "Your data stays here" })).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByRole("heading", { name: "Permissions" })).toBeVisible();
+  await page.getByRole("button", { name: "Continue" }).click();
+  // Finish stays disabled until the model has really answered.
+  await expect(page.getByRole("button", { name: "Finish setup" })).toBeDisabled();
+  await expect(page.getByText("VEENA is ready.")).toBeVisible({ timeout: 180_000 });
   await page.getByRole("button", { name: "Run benchmark" }).click();
   await expect(page.getByText(/tokens\/s · first token/)).toBeVisible({ timeout: 180_000 });
   await expect(page.getByText(/× real time/)).toBeVisible();
