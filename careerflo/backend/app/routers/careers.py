@@ -359,6 +359,22 @@ async def analytics_report(user: CurrentUser, idem: IdemKey = None) -> dict:
     return with_usage(result, user.id, "career_analytics")
 
 
+# ---------------------------------------------------------------- career graph (knowledge → context → procedure)
+class GraphIn(BaseModel):
+    job_id: uuid.UUID | None = None
+
+
+@router.post("/career-graph")
+async def career_graph(body: GraphIn, user: CurrentUser, idem: IdemKey = None) -> dict:
+    async with metered(user.id, "career_graph", idem) as m:
+        if m.replay is not None:
+            return m.replay
+        args = {"job_id": str(body.job_id)} if body.job_id else {}
+        result = (await gw.call_tool(user.id, "user", "analytics", "build_career_graph", args)).data
+        m.set_result(result)
+    return with_usage(result, user.id, "career_graph")
+
+
 # ---------------------------------------------------------------- roadmap / skills planner (part of analytics report allowance)
 @router.get("/learning/catalog")
 def learning_catalog() -> dict:

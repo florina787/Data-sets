@@ -25,7 +25,7 @@ def first_job(client, h):
 def test_new_user_gets_two_of_every_feature(client, user):
     h, _ = user
     feats = client.get("/api/usage", headers=h).json()["features"]
-    assert len(feats) == len(FEATURES) == 16
+    assert len(feats) == len(FEATURES) == 17
     assert all(f["trial_limit"] == 2 and f["trial_remaining"] == 2 for f in feats)
 
 

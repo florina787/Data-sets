@@ -228,3 +228,36 @@ def test_demo_seed_is_labelled_and_excluded_from_admin_metrics(client):
         from app.models import User
         assert m["registered_users"] == db.query(User).filter_by(is_demo=False).count()
 
+
+
+def test_career_graph_knowledge_context_procedure(client, user):
+    h, _ = user
+    # No resume: the procedure starts at "upload resume".
+    g = client.post("/api/career-graph", headers=h, json={}).json()
+    assert g["procedure"]["current"] == "upload_resume" and g["context"]["focus"] is None
+    upload_resume(client, h)
+    jobs = search_jobs(client, h, query="AI Engineer", city="Toronto")["jobs"]
+    client.post(f"/api/jobs/{jobs[0]['id']}/save", headers=h)
+    g = client.post("/api/career-graph", headers=h, json={"job_id": jobs[0]["id"]}).json()
+    kg, ctx, proc = g["knowledge"], g["context"], g["procedure"]
+    types = {n["type"] for n in kg["nodes"]}
+    assert {"Person", "Skill", "Employer", "Education", "Job", "Company"} <= types
+    assert all(n["source"] for n in kg["nodes"])                       # every fact has provenance
+    assert ctx["focus"]["job_id"] == jobs[0]["id"]
+    assert ctx["scope"]["kept"] < ctx["scope"]["of"]                  # context is a scoped subgraph
+    states = {n["label"]: n.get("state") for n in ctx["nodes"] if n["type"] == "Skill"}
+    assert "Terraform" not in states or states["Terraform"] == "gap"
+    assert any(x["key"] == "match" for x in ctx["live_state"])
+    assert proc["current"] in {"close_gaps", "tailor_resume", "upskill"} and proc["guidance"]["why"]
+    assert {e["condition"] for e in proc["edges"] if e["source"] == "check_fit"} == {"score < 45", "required gaps", "good fit"}
+    assert [s["layer"] for s in g["spine"]] == ["Ontology", "Knowledge Graph", "Context Graph", "Procedural Graph", "AI Agents"]
+    assert g["_usage"]["trial_remaining"] == 0                       # two uses consumed
+    # After tailoring, the next step moves forward along the procedure.
+    client.post("/api/resumes/tailor", headers=h, json={"job_id": jobs[0]["id"]})
+    from app.careers.graphs import career_graph
+    from app.db import SessionLocal
+    import uuid as _u
+    with SessionLocal() as db:
+        g2 = career_graph(db, _u.UUID(user[1]["id"]), jobs[0]["id"])
+    assert g2["procedure"]["current"] == "ats_check"
+    assert client.post("/api/career-graph", headers=h, json={}).status_code == 402

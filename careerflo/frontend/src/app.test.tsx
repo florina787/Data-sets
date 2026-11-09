@@ -13,7 +13,8 @@ test("sidebar exposes all 22 required sections", () => {
   for (const l of ["AI Career Assistant", "Job Discovery", "Indeed Job Intelligence", "LinkedIn Job Intelligence", "Hidden Job Radar", "Job Matching",
     "Resume Studio", "ATS Intelligence", "Cover Letter Studio", "Interview Intelligence", "Live Coding Coach", "Company Research", "Recruiter CRM",
     "Application Tracker", "GitHub Portfolio Intelligence", "Salary Intelligence", "Career Analytics", "Agent Mission Control", "MCP Tool Registry",
-    "Governance Center", "Billing and Subscription", "Account Settings"]) expect(labels).toContain(l);
+    "Governance Center", "Billing and Subscription", "Account Settings", "Career Graph"]) expect(labels).toContain(l);
+  expect(labels.at(-1)).toBe("Career Graph");
 });
 
 test("job card shows source, salary and synthetic label; never invents a salary", () => {

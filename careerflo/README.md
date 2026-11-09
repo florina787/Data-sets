@@ -12,13 +12,14 @@ Everything runs on open-weight **Qwen** models.
 <p>
 <img alt="Python" src="https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white">
 <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white">
+<img alt="Career Graph" src="https://img.shields.io/badge/Career_Graph-knowledge→context→procedure-F59E0B">
 <img alt="LangGraph" src="https://img.shields.io/badge/LangGraph-15_agents-7357FF">
 <img alt="MCP" src="https://img.shields.io/badge/MCP-7_servers-101828">
 <img alt="Qwen" src="https://img.shields.io/badge/Qwen3-open--weight-38BDF8">
 <img alt="React" src="https://img.shields.io/badge/React-TypeScript-61DAFB?logo=react&logoColor=black">
 <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Postgres_+_RLS-3ECF8E?logo=supabase&logoColor=white">
 <img alt="Stripe" src="https://img.shields.io/badge/Stripe-test_mode-635BFF?logo=stripe&logoColor=white">
-<img alt="Tests" src="https://img.shields.io/badge/tests-95_passing-10B981">
+<img alt="Tests" src="https://img.shields.io/badge/tests-97_passing-10B981">
 </p>
 
 <img src="docs/assets/screens/landing.png" alt="Career_flo AI landing page: an empty canvas with floating cards and AI agents shown as collaborative cursors" width="100%" />
@@ -31,7 +32,7 @@ Everything runs on open-weight **Qwen** models.
 
 | 🧭 **Agents you can watch** | 🛡️ **Honest by construction** | 🎁 **Try everything, free** |
 |---|---|---|
-| A LangGraph supervisor routes your request to specialised agents. They appear as live cursors while they work. | Resumes and cover letters are fact-checked against your original resume. Anything unsupported is rejected. Salaries are shown only when the employer published them. | Every new account gets **2 free uses of all 16 premium features**, with no credit card. Trials never turn into a charge. |
+| A LangGraph supervisor routes your request to specialised agents. They appear as live cursors while they work. | Resumes and cover letters are fact-checked against your original resume. Anything unsupported is rejected. Salaries are shown only when the employer published them. | Every new account gets **2 free uses of all 17 premium features**, with no credit card. Trials never turn into a charge. |
 
 <br/>
 
@@ -164,7 +165,7 @@ sequenceDiagram
 
 ## 🎁 Two free uses of every feature
 
-<img src="docs/assets/charts/trials.svg" alt="Sixteen premium features, each with two free uses" width="100%" />
+<img src="docs/assets/charts/trials.svg" alt="Seventeen premium features, each with two free uses" width="100%" />
 
 - **Server-side:** the counters live on the server. Logging out or changing email never resets them.
 - **Safe under load:** 12 parallel requests still get exactly 2 uses (tested on PostgreSQL).
@@ -192,7 +193,7 @@ sequenceDiagram
 
 ## ✅ Tested
 
-<img src="docs/assets/charts/tests.svg" alt="45 backend tests on SQLite, 45 on PostgreSQL, 5 frontend tests" width="100%" />
+<img src="docs/assets/charts/tests.svg" alt="46 backend tests on SQLite, 46 on PostgreSQL, 5 frontend tests" width="100%" />
 
 The suite covers all six acceptance scenarios (job discovery, resume optimisation, mock interview, trial exhaustion, Stripe subscription, multi-user isolation). It also checks MCP discovery and allowlists, LangGraph workflows, SSE chat, Stripe webhook signature/replay/out-of-order handling, cross-user access, counter tampering, concurrent trials, malicious uploads, prompt injection and the coding sandbox.
 
@@ -237,10 +238,38 @@ Production (Supabase, Stripe, Ollama on one VM, Docker Compose): see the [deploy
 | Qwen client and benchmark | [`backend/app/llm/qwen.py`](backend/app/llm/qwen.py) · [`backend/scripts/benchmark_qwen.py`](backend/scripts/benchmark_qwen.py) |
 | Jobs, resume, ATS, interview, coding, salary, company, portfolio | [`backend/app/jobs/`](backend/app/jobs/) · [`backend/app/careers/`](backend/app/careers/) |
 | Schema and row-level-security migrations | [`backend/migrations/versions/`](backend/migrations/versions/) |
-| Frontend (22 sections, Skills & Learning, pricing, admin) | [`frontend/src/`](frontend/src/) |
+| Career Graph (knowledge → context → procedure → trace & learn) | [`backend/app/careers/graphs.py`](backend/app/careers/graphs.py) · [`frontend/src/pages/graph.tsx`](frontend/src/pages/graph.tsx) |
+| Frontend (22 sections, Skills & Learning, Career Graph, pricing, admin) | [`frontend/src/`](frontend/src/) |
 | README visuals (regenerate) | [`scripts/readme_charts.py`](scripts/readme_charts.py) · [`scripts/readme_screenshots.cjs`](scripts/readme_screenshots.cjs) |
 
-**Docs:** [Architecture](docs/ARCHITECTURE.md) · [MCP](docs/MCP.md) · [API (96 endpoints)](docs/API.md) · [Security](docs/SECURITY.md) · [Deployment](docs/DEPLOYMENT.md) · [Benchmark](docs/BENCHMARK.md) · [Limitations & costs](docs/LIMITATIONS_AND_COSTS.md) · [Design](docs/DESIGN.md) · [Dossier assessment](docs/DOSSIER_ASSESSMENT.md)
+**Docs:** [Architecture](docs/ARCHITECTURE.md) · [MCP](docs/MCP.md) · [API (97 endpoints)](docs/API.md) · [Security](docs/SECURITY.md) · [Deployment](docs/DEPLOYMENT.md) · [Benchmark](docs/BENCHMARK.md) · [Limitations & costs](docs/LIMITATIONS_AND_COSTS.md) · [Design](docs/DESIGN.md) · [Dossier assessment](docs/DOSSIER_ASSESSMENT.md)
+
+<br/>
+
+## 🕸️ Career Graph: what's true → what matters now → what do I do next
+
+The last page in the app turns your job search into a **semantic spine** of three graphs. Each one is built from your own records, so no model invents a graph fact.
+
+<img src="docs/assets/screens/career-graph.png" alt="Career Graph page: knowledge graph, scoped context graph, procedural graph with the next step, trace and learn, and the semantic spine" width="100%" />
+
+| Layer | Question | What Career_flo builds |
+|---|---|---|
+| 🟠 **Knowledge Graph** | *What is true?* | Your verified skills, roles, employers, education and certifications, plus the jobs you saved or applied to, their companies, required skills and your recruiter contacts. Every node keeps its **source** (resume, profile, posting, CRM). |
+| 🔵 **Context Graph** | *What matters now?* | A small subgraph around **one** target job. It shows required skills split into *have* vs *gap*, the company, recruiters and your application, plus **live state**: match score, posting age, published salary, status, follow-ups due, upcoming interviews. *Don't retrieve everything:* in the demo, 10 of 72 facts are kept. |
+| 🟢 **Procedural Graph** | *What do I do next?* | The job search as `(procedure, condition, procedure)` triplets: check fit → close gaps or upskill → tailor → ATS check → cover letter → **your approval** → applied → follow up → interview prep → offer → negotiate. Guards evaluated on the context graph pick the **current step**, explain **why**, and list the possible transitions. It **guides, it doesn't dictate**: steps marked *YOU* always wait for a human. |
+| ⚫ **Trace & Learn** | *What worked?* | Success and failure traces from your own history. For example, the demo data shows a **100% response rate with a scheduled follow-up vs 39% without**, alongside your agent runs and approval decisions. |
+
+```mermaid
+flowchart LR
+    O[Ontology<br/><sub>what things are</sub>] --> K[Knowledge Graph<br/><sub>what's true</sub>] --> C[Context Graph<br/><sub>what matters now</sub>] --> P[Procedural Graph<br/><sub>what to do next</sub>] --> A[AI Agents<br/><sub>act, then write traces back</sub>]
+    A -. traces update .-> K
+    style K fill:#FFF1E6,stroke:#F59E0B
+    style C fill:#EFF6FF,stroke:#3B82F6
+    style P fill:#ECFDF5,stroke:#10B981
+    style A fill:#F1EEFF,stroke:#7357FF
+```
+
+Available as a metered feature (`POST /api/career-graph`, two free uses) and as the MCP tool `analytics.build_career_graph`, so agents reason over the same scoped graph.
 
 <br/>
 
@@ -276,6 +305,9 @@ If you want a single-user, self-hosted job-search tool, go give Dossier a ⭐.
 </table>
 
 ### Also standing on the shoulders of
+
+The Career Graph's *knowledge graph → context graph → procedural graph* framing ("what's true, what matters now, what to do next") was inspired by Rakesh Gohel's explainer on how AI agents reason. The implementation and visuals here are our own.
+
 
 [Qwen](https://github.com/QwenLM/Qwen3) · [Ollama](https://github.com/ollama/ollama) · [llama.cpp](https://github.com/ggml-org/llama.cpp) · [LangGraph](https://github.com/langchain-ai/langgraph) · [Model Context Protocol Python SDK](https://github.com/modelcontextprotocol/python-sdk) · [FastAPI](https://github.com/fastapi/fastapi) · [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy) · [Supabase](https://github.com/supabase/supabase) · [Stripe](https://stripe.com) · [React](https://github.com/facebook/react) · [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) · [TanStack Query](https://github.com/TanStack/query) · [Recharts](https://github.com/recharts/recharts) · [Framer Motion](https://github.com/framer/motion) · [Lucide](https://github.com/lucide-icons/lucide)
 

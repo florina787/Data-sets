@@ -39,6 +39,7 @@ FEATURES: dict[str, Feature] = {f.id: f for f in [
     Feature("career_analytics", "Career Analytics", "Funnel, conversion, salary and skill-gap report.", "report", 0.1),
     Feature("ai_chat", "AI Career Assistant", "A bounded conversation with the Qwen career assistant.", "conversation", 3.0),
     Feature("multi_agent_workflow", "Multi-Agent Workflows", "Supervisor-coordinated multi-step career workflow.", "workflow", 4.0),
+    Feature("career_graph", "Career Graph Intelligence", "Knowledge, context and procedural graphs: what's true, what matters now, what to do next.", "graph", 0.2),
 ]}
 
 
@@ -58,7 +59,7 @@ _PRO = {
     "job_discovery": 150, "job_board_search": 60, "job_matching": 200, "resume_optimization": 40,
     "ats_intelligence": 80, "cover_letter": 40, "mock_interview": 20, "coding_coach": 30,
     "company_research": 30, "salary_intelligence": 30, "recruiter_intelligence": 20,
-    "application_automation": 10, "career_analytics": 60, "ai_chat": 60, "multi_agent_workflow": 10,
+    "application_automation": 10, "career_analytics": 60, "ai_chat": 60, "multi_agent_workflow": 10, "career_graph": 60,
 }
 _PREMIUM = {k: v * 3 for k, v in _PRO.items()} | {"portfolio_analysis": 30, "multi_agent_workflow": 40}
 

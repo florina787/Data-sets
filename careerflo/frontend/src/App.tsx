@@ -6,6 +6,7 @@ import { Admin, Billing, Governance, McpRegistry, MissionControl, SettingsPage }
 import { JobDiscovery, Matching, Radar } from "./pages/jobs";
 import { Ats, Coding, CoverLetters, InterviewPage, Learning, ResumeStudio } from "./pages/prepare";
 import { BillingResult, Landing, Login, Pricing, Register } from "./pages/public";
+import { CareerGraph } from "./pages/graph";
 import { Analytics, Applications, CompanyResearch, Portfolio, Recruiters, Salary } from "./pages/pursue";
 
 function Protected({ children }: { children: JSX.Element }) {
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="billing" element={<Billing />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="graph" element={<CareerGraph />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

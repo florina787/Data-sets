@@ -74,7 +74,7 @@ AGENT_ALLOWLIST: dict[str, set[str]] = {
     "salary": {"analytics.analyze_salary_distribution", "jobs.search_all_jobs"} | _GOV,
     "career_analytics": {"analytics.calculate_application_metrics", "analytics.calculate_interview_conversion",
                          "analytics.analyze_salary_distribution", "analytics.identify_skill_gaps",
-                         "analytics.generate_dashboard_data"} | _GOV,
+                         "analytics.generate_dashboard_data", "analytics.build_career_graph"} | _GOV,
     "autonomous_workflow": {"jobs.search_all_jobs", "jobs.save_job", "resume.compare_resume_to_job", "resume.tailor_resume",
                             "resume.validate_resume_claims", "applications.create_application",
                             "applications.update_application", "governance.request_human_approval"} | _GOV,

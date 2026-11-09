@@ -46,6 +46,7 @@ Interactive OpenAPI docs are served by the backend at `/docs` (Swagger UI) and `
 | POST | `/api/coding/sessions/{sid}/run` | career intelligence |
 | POST | `/api/company/compare` | career intelligence |
 | POST | `/api/company/research` | career intelligence |
+| POST | `/api/career-graph` | career intelligence |
 | POST | `/api/cover-letters` | career intelligence |
 | GET | `/api/features` | account |
 | GET | `/api/followups` | crm & tracker |

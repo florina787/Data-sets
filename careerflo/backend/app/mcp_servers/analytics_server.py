@@ -51,6 +51,14 @@ def identify_skill_gaps(user_id: str, title_keyword: str = "") -> dict:
         return {"gaps": A.skill_gaps(cand["skills"], jobs), "based_on_jobs": len(jobs)}
 
 
+@mcp.tool(description="Knowledge graph (what's true), context graph scoped to one job (what matters now) and procedural graph (what to do next).")
+def build_career_graph(user_id: str, job_id: str | None = None) -> dict:
+    from ..careers.graphs import career_graph
+
+    with SessionLocal() as db:
+        return career_graph(db, as_uuid(user_id), job_id)
+
+
 @mcp.tool(description="All dashboard data for the user.")
 def generate_dashboard_data(user_id: str) -> dict:
     with SessionLocal() as db:

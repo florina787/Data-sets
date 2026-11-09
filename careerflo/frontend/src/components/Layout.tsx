@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity, BarChart3, Bot, BookOpen, Boxes, Briefcase, Building2, Code2, CreditCard, FileCheck2, FileText, Github, Kanban, LogOut,
-  Mail, Menu, MessagesSquare, Moon, Radar, Scale, Search, Settings, ShieldCheck, Sparkles, Sun, Target, Users, Wallet, X,
+  Mail, Menu, MessagesSquare, Moon, Network, Radar, Scale, Search, Settings, ShieldCheck, Sparkles, Sun, Target, Users, Wallet, X,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ export const NAV: { group: string; items: [string, string, typeof Bot][] }[] = [
     ["Salary Intelligence", "/app/salary", Wallet], ["Career Analytics", "/app/analytics", BarChart3]] },
   { group: "Control", items: [["Agent Mission Control", "/app/mission", Activity], ["MCP Tool Registry", "/app/mcp", Boxes],
     ["Governance Center", "/app/governance", ShieldCheck], ["Billing and Subscription", "/app/billing", CreditCard], ["Account Settings", "/app/settings", Settings]] },
+  { group: "Intelligence", items: [["Career Graph", "/app/graph", Network]] },
 ];
 
 export function useTheme() {

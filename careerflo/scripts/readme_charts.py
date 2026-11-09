@@ -61,14 +61,14 @@ for mi, r in enumerate(bench):
 
 # Test suite overview (counts from the repository's tests)
 hbars("tests.svg", "Automated tests — all passing", "tests",
-      [("Backend · SQLite", 45, True), ("Backend · PostgreSQL", 45, True), ("Frontend · Vitest", 5, False)], E, maxv=55,
-      note="Scenarios A–F, MCP, LangGraph, SSE chat, Stripe webhooks, RLS isolation, concurrency, uploads, injection, sandbox")
+      [("Backend · SQLite", 46, True), ("Backend · PostgreSQL", 46, True), ("Frontend · Vitest", 5, False)], E, maxv=55,
+      note="Scenarios A–F, career graph, MCP, LangGraph, SSE chat, Stripe webhooks, RLS isolation, concurrency, uploads, injection, sandbox")
 
 # Trial model: 16 features x 2 dots
 feats = ["Job Discovery", "Indeed / LinkedIn", "Job Matching", "Resume Optimization", "ATS Intelligence", "Cover Letters",
          "Mock Interviews", "Coding Coach", "Company Research", "Salary Intelligence", "GitHub Portfolio", "Recruiter Intelligence",
-         "App Automation", "Career Analytics", "AI Assistant", "Multi-Agent Workflows"]
-w, h = 760, 350
+         "App Automation", "Career Analytics", "AI Assistant", "Multi-Agent Workflows", "Career Graph"]
+w, h = 760, 420
 b = f"<text x='28' y='40' font-size='19' font-weight='700' fill='{INK}'>2 free uses of every premium feature · no card</text>"
 for i, f in enumerate(feats):
     col, row = i % 4, i // 4

@@ -13,7 +13,7 @@ cd backend && .venv/bin/python -m app.mcp_servers.run jobs
 | C Application Tracking (`applications`) | 1.0.0 | create_application, update_application, list_applications, record_interview, schedule_followup, retrieve_application_history |
 | D GitHub Portfolio (`portfolio`) | 1.0.0 | list_repositories, inspect_repository, analyze_technology_stack, match_project_to_job, generate_portfolio_summary |
 | E Company Research (`company`) | 1.0.0 | retrieve_company_information, analyze_job_requirements, summarize_public_sources, compare_companies |
-| F Career Analytics (`analytics`) | 1.0.0 | calculate_application_metrics, calculate_interview_conversion, analyze_salary_distribution, identify_skill_gaps, generate_dashboard_data |
+| F Career Analytics (`analytics`) | 1.0.0 | calculate_application_metrics, calculate_interview_conversion, analyze_salary_distribution, identify_skill_gaps, generate_dashboard_data, build_career_graph |
 | G Governance (`governance`) | 1.0.0 | validate_tool_request, check_permissions, redact_sensitive_data, request_human_approval, record_audit_event |
 
 ## Gateway controls (`app/mcp_gateway.py`)
