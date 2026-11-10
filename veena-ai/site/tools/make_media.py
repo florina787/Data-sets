@@ -2,7 +2,11 @@
 short website clips: MP4 + WebM + GIF + poster per demo, plus the hero video and
 the Open Graph image.
 
-    python site/tools/make_media.py <recording-dir> site/media
+    python site/tools/make_media.py site/media <recording-dir> [<recording-dir> ...]
+
+Each demo is cut from the first recording (in the order given) that contains all of
+its marks, so a demo can come from a re-run when a step failed or was mis-timed in
+an earlier one. Every clip is still one continuous take of one recording.
 
 Honesty rule: only time is edited. Model waits are shortened and long streamed
 answers play faster (the website says so); nothing is added, staged or re-ordered.
@@ -15,17 +19,20 @@ import subprocess
 import sys
 from pathlib import Path
 
-rec, out = Path(sys.argv[1]), Path(sys.argv[2])
+out = Path(sys.argv[1])
 out.mkdir(parents=True, exist_ok=True)
-marks = {m["name"]: m["t"] for m in json.loads((rec / "marks.json").read_text())}
-src = rec / "session.webm"
+RECS = [(Path(d), {m["name"]: m["t"] for m in json.loads((Path(d) / "marks.json").read_text())}) for d in sys.argv[2:]]
 MAX_NORMAL = 14.0  # longer stretches are played faster, up to 3x
 STREAM = 10.0  # a long streamed answer plays faster so it lasts at most about 10 s (stated on the site)
 
 
-def seg(a: str | float, b: str | float, target: float | None = None) -> tuple[float, float, float]:
-    ta = marks[a] if isinstance(a, str) else a
-    tb = marks[b] if isinstance(b, str) else b
+def seg(a, b, target: float | None = None):
+    return (a, b, target)
+
+
+def resolve(marks: dict, a, b, target: float | None) -> tuple[float, float, float]:
+    ta = a(marks) if callable(a) else marks[a] if isinstance(a, str) else a
+    tb = b(marks) if callable(b) else marks[b] if isinstance(b, str) else b
     dur = max(0.1, tb - ta)
     if target is not None:  # a model wait: shorten to `target` seconds
         speed = max(1.0, dur / target)
@@ -37,7 +44,11 @@ def seg(a: str | float, b: str | float, target: float | None = None) -> tuple[fl
 DEMOS = {
     "chat": [seg("chat:start", "chat:wait"), seg("chat:wait", "chat:streaming", 1.5), seg("chat:streaming", "chat:end", STREAM)],
     "docs": [seg("docs:start", "docs:wait"), seg("docs:wait", "docs:streaming", 1.5), seg("docs:streaming", "docs:end", STREAM)],
-    "screen": [seg("screen:start", "screen:wait"), seg("screen:wait", "screen:streaming", 2.5), seg("screen:streaming", "screen:end", STREAM)],
+    "screen": [
+        seg("screen:start", "screen:wait"),
+        seg("screen:wait", "screen:streaming", 2.5),
+        seg("screen:streaming", "screen:end", STREAM),
+    ],
     "meeting": [
         seg("meeting:start", "meeting:listening"),
         seg("meeting:listening", "meeting:wait"),
@@ -53,7 +64,7 @@ DEMOS = {
     ],
     "agents": [seg("agents:start", "agents:end")],
     # The whole guided setup, from the first screen to the first page after it.
-    "setup": [seg(0.5, marks["chat:start"] - 2.0, 12.0)],
+    "setup": [seg(0.5, lambda m: m["chat:start"] - 2.0, 12.0)],
 }
 
 
@@ -61,7 +72,21 @@ def run(*args: str) -> None:
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", *args], check=True)
 
 
-def build(name: str, parts: list[tuple[float, float, float]]) -> Path:
+def pick(parts: list) -> tuple[Path, dict]:
+    need = {x for a, b, _ in parts for x in (a, b) if isinstance(x, str)} | (
+        {"chat:start"} if any(callable(b) for _, b, _ in parts) else set()
+    )
+    for d, marks in RECS:
+        if need <= marks.keys():
+            return d, marks
+    sys.exit(f"no recording has all of {sorted(need)}")
+
+
+def build(name: str, spec: list) -> Path:
+    rec, marks = pick(spec)
+    src = rec / "session.webm"
+    parts = [resolve(marks, *p) for p in spec]
+    print(f"{name}: from {rec.name}")
     chains, labels = [], []
     for i, (a, b, speed) in enumerate(parts):
         chains.append(f"[0:v]trim=start={a:.2f}:end={b:.2f},setpts=(PTS-STARTPTS)/{speed:.3f}[v{i}]")

@@ -49,6 +49,9 @@ const typeSlowly = async (locator, text) => {
   await page.keyboard.type(text, { delay: 28 });
 };
 
+// DEMOS=meeting,interview records only those steps (setup always runs).
+const only = (process.env.DEMOS || "").split(",").filter(Boolean);
+const want = (name) => only.length === 0 || only.includes(name);
 let failed = null;
 try {
 // ---- Setup (not part of a demo clip) ----
@@ -67,6 +70,7 @@ await page.getByText("Recent sessions").waitFor();
 await pause(1500);
 
 // ---- 1. Ask a question, answered by the local model ----
+if (want("chat")) {
 await page.getByRole("button", { name: "New conversation" }).click();
 await pause(800);
 mark("chat:start");
@@ -79,7 +83,9 @@ await idle();
 await pause(2500);
 mark("chat:end");
 
+}
 // ---- 2. Documents with citations ----
+if (want("docs")) {
 await page.getByRole("button", { name: "Knowledge" }).first().click();
 await pause(800);
 mark("docs:start");
@@ -112,7 +118,9 @@ await pause(3000);
 mark("docs:end");
 await page.locator("aside[aria-label='Context'] input[type=checkbox]").first().uncheck().catch(() => undefined);
 
+}
 // ---- 3. Screen intelligence (the shared screen is VEENA's own window showing the code answer) ----
+if (want("screen")) {
 await page.getByRole("button", { name: "Screen Intelligence" }).first().click();
 await pause(800);
 mark("screen:start");
@@ -134,7 +142,9 @@ await pause(3000);
 mark("screen:end");
 await page.getByRole("button", { name: "Stop Sharing", exact: true }).click();
 
+}
 // ---- 4. Meeting notes from speech ----
+if (want("meeting")) {
 await page.getByRole("button", { name: "Meeting Copilot" }).first().click();
 await pause(800);
 mark("meeting:start");
@@ -157,7 +167,9 @@ mark("meeting:notes");
 await pause(3500);
 mark("meeting:end");
 
+}
 // ---- 5. Interview practice ----
+if (want("interview")) {
 await page.getByRole("button", { name: "Interview Practice" }).first().click();
 await pause(800);
 mark("interview:start");
@@ -179,7 +191,9 @@ mark("interview:feedback");
 await pause(3500);
 mark("interview:end");
 
+}
 // ---- 6. Evidence and memory: the Agents page ----
+if (want("agents")) {
 await page.getByRole("button", { name: "Agents" }).first().click();
 mark("agents:start");
 await page.getByText("The semantic spine").waitFor();
@@ -192,12 +206,15 @@ for (let y = 0; y <= 1300; y += 20) {
 await pause(2500);
 mark("agents:end");
 
+}
 // Hero still: a cited answer in the night theme.
+if (want("library")) {
 await page.getByRole("button", { name: "Library" }).first().click();
 await pause(1500);
 mark("library:shot");
 await page.screenshot({ path: path.join(out, "still-library.png") });
 
+}
 } catch (e) {
   failed = e;
   console.error("demo step failed:", e.message);
