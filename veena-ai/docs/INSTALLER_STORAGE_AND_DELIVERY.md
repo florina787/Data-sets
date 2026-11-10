@@ -4,11 +4,11 @@
 
 **GitHub Releases** of `florina787/Data-sets`, tag `veena-ai-v<version>`:
 
-| File | Platform | Measured size |
+| File | Platform | Measured size (CI #18 artifacts; includes the bundled 92 MB document-search model) |
 |---|---|---|
-| `VEENA.AI-Windows-Setup.exe` | Windows 10/11 x64 (NSIS, per-user, desktop + Start menu shortcuts, uninstaller) | 487 MB |
-| `VEENA.AI-macOS-AppleSilicon.dmg` | macOS on Apple Silicon | not yet measured |
-| `VEENA.AI-Linux-x86_64.AppImage` | Linux x86_64 | 740 MB |
+| `VEENA.AI-Windows-Setup.exe` | Windows 10/11 x64 (NSIS, per-user, desktop + Start menu shortcuts, uninstaller) | 570 MB |
+| `VEENA.AI-macOS-AppleSilicon.dmg` | macOS on Apple Silicon | 626 MB |
+| `VEENA.AI-Linux-x86_64.AppImage` | Linux x86_64 | 823 MB |
 | `SHA256SUMS.txt` | checksums of the three files | |
 
 Releases allow files up to 2 GiB and state no bandwidth or total-size limit. Installers are never stored in a database, in Actions artifacts for customers (those expire and require a login), or in the website.

@@ -6,10 +6,10 @@ Inputs are measured or taken from the official pages in [FREE_TIER_CLOUD_RESEARC
 
 | Input | Value | Source |
 |---|---|---|
-| Windows installer | 487 MB | CI run 42651931298 artifact (zipped installer) |
-| Linux AppImage | 740 MB | same run |
-| macOS disk image | **not measured** (job had no runner); planned at 740 MB | assumption, upper bound |
-| Average installer download | **0.62 GB** | 60% Windows, 30% macOS, 10% Linux (assumed mix) |
+| Windows installer | 570 MB | CI run 42727331443 artifact |
+| Linux AppImage | 823 MB | same run |
+| macOS disk image | 626 MB | same run |
+| Average installer download | **0.61 GB** | 60% Windows, 30% macOS, 10% Linux (assumed mix) |
 | Website, one full visit | 1.4 MB, all images | `site/build.sh` output |
 | Website visits per download | 5 (assumed) | |
 | AI runtime download (Ollama, ~1.5 GB Windows/Linux, 181 MB macOS) | **not served by VEENA**: comes from Ollama's GitHub release | `backend/runtime/ollama_runtime.py` |

@@ -11,7 +11,7 @@ A local-first desktop AI copilot that listens, reads the screen you choose, answ
   <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-99613E?style=flat-square" />
   <img alt="Platforms" src="https://img.shields.io/badge/platforms-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-75462D?style=flat-square" />
   <img alt="License GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-B87848?style=flat-square" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-175%20passing-99613E?style=flat-square" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-179%20passing-99613E?style=flat-square" />
 </p>
 
 <h3 align="center">Download</h3>
