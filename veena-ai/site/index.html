@@ -3,122 +3,195 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VEENA.AI · Local AI copilot</title>
-<meta name="description" content="VEENA.AI is a free, local-first desktop AI copilot for conversations, meetings, documents and screens. Runs on your own computer: no subscription, no API key." />
-<meta property="og:title" content="VEENA.AI · Local AI copilot" />
-<meta property="og:description" content="Free, local-first AI copilot for Windows, macOS and Linux. Your conversations stay on your computer." />
-<meta property="og:image" content="images/agents.png" />
+<title>VEENA.AI · Your AI. Your computer. Your control.</title>
+<meta name="description" content="Meet VEENA: a private, open-source AI companion for conversations, meetings, interviews, documents and your screen. Free for Windows, macOS and Linux." />
+<meta name="theme-color" content="#17110f" />
+<link rel="canonical" href="https://florina787.github.io/Data-sets/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="VEENA.AI" />
+<meta property="og:title" content="Meet VEENA. Your AI. Your computer. Your control." />
+<meta property="og:description" content="A private, open-source AI companion for conversations, meetings, interviews, documents and your screen. Free for Windows, macOS and Linux." />
+<meta property="og:url" content="https://florina787.github.io/Data-sets/" />
+<meta property="og:image" content="https://florina787.github.io/Data-sets/media/og.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" type="image/png" href="images/icon-64.png" />
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="fonts/instrument-serif-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="site.css" />
-<script>try{if(localStorage.getItem("veena.site.theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="top">
-  <a class="brand" href="#"><img src="images/icon-64.png" alt="" width="32" height="32" /><span>veena<span class="dot">.ai</span></span></a>
-  <nav aria-label="Sections">
-    <a href="#features">Features</a>
-    <a href="#install">Install</a>
-    <a href="#privacy">Privacy</a>
-    <a href="#requirements">Requirements</a>
-    <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>
-    <button class="theme" type="button" onclick="var l=document.documentElement.dataset.theme==='light';document.documentElement.dataset.theme=l?'dark':'light';try{localStorage.setItem('veena.site.theme',l?'dark':'light')}catch(e){}">Light / dark</button>
-  </nav>
+<div class="ambient" aria-hidden="true"><div class="wash"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="VEENA.AI home"><img src="images/icon-64.png" alt="" width="28" height="28" /><span><b>VEENA</b><i>.AI</i></span></a>
+    <nav aria-label="Main">
+      <a href="features.html">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>
+      <a class="pill dark" href="#download">Download</a>
+    </nav>
+  </div>
 </header>
 
 <main id="main">
-  <section class="hero">
-    <div class="hero-text">
-      <p class="eyebrow">Free · Local-first · Open source</p>
-      <h1>Your intelligent conversation companion.</h1>
-      <p class="lede">VEENA listens when you ask it to, reads the screen you choose, answers from your own documents with citations, and runs entirely on your computer. No subscription, no account, no API key.</p>
-      <div class="downloads" id="downloads" aria-live="polite">
-        <a class="btn primary" data-os="windows" data-file="VEENA.AI-Windows-Setup.exe" aria-disabled="true">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="9.5" height="9.5"/><rect x="12.5" y="2" width="9.5" height="9.5"/><rect x="2" y="12.5" width="9.5" height="9.5"/><rect x="12.5" y="12.5" width="9.5" height="9.5"/></svg>
-          <span><b>Download for Windows</b><small class="state">Checking…</small></span>
-        </a>
-        <a class="btn primary" data-os="mac" data-file="VEENA.AI-macOS-AppleSilicon.dmg" aria-disabled="true">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.8-.8-3-.8-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.2 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z"/></svg>
-          <span><b>Download for macOS</b><small class="state">Checking…</small></span>
-        </a>
-        <a class="btn" data-os="linux" data-file="VEENA.AI-Linux-x86_64.AppImage" aria-disabled="true">
-          <span><b>Linux (AppImage)</b><small class="state">Checking…</small></span>
-        </a>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <p class="eyebrow">Private · Open source · Free</p>
+      <h1 id="hero-title">Meet <span class="serif">VEENA.</span></h1>
+      <p class="sub">Your AI. Your computer. Your control.</p>
+      <p class="lede">A private, open-source AI companion for conversations, meetings, interviews, documents and your screen.</p>
+      <div class="actions">
+        <a class="pill dark" href="#download" data-dl-primary>Download VEENA — Free</a>
+        <a class="pill ghost" href="features.html">Watch VEENA in action</a>
       </div>
-      <p class="fine" id="release-line">Apple Silicon Macs (M1 to M4) only for now. You will also need the free AI runtime; VEENA's setup downloads it for you.</p>
+      <p class="fine">Available for Windows, macOS and Linux.</p>
     </div>
-    <figure class="hero-shot">
-      <img src="images/agents.png" alt="VEENA's Agents page: every answer measured for backed facts, context use and procedure" width="1440" height="872" />
-    </figure>
-  </section>
-
-  <section id="features" class="band">
-    <h2>What VEENA does</h2>
-    <div class="grid">
-      <article><img src="images/citations.png" alt="An answer from a document with clickable citations" loading="lazy" /><h3>Answers from your documents</h3><p>PDF, Word, text, Markdown, CSV and JSON, indexed on your computer. Every answer cites the passage it used, and says so when nothing matches.</p></article>
-      <article><img src="images/agents-answer.png" alt="An answer flagged for claims not found in its inputs" loading="lazy" /><h3>Catches made-up facts</h3><p>Names and figures in an answer are checked against what VEENA was given. Anything not backed is flagged right under the answer.</p></article>
-      <article><img src="images/meeting.png" alt="Meeting notes with decisions and action items" loading="lazy" /><h3>Meeting notes</h3><p>Summary, decisions, action items and open questions from a transcript you are authorised to capture. A recording indicator is always visible.</p></article>
-      <article><img src="images/screen.png" alt="Screen analysis of a shared window" loading="lazy" /><h3>Screen intelligence</h3><p>Explain code, find errors or summarise a page. Only the screen or window you pick is captured, and detected secrets are masked first.</p></article>
-      <article><img src="images/interview.png" alt="Interview practice feedback" loading="lazy" /><h3>Interview practice</h3><p>Generated questions for eight roles with scored feedback, for rehearsal. VEENA is not designed for covert help in live interviews.</p></article>
-      <article><img src="images/agents-graphs.png" alt="Context graph and knowledge graph" loading="lazy" /><h3>Measured agents</h3><p>Knowledge, context and procedural graphs score every answer with transparent rules, so you can see how much to trust it.</p></article>
+    <div class="stage">
+      <div class="wordmark" aria-hidden="true">VEENA</div>
+      <div class="laptop">
+        <div class="lid">
+          <div class="screen">
+            <video autoplay muted loop playsinline preload="metadata" poster="media/hero-poster.jpg" aria-label="VEENA answering a question with a code example, using a local AI model">
+              <source src="media/hero.webm" type="video/webm" />
+              <source src="media/hero.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+        <div class="base"></div>
+      </div>
+      <div class="surface" aria-hidden="true"></div>
     </div>
   </section>
 
-  <section id="install" class="band alt">
-    <h2>Install in four steps</h2>
-    <ol class="steps">
-      <li><b>Download</b> the installer for your computer above.</li>
-      <li><b>Install.</b> Windows: run the installer. If SmartScreen says "Windows protected your PC", this beta is not yet code-signed: choose <i>More info</i>, check the publisher and file name, then <i>Run anyway</i>. macOS: open the disk image and drag VEENA to Applications.</li>
-      <li><b>Open VEENA</b> from the desktop or Start menu icon. Setup checks your computer and, with your permission, downloads the free AI runtime (Ollama, MIT licence) and an AI model. Allow 5 to 20 minutes, mostly downloading.</li>
-      <li><b>Ask your first question.</b> Setup says "VEENA is ready." only after the model has really answered on your computer.</li>
-    </ol>
-    <p class="fine">Full guide: <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/docs/CUSTOMER_INSTALLATION_GUIDE.md">installation guide</a> · <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/docs/SUPPORT_AND_TROUBLESHOOTING.md">troubleshooting</a>. Check a download against the SHA-256 checksums published with each release.</p>
+  <section id="how" aria-labelledby="how-title">
+    <div class="wrap center">
+      <p class="eyebrow reveal">From download to ready</p>
+      <h2 class="h2 reveal" id="how-title"><span class="serif">Simple</span> to set up.<br />Ready to work.</h2>
+      <div class="steps reveal" role="list">
+        <div class="step" role="listitem"><span class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg></span><span><b>Download</b><small>One installer</small></span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step" role="listitem"><span class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></span><span><b>Guided setup</b><small>Runtime and model, with your permission</small></span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step done" role="listitem"><span class="ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Ready</b><small>Only after a real answer</small></span></div>
+      </div>
+      <p class="intro reveal">The first launch downloads the free local AI runtime and a model (1–4 GB), so it needs an internet connection and some disk space. After that, VEENA works on your computer, even offline.</p>
+
+      <div class="gallery" role="list">
+        <figure class="tile wide reveal" role="listitem">
+          <picture><source srcset="media/docs.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/docs-poster.jpg" alt="A question about an uploaded design document answered with a clickable citation to the exact passage" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Answers from your documents</b><span>Every answer points to the passage it came from.</span></figcaption>
+        </figure>
+        <figure class="tile reveal" role="listitem">
+          <picture><source srcset="media/chat.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/chat-poster.jpg" alt="VEENA streaming an answer with a code example from a local model" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Ask anything</b><span>Answered by a local model on your computer.</span></figcaption>
+        </figure>
+        <figure class="tile reveal" role="listitem">
+          <picture><source srcset="media/screen.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/screen-poster.jpg" alt="Choosing a window to share and VEENA summarising what is on it" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Understands your screen</b><span>Only the window you choose.</span></figcaption>
+        </figure>
+        <figure class="tile reveal" role="listitem">
+          <picture><source srcset="media/meeting.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/meeting-poster.jpg" alt="Speech transcribed live in a meeting session and turned into notes with decisions and action items" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Meeting notes</b><span>From speech to decisions and actions.</span></figcaption>
+        </figure>
+        <figure class="tile reveal" role="listitem">
+          <picture><source srcset="media/interview.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/interview-poster.jpg" alt="An interview practice question, a typed answer and scored feedback" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Interview practice</b><span>Rehearse with scored feedback.</span></figcaption>
+        </figure>
+        <figure class="tile half reveal" role="listitem">
+          <picture><source srcset="media/agents.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/agents-poster.jpg" alt="The Agents page showing which facts in answers were backed by the material VEENA was given" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Evidence you can see</b><span>Facts checked against what VEENA was given.</span></figcaption>
+        </figure>
+        <figure class="tile half reveal" role="listitem">
+          <picture><source srcset="media/setup.gif" media="(prefers-reduced-motion: no-preference)" /><img src="media/setup-poster.jpg" alt="The guided setup checking the computer, the AI runtime and the first answer" loading="lazy" width="960" height="600" /></picture>
+          <figcaption><b>Guided setup</b><span>No terminal, no account, no API key.</span></figcaption>
+        </figure>
+      </div>
+      <p class="fine reveal" style="margin-top:18px">Recorded from the real app with real local models and sample data. Long model waits are shortened; on the 4-core, CPU-only recording machine a screen summary took about two minutes.</p>
+      <p class="reveal" style="margin-top:22px"><a class="pill ghost" href="features.html">Explore every feature</a></p>
+    </div>
   </section>
 
-  <section id="privacy" class="band">
-    <h2>Your data stays on your computer</h2>
-    <ul class="checks">
-      <li>Conversations, transcripts and documents are stored in a local database. Export or delete them at any time; history is deleted automatically after 30 days by default.</li>
-      <li>AI answers are generated on your computer. VEENA does not send your data to a cloud AI service, and has no telemetry.</li>
-      <li>Raw audio and screenshots are never saved.</li>
-      <li>Internet is used to download the AI runtime and models, and, if you allow it, to check once a day for a newer version number.</li>
-    </ul>
-    <p class="fine"><a href="privacy.html">Privacy policy</a></p>
+  <section aria-labelledby="why-title">
+    <div class="wrap">
+      <h2 class="h2 center reveal" id="why-title">Why <span class="serif">VEENA</span></h2>
+      <div class="benefits" style="margin-top:46px">
+        <div class="benefit reveal"><div class="num">01</div><h3>Private <span class="serif">by design</span></h3><p>Your conversations, documents and screens are processed on your computer and stored there. No account and no telemetry.</p></div>
+        <div class="benefit reveal"><div class="num">02</div><h3>Built for <span class="serif">real work</span></h3><p>Meetings, documents, interview practice and your screen, with sources and fact checks so you can judge every answer.</p></div>
+        <div class="benefit reveal"><div class="num">03</div><h3>Open-source <span class="serif">AI</span></h3><p>Open models with commercial-friendly Apache-2.0 licences, run locally through Ollama. The code is open under GPL-3.0.</p></div>
+      </div>
+    </div>
   </section>
 
-  <section id="requirements" class="band alt">
-    <h2>Requirements</h2>
-    <table>
-      <thead><tr><th></th><th>Minimum</th><th>Recommended</th></tr></thead>
-      <tbody>
-        <tr><th>System</th><td>Windows 10/11 64-bit · macOS on Apple Silicon · Linux x86_64</td><td>Same</td></tr>
-        <tr><th>Memory</th><td>8 GB</td><td>16 GB or more</td></tr>
-        <tr><th>Free disk</th><td>About 8 GB (app, runtime, one model)</td><td>15 GB or more</td></tr>
-        <tr><th>GPU</th><td>Not required</td><td>A supported GPU makes answers faster</td></tr>
-        <tr><th>Internet</th><td colspan="2">Needed once for setup downloads. Chat and documents then work without it.</td></tr>
-      </tbody>
-    </table>
-    <h3>AI models</h3>
-    <p>VEENA recommends only models whose licences allow commercial use (Apache 2.0), downloaded through the local runtime. See the <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/reports/MODEL_LICENSE_AUDIT.md">model licence audit</a>.</p>
-    <h3>Known limitations</h3>
-    <ul>
-      <li>This is a beta. Installers are not yet code-signed, so Windows and macOS show a warning on first launch.</li>
-      <li>No build for Intel Macs yet.</li>
-      <li>On a laptop without a GPU, answers take a few seconds and screen analysis can take a minute or more.</li>
-      <li>Small local models make mistakes. VEENA shows its sources and flags unbacked claims so you can judge.</li>
-      <li>Capturing other apps' audio (system audio) works on Windows only.</li>
-    </ul>
+  <section id="download" class="dark" aria-labelledby="download-title">
+    <div class="wrap">
+      <h2 class="h2 center reveal" id="download-title">Download <span class="serif">VEENA</span></h2>
+      <p class="intro center reveal">Free. No account. No subscription.</p>
+      <div class="dl-main reveal" aria-live="polite">
+        <div class="os" id="dl-os">Your computer</div>
+        <h3 id="dl-title">Checking the latest release…</h3>
+        <p class="meta" id="dl-meta">&nbsp;</p>
+        <a class="pill light" id="dl-button" aria-disabled="true">Download</a>
+        <div class="dl-others" id="dl-others"></div>
+      </div>
+      <p class="notice reveal" id="dl-notice">
+        Beta builds are not yet code-signed, so Windows and macOS show a warning the first time. It is expected; here is
+        <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/docs/CUSTOMER_INSTALLATION_GUIDE.md">how to install</a>. Verify your download with the
+        <a href="https://github.com/florina787/Data-sets/releases" id="dl-sums">SHA-256 checksums</a> in the release.
+      </p>
+      <div class="facts">
+        <div class="fact reveal"><b>Systems</b>Windows 10/11 64-bit · Mac with Apple Silicon · Linux x86_64</div>
+        <div class="fact reveal"><b>Memory</b>8 GB minimum, 16 GB recommended</div>
+        <div class="fact reveal"><b>Disk</b>About 8 GB free for the app, runtime and one model</div>
+        <div class="fact reveal"><b>Internet</b>Needed once for setup downloads; then works offline</div>
+      </div>
+    </div>
   </section>
 
-  <section class="band">
-    <h2>Help and feedback</h2>
-    <p>Report a problem or ask a question on <a href="https://github.com/florina787/Data-sets/issues">GitHub Issues</a>. The source code is on <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>.</p>
+  <section aria-labelledby="story-title">
+    <div class="wrap story">
+      <div class="reveal">
+        <p class="eyebrow">The open-source story</p>
+        <h2 class="h2" id="story-title">Built <span class="serif">openly.</span><br />Built thoughtfully.</h2>
+        <p>VEENA began with a simple idea: powerful AI should be accessible without expensive cloud subscriptions.</p>
+        <p>Built with open-source technologies and local AI models, VEENA puts intelligence closer to the people using it. Its development puts privacy, transparency, practical usefulness and easy distribution first.</p>
+        <ul class="stack" aria-label="Built with">
+          <li>Electron</li><li>React</li><li>Python · FastAPI</li><li>Ollama</li><li>Qwen models</li><li>Whisper</li><li>FAISS</li><li>SQLite</li><li>GitHub Actions</li>
+        </ul>
+        <p class="fine">Developed with free, open-source tools. Running it still uses your computer's power and disk, and the first setup downloads a few gigabytes.</p>
+        <p style="margin-top:22px"><a class="pill dark" href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">View the source code</a></p>
+      </div>
+      <blockquote class="quote reveal">“Powerful AI, closer to the people who use it.”</blockquote>
+    </div>
+  </section>
+  <section class="perspective" aria-labelledby="perspective-title">
+    <div class="wrap reveal">
+      <h2 id="perspective-title">Your perspective <span class="serif">matters.</span></h2>
+      <p>Help shape what VEENA becomes. Every note is read.</p>
+      <div class="quiet-links"><a href="feedback.html">Share feedback</a><a data-community hidden href="#">Join the conversation</a></div>
+    </div>
   </section>
 </main>
 
-<footer class="foot">
-  <p>VEENA.AI · GPL-3.0 · <a href="privacy.html">Privacy</a> · <a href="https://github.com/florina787/Data-sets">Source</a></p>
+<footer>
+  <div class="wrap">
+    <span>© 2026 Florina Regius · VEENA.AI · GPL-3.0</span>
+    <nav aria-label="Footer">
+      <a href="features.html">Features</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/SECURITY.md">Security</a>
+      <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/LICENSE">License</a>
+      <a href="https://github.com/florina787/Data-sets/releases">Releases</a>
+      <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai/docs">Documentation</a>
+      <a href="feedback.html">Feedback</a>
+      <a data-community hidden href="#">Community</a>
+    </nav>
+  </div>
 </footer>
-<script src="downloads.js"></script>
+<script src="config.js"></script>
+<script src="site.js" defer></script>
 </body>
 </html>

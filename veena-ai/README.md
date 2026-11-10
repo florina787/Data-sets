@@ -1,35 +1,62 @@
 <p align="center">
-  <img src="apps/desktop/assets/icon-256.png" width="140" alt="VEENA.AI ginger Persian cat logo" />
+  <img src="apps/desktop/assets/icon-256.png" width="96" alt="VEENA.AI ginger Persian cat logo" />
 </p>
 
-<h1 align="center">veena.ai</h1>
-<p align="center"><b>Your intelligent conversation companion.</b><br/>
-A local-first desktop AI copilot that listens, reads the screen you choose, answers from your documents, and runs entirely on your own computer.</p>
+<h1 align="center">Meet <i>VEENA.</i></h1>
+<p align="center"><b>Your AI. Your computer. Your control.</b><br/>
+A private AI companion for conversations, meetings, interview practice, documents and your screen.<br/>
+It runs on your own computer, with open models. No account, no subscription, no API key.</p>
 
 <p align="center">
-  <img alt="Cost: $0 per month" src="https://img.shields.io/badge/cost-%240%20%2F%20month-4A2C1C?style=flat-square" />
-  <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-99613E?style=flat-square" />
-  <img alt="Platforms" src="https://img.shields.io/badge/platforms-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-75462D?style=flat-square" />
-  <img alt="License GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-B87848?style=flat-square" />
-  <img alt="Tests" src="https://img.shields.io/badge/tests-179%20passing-99613E?style=flat-square" />
-</p>
-
-<h3 align="center">Download</h3>
-<p align="center">
-  <a href="https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Windows-Setup.exe"><img alt="Download for Windows" src="https://img.shields.io/badge/Download%20for-Windows-75462D?style=for-the-badge&labelColor=2C1A12&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZmZmZiI%2BPHJlY3QgeD0iMiIgeT0iMiIgd2lkdGg9IjkuNSIgaGVpZ2h0PSI5LjUiLz48cmVjdCB4PSIxMi41IiB5PSIyIiB3aWR0aD0iOS41IiBoZWlnaHQ9IjkuNSIvPjxyZWN0IHg9IjIiIHk9IjEyLjUiIHdpZHRoPSI5LjUiIGhlaWdodD0iOS41Ii8%2BPHJlY3QgeD0iMTIuNSIgeT0iMTIuNSIgd2lkdGg9IjkuNSIgaGVpZ2h0PSI5LjUiLz48L3N2Zz4%3D" height="40" /></a>
-  &nbsp;
-  <a href="https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-macOS-AppleSilicon.dmg"><img alt="Download for macOS (Apple Silicon)" src="https://img.shields.io/badge/Download%20for-macOS%20(M1%E2%80%93M4)-4A2C1C?style=for-the-badge&logo=apple&logoColor=white&labelColor=2C1A12" height="40" /></a>
-  &nbsp;
-  <a href="https://ollama.com/download"><img alt="Get Ollama (free, required)" src="https://img.shields.io/badge/Also%20install-Ollama%20(free)-B87848?style=for-the-badge&labelColor=2C1A12&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyBmaWxsPSIjZmZmZmZmIiByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU%2BT2xsYW1hPC90aXRsZT48cGF0aCBkPSJNMTYuMzYxIDEwLjI2YS44OTQuODk0IDAgMCAwLS41NTguNDdsLS4wNzIuMTQ4LjAwMS4yMDdjMCAuMTkzLjAwNC4yMTcuMDU5LjM1My4wNzYuMTkzLjE1Mi4zMTIuMjkxLjQ0OC4yNC4yMzguNTEuMy44NzIuMjA1YS44Ni44NiAwIDAgMCAuNTE3LS40MzYuNzUyLjc1MiAwIDAgMCAuMDgtLjQ5OGMtLjA2NC0uNDUzLS4zMy0uNzgyLS43MjQtLjg5N2ExLjA2IDEuMDYgMCAwIDAtLjQ2NiAwem0tOS4yMDMuMDA1Yy0uMzA1LjA5Ni0uNTMzLjMyLS42NS42MzlhMS4xODcgMS4xODcgMCAwIDAtLjA2LjUyYy4wNTcuMzA5LjMxLjU5LjU5OC42NjcuMzYyLjA5NS42MzIuMDMzLjg3Mi0uMjA1LjE0LS4xMzYuMjE1LS4yNTUuMjkxLS40NDguMDU1LS4xMzYuMDU5LS4xNi4wNTktLjM1M2wuMDAxLS4yMDctLjA3Mi0uMTQ4YS44OTQuODk0IDAgMCAwLS41NjUtLjQ3MiAxLjAyIDEuMDIgMCAwIDAtLjQ3NC4wMDdabTQuMTg0IDJjLS4xMzEuMDcxLS4yMjMuMjUtLjE5NS4zODMuMDMxLjE0My4xNTcuMjg4LjM1My40MDcuMTA1LjA2My4xMTIuMDcyLjExNy4xMzYuMDA0LjAzOC0uMDEuMTQ2LS4wMjkuMjQzLS4wMi4wOTQtLjAzNi4xOTQtLjAzNi4yMjIuMDAyLjA3NC4wNy4xOTUuMTQzLjI1My4wNjQuMDUyLjA3Ni4wNTQuMjU1LjA1OS4xNjQuMDA1LjE5OC4wMDEuMjY0LS4wMy4xNjktLjA4Mi4yMTItLjIzNC4xNS0uNTI1LS4wNTItLjI0My0uMDQyLS4yOC4wODctLjM1NS4xMzctLjA4LjI4MS0uMjE5LjMyNC0uMzE0YS4zNjUuMzY1IDAgMCAwLS4xNzUtLjQ4LjM5NC4zOTQgMCAwIDAtLjE4MS0uMDMzYy0uMTI2IDAtLjIwNy4wMy0uMzU1LjEyNGwtLjA4NS4wNTMtLjA1My0uMDMyYy0uMjE5LS4xMy0uMjU5LS4xNDUtLjM5MS0uMTQzYS4zOTYuMzk2IDAgMCAwLS4xOTMuMDMyem0uMzktMi4xOTVjLS4zNzMuMDM2LS40NzUuMDUtLjY1NC4wODYtLjI5MS4wNi0uNjguMTk1LS45NTEuMzI4LS45NC40Ni0xLjU4OSAxLjIyNi0xLjc4NyAyLjExNC0uMDQuMTc2LS4wNDUuMjM0LS4wNDUuNTMgMCAuMjk0LjAwNS4zNTcuMDQzLjUyNC4yNjQgMS4xNiAxLjMzMiAyLjAxNyAyLjcxNCAyLjE3My4zLjAzMyAxLjU5Ni4wMzMgMS44OTYgMCAxLjExLS4xMjUgMi4wNjQtLjcyNyAyLjQ5My0xLjU3MS4xMTQtLjIyNi4xNjktLjM3Mi4yMi0uNjAyLjAzOS0uMTY3LjA0NC0uMjMuMDQ0LS41MjMgMC0uMjk3LS4wMDUtLjM1NS0uMDQ1LS41MzEtLjI4OC0xLjI5LTEuNTM5LTIuMzA0LTMuMDcyLTIuNDk3YTYuODczIDYuODczIDAgMCAwLS44NTUtLjAzMXptLjY0NS45MzdhMy4yODMgMy4yODMgMCAwIDEgMS40NC41MTRjLjIyMy4xNDguNTM3LjQ1OC42NzEuNjYyLjE2Ni4yNTEuMjYuNTA4LjMwMy44Mi4wMi4xNDMuMDEuMjUxLS4wNDMuNDgyLS4wOC4zNDUtLjMzMi43MDUtLjY3Mi45NTdhMy4xMTUgMy4xMTUgMCAwIDEtLjY4OS4zNDhjLS4zODIuMTIyLS42MzIuMTQ0LTEuNTI1LjEzOC0uNTgyLS4wMDYtLjY4Ni0uMDEtLjg1My0uMDQyLS41Ny0uMTA3LTEuMDIyLS4zMzQtMS4zNS0uNjgtLjI2NC0uMjgtLjM4NS0uNTM1LS40NS0uOTQ2LS4wMy0uMTkyLjAyNS0uNTA5LjEzNy0uNzc2LjEzNi0uMzI2LjQ4OC0uNzMuODM2LS45NjMuNDAzLS4yNjkuOTM0LS40NiAxLjQyMi0uNTEyLjE4Ny0uMDIuNTg2LS4wMi43NzMtLjAwMnptLTUuNTAzLTExYTEuNjUzIDEuNjUzIDAgMCAwLS42ODMuMjk4QzUuNjE3Ljc0IDUuMTczIDEuNjY2IDQuOTg1IDIuODE5Yy0uMDcuNDM2LS4xMTkgMS4wNC0uMTE5IDEuNTAzIDAgLjU0NC4wNjQgMS4yNC4xNTUgMS43MjEuMDIuMTA3LjAzMS4yMDIuMDIzLjIwOGE4LjEyIDguMTIgMCAwIDEtLjE4Ny4xNTIgNS4zMjQgNS4zMjQgMCAwIDAtLjk0OSAxLjAyIDUuNDkgNS40OSAwIDAgMC0uOTQgMi4zMzkgNi42MjUgNi42MjUgMCAwIDAtLjAyMyAxLjM1N2MuMDkxLjc4LjMyNSAxLjQzOC43MjcgMi4wNGwuMTMuMTk1LS4wMzcuMDY0Yy0uMjY5LjQ1Mi0uNDk4IDEuMTA1LS42MDUgMS43MzItLjA4NC40OTYtLjA5NS42MjktLjA5NSAxLjI5NCAwIC42Ny4wMDkuODAzLjA4OCAxLjI2Ni4wOTUuNTU1LjI4OCAxLjE0My41MDMgMS41MzQuMDcxLjEyOC4yNDMuMzkzLjI2NC40MDcuMDA3LjAwMy0uMDE0LjA2Ny0uMDQ2LjE0MWE3LjQwNSA3LjQwNSAwIDAgMC0uNTQ4IDEuODczYy0uMDYyLjQxNy0uMDcxLjU1Mi0uMDcxLjk5MSAwIC41Ni4wMzEuODMyLjE0OCAxLjI3OUwzLjQyIDI0aDEuNDc4bC0uMDUtLjA5MWMtLjI5Ny0uNTUyLS4zMjUtMS41NzUtLjA2OC0yLjU5Ny4xMTctLjQ3Mi4yNS0uODE5LjQ5OC0xLjI5NmwuMTQ4LS4yOXYtLjE3N2MwLS4xNjUtLjAwMy0uMTg0LS4wNTctLjI5M2EuOTE1LjkxNSAwIDAgMC0uMTk0LS4yNSAxLjc0IDEuNzQgMCAwIDEtLjM4NS0uNTQzYy0uNDI0LS45Mi0uNTA2LTIuMjg2LS4yMDgtMy40NTEuMTI0LS40ODYuMzI5LS45MTguNTQ0LTEuMTU0YS43ODcuNzg3IDAgMCAwIC4yMjMtLjUzMWMwLS4xOTUtLjA3LS4zNTUtLjIyNC0uNTIyYTMuMTM2IDMuMTM2IDAgMCAxLS44MTctMS43MjljLS4xNC0uOTYuMTE0LTIuMDA1LjY5LTIuODM0LjU2My0uODE0IDEuMzUzLTEuMzM2IDIuMjM3LTEuNDc1LjE5OS0uMDMzLjU3LS4wMjguNzc2LjAxLjIyNi4wNC4zNjcuMDI4LjUxMi0uMDQxLjE3OS0uMDg1LjI2OC0uMTkuMzc0LS40MzEuMDkzLS4yMTUuMTY1LS4zMzMuMzYtLjU3Ni4yMzQtLjI5LjQ2LS40ODkuODIyLS43MjkuNDEzLS4yNy44ODQtLjQ2NyAxLjM1Mi0uNTYxLjE3LS4wMzUuMjUtLjA0LjU2OS0uMDQuMzE5IDAgLjM5OC4wMDUuNTY5LjA0YTQuMDcgNC4wNyAwIDAgMSAxLjkxNC45OTdjLjExNy4xMDkuMzk4LjQ1Ny40ODguNjAyLjAzNC4wNTcuMDk1LjE3Ny4xMzIuMjY3LjEwNS4yNDEuMTk1LjM0Ni4zNzQuNDMuMTQuMDY4LjI4Ni4wODIuNTAzLjA0NS4zNDMtLjA1OC42MDctLjA1My45NDMuMDE2IDEuMTQ0LjIzIDIuMTQgMS4xNzMgMi41ODEgMi40MzcuMzg1IDEuMTA4LjI3NiAyLjI2Ny0uMjk2IDMuMTUzLS4wOTcuMTUtLjE5My4yNy0uMzMzLjQxOS0uMzAxLjMyMi0uMzAxLjcyMi0uMDAxIDEuMDUzLjQ5My41MzkuODAxIDEuODY2LjcwOCAzLjAzNi0uMDYyLjc3Mi0uMjYgMS40NjMtLjUzMyAxLjg1NGEyLjA5NiAyLjA5NiAwIDAgMS0uMjI0LjI1OC45MTYuOTE2IDAgMCAwLS4xOTQuMjVjLS4wNTQuMTA5LS4wNTcuMTI4LS4wNTcuMjkzdi4xNzhsLjE0OC4yOWMuMjQ4LjQ3Ni4zOC44MjMuNDk4IDEuMjk1LjI1MyAxLjAwOC4yMzEgMi4wMS0uMDU5IDIuNTgxYS44NDUuODQ1IDAgMCAwLS4wNDQuMDk4YzAgLjAwNi4zMjkuMDA5LjczMi4wMDloLjczbC4wMi0uMDc0LjAzNi0uMTM0Yy4wMTktLjA3Ni4wNTctLjMuMDg4LS41MTYuMDI5LS4yMTcuMDI5LTEuMDE2IDAtMS4yNTgtLjExLS44NzUtLjI5NS0xLjU3LS41OTctMi4yMjYtLjAzMi0uMDc0LS4wNTMtLjEzOC0uMDQ2LS4xNDEuMDA4LS4wMDUuMDU3LS4wNzQuMTA4LS4xNTIuMzc2LS41NjkuNjA3LTEuMjg0LjcyNC0yLjIyOC4wMzEtLjI2LjAzMS0xLjM3OCAwLTEuNjI4LS4wODMtLjY0NS0uMTgyLTEuMDgyLS4zNDgtMS41MjVhNi4wODMgNi4wODMgMCAwIDAtLjMyOS0uN2wtLjAzOC0uMDY0LjEzMS0uMTk0Yy40MDItLjYwNC42MzYtMS4yNjIuNzI3LTIuMDRhNi42MjUgNi42MjUgMCAwIDAtLjAyNC0xLjM1OCA1LjUxMiA1LjUxMiAwIDAgMC0uOTM5LTIuMzM5IDUuMzI1IDUuMzI1IDAgMCAwLS45NS0xLjAyIDguMDk3IDguMDk3IDAgMCAxLS4xODYtLjE1Mi42OTIuNjkyIDAgMCAxIC4wMjMtLjIwOGMuMjA4LTEuMDg3LjIwMS0yLjQ0My0uMDE3LTMuNTAzLS4xOS0uOTI0LS41MzUtMS42NTgtLjk4LTIuMDgyLS4zNTQtLjMzOC0uNzE2LS40ODItMS4xNS0uNDU1LS45OTYuMDU5LTEuOCAxLjIwNS0yLjExNiAzLjAxYTYuODA1IDYuODA1IDAgMCAwLS4wOTcuNzI2YzAgLjAzNi0uMDA3LjA2Ni0uMDE1LjA2NmEuOTYuOTYgMCAwIDEtLjE0OS0uMDc4QTQuODU3IDQuODU3IDAgMCAwIDEyIDMuMDNjLS44MzIgMC0xLjY4Ny4yNDMtMi40NTYuNjk4YS45NTguOTU4IDAgMCAxLS4xNDguMDc4Yy0uMDA4IDAtLjAxNS0uMDMtLjAxNS0uMDY2YTYuNzEgNi43MSAwIDAgMC0uMDk3LS43MjVDOC45OTcgMS4zOTIgOC4zMzcuMzE5IDcuNDYuMDQ4YTIuMDk2IDIuMDk2IDAgMCAwLS41ODUtLjA0MVptLjI5MyAxLjQwMmMuMjQ4LjE5Ny41MjMuNzU5LjY4MiAxLjM4OC4wMy4xMTMuMDYuMjQ0LjA2OS4yOTIuMDA3LjA0Ny4wMjYuMTUyLjA0MS4yMzMuMDY3LjM2NS4wOTguNzYuMTAyIDEuMjRsLjAwMi40NzUtLjEyLjE3NS0uMTE4LjE3OGgtLjI3OGMtLjMyNCAwLS42NDYuMDQxLS45NTQuMTI0bC0uMjM4LjA2Yy0uMDMzLjAwNy0uMDM4LS4wMDMtLjA1Ny0uMTQ0YTguNDM4IDguNDM4IDAgMCAxIC4wMTYtMi4zMjNjLjEyNC0uNzg4LjQxMy0xLjUwMS42OTYtMS43MTEuMDY3LS4wNS4wNzktLjA0OS4xNTcuMDEzem05LjgyNS0uMDEyYy4xNy4xMjYuMzU4LjQ2LjQ5OC44ODguMjguODU0LjM2IDIuMDI4LjIxMiAzLjE0NS0uMDE5LjE0LS4wMjQuMTUxLS4wNTcuMTQ0bC0uMjM4LS4wNmEzLjY5MyAzLjY5MyAwIDAgMC0uOTU0LS4xMjRoLS4yNzhsLS4xMTktLjE3OC0uMTE5LS4xNzUuMDAyLS40NzRjLjAwNC0uNjY5LjA2Ni0xLjE5LjIxNC0xLjc3Mi4xNTctLjYyMy40MzQtMS4xODUuNjgtMS4zODIuMDc4LS4wNjIuMDktLjA2My4xNTktLjAxMnoiLz48L3N2Zz4%3D" height="40" /></a>
+  <a href="https://github.com/florina787/Data-sets/releases"><img alt="Download: public beta coming soon" src="https://img.shields.io/badge/Download-Public%20beta%20coming%20soon-17110F?style=for-the-badge&labelColor=34251E" height="38" /></a>
 </p>
 <p align="center"><sub>
-  Also for <a href="https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Linux-x86_64.AppImage">Linux (AppImage)</a> ·
-  <a href="https://github.com/florina787/Data-sets/releases/latest">All files and checksums</a> ·
-  Free · Ollama is optional: VEENA's setup installs it for you · Unsigned beta builds: see <a href="#install-users">first launch</a>
+  Windows 10/11 · Mac with Apple Silicon · Linux x86_64 &nbsp;·&nbsp; Free &nbsp;·&nbsp; Installers are built and install-tested in CI; the first public release is not published yet.
 </sub></p>
 
 <p align="center">
-  <img src="docs/images/welcome.png" width="900" alt="VEENA.AI welcome screen" />
+  <img src="site/media/docs.gif" width="860" alt="A document is added to VEENA, then a question is answered with a citation that opens the exact passage" />
+</p>
+
+<table>
+<tr>
+<td width="33%" valign="top"><b>Private by design</b><br/>Your conversations, documents, meetings and screens stay on your computer. Nothing is uploaded.</td>
+<td width="33%" valign="top"><b>Free to use</b><br/>No subscription or account. Open models run on your own hardware.</td>
+<td width="33%" valign="top"><b>Built to be checked</b><br/>Answers cite their sources, and names or figures the model invented are flagged.</td>
+</tr>
+</table>
+
+### See it work
+
+<table>
+<tr>
+<td width="50%"><b>Ask anything</b><br/><img src="site/media/chat.gif" alt="A question typed into VEENA and a code answer streaming in from a local model" /></td>
+<td width="50%"><b>Understands the screen you share</b><br/><img src="site/media/screen.gif" alt="Choosing a window in VEENA's picker, then a summary of it" /></td>
+</tr>
+<tr>
+<td><b>Meeting notes from speech</b><br/><img src="site/media/meeting.gif" alt="Speech transcribed live and turned into a summary with decisions and action items" /></td>
+<td><b>Interview practice with feedback</b><br/><img src="site/media/interview.gif" alt="An interview question, a typed answer and scored feedback" /></td>
+</tr>
+<tr>
+<td><b>Evidence for every answer</b><br/><img src="site/media/agents.gif" alt="The Agents page with facts checked against sources and a knowledge graph" /></td>
+<td><b>Guided setup</b><br/><img src="site/media/setup.gif" alt="VEENA's setup checking the computer, the local AI runtime and a model" /></td>
+</tr>
+</table>
+<sub>Recorded from the real app with real local models and synthetic sample data, by
+<a href="apps/desktop/scripts/record-demos.mjs"><code>record-demos.mjs</code></a>. Model waits are shortened and long answers play faster;
+on the 4-core, CPU-only recording machine answers take from seconds to a few minutes.</sub>
+
+### Start in three steps
+
+1. **Download** VEENA for your computer (from the [releases page](https://github.com/florina787/Data-sets/releases), once the beta is published).
+2. **Open it.** Setup checks your computer and, with your permission, downloads the free local AI runtime and an Apache-2.0 model.
+3. **Ask.** Setup says *"VEENA is ready."* only after the model has answered on your computer.
+
+<p align="center">
+  <img alt="Runs locally" src="https://img.shields.io/badge/runs-100%25%20local-34251E?style=flat-square" />
+  <img alt="License GPL-3.0" src="https://img.shields.io/badge/license-GPL--3.0-34251E?style=flat-square" />
+  <img alt="Tests" src="https://img.shields.io/badge/tests-179%20passing-34251E?style=flat-square" />
+  <img alt="Platforms" src="https://img.shields.io/badge/Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-34251E?style=flat-square" />
 </p>
 
 ## Why it exists
@@ -179,7 +206,8 @@ What has been built and verified, and how:
 
 ## Install (users)
 
-1. Download VEENA.AI for your computer:
+1. Download VEENA.AI for your computer. *The first public release is not published yet; until it is, these
+   links return "not found". Installers are built and install-tested by CI.*
    * **Windows 10/11:** [VEENA.AI-Windows-Setup.exe](https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Windows-Setup.exe)
    * **Mac with Apple Silicon (M1–M4):** [VEENA.AI-macOS-AppleSilicon.dmg](https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-macOS-AppleSilicon.dmg). No Intel Mac build yet.
    * **Linux x86_64:** [VEENA.AI-Linux-x86_64.AppImage](https://github.com/florina787/Data-sets/releases/latest/download/VEENA.AI-Linux-x86_64.AppImage)
@@ -206,6 +234,20 @@ No money is required. You do pay in resources:
   21 tokens/s; a full-screen analysis with the licensed 2B vision model takes
   about 2.4 minutes. See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) and
   [the real-model evaluation](reports/REAL_MODEL_EVALUATION.md).
+
+## Feedback & Community
+
+Your perspective matters. Every note is read.
+
+* **Share feedback:** the [feedback page](site/feedback.html) on the VEENA website. It's a short form; email is
+  optional. *It opens once the form is set up and the website is deployed.*
+* **Join the conversation:** GitHub Discussions (General Discussion, Feature Requests, Product Feedback,
+  Support & Issues). *Not enabled on this repository yet.*
+* **Security problems:** report them privately: [SECURITY.md](SECURITY.md).
+
+How feedback, community links and visitor counts are set up, and what each number means:
+[feedback and community setup](docs/FEEDBACK_AND_COMMUNITY_SETUP.md) ·
+[readiness report](reports/FEEDBACK_AND_ANALYTICS_READINESS.md).
 
 ## Develop
 
@@ -325,3 +367,7 @@ the law requires. Capture is always visible and started by you.
 ## License
 
 GPL-3.0-or-later, same as this repository.
+
+---
+
+<p align="center"><sub>© 2026 Florina Regius · VEENA.AI · <a href="https://github.com/florina787/Data-sets/tree/claude/amazing-babbage-qia83y/veena-ai/site">Website source</a> · <a href="SECURITY.md">Security</a> · <a href="CONTRIBUTING.md">Contributing</a></sub></p>

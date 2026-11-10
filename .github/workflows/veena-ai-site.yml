@@ -8,7 +8,7 @@ name: VEENA.AI website
 
 on:
   push:
-    paths: ["veena-ai/site/**", "veena-ai/docs/images/**", ".github/workflows/veena-ai-site.yml"]
+    paths: ["veena-ai/site/**", "veena-ai/apps/desktop/assets/**", ".github/workflows/veena-ai-site.yml"]
   pull_request:
     paths: ["veena-ai/site/**", ".github/workflows/veena-ai-site.yml"]
   workflow_dispatch:
@@ -34,31 +34,21 @@ jobs:
         env:
           REF: ${{ github.ref_name }}
         run: veena-ai/site/build.sh "$GITHUB_WORKSPACE/_site"
-      - name: Check the page works on a phone and has no broken downloads
+      - name: Browser checks (phone, tablet, desktop; accessibility; downloads; feedback form)
         run: |
-          npm install --no-save playwright@1.63.0
+          mkdir -p /tmp/sitecheck /tmp/screens && cd /tmp/sitecheck
+          npm init -y >/dev/null
+          npm install --no-save playwright@1.63.0 axe-core@4.11.0
           npx playwright install --with-deps chromium
-          python3 -m http.server 8765 -d _site >/dev/null 2>&1 &
-          sleep 1
-          node - <<'JS'
-          const { chromium } = require("playwright");
-          (async () => {
-            const b = await chromium.launch();
-            for (const vp of [{ width: 390, height: 844 }, { width: 1366, height: 900 }]) {
-              const p = await b.newPage({ viewport: vp });
-              await p.goto("http://127.0.0.1:8765/index.html");
-              await p.waitForTimeout(4000);
-              if (await p.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)) throw new Error(`horizontal scroll at ${vp.width}px`);
-              // An enabled download button must point at a real file.
-              for (const href of await p.$$eval("#downloads .btn[href]", (bs) => bs.map((x) => x.href))) {
-                const r = await fetch(href, { method: "HEAD", redirect: "follow" });
-                if (!r.ok) throw new Error(`download link broken: ${href} -> ${r.status}`);
-                console.log("download OK:", href);
-              }
-            }
-            await b.close();
-          })().catch((e) => { console.error(e); process.exit(1); });
-          JS
+          node "$GITHUB_WORKSPACE/veena-ai/site/tools/site_check.mjs" "$GITHUB_WORKSPACE/_site" /tmp/screens
+      - name: Release download totals (GitHub's own per-file counts)
+        run: python3 veena-ai/site/tools/release_downloads.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: website-screenshots
+          path: /tmp/screens
+          retention-days: 14
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
@@ -80,7 +70,7 @@ jobs:
         run: |
           url="${{ steps.deployment.outputs.page_url }}"
           for i in 1 2 3 4 5 6; do
-            if curl -fsS "$url" | grep -q "Your intelligent conversation companion"; then echo "live: $url"; exit 0; fi
+            if curl -fsS "$url" | grep -q "Meet <span class=\"serif\">VEENA.</span>"; then echo "live: $url"; exit 0; fi
             sleep 10
           done
           echo "site did not come up at $url" >&2; exit 1

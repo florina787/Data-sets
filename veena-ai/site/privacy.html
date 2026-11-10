@@ -3,14 +3,27 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>VEENA.AI Privacy</title>
+<title>Privacy · VEENA.AI</title>
+<meta name="description" content="How VEENA.AI handles your data: everything stays on your computer; no accounts, no telemetry." />
+<meta name="theme-color" content="#17110f" />
 <link rel="icon" type="image/png" href="images/icon-64.png" />
 <link rel="stylesheet" href="site.css" />
-<script>try{if(localStorage.getItem("veena.site.theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}</script>
 </head>
 <body>
-<header class="top"><a class="brand" href="index.html"><img src="images/icon-64.png" alt="" width="32" height="32" /><span>veena<span class="dot">.ai</span></span></a><button class="theme" type="button" onclick="var l=document.documentElement.dataset.theme==='light';document.documentElement.dataset.theme=l?'dark':'light';try{localStorage.setItem('veena.site.theme',l?'dark':'light')}catch(e){}">Light / dark</button></header>
-<main class="policy">
+<a class="skip" href="#main">Skip to content</a>
+<div class="ambient" aria-hidden="true"><div class="wash"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="VEENA.AI home"><img src="images/icon-64.png" alt="" width="28" height="28" /><span><b>VEENA</b><i>.AI</i></span></a>
+    <nav aria-label="Main">
+      <a href="features.html">Features</a>
+      <a href="./#how">How It Works</a>
+      <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>
+      <a class="pill dark" href="./#download">Download</a>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap"><div class="doc">
 <h1>Privacy policy</h1>
 <p class="fine">Applies to the VEENA.AI desktop application and this website. Last updated 9 November 2026.</p>
 
@@ -33,14 +46,26 @@
 <p>Nothing else is sent. After setup, chat, document answers, meeting notes and screen analysis work without an internet connection.</p>
 
 <h2>This website</h2>
-<p>This site is static and sets no cookies. Your browser asks GitHub's public API which installers are available, so the download buttons only appear for files that exist. The hosting provider keeps standard server logs under its own policy. We do not run analytics on this site.</p>
+<p>This site is static and sets no cookies. Your browser asks GitHub's public API which installers are available, so the download buttons only appear for files that exist. The hosting provider keeps standard server logs under its own policy.</p>
+<p><b>Visitor counts.</b> No analytics run on this site today. If we switch on Cloudflare Web Analytics, it counts page views and visits without cookies or local storage, and Cloudflare states it does not collect visitors' personal data; this notice will say so first. Download totals come from GitHub's own per-file download counts, which contain no information about who downloaded.</p>
+
+<h2 id="feedback">Feedback</h2>
+<p>The <a href="feedback.html">feedback form</a> hands your answers to a Google Form owned by VEENA's developer; you review them and press Submit on Google's page. Google processes the submission under its own privacy policy, and responses are stored in the developer's Google account (Google Forms and Sheets). We use them only to improve VEENA, never sell or share them, and delete them on request. Email is optional and used only to reply to you. Please leave out passwords, private documents and other personal information.</p>
 
 <h2>Your responsibilities</h2>
 <p>Only capture meetings, calls or screens you are authorised to capture, and follow the laws and policies that apply to you, including telling other participants when that is required. VEENA is designed for open use, not covert assistance.</p>
 
 <h2>Contact</h2>
-<p>Questions or concerns: open an issue on <a href="https://github.com/florina787/Data-sets/issues">GitHub</a>.</p>
-<p><a href="index.html">Back to VEENA.AI</a></p>
-</main>
+<p>Questions or concerns: use the <a href="feedback.html">feedback form</a>. Security issues: report them privately as described in the <a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/SECURITY.md">security policy</a>.</p>
+<p><a href="./">Back to VEENA.AI</a></p>
+</div></main>
+<footer>
+  <div class="wrap">
+    <span>© 2026 Florina Regius · VEENA.AI · GPL-3.0</span>
+    <nav aria-label="Footer"><a href="./">Home</a><a href="features.html">Features</a><a href="https://github.com/florina787/Data-sets/blob/__REF__/veena-ai/SECURITY.md">Security</a><a href="https://github.com/florina787/Data-sets/releases">Releases</a><a href="feedback.html">Feedback</a><a data-community hidden href="#">Community</a></nav>
+  </div>
+</footer>
+<script src="config.js"></script>
+<script src="site.js" defer></script>
 </body>
 </html>

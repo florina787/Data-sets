@@ -6,11 +6,25 @@ here="$(cd "$(dirname "$0")" && pwd)"
 out="${1:-$here/_site}"
 ref="${REF:-main}"
 rm -rf "$out" && mkdir -p "$out/images"
-cp "$here"/index.html "$here"/privacy.html "$here"/site.css "$here"/downloads.js "$out/"
+# Nothing switched on unverified (feedback form, community link, analytics), and no secrets.
+python3 "$here/tools/check_config.py" "$here/config.js"
+cp "$here"/index.html "$here"/features.html "$here"/feedback.html "$here"/privacy.html \
+   "$here"/site.css "$here"/site.js "$here"/config.js "$out/"
+cp -R "$here/fonts" "$out/fonts"
 cp "$here"/../apps/desktop/assets/icon-64.png "$out/images/"
-for img in agents agents-answer agents-graphs citations meeting screen interview; do
-  cp "$here/../docs/images/$img.png" "$out/images/"
-done
+# Demo media (recorded from the real app by apps/desktop/scripts/record-demos.mjs).
+if [ -d "$here/media" ]; then cp -R "$here/media" "$out/media"; fi
+# Media budget: keep pages fast on ordinary connections.
+python3 - "$out" <<'PY'
+import pathlib, sys
+media = pathlib.Path(sys.argv[1]) / "media"
+files = list(media.glob("*")) if media.exists() else []
+limits = {".gif": 6e6, ".mp4": 6e6, ".webm": 6e6, ".jpg": 400e3}
+over = [f"{f.name} {f.stat().st_size/1e6:.1f} MB" for f in files if f.stat().st_size > limits.get(f.suffix, 1e6)]
+total = sum(f.stat().st_size for f in files)
+if over or total > 60e6:
+    sys.exit("media over budget: " + ", ".join(over) + f" (total {total/1e6:.1f} MB, limit 60 MB)")
+PY
 # Never publish the owner's private photo, even by accident.
 if find "$out" -iname '*founder*' | grep -q .; then echo "refusing: private photo in site output" >&2; exit 1; fi
 sed -i.bak "s#__REF__#${ref}#g" "$out"/*.html && rm -f "$out"/*.bak
@@ -19,8 +33,8 @@ python3 - "$out" <<'PY'
 import re, sys, pathlib
 out = pathlib.Path(sys.argv[1]); missing = []
 for page in out.glob("*.html"):
-    for ref in re.findall(r'(?:src|href)="([^"#:]+)"', page.read_text()):
-        if not (out / ref).exists():
+    for ref in re.findall(r'(?:src|href|srcset|poster|data-video)="([^"#:]+)"', page.read_text()):
+        if ref not in ("./",) and not (out / ref.split("?")[0]).exists():
             missing.append(f"{page.name}: {ref}")
 if missing:
     sys.exit("missing local files:\n" + "\n".join(missing))
