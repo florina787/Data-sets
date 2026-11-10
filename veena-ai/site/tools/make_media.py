@@ -97,6 +97,10 @@ def build(name: str, spec: list) -> Path:
     # change marked at 1128.0 s appears at 1126.3 s), so every cut is shifted by that.
     marks = {k: v - LAG for k, v in marks.items()}
     parts = [resolve(marks, *p) for p in spec]
+    # The lag differs between recordings, and a clip must never open on the previous page,
+    # so each clip starts at its unshifted start mark (the page has switched by then).
+    a0, b0, s0 = parts[0]
+    parts[0] = (min(a0 + LAG, b0 - 0.2), b0, s0)
     # Always end on the finished result at normal speed: at high speed-ups the last
     # seconds would otherwise last less than a frame and the clip would end mid-answer.
     a, b, speed = parts[-1]
