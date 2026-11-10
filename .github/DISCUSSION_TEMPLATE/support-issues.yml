@@ -1,0 +1,23 @@
+body:
+  - type: markdown
+    attributes:
+      value: "Security problem? Please don't post it here: report it privately (see veena-ai/SECURITY.md)."
+  - type: input
+    id: system
+    attributes:
+      label: Operating system and VEENA version
+      placeholder: "macOS 15 on M2, VEENA 0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log (optional)
+      description: Settings → Diagnostics → Show log. Secrets are redacted, but read it before pasting.
+      render: text

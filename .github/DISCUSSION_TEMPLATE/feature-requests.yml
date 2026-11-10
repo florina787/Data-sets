@@ -1,0 +1,23 @@
+title: "Idea: "
+body:
+  - type: markdown
+    attributes:
+      value: "One idea per post, please. Search first: if someone already asked, upvote theirs."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation or problem, in your own words.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: VEENA version and operating system (optional)
+      placeholder: "0.1.0 on Windows 11"

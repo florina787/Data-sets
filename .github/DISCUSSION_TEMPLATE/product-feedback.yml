@@ -1,0 +1,19 @@
+body:
+  - type: dropdown
+    id: experience
+    attributes:
+      label: How was your experience?
+      options: ["Excellent", "Good", "Needs improvement"]
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Tell us more
+      description: What worked, what didn't, what surprised you. Please leave out personal or private information.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: VEENA version and operating system (optional)
