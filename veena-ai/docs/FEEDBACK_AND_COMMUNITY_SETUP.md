@@ -7,7 +7,7 @@ and anything that looks like a password or API key.
 | Feature | Today | Turned on by | Cost |
 | --- | --- | --- | --- |
 | Feedback form | Shown, but disabled with "being set up" | `feedback.formUrl` + `feedback.entries` | Free (Google account) |
-| Community link ("Join the conversation", footer "Community") | Hidden | `discussionsEnabled: true` after enabling Discussions | Free |
+| Community link ("Join the conversation", footer "Community") | **On** (Discussions verified enabled) | `discussionsEnabled: true` | Free |
 | Visitor counts | Off; no analytics script | `cloudflareToken` | Free (Cloudflare account) |
 | Download totals | Works now, needs no setup | `python site/tools/release_downloads.py` | Free |
 
@@ -77,8 +77,9 @@ The form ID is not secret: it is in every public link to the form.
 
 ## 2. Community: GitHub Discussions
 
-GitHub API (checked 2026-11-10): `has_discussions: false` and **`has_issues: false`** on
-`florina787/Data-sets`. Both are repository settings only the owner can change.
+**Done 2026-11-10:** the owner enabled Issues, Discussions and Pages (GitHub API: `has_issues`,
+`has_discussions` and `has_pages` all `true`), and `discussionsEnabled` is now `true` in `site/config.js`.
+Remaining: the categories and the pinned welcome post (2.2 and 2.3).
 
 ### 2.1 Turn them on
 

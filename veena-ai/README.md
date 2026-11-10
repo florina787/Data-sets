@@ -241,8 +241,9 @@ Your perspective matters. Every note is read.
 
 * **Share feedback:** the [feedback page](site/feedback.html) on the VEENA website. It's a short form; email is
   optional. *It opens once the form is set up and the website is deployed.*
-* **Join the conversation:** GitHub Discussions (General Discussion, Feature Requests, Product Feedback,
-  Support & Issues). *Not enabled on this repository yet.*
+* **Join the conversation:** [GitHub Discussions](https://github.com/florina787/Data-sets/discussions):
+  General Discussion, Feature Requests, Product Feedback, Support & Issues.
+* **Report a bug:** [GitHub Issues](https://github.com/florina787/Data-sets/issues).
 * **Security problems:** report them privately: [SECURITY.md](SECURITY.md).
 
 How feedback, community links and visitor counts are set up, and what each number means:

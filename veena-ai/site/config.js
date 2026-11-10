@@ -14,7 +14,7 @@ window.VEENA_CONFIG = {
 
   // GitHub Discussions. Set to true ONLY after Discussions is enabled in
   // Settings > General > Features and the categories exist; CI checks the API.
-  discussionsEnabled: false,
+  discussionsEnabled: true,
 
   // Cloudflare Web Analytics site token (public, cookieless page-view counts).
   // Leave null until the owner creates the site in their Cloudflare dashboard.
