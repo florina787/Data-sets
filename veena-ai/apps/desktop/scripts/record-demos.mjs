@@ -26,6 +26,15 @@ execFileSync("espeak-ng", [
 ]);
 execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", raw, "-ac", "1", "-ar", "16000", wav]);
 
+// Privacy: the Home screen shows public/founder.png when it exists (a private local
+// photo, never committed). Refuse to record while it is in the build.
+for (const f of ["public/founder.png", "dist/founder.png"]) {
+  if (fs.existsSync(path.resolve(import.meta.dirname, "..", f))) {
+    console.error(`refusing to record: ${f} exists. Move it out of apps/desktop (and rebuild) first.`);
+    process.exit(2);
+  }
+}
+
 const app = await electron.launch({
   args: [".", "--no-sandbox", "--use-fake-device-for-media-stream", `--use-file-for-fake-audio-capture=${wav}`],
   cwd: path.resolve(import.meta.dirname, ".."),

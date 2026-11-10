@@ -15,8 +15,8 @@ was invented: there is no form URL, no Discussions link, no analytics token and 
 | Feedback page (`feedback.html`) | **Done, form pending** | Experience · Type · Message · optional Email · privacy notice. Disabled with "being set up" until a form is configured (browser-tested) |
 | Google Forms + Sheets hand-off | **Built and tested with an example config; needs the owner's form** | Documented pre-filled-link feature; browser test checks every answer reaches the right `entry.` field, special characters intact, empty email omitted |
 | Email notification on new feedback | **Documented**, owner turns it on in Google Forms | `docs/FEEDBACK_AND_COMMUNITY_SETUP.md` §1.3; no address or credential in the website |
-| GitHub Discussions | **Not enabled** (API: `has_discussions: false`) | Categories, three discussion form templates and a pinned welcome post prepared |
-| Footer "Community" link | **Hidden** until verified | Build fails if `discussionsEnabled` is true while the API says false |
+| GitHub Discussions | **Enabled** by the owner (API: `has_discussions: true`) | Categories and pinned welcome post still to create; three form templates ready |
+| Footer "Community" link | **On** (verified) | Build fails if `discussionsEnabled` is true while the API says false |
 | Download-click instrumentation | **Hook only; sends nothing** | Page-local `veena:download` event `{os, version, campaign}`; no cookies, storage or fingerprinting |
 | Release download counts | **Done** | `site/tools/release_downloads.py`; today: "No published VEENA release yet" |
 | Cloudflare Web Analytics | **Prepared, off** | Beacon loaded only for a valid 32-hex token; free tier and limits checked against Cloudflare's docs |
@@ -81,4 +81,20 @@ was invented: there is no form URL, no Discussions link, no analytics token and 
 
 ## Website QA
 
-QA_PLACEHOLDER
+Run 2026-11-10 on the built site (`site/build.sh`, then `site/tools/site_check.mjs`), Chromium via Playwright:
+
+| Check | Result |
+| --- | --- |
+| Pages | index, features, feedback, privacy |
+| Viewports | 390×844 (phone), 820×1180 (tablet), 1440×900 (desktop) |
+| Horizontal scrolling | None (two defects found and fixed first: laptop base 403 px on a 390 px phone; low-contrast benefit numerals) |
+| axe-core accessibility, serious or critical | None, on phone and desktop |
+| Third-party requests | None besides `api.github.com` (release list) |
+| Page errors | None |
+| Download panel | "Public beta coming soon" (no published release, so no download link is offered) |
+| Feedback flow | Pending state correct; example config hands answers to Google Forms correctly |
+| Community link | Shown; Discussions verified enabled through the GitHub API |
+| Demo clips privacy (`site/tools/check_media_privacy.py`) | 15 clips, every half second read by OCR: no Home screen (which can show a private local photo) |
+| Site size | 45 files, 18.4 MB |
+
+Lighthouse scores have not been measured yet, so none are claimed.

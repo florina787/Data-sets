@@ -23,6 +23,8 @@ out = Path(sys.argv[1])
 out.mkdir(parents=True, exist_ok=True)
 RECS = [(Path(d), {m["name"]: m["t"] for m in json.loads((Path(d) / "marks.json").read_text())}) for d in sys.argv[2:]]
 MAX_NORMAL = 14.0  # longer stretches are played faster, up to 3x
+LAG = 1.7
+HOLD = {"setup": 2.0}  # seconds to hold the final frame where the take ends quickly
 STREAM = 10.0  # a long streamed answer plays faster so it lasts at most about 10 s (stated on the site)
 
 
@@ -42,7 +44,12 @@ def resolve(marks: dict, a, b, target: float | None) -> tuple[float, float, floa
 
 
 DEMOS = {
-    "chat": [seg("chat:start", "chat:wait"), seg("chat:wait", "chat:streaming", 1.5), seg("chat:streaming", "chat:end", STREAM)],
+    # Starts after the Home screen (+LAG cancels the shift): Home can show a private local photo.
+    "chat": [
+        seg(lambda m: m["chat:start"] + LAG, "chat:wait"),
+        seg("chat:wait", "chat:streaming", 1.5),
+        seg("chat:streaming", "chat:end", STREAM),
+    ],
     "docs": [seg("docs:start", "docs:wait"), seg("docs:wait", "docs:streaming", 1.5), seg("docs:streaming", "docs:end", STREAM)],
     "screen": [
         seg("screen:start", "screen:wait"),
@@ -64,7 +71,8 @@ DEMOS = {
     ],
     "agents": [seg("agents:start", "agents:end")],
     # The whole guided setup, from the first screen to the first page after it.
-    "setup": [seg(0.5, lambda m: m["chat:start"] - 2.0, 12.0)],
+    # Ends on "VEENA is ready." (just before the Home screen, which can show a private photo).
+    "setup": [seg(0.5, lambda m: m["chat:start"] - 0.8, 12.0)],
 }
 
 
@@ -74,7 +82,7 @@ def run(*args: str) -> None:
 
 def pick(parts: list) -> tuple[Path, dict]:
     need = {x for a, b, _ in parts for x in (a, b) if isinstance(x, str)} | (
-        {"chat:start"} if any(callable(b) for _, b, _ in parts) else set()
+        {"chat:start"} if any(callable(a) or callable(b) for a, b, _ in parts) else set()
     )
     for d, marks in RECS:
         if need <= marks.keys():
@@ -85,7 +93,15 @@ def pick(parts: list) -> tuple[Path, dict]:
 def build(name: str, spec: list) -> Path:
     rec, marks = pick(spec)
     src = rec / "session.webm"
+    # The recorded video runs about 1.7 s behind the step timestamps (measured: a page
+    # change marked at 1128.0 s appears at 1126.3 s), so every cut is shifted by that.
+    marks = {k: v - LAG for k, v in marks.items()}
     parts = [resolve(marks, *p) for p in spec]
+    # Always end on the finished result at normal speed: at high speed-ups the last
+    # seconds would otherwise last less than a frame and the clip would end mid-answer.
+    a, b, speed = parts[-1]
+    if speed > 1.0 and b - a > 4.0:
+        parts[-1:] = [resolve(marks, a, b - 2.5, None if speed <= 3.0 else (b - 2.5 - a) / speed), (b - 2.5, b, 1.0)]
     print(f"{name}: from {rec.name}")
     # Cut each piece on its own (low memory), then join them: one take, only time edited.
     tmp = out / f".{name}-parts"
@@ -102,7 +118,8 @@ def build(name: str, spec: list) -> Path:
             str(src),
             "-an",
             "-vf",
-            f"setpts=(PTS-STARTPTS)/{speed:.3f},fps=30,scale=1280:-2:flags=lanczos",
+            f"setpts=(PTS-STARTPTS)/{speed:.3f},fps=30,scale=1280:-2:flags=lanczos"
+            + (f",tpad=stop_mode=clone:stop_duration={HOLD[name]}" if i == len(parts) - 1 and name in HOLD else ""),
             "-c:v",
             "libx264",
             "-preset",
