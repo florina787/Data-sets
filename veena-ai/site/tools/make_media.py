@@ -87,19 +87,43 @@ def build(name: str, spec: list) -> Path:
     src = rec / "session.webm"
     parts = [resolve(marks, *p) for p in spec]
     print(f"{name}: from {rec.name}")
-    chains, labels = [], []
+    # Cut each piece on its own (low memory), then join them: one take, only time edited.
+    tmp = out / f".{name}-parts"
+    tmp.mkdir(exist_ok=True)
+    pieces = []
     for i, (a, b, speed) in enumerate(parts):
-        chains.append(f"[0:v]trim=start={a:.2f}:end={b:.2f},setpts=(PTS-STARTPTS)/{speed:.3f}[v{i}]")
-        labels.append(f"[v{i}]")
-    graph = ";".join(chains) + f";{''.join(labels)}concat=n={len(parts)}:v=1:a=0,fps=30,scale=1280:-2:flags=lanczos[out]"
+        piece = tmp / f"{i}.mp4"
+        run(
+            "-ss",
+            f"{a:.2f}",
+            "-to",
+            f"{b:.2f}",
+            "-i",
+            str(src),
+            "-an",
+            "-vf",
+            f"setpts=(PTS-STARTPTS)/{speed:.3f},fps=30,scale=1280:-2:flags=lanczos",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "16",
+            "-pix_fmt",
+            "yuv420p",
+            str(piece),
+        )
+        pieces.append(piece)
+    listing = tmp / "list.txt"
+    listing.write_text("".join(f"file '{x.name}'\n" for x in pieces))
     mp4 = out / f"{name}.mp4"
     run(
+        "-f",
+        "concat",
+        "-safe",
+        "0",
         "-i",
-        str(src),
-        "-filter_complex",
-        graph,
-        "-map",
-        "[out]",
+        str(listing),
         "-c:v",
         "libx264",
         "-preset",
@@ -113,6 +137,9 @@ def build(name: str, spec: list) -> Path:
         "-an",
         str(mp4),
     )
+    for x in [*pieces, listing]:
+        x.unlink()
+    tmp.rmdir()
     run("-i", str(mp4), "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "42", "-row-mt", "1", "-an", str(out / f"{name}.webm"))
     # GIF: 12 fps, 720 px wide, palette tuned per clip.
     pal = out / f"{name}-palette.png"
