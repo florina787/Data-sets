@@ -1,0 +1,58 @@
+[
+ {
+  "session": [
+   [
+    "What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?",
+    "negative_topics"
+   ],
+   [
+    "Compare the top two topics.",
+    "compare_topics"
+   ],
+   [
+    "What about the previous month?",
+    "compare_topics"
+   ],
+   [
+    "Now show similar conversations for the first one.",
+    "similar_conversations"
+   ],
+   [
+    "Which findings are uncertain?",
+    "uncertainty_review"
+   ]
+  ]
+ },
+ {
+  "session": [
+   [
+    "Which recurring customer concerns should contact-centre leadership review first?",
+    "leadership_priorities"
+   ],
+   [
+    "Why was this concern ranked first?",
+    "explain_previous"
+   ],
+   [
+    "Summarize this for senior leadership.",
+    "leadership_summary"
+   ],
+   [
+    "Show three supporting examples.",
+    "similar_conversations"
+   ]
+  ]
+ },
+ {
+  "session": [
+   [
+    "Which support agents may benefit from additional coaching on empathy or customer communication, and what evidence supports that view?",
+    "agent_coaching"
+   ],
+   [
+    "Show only negative conversations.",
+    "conversation_list"
+   ]
+  ]
+ }
+]

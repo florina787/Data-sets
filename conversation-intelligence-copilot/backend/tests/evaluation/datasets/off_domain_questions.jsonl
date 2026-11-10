@@ -1,0 +1,30 @@
+{"question": "hello there", "split": "dev"}
+{"question": "hi, how are you?", "split": "dev"}
+{"question": "good morning", "split": "test"}
+{"question": "thanks a lot!", "split": "test"}
+{"question": "how was the sales today?", "split": "dev"}
+{"question": "what were our sales figures this quarter?", "split": "test"}
+{"question": "what is the capital of France?", "split": "dev"}
+{"question": "who won the football world cup in 2022?", "split": "test"}
+{"question": "what's the weather like tomorrow?", "split": "dev"}
+{"question": "write me a short poem about the sea", "split": "test"}
+{"question": "explain what machine learning is", "split": "dev"}
+{"question": "what is a large language model?", "split": "test"}
+{"question": "what is a good customer satisfaction score for a contact centre?", "split": "dev"}
+{"question": "what is the industry average first contact resolution rate?", "split": "test"}
+{"question": "how do I hire a good support team lead?", "split": "dev"}
+{"question": "what are best practices for writing a support macro?", "split": "test"}
+{"question": "how do I install python on windows?", "split": "dev"}
+{"question": "can you translate hello into Spanish?", "split": "test"}
+{"question": "what time is it in Tokyo?", "split": "dev"}
+{"question": "recommend a good book on leadership", "split": "test"}
+{"question": "what should I eat for dinner?", "split": "dev"}
+{"question": "how do I reset my router?", "split": "test"}
+{"question": "what is the stock price of Microsoft?", "split": "dev"}
+{"question": "tell me a joke", "split": "test"}
+{"question": "what is the difference between CSAT and NPS?", "split": "dev"}
+{"question": "how can contact centres reduce average handle time in general?", "split": "test"}
+{"question": "summarise the history of call centres", "split": "dev"}
+{"question": "what programming language should I learn first?", "split": "test"}
+{"question": "how many employees does a typical contact centre have?", "split": "dev"}
+{"question": "what's your favourite movie?", "split": "test"}

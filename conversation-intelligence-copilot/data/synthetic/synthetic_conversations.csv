@@ -1,0 +1,1093 @@
+conv_id,turn_index,timestamp,role,text,customer_name,agent_name
+S0000001,0,2025-09-11T11:34:00,customer,"My card got billed two times for the Wallet subscription, please sort it.",SynCust0000,SynAgent07
+S0000001,1,2025-09-11T11:38:00,agent,Give me a minute to check this.,SynCust0000,SynAgent07
+S0000001,2,2025-09-11T11:42:00,customer,Thanks for the quick help.,SynCust0000,SynAgent07
+S0000001,3,2025-09-11T11:46:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0000,SynAgent07
+S0000001,4,2025-09-11T11:50:00,customer,Thanks for the quick help.,SynCust0000,SynAgent07
+S0000001,5,2025-09-11T11:54:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0000,SynAgent07
+S0000002,0,2025-08-28T09:38:00,customer,"Something is wrong with Course, it doesn't work at all.",SynCust0001,SynAgent02
+S0000002,1,2025-08-28T09:42:00,agent,Could you confirm the email on the account?,SynCust0001,SynAgent02
+S0000002,2,2025-08-28T09:46:00,customer,"This still isn't sorted, I want a manager.",SynCust0001,SynAgent02
+S0000002,3,2025-08-28T09:50:00,agent,Thanks for your patience while I check.,SynCust0001,SynAgent02
+S0000002,4,2025-08-28T09:54:00,customer,"Brilliant, it works now, thank you!",SynCust0001,SynAgent02
+S0000002,5,2025-08-28T09:58:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0001,SynAgent02
+S0000003,0,2025-08-08T18:39:00,customer,Been waiting a week and my Order never showed up.,SynCust0002,SynAgent02
+S0000003,1,2025-08-08T18:43:00,agent,Thanks for your patience while I check.,SynCust0002,SynAgent02
+S0000003,2,2025-08-08T18:47:00,customer,Thanks for the quick help.,SynCust0002,SynAgent02
+S0000003,3,2025-08-08T18:51:00,agent,I completely understand how annoying this is.,SynCust0002,SynAgent02
+S0000003,4,2025-08-08T18:55:00,customer,"This still isn't sorted, I want a manager.",SynCust0002,SynAgent02
+S0000003,5,2025-08-08T18:59:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0002,SynAgent02
+S0000004,0,2025-08-29T09:47:00,customer,The app shuts down every time I open Course.,SynCust0003,SynAgent03
+S0000004,1,2025-08-29T09:51:00,agent,Thanks for your patience while I check.,SynCust0003,SynAgent03
+S0000004,2,2025-08-29T09:55:00,customer,"This still isn't sorted, I want a manager.",SynCust0003,SynAgent03
+S0000004,3,2025-08-29T09:59:00,agent,Thanks for your patience while I check.,SynCust0003,SynAgent03
+S0000004,4,2025-08-29T10:03:00,customer,"Alright, I'll wait to hear back.",SynCust0003,SynAgent03
+S0000004,5,2025-08-29T10:07:00,agent,Thanks for your patience while I check.,SynCust0003,SynAgent03
+S0000004,6,2025-08-29T10:11:00,customer,"Please hurry, this is really urgent.",SynCust0003,SynAgent03
+S0000004,7,2025-08-29T10:15:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0003,SynAgent03
+S0000005,0,2025-08-14T18:55:00,customer,I'm locked out of my account and can't sign in.,SynCust0004,SynAgent04
+S0000005,1,2025-08-14T18:59:00,agent,Thanks for your patience while I check.,SynCust0004,SynAgent04
+S0000005,2,2025-08-14T19:03:00,customer,"This still isn't sorted, I want a manager.",SynCust0004,SynAgent04
+S0000005,3,2025-08-14T19:07:00,agent,Thanks for your patience while I check.,SynCust0004,SynAgent04
+S0000005,4,2025-08-14T19:11:00,customer,"Please hurry, this is really urgent.",SynCust0004,SynAgent04
+S0000005,5,2025-08-14T19:15:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0004,SynAgent04
+S0000006,0,2025-10-03T18:04:00,customer,I'm locked out of my account and can't sign in.,SynCust0005,SynAgent07
+S0000006,1,2025-10-03T18:08:00,agent,Give me a minute to check this.,SynCust0005,SynAgent07
+S0000006,2,2025-10-03T18:12:00,customer,"Alright, I'll wait to hear back.",SynCust0005,SynAgent07
+S0000006,3,2025-10-03T18:16:00,agent,Could you confirm the email on the account?,SynCust0005,SynAgent07
+S0000006,4,2025-10-03T18:20:00,customer,"Please hurry, this is really urgent.",SynCust0005,SynAgent07
+S0000006,5,2025-10-03T18:24:00,agent,Could you confirm the email on the account?,SynCust0005,SynAgent07
+S0000006,6,2025-10-03T18:28:00,customer,"This still isn't sorted, I want a manager.",SynCust0005,SynAgent07
+S0000006,7,2025-10-03T18:32:00,agent,Thanks for your patience while I check.,SynCust0005,SynAgent07
+S0000006,8,2025-10-03T18:36:00,customer,"Alright, I'll wait to hear back.",SynCust0005,SynAgent07
+S0000006,9,2025-10-03T18:40:00,agent,Thanks for your patience while I check.,SynCust0005,SynAgent07
+S0000006,10,2025-10-03T18:44:00,customer,"Brilliant, it works now, thank you!",SynCust0005,SynAgent07
+S0000006,11,2025-10-03T18:48:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0005,SynAgent07
+S0000007,0,2025-11-21T14:51:00,customer,The app shuts down every time I open Insurance.,SynCust0006,SynAgent08
+S0000007,1,2025-11-21T14:55:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0006,SynAgent08
+S0000007,2,2025-11-21T14:59:00,customer,Thanks for the quick help.,SynCust0006,SynAgent08
+S0000007,3,2025-11-21T15:03:00,agent,I completely understand how annoying this is.,SynCust0006,SynAgent08
+S0000007,4,2025-11-21T15:07:00,customer,"Please hurry, this is really urgent.",SynCust0006,SynAgent08
+S0000007,5,2025-11-21T15:11:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0006,SynAgent08
+S0000008,0,2025-11-05T14:50:00,customer,Quick question about Course please.,SynCust0007,SynAgent03
+S0000008,1,2025-11-05T14:54:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0007,SynAgent03
+S0000008,2,2025-11-05T14:58:00,customer,Thanks for the quick help.,SynCust0007,SynAgent03
+S0000008,3,2025-11-05T15:02:00,agent,Thanks for your patience while I check.,SynCust0007,SynAgent03
+S0000008,4,2025-11-05T15:06:00,customer,"Alright, I'll wait to hear back.",SynCust0007,SynAgent03
+S0000008,5,2025-11-05T15:10:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0007,SynAgent03
+S0000009,0,2025-09-13T14:58:00,customer,Quick question about Wallet please.,SynCust0008,SynAgent08
+S0000009,1,2025-09-13T15:02:00,agent,Give me a minute to check this.,SynCust0008,SynAgent08
+S0000009,2,2025-09-13T15:06:00,customer,"Brilliant, it works now, thank you!",SynCust0008,SynAgent08
+S0000009,3,2025-09-13T15:10:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0008,SynAgent08
+S0000009,4,2025-09-13T15:14:00,customer,"This still isn't sorted, I want a manager.",SynCust0008,SynAgent08
+S0000009,5,2025-09-13T15:18:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0008,SynAgent08
+S0000010,0,2025-11-02T14:17:00,customer,The app shuts down every time I open Order.,SynCust0009,SynAgent08
+S0000010,1,2025-11-02T14:21:00,agent,Give me a minute to check this.,SynCust0009,SynAgent08
+S0000010,2,2025-11-02T14:25:00,customer,"This still isn't sorted, I want a manager.",SynCust0009,SynAgent08
+S0000010,3,2025-11-02T14:29:00,agent,I completely understand how annoying this is.,SynCust0009,SynAgent08
+S0000010,4,2025-11-02T14:33:00,customer,"Alright, I'll wait to hear back.",SynCust0009,SynAgent08
+S0000010,5,2025-11-02T14:37:00,agent,Could you confirm the email on the account?,SynCust0009,SynAgent08
+S0000010,6,2025-11-02T14:41:00,customer,Thanks for the quick help.,SynCust0009,SynAgent08
+S0000010,7,2025-11-02T14:45:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0009,SynAgent08
+S0000010,8,2025-11-02T14:49:00,customer,"Brilliant, it works now, thank you!",SynCust0009,SynAgent08
+S0000010,9,2025-11-02T14:53:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0009,SynAgent08
+S0000010,10,2025-11-02T14:57:00,customer,"Please hurry, this is really urgent.",SynCust0009,SynAgent08
+S0000010,11,2025-11-02T15:01:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0009,SynAgent08
+S0000011,0,2025-11-07T13:54:00,customer,Been waiting a week and my Course never showed up.,SynCust0010,SynAgent03
+S0000011,1,2025-11-07T13:58:00,agent,I completely understand how annoying this is.,SynCust0010,SynAgent03
+S0000011,2,2025-11-07T14:02:00,customer,"This still isn't sorted, I want a manager.",SynCust0010,SynAgent03
+S0000011,3,2025-11-07T14:06:00,agent,Could you confirm the email on the account?,SynCust0010,SynAgent03
+S0000011,4,2025-11-07T14:10:00,customer,"Brilliant, it works now, thank you!",SynCust0010,SynAgent03
+S0000011,5,2025-11-07T14:14:00,agent,I completely understand how annoying this is.,SynCust0010,SynAgent03
+S0000011,6,2025-11-07T14:18:00,customer,Thanks for the quick help.,SynCust0010,SynAgent03
+S0000011,7,2025-11-07T14:22:00,agent,Give me a minute to check this.,SynCust0010,SynAgent03
+S0000011,8,2025-11-07T14:26:00,customer,"Please hurry, this is really urgent.",SynCust0010,SynAgent03
+S0000011,9,2025-11-07T14:30:00,agent,I completely understand how annoying this is.,SynCust0010,SynAgent03
+S0000011,10,2025-11-07T14:34:00,customer,Thanks for the quick help.,SynCust0010,SynAgent03
+S0000011,11,2025-11-07T14:38:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0010,SynAgent03
+S0000012,0,2025-09-05T16:05:00,customer,"Something is wrong with Broadband, it doesn't work at all.",SynCust0011,SynAgent06
+S0000012,1,2025-09-05T16:09:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0011,SynAgent06
+S0000012,2,2025-09-05T16:13:00,customer,"Please hurry, this is really urgent.",SynCust0011,SynAgent06
+S0000012,3,2025-09-05T16:17:00,agent,Could you confirm the email on the account?,SynCust0011,SynAgent06
+S0000012,4,2025-09-05T16:21:00,customer,"Please hurry, this is really urgent.",SynCust0011,SynAgent06
+S0000012,5,2025-09-05T16:25:00,agent,Could you confirm the email on the account?,SynCust0011,SynAgent06
+S0000012,6,2025-09-05T16:29:00,customer,"This still isn't sorted, I want a manager.",SynCust0011,SynAgent06
+S0000012,7,2025-09-05T16:33:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0011,SynAgent06
+S0000013,0,2025-10-02T12:06:00,customer,The app shuts down every time I open Wallet.,SynCust0012,SynAgent05
+S0000013,1,2025-10-02T12:10:00,agent,I completely understand how annoying this is.,SynCust0012,SynAgent05
+S0000013,2,2025-10-02T12:14:00,customer,Thanks for the quick help.,SynCust0012,SynAgent05
+S0000013,3,2025-10-02T12:18:00,agent,Give me a minute to check this.,SynCust0012,SynAgent05
+S0000013,4,2025-10-02T12:22:00,customer,Thanks for the quick help.,SynCust0012,SynAgent05
+S0000013,5,2025-10-02T12:26:00,agent,Thanks for your patience while I check.,SynCust0012,SynAgent05
+S0000013,6,2025-10-02T12:30:00,customer,"Alright, I'll wait to hear back.",SynCust0012,SynAgent05
+S0000013,7,2025-10-02T12:34:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0012,SynAgent05
+S0000014,0,2025-08-17T17:47:00,customer,Quick question about Order please.,SynCust0013,SynAgent01
+S0000014,1,2025-08-17T17:51:00,agent,I completely understand how annoying this is.,SynCust0013,SynAgent01
+S0000014,2,2025-08-17T17:55:00,customer,"Brilliant, it works now, thank you!",SynCust0013,SynAgent01
+S0000014,3,2025-08-17T17:59:00,agent,I completely understand how annoying this is.,SynCust0013,SynAgent01
+S0000014,4,2025-08-17T18:03:00,customer,"This still isn't sorted, I want a manager.",SynCust0013,SynAgent01
+S0000014,5,2025-08-17T18:07:00,agent,I completely understand how annoying this is.,SynCust0013,SynAgent01
+S0000014,6,2025-08-17T18:11:00,customer,"Brilliant, it works now, thank you!",SynCust0013,SynAgent01
+S0000014,7,2025-08-17T18:15:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0013,SynAgent01
+S0000014,8,2025-08-17T18:19:00,customer,"Please hurry, this is really urgent.",SynCust0013,SynAgent01
+S0000014,9,2025-08-17T18:23:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0013,SynAgent01
+S0000014,10,2025-08-17T18:27:00,customer,"Please hurry, this is really urgent.",SynCust0013,SynAgent01
+S0000014,11,2025-08-17T18:31:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0013,SynAgent01
+S0000015,0,2025-09-26T11:46:00,customer,I'm locked out of my account and can't sign in.,SynCust0014,SynAgent02
+S0000015,1,2025-09-26T11:50:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0014,SynAgent02
+S0000015,2,2025-09-26T11:54:00,customer,"This still isn't sorted, I want a manager.",SynCust0014,SynAgent02
+S0000015,3,2025-09-26T11:58:00,agent,Thanks for your patience while I check.,SynCust0014,SynAgent02
+S0000015,4,2025-09-26T12:02:00,customer,"Please hurry, this is really urgent.",SynCust0014,SynAgent02
+S0000015,5,2025-09-26T12:06:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0014,SynAgent02
+S0000016,0,2025-10-08T10:43:00,customer,"My card got billed two times for the Wallet subscription, please sort it.",SynCust0015,SynAgent06
+S0000016,1,2025-10-08T10:47:00,agent,Thanks for your patience while I check.,SynCust0015,SynAgent06
+S0000016,2,2025-10-08T10:51:00,customer,"Brilliant, it works now, thank you!",SynCust0015,SynAgent06
+S0000016,3,2025-10-08T10:55:00,agent,Could you confirm the email on the account?,SynCust0015,SynAgent06
+S0000016,4,2025-10-08T10:59:00,customer,"Alright, I'll wait to hear back.",SynCust0015,SynAgent06
+S0000016,5,2025-10-08T11:03:00,agent,Give me a minute to check this.,SynCust0015,SynAgent06
+S0000016,6,2025-10-08T11:07:00,customer,Thanks for the quick help.,SynCust0015,SynAgent06
+S0000016,7,2025-10-08T11:11:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0015,SynAgent06
+S0000017,0,2025-09-16T17:05:00,customer,Paid already but the Course still isn't active on my account.,SynCust0016,SynAgent02
+S0000017,1,2025-09-16T17:09:00,agent,I completely understand how annoying this is.,SynCust0016,SynAgent02
+S0000017,2,2025-09-16T17:13:00,customer,"Brilliant, it works now, thank you!",SynCust0016,SynAgent02
+S0000017,3,2025-09-16T17:17:00,agent,Give me a minute to check this.,SynCust0016,SynAgent02
+S0000017,4,2025-09-16T17:21:00,customer,"This still isn't sorted, I want a manager.",SynCust0016,SynAgent02
+S0000017,5,2025-09-16T17:25:00,agent,Could you confirm the email on the account?,SynCust0016,SynAgent02
+S0000017,6,2025-09-16T17:29:00,customer,"This still isn't sorted, I want a manager.",SynCust0016,SynAgent02
+S0000017,7,2025-09-16T17:33:00,agent,Give me a minute to check this.,SynCust0016,SynAgent02
+S0000017,8,2025-09-16T17:37:00,customer,"Alright, I'll wait to hear back.",SynCust0016,SynAgent02
+S0000017,9,2025-09-16T17:41:00,agent,I completely understand how annoying this is.,SynCust0016,SynAgent02
+S0000017,10,2025-09-16T17:45:00,customer,"Please hurry, this is really urgent.",SynCust0016,SynAgent02
+S0000017,11,2025-09-16T17:49:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0016,SynAgent02
+S0000018,0,2025-10-06T09:23:00,customer,I'm locked out of my account and can't sign in.,SynCust0017,SynAgent04
+S0000018,1,2025-10-06T09:27:00,agent,Thanks for your patience while I check.,SynCust0017,SynAgent04
+S0000018,2,2025-10-06T09:31:00,customer,"Alright, I'll wait to hear back.",SynCust0017,SynAgent04
+S0000018,3,2025-10-06T09:35:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0017,SynAgent04
+S0000018,4,2025-10-06T09:39:00,customer,"Alright, I'll wait to hear back.",SynCust0017,SynAgent04
+S0000018,5,2025-10-06T09:43:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0017,SynAgent04
+S0000019,0,2025-10-06T15:15:00,customer,I'm locked out of my account and can't sign in.,SynCust0018,SynAgent03
+S0000019,1,2025-10-06T15:19:00,agent,Could you confirm the email on the account?,SynCust0018,SynAgent03
+S0000019,2,2025-10-06T15:23:00,customer,Thanks for the quick help.,SynCust0018,SynAgent03
+S0000019,3,2025-10-06T15:27:00,agent,Could you confirm the email on the account?,SynCust0018,SynAgent03
+S0000019,4,2025-10-06T15:31:00,customer,"Please hurry, this is really urgent.",SynCust0018,SynAgent03
+S0000019,5,2025-10-06T15:35:00,agent,I completely understand how annoying this is.,SynCust0018,SynAgent03
+S0000019,6,2025-10-06T15:39:00,customer,"Please hurry, this is really urgent.",SynCust0018,SynAgent03
+S0000019,7,2025-10-06T15:43:00,agent,Could you confirm the email on the account?,SynCust0018,SynAgent03
+S0000019,8,2025-10-06T15:47:00,customer,Thanks for the quick help.,SynCust0018,SynAgent03
+S0000019,9,2025-10-06T15:51:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0018,SynAgent03
+S0000020,0,2025-10-03T15:04:00,customer,"My card got billed two times for the Flight subscription, please sort it.",SynCust0019,SynAgent01
+S0000020,1,2025-10-03T15:08:00,agent,Give me a minute to check this.,SynCust0019,SynAgent01
+S0000020,2,2025-10-03T15:12:00,customer,"Please hurry, this is really urgent.",SynCust0019,SynAgent01
+S0000020,3,2025-10-03T15:16:00,agent,Thanks for your patience while I check.,SynCust0019,SynAgent01
+S0000020,4,2025-10-03T15:20:00,customer,"Alright, I'll wait to hear back.",SynCust0019,SynAgent01
+S0000020,5,2025-10-03T15:24:00,agent,I completely understand how annoying this is.,SynCust0019,SynAgent01
+S0000020,6,2025-10-03T15:28:00,customer,"Alright, I'll wait to hear back.",SynCust0019,SynAgent01
+S0000020,7,2025-10-03T15:32:00,agent,Give me a minute to check this.,SynCust0019,SynAgent01
+S0000020,8,2025-10-03T15:36:00,customer,"This still isn't sorted, I want a manager.",SynCust0019,SynAgent01
+S0000020,9,2025-10-03T15:40:00,agent,Could you confirm the email on the account?,SynCust0019,SynAgent01
+S0000020,10,2025-10-03T15:44:00,customer,"This still isn't sorted, I want a manager.",SynCust0019,SynAgent01
+S0000020,11,2025-10-03T15:48:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0019,SynAgent01
+S0000021,0,2025-08-30T17:01:00,customer,I'm locked out of my account and can't sign in.,SynCust0020,SynAgent04
+S0000021,1,2025-08-30T17:05:00,agent,Thanks for your patience while I check.,SynCust0020,SynAgent04
+S0000021,2,2025-08-30T17:09:00,customer,Thanks for the quick help.,SynCust0020,SynAgent04
+S0000021,3,2025-08-30T17:13:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0020,SynAgent04
+S0000021,4,2025-08-30T17:17:00,customer,"Brilliant, it works now, thank you!",SynCust0020,SynAgent04
+S0000021,5,2025-08-30T17:21:00,agent,Give me a minute to check this.,SynCust0020,SynAgent04
+S0000021,6,2025-08-30T17:25:00,customer,"This still isn't sorted, I want a manager.",SynCust0020,SynAgent04
+S0000021,7,2025-08-30T17:29:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0020,SynAgent04
+S0000021,8,2025-08-30T17:33:00,customer,"Brilliant, it works now, thank you!",SynCust0020,SynAgent04
+S0000021,9,2025-08-30T17:37:00,agent,Could you confirm the email on the account?,SynCust0020,SynAgent04
+S0000021,10,2025-08-30T17:41:00,customer,"Brilliant, it works now, thank you!",SynCust0020,SynAgent04
+S0000021,11,2025-08-30T17:45:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0020,SynAgent04
+S0000022,0,2025-11-22T12:02:00,customer,I'm locked out of my account and can't sign in.,SynCust0021,SynAgent07
+S0000022,1,2025-11-22T12:06:00,agent,I completely understand how annoying this is.,SynCust0021,SynAgent07
+S0000022,2,2025-11-22T12:10:00,customer,"Brilliant, it works now, thank you!",SynCust0021,SynAgent07
+S0000022,3,2025-11-22T12:14:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0021,SynAgent07
+S0000022,4,2025-11-22T12:18:00,customer,"Please hurry, this is really urgent.",SynCust0021,SynAgent07
+S0000022,5,2025-11-22T12:22:00,agent,Could you confirm the email on the account?,SynCust0021,SynAgent07
+S0000022,6,2025-11-22T12:26:00,customer,"Please hurry, this is really urgent.",SynCust0021,SynAgent07
+S0000022,7,2025-11-22T12:30:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0021,SynAgent07
+S0000022,8,2025-11-22T12:34:00,customer,"Please hurry, this is really urgent.",SynCust0021,SynAgent07
+S0000022,9,2025-11-22T12:38:00,agent,Thanks for your patience while I check.,SynCust0021,SynAgent07
+S0000022,10,2025-11-22T12:42:00,customer,"Brilliant, it works now, thank you!",SynCust0021,SynAgent07
+S0000022,11,2025-11-22T12:46:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0021,SynAgent07
+S0000023,0,2025-11-12T11:29:00,customer,I'm locked out of my account and can't sign in.,SynCust0022,SynAgent08
+S0000023,1,2025-11-12T11:33:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0022,SynAgent08
+S0000023,2,2025-11-12T11:37:00,customer,"This still isn't sorted, I want a manager.",SynCust0022,SynAgent08
+S0000023,3,2025-11-12T11:41:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0022,SynAgent08
+S0000023,4,2025-11-12T11:45:00,customer,Thanks for the quick help.,SynCust0022,SynAgent08
+S0000023,5,2025-11-12T11:49:00,agent,Could you confirm the email on the account?,SynCust0022,SynAgent08
+S0000023,6,2025-11-12T11:53:00,customer,"Brilliant, it works now, thank you!",SynCust0022,SynAgent08
+S0000023,7,2025-11-12T11:57:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0022,SynAgent08
+S0000024,0,2025-11-20T12:19:00,customer,"My card got billed two times for the Flight subscription, please sort it.",SynCust0023,SynAgent04
+S0000024,1,2025-11-20T12:23:00,agent,Give me a minute to check this.,SynCust0023,SynAgent04
+S0000024,2,2025-11-20T12:27:00,customer,Thanks for the quick help.,SynCust0023,SynAgent04
+S0000024,3,2025-11-20T12:31:00,agent,Could you confirm the email on the account?,SynCust0023,SynAgent04
+S0000024,4,2025-11-20T12:35:00,customer,Thanks for the quick help.,SynCust0023,SynAgent04
+S0000024,5,2025-11-20T12:39:00,agent,Give me a minute to check this.,SynCust0023,SynAgent04
+S0000024,6,2025-11-20T12:43:00,customer,"Alright, I'll wait to hear back.",SynCust0023,SynAgent04
+S0000024,7,2025-11-20T12:47:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0023,SynAgent04
+S0000025,0,2025-10-09T16:09:00,customer,"My card got billed two times for the Order subscription, please sort it.",SynCust0024,SynAgent03
+S0000025,1,2025-10-09T16:13:00,agent,I completely understand how annoying this is.,SynCust0024,SynAgent03
+S0000025,2,2025-10-09T16:17:00,customer,Thanks for the quick help.,SynCust0024,SynAgent03
+S0000025,3,2025-10-09T16:21:00,agent,Thanks for your patience while I check.,SynCust0024,SynAgent03
+S0000025,4,2025-10-09T16:25:00,customer,"Brilliant, it works now, thank you!",SynCust0024,SynAgent03
+S0000025,5,2025-10-09T16:29:00,agent,Thanks for your patience while I check.,SynCust0024,SynAgent03
+S0000025,6,2025-10-09T16:33:00,customer,"Please hurry, this is really urgent.",SynCust0024,SynAgent03
+S0000025,7,2025-10-09T16:37:00,agent,Thanks for your patience while I check.,SynCust0024,SynAgent03
+S0000025,8,2025-10-09T16:41:00,customer,"Please hurry, this is really urgent.",SynCust0024,SynAgent03
+S0000025,9,2025-10-09T16:45:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0024,SynAgent03
+S0000026,0,2025-10-07T17:42:00,customer,Quick question about Broadband please.,SynCust0025,SynAgent01
+S0000026,1,2025-10-07T17:46:00,agent,Could you confirm the email on the account?,SynCust0025,SynAgent01
+S0000026,2,2025-10-07T17:50:00,customer,"Please hurry, this is really urgent.",SynCust0025,SynAgent01
+S0000026,3,2025-10-07T17:54:00,agent,Could you confirm the email on the account?,SynCust0025,SynAgent01
+S0000026,4,2025-10-07T17:58:00,customer,"Brilliant, it works now, thank you!",SynCust0025,SynAgent01
+S0000026,5,2025-10-07T18:02:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0025,SynAgent01
+S0000027,0,2025-10-19T11:03:00,customer,I'm locked out of my account and can't sign in.,SynCust0026,SynAgent01
+S0000027,1,2025-10-19T11:07:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0026,SynAgent01
+S0000027,2,2025-10-19T11:11:00,customer,Thanks for the quick help.,SynCust0026,SynAgent01
+S0000027,3,2025-10-19T11:15:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0026,SynAgent01
+S0000027,4,2025-10-19T11:19:00,customer,"Please hurry, this is really urgent.",SynCust0026,SynAgent01
+S0000027,5,2025-10-19T11:23:00,agent,Could you confirm the email on the account?,SynCust0026,SynAgent01
+S0000027,6,2025-10-19T11:27:00,customer,"Alright, I'll wait to hear back.",SynCust0026,SynAgent01
+S0000027,7,2025-10-19T11:31:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0026,SynAgent01
+S0000027,8,2025-10-19T11:35:00,customer,"This still isn't sorted, I want a manager.",SynCust0026,SynAgent01
+S0000027,9,2025-10-19T11:39:00,agent,Thanks for your patience while I check.,SynCust0026,SynAgent01
+S0000027,10,2025-10-19T11:43:00,customer,"Brilliant, it works now, thank you!",SynCust0026,SynAgent01
+S0000027,11,2025-10-19T11:47:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0026,SynAgent01
+S0000028,0,2025-10-11T09:28:00,customer,Quick question about Flight please.,SynCust0027,SynAgent02
+S0000028,1,2025-10-11T09:32:00,agent,Give me a minute to check this.,SynCust0027,SynAgent02
+S0000028,2,2025-10-11T09:36:00,customer,"Brilliant, it works now, thank you!",SynCust0027,SynAgent02
+S0000028,3,2025-10-11T09:40:00,agent,Thanks for your patience while I check.,SynCust0027,SynAgent02
+S0000028,4,2025-10-11T09:44:00,customer,Thanks for the quick help.,SynCust0027,SynAgent02
+S0000028,5,2025-10-11T09:48:00,agent,I completely understand how annoying this is.,SynCust0027,SynAgent02
+S0000028,6,2025-10-11T09:52:00,customer,Thanks for the quick help.,SynCust0027,SynAgent02
+S0000028,7,2025-10-11T09:56:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0027,SynAgent02
+S0000029,0,2025-11-29T13:13:00,customer,Been waiting a week and my Course never showed up.,SynCust0028,SynAgent05
+S0000029,1,2025-11-29T13:17:00,agent,I completely understand how annoying this is.,SynCust0028,SynAgent05
+S0000029,2,2025-11-29T13:21:00,customer,"This still isn't sorted, I want a manager.",SynCust0028,SynAgent05
+S0000029,3,2025-11-29T13:25:00,agent,I completely understand how annoying this is.,SynCust0028,SynAgent05
+S0000029,4,2025-11-29T13:29:00,customer,"Brilliant, it works now, thank you!",SynCust0028,SynAgent05
+S0000029,5,2025-11-29T13:33:00,agent,Give me a minute to check this.,SynCust0028,SynAgent05
+S0000029,6,2025-11-29T13:37:00,customer,"This still isn't sorted, I want a manager.",SynCust0028,SynAgent05
+S0000029,7,2025-11-29T13:41:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0028,SynAgent05
+S0000030,0,2025-10-25T13:06:00,customer,Paid already but the Broadband still isn't active on my account.,SynCust0029,SynAgent07
+S0000030,1,2025-10-25T13:10:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0029,SynAgent07
+S0000030,2,2025-10-25T13:14:00,customer,"Please hurry, this is really urgent.",SynCust0029,SynAgent07
+S0000030,3,2025-10-25T13:18:00,agent,Give me a minute to check this.,SynCust0029,SynAgent07
+S0000030,4,2025-10-25T13:22:00,customer,"Please hurry, this is really urgent.",SynCust0029,SynAgent07
+S0000030,5,2025-10-25T13:26:00,agent,Give me a minute to check this.,SynCust0029,SynAgent07
+S0000030,6,2025-10-25T13:30:00,customer,"Please hurry, this is really urgent.",SynCust0029,SynAgent07
+S0000030,7,2025-10-25T13:34:00,agent,I completely understand how annoying this is.,SynCust0029,SynAgent07
+S0000030,8,2025-10-25T13:38:00,customer,"Please hurry, this is really urgent.",SynCust0029,SynAgent07
+S0000030,9,2025-10-25T13:42:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0029,SynAgent07
+S0000031,0,2025-11-04T10:36:00,customer,Quick question about Broadband please.,SynCust0030,SynAgent07
+S0000031,1,2025-11-04T10:40:00,agent,Could you confirm the email on the account?,SynCust0030,SynAgent07
+S0000031,2,2025-11-04T10:44:00,customer,"Brilliant, it works now, thank you!",SynCust0030,SynAgent07
+S0000031,3,2025-11-04T10:48:00,agent,Thanks for your patience while I check.,SynCust0030,SynAgent07
+S0000031,4,2025-11-04T10:52:00,customer,"Brilliant, it works now, thank you!",SynCust0030,SynAgent07
+S0000031,5,2025-11-04T10:56:00,agent,Give me a minute to check this.,SynCust0030,SynAgent07
+S0000031,6,2025-11-04T11:00:00,customer,"Brilliant, it works now, thank you!",SynCust0030,SynAgent07
+S0000031,7,2025-11-04T11:04:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0030,SynAgent07
+S0000032,0,2025-08-26T15:05:00,customer,Paid already but the Order still isn't active on my account.,SynCust0031,SynAgent06
+S0000032,1,2025-08-26T15:09:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0031,SynAgent06
+S0000032,2,2025-08-26T15:13:00,customer,"Alright, I'll wait to hear back.",SynCust0031,SynAgent06
+S0000032,3,2025-08-26T15:17:00,agent,Thanks for your patience while I check.,SynCust0031,SynAgent06
+S0000032,4,2025-08-26T15:21:00,customer,"Brilliant, it works now, thank you!",SynCust0031,SynAgent06
+S0000032,5,2025-08-26T15:25:00,agent,I completely understand how annoying this is.,SynCust0031,SynAgent06
+S0000032,6,2025-08-26T15:29:00,customer,"This still isn't sorted, I want a manager.",SynCust0031,SynAgent06
+S0000032,7,2025-08-26T15:33:00,agent,I completely understand how annoying this is.,SynCust0031,SynAgent06
+S0000032,8,2025-08-26T15:37:00,customer,"Alright, I'll wait to hear back.",SynCust0031,SynAgent06
+S0000032,9,2025-08-26T15:41:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0031,SynAgent06
+S0000033,0,2025-10-06T14:02:00,customer,Paid already but the Broadband still isn't active on my account.,SynCust0032,SynAgent02
+S0000033,1,2025-10-06T14:06:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0032,SynAgent02
+S0000033,2,2025-10-06T14:10:00,customer,"Alright, I'll wait to hear back.",SynCust0032,SynAgent02
+S0000033,3,2025-10-06T14:14:00,agent,Give me a minute to check this.,SynCust0032,SynAgent02
+S0000033,4,2025-10-06T14:18:00,customer,"This still isn't sorted, I want a manager.",SynCust0032,SynAgent02
+S0000033,5,2025-10-06T14:22:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0032,SynAgent02
+S0000034,0,2025-11-24T12:05:00,customer,The promo code just won't work for Course.,SynCust0033,SynAgent05
+S0000034,1,2025-11-24T12:09:00,agent,I completely understand how annoying this is.,SynCust0033,SynAgent05
+S0000034,2,2025-11-24T12:13:00,customer,"Please hurry, this is really urgent.",SynCust0033,SynAgent05
+S0000034,3,2025-11-24T12:17:00,agent,Thanks for your patience while I check.,SynCust0033,SynAgent05
+S0000034,4,2025-11-24T12:21:00,customer,Thanks for the quick help.,SynCust0033,SynAgent05
+S0000034,5,2025-11-24T12:25:00,agent,Thanks for your patience while I check.,SynCust0033,SynAgent05
+S0000034,6,2025-11-24T12:29:00,customer,"Brilliant, it works now, thank you!",SynCust0033,SynAgent05
+S0000034,7,2025-11-24T12:33:00,agent,Give me a minute to check this.,SynCust0033,SynAgent05
+S0000034,8,2025-11-24T12:37:00,customer,"This still isn't sorted, I want a manager.",SynCust0033,SynAgent05
+S0000034,9,2025-11-24T12:41:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0033,SynAgent05
+S0000035,0,2025-09-05T09:58:00,customer,"Something is wrong with Wallet, it doesn't work at all.",SynCust0034,SynAgent03
+S0000035,1,2025-09-05T10:02:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0034,SynAgent03
+S0000035,2,2025-09-05T10:06:00,customer,"This still isn't sorted, I want a manager.",SynCust0034,SynAgent03
+S0000035,3,2025-09-05T10:10:00,agent,Give me a minute to check this.,SynCust0034,SynAgent03
+S0000035,4,2025-09-05T10:14:00,customer,"This still isn't sorted, I want a manager.",SynCust0034,SynAgent03
+S0000035,5,2025-09-05T10:18:00,agent,Thanks for your patience while I check.,SynCust0034,SynAgent03
+S0000035,6,2025-09-05T10:22:00,customer,"Please hurry, this is really urgent.",SynCust0034,SynAgent03
+S0000035,7,2025-09-05T10:26:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0034,SynAgent03
+S0000035,8,2025-09-05T10:30:00,customer,"Alright, I'll wait to hear back.",SynCust0034,SynAgent03
+S0000035,9,2025-09-05T10:34:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0034,SynAgent03
+S0000036,0,2025-11-19T11:04:00,customer,"My card got billed two times for the Flight subscription, please sort it.",SynCust0035,SynAgent08
+S0000036,1,2025-11-19T11:08:00,agent,Give me a minute to check this.,SynCust0035,SynAgent08
+S0000036,2,2025-11-19T11:12:00,customer,Thanks for the quick help.,SynCust0035,SynAgent08
+S0000036,3,2025-11-19T11:16:00,agent,Could you confirm the email on the account?,SynCust0035,SynAgent08
+S0000036,4,2025-11-19T11:20:00,customer,"This still isn't sorted, I want a manager.",SynCust0035,SynAgent08
+S0000036,5,2025-11-19T11:24:00,agent,Thanks for your patience while I check.,SynCust0035,SynAgent08
+S0000036,6,2025-11-19T11:28:00,customer,"Please hurry, this is really urgent.",SynCust0035,SynAgent08
+S0000036,7,2025-11-19T11:32:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0035,SynAgent08
+S0000036,8,2025-11-19T11:36:00,customer,"Please hurry, this is really urgent.",SynCust0035,SynAgent08
+S0000036,9,2025-11-19T11:40:00,agent,Give me a minute to check this.,SynCust0035,SynAgent08
+S0000036,10,2025-11-19T11:44:00,customer,"This still isn't sorted, I want a manager.",SynCust0035,SynAgent08
+S0000036,11,2025-11-19T11:48:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0035,SynAgent08
+S0000037,0,2025-08-24T12:26:00,customer,The app shuts down every time I open Insurance.,SynCust0036,SynAgent05
+S0000037,1,2025-08-24T12:30:00,agent,Give me a minute to check this.,SynCust0036,SynAgent05
+S0000037,2,2025-08-24T12:34:00,customer,"Brilliant, it works now, thank you!",SynCust0036,SynAgent05
+S0000037,3,2025-08-24T12:38:00,agent,Thanks for your patience while I check.,SynCust0036,SynAgent05
+S0000037,4,2025-08-24T12:42:00,customer,"Please hurry, this is really urgent.",SynCust0036,SynAgent05
+S0000037,5,2025-08-24T12:46:00,agent,Give me a minute to check this.,SynCust0036,SynAgent05
+S0000037,6,2025-08-24T12:50:00,customer,"Alright, I'll wait to hear back.",SynCust0036,SynAgent05
+S0000037,7,2025-08-24T12:54:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0036,SynAgent05
+S0000038,0,2025-11-11T09:18:00,customer,"My card got billed two times for the Wallet subscription, please sort it.",SynCust0037,SynAgent05
+S0000038,1,2025-11-11T09:22:00,agent,Thanks for your patience while I check.,SynCust0037,SynAgent05
+S0000038,2,2025-11-11T09:26:00,customer,Thanks for the quick help.,SynCust0037,SynAgent05
+S0000038,3,2025-11-11T09:30:00,agent,Could you confirm the email on the account?,SynCust0037,SynAgent05
+S0000038,4,2025-11-11T09:34:00,customer,Thanks for the quick help.,SynCust0037,SynAgent05
+S0000038,5,2025-11-11T09:38:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0037,SynAgent05
+S0000039,0,2025-09-30T13:11:00,customer,Paid already but the Order still isn't active on my account.,SynCust0038,SynAgent08
+S0000039,1,2025-09-30T13:15:00,agent,I completely understand how annoying this is.,SynCust0038,SynAgent08
+S0000039,2,2025-09-30T13:19:00,customer,Thanks for the quick help.,SynCust0038,SynAgent08
+S0000039,3,2025-09-30T13:23:00,agent,I completely understand how annoying this is.,SynCust0038,SynAgent08
+S0000039,4,2025-09-30T13:27:00,customer,Thanks for the quick help.,SynCust0038,SynAgent08
+S0000039,5,2025-09-30T13:31:00,agent,Give me a minute to check this.,SynCust0038,SynAgent08
+S0000039,6,2025-09-30T13:35:00,customer,"Please hurry, this is really urgent.",SynCust0038,SynAgent08
+S0000039,7,2025-09-30T13:39:00,agent,Could you confirm the email on the account?,SynCust0038,SynAgent08
+S0000039,8,2025-09-30T13:43:00,customer,"Alright, I'll wait to hear back.",SynCust0038,SynAgent08
+S0000039,9,2025-09-30T13:47:00,agent,Could you confirm the email on the account?,SynCust0038,SynAgent08
+S0000039,10,2025-09-30T13:51:00,customer,"Please hurry, this is really urgent.",SynCust0038,SynAgent08
+S0000039,11,2025-09-30T13:55:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0038,SynAgent08
+S0000040,0,2025-09-21T14:55:00,customer,The promo code just won't work for Wallet.,SynCust0039,SynAgent01
+S0000040,1,2025-09-21T14:59:00,agent,Give me a minute to check this.,SynCust0039,SynAgent01
+S0000040,2,2025-09-21T15:03:00,customer,"Brilliant, it works now, thank you!",SynCust0039,SynAgent01
+S0000040,3,2025-09-21T15:07:00,agent,Could you confirm the email on the account?,SynCust0039,SynAgent01
+S0000040,4,2025-09-21T15:11:00,customer,"This still isn't sorted, I want a manager.",SynCust0039,SynAgent01
+S0000040,5,2025-09-21T15:15:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0039,SynAgent01
+S0000041,0,2025-08-11T15:30:00,customer,Been waiting a week and my Order never showed up.,SynCust0040,SynAgent05
+S0000041,1,2025-08-11T15:34:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0040,SynAgent05
+S0000041,2,2025-08-11T15:38:00,customer,"Brilliant, it works now, thank you!",SynCust0040,SynAgent05
+S0000041,3,2025-08-11T15:42:00,agent,Could you confirm the email on the account?,SynCust0040,SynAgent05
+S0000041,4,2025-08-11T15:46:00,customer,"Please hurry, this is really urgent.",SynCust0040,SynAgent05
+S0000041,5,2025-08-11T15:50:00,agent,Give me a minute to check this.,SynCust0040,SynAgent05
+S0000041,6,2025-08-11T15:54:00,customer,"Brilliant, it works now, thank you!",SynCust0040,SynAgent05
+S0000041,7,2025-08-11T15:58:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0040,SynAgent05
+S0000041,8,2025-08-11T16:02:00,customer,"Alright, I'll wait to hear back.",SynCust0040,SynAgent05
+S0000041,9,2025-08-11T16:06:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0040,SynAgent05
+S0000042,0,2025-09-16T14:36:00,customer,Been waiting a week and my Wallet never showed up.,SynCust0041,SynAgent06
+S0000042,1,2025-09-16T14:40:00,agent,Could you confirm the email on the account?,SynCust0041,SynAgent06
+S0000042,2,2025-09-16T14:44:00,customer,"Alright, I'll wait to hear back.",SynCust0041,SynAgent06
+S0000042,3,2025-09-16T14:48:00,agent,Could you confirm the email on the account?,SynCust0041,SynAgent06
+S0000042,4,2025-09-16T14:52:00,customer,"This still isn't sorted, I want a manager.",SynCust0041,SynAgent06
+S0000042,5,2025-09-16T14:56:00,agent,Give me a minute to check this.,SynCust0041,SynAgent06
+S0000042,6,2025-09-16T15:00:00,customer,"Brilliant, it works now, thank you!",SynCust0041,SynAgent06
+S0000042,7,2025-09-16T15:04:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0041,SynAgent06
+S0000042,8,2025-09-16T15:08:00,customer,"Brilliant, it works now, thank you!",SynCust0041,SynAgent06
+S0000042,9,2025-09-16T15:12:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0041,SynAgent06
+S0000043,0,2025-09-05T17:34:00,customer,Been waiting a week and my Insurance never showed up.,SynCust0042,SynAgent04
+S0000043,1,2025-09-05T17:38:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0042,SynAgent04
+S0000043,2,2025-09-05T17:42:00,customer,"Alright, I'll wait to hear back.",SynCust0042,SynAgent04
+S0000043,3,2025-09-05T17:46:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0042,SynAgent04
+S0000043,4,2025-09-05T17:50:00,customer,"Please hurry, this is really urgent.",SynCust0042,SynAgent04
+S0000043,5,2025-09-05T17:54:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0042,SynAgent04
+S0000044,0,2025-09-21T19:00:00,customer,"Something is wrong with Wallet, it doesn't work at all.",SynCust0043,SynAgent01
+S0000044,1,2025-09-21T19:04:00,agent,Give me a minute to check this.,SynCust0043,SynAgent01
+S0000044,2,2025-09-21T19:08:00,customer,"Please hurry, this is really urgent.",SynCust0043,SynAgent01
+S0000044,3,2025-09-21T19:12:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0043,SynAgent01
+S0000044,4,2025-09-21T19:16:00,customer,Thanks for the quick help.,SynCust0043,SynAgent01
+S0000044,5,2025-09-21T19:20:00,agent,Thanks for your patience while I check.,SynCust0043,SynAgent01
+S0000044,6,2025-09-21T19:24:00,customer,"Please hurry, this is really urgent.",SynCust0043,SynAgent01
+S0000044,7,2025-09-21T19:28:00,agent,Thanks for your patience while I check.,SynCust0043,SynAgent01
+S0000044,8,2025-09-21T19:32:00,customer,"Brilliant, it works now, thank you!",SynCust0043,SynAgent01
+S0000044,9,2025-09-21T19:36:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0043,SynAgent01
+S0000045,0,2025-11-06T14:33:00,customer,The promo code just won't work for Flight.,SynCust0044,SynAgent08
+S0000045,1,2025-11-06T14:37:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0044,SynAgent08
+S0000045,2,2025-11-06T14:41:00,customer,Thanks for the quick help.,SynCust0044,SynAgent08
+S0000045,3,2025-11-06T14:45:00,agent,I completely understand how annoying this is.,SynCust0044,SynAgent08
+S0000045,4,2025-11-06T14:49:00,customer,Thanks for the quick help.,SynCust0044,SynAgent08
+S0000045,5,2025-11-06T14:53:00,agent,Could you confirm the email on the account?,SynCust0044,SynAgent08
+S0000045,6,2025-11-06T14:57:00,customer,Thanks for the quick help.,SynCust0044,SynAgent08
+S0000045,7,2025-11-06T15:01:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0044,SynAgent08
+S0000046,0,2025-11-05T17:36:00,customer,Been waiting a week and my Wallet never showed up.,SynCust0045,SynAgent01
+S0000046,1,2025-11-05T17:40:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0045,SynAgent01
+S0000046,2,2025-11-05T17:44:00,customer,"Please hurry, this is really urgent.",SynCust0045,SynAgent01
+S0000046,3,2025-11-05T17:48:00,agent,Give me a minute to check this.,SynCust0045,SynAgent01
+S0000046,4,2025-11-05T17:52:00,customer,"This still isn't sorted, I want a manager.",SynCust0045,SynAgent01
+S0000046,5,2025-11-05T17:56:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0045,SynAgent01
+S0000047,0,2025-09-18T16:42:00,customer,"My card got billed two times for the Order subscription, please sort it.",SynCust0046,SynAgent01
+S0000047,1,2025-09-18T16:46:00,agent,I completely understand how annoying this is.,SynCust0046,SynAgent01
+S0000047,2,2025-09-18T16:50:00,customer,"Alright, I'll wait to hear back.",SynCust0046,SynAgent01
+S0000047,3,2025-09-18T16:54:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0046,SynAgent01
+S0000047,4,2025-09-18T16:58:00,customer,"Brilliant, it works now, thank you!",SynCust0046,SynAgent01
+S0000047,5,2025-09-18T17:02:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0046,SynAgent01
+S0000047,6,2025-09-18T17:06:00,customer,Thanks for the quick help.,SynCust0046,SynAgent01
+S0000047,7,2025-09-18T17:10:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0046,SynAgent01
+S0000048,0,2025-11-23T18:08:00,customer,Paid already but the Order still isn't active on my account.,SynCust0047,SynAgent02
+S0000048,1,2025-11-23T18:12:00,agent,Give me a minute to check this.,SynCust0047,SynAgent02
+S0000048,2,2025-11-23T18:16:00,customer,"This still isn't sorted, I want a manager.",SynCust0047,SynAgent02
+S0000048,3,2025-11-23T18:20:00,agent,Give me a minute to check this.,SynCust0047,SynAgent02
+S0000048,4,2025-11-23T18:24:00,customer,"Please hurry, this is really urgent.",SynCust0047,SynAgent02
+S0000048,5,2025-11-23T18:28:00,agent,Could you confirm the email on the account?,SynCust0047,SynAgent02
+S0000048,6,2025-11-23T18:32:00,customer,"Please hurry, this is really urgent.",SynCust0047,SynAgent02
+S0000048,7,2025-11-23T18:36:00,agent,I completely understand how annoying this is.,SynCust0047,SynAgent02
+S0000048,8,2025-11-23T18:40:00,customer,"Brilliant, it works now, thank you!",SynCust0047,SynAgent02
+S0000048,9,2025-11-23T18:44:00,agent,I completely understand how annoying this is.,SynCust0047,SynAgent02
+S0000048,10,2025-11-23T18:48:00,customer,"This still isn't sorted, I want a manager.",SynCust0047,SynAgent02
+S0000048,11,2025-11-23T18:52:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0047,SynAgent02
+S0000049,0,2025-10-01T13:54:00,customer,Been waiting a week and my Wallet never showed up.,SynCust0048,SynAgent01
+S0000049,1,2025-10-01T13:58:00,agent,Give me a minute to check this.,SynCust0048,SynAgent01
+S0000049,2,2025-10-01T14:02:00,customer,"Alright, I'll wait to hear back.",SynCust0048,SynAgent01
+S0000049,3,2025-10-01T14:06:00,agent,Give me a minute to check this.,SynCust0048,SynAgent01
+S0000049,4,2025-10-01T14:10:00,customer,Thanks for the quick help.,SynCust0048,SynAgent01
+S0000049,5,2025-10-01T14:14:00,agent,Thanks for your patience while I check.,SynCust0048,SynAgent01
+S0000049,6,2025-10-01T14:18:00,customer,"Please hurry, this is really urgent.",SynCust0048,SynAgent01
+S0000049,7,2025-10-01T14:22:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0048,SynAgent01
+S0000050,0,2025-08-02T17:13:00,customer,Quick question about Flight please.,SynCust0049,SynAgent01
+S0000050,1,2025-08-02T17:17:00,agent,Could you confirm the email on the account?,SynCust0049,SynAgent01
+S0000050,2,2025-08-02T17:21:00,customer,"Brilliant, it works now, thank you!",SynCust0049,SynAgent01
+S0000050,3,2025-08-02T17:25:00,agent,Give me a minute to check this.,SynCust0049,SynAgent01
+S0000050,4,2025-08-02T17:29:00,customer,Thanks for the quick help.,SynCust0049,SynAgent01
+S0000050,5,2025-08-02T17:33:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0049,SynAgent01
+S0000051,0,2025-09-06T16:55:00,customer,Quick question about Wallet please.,SynCust0050,SynAgent08
+S0000051,1,2025-09-06T16:59:00,agent,Give me a minute to check this.,SynCust0050,SynAgent08
+S0000051,2,2025-09-06T17:03:00,customer,"This still isn't sorted, I want a manager.",SynCust0050,SynAgent08
+S0000051,3,2025-09-06T17:07:00,agent,I completely understand how annoying this is.,SynCust0050,SynAgent08
+S0000051,4,2025-09-06T17:11:00,customer,"This still isn't sorted, I want a manager.",SynCust0050,SynAgent08
+S0000051,5,2025-09-06T17:15:00,agent,Give me a minute to check this.,SynCust0050,SynAgent08
+S0000051,6,2025-09-06T17:19:00,customer,"Brilliant, it works now, thank you!",SynCust0050,SynAgent08
+S0000051,7,2025-09-06T17:23:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0050,SynAgent08
+S0000052,0,2025-08-10T17:38:00,customer,The app shuts down every time I open Course.,SynCust0051,SynAgent08
+S0000052,1,2025-08-10T17:42:00,agent,Could you confirm the email on the account?,SynCust0051,SynAgent08
+S0000052,2,2025-08-10T17:46:00,customer,"This still isn't sorted, I want a manager.",SynCust0051,SynAgent08
+S0000052,3,2025-08-10T17:50:00,agent,Thanks for your patience while I check.,SynCust0051,SynAgent08
+S0000052,4,2025-08-10T17:54:00,customer,"This still isn't sorted, I want a manager.",SynCust0051,SynAgent08
+S0000052,5,2025-08-10T17:58:00,agent,Could you confirm the email on the account?,SynCust0051,SynAgent08
+S0000052,6,2025-08-10T18:02:00,customer,Thanks for the quick help.,SynCust0051,SynAgent08
+S0000052,7,2025-08-10T18:06:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0051,SynAgent08
+S0000053,0,2025-09-03T15:08:00,customer,The app shuts down every time I open Wallet.,SynCust0052,SynAgent03
+S0000053,1,2025-09-03T15:12:00,agent,Could you confirm the email on the account?,SynCust0052,SynAgent03
+S0000053,2,2025-09-03T15:16:00,customer,"Brilliant, it works now, thank you!",SynCust0052,SynAgent03
+S0000053,3,2025-09-03T15:20:00,agent,I completely understand how annoying this is.,SynCust0052,SynAgent03
+S0000053,4,2025-09-03T15:24:00,customer,"Brilliant, it works now, thank you!",SynCust0052,SynAgent03
+S0000053,5,2025-09-03T15:28:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0052,SynAgent03
+S0000053,6,2025-09-03T15:32:00,customer,"Please hurry, this is really urgent.",SynCust0052,SynAgent03
+S0000053,7,2025-09-03T15:36:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0052,SynAgent03
+S0000053,8,2025-09-03T15:40:00,customer,"Brilliant, it works now, thank you!",SynCust0052,SynAgent03
+S0000053,9,2025-09-03T15:44:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0052,SynAgent03
+S0000054,0,2025-10-27T16:41:00,customer,The app shuts down every time I open Order.,SynCust0053,SynAgent07
+S0000054,1,2025-10-27T16:45:00,agent,I completely understand how annoying this is.,SynCust0053,SynAgent07
+S0000054,2,2025-10-27T16:49:00,customer,"Alright, I'll wait to hear back.",SynCust0053,SynAgent07
+S0000054,3,2025-10-27T16:53:00,agent,I completely understand how annoying this is.,SynCust0053,SynAgent07
+S0000054,4,2025-10-27T16:57:00,customer,"Alright, I'll wait to hear back.",SynCust0053,SynAgent07
+S0000054,5,2025-10-27T17:01:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0053,SynAgent07
+S0000054,6,2025-10-27T17:05:00,customer,"Alright, I'll wait to hear back.",SynCust0053,SynAgent07
+S0000054,7,2025-10-27T17:09:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0053,SynAgent07
+S0000055,0,2025-08-01T14:32:00,customer,"Something is wrong with Wallet, it doesn't work at all.",SynCust0054,SynAgent06
+S0000055,1,2025-08-01T14:36:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0054,SynAgent06
+S0000055,2,2025-08-01T14:40:00,customer,"Alright, I'll wait to hear back.",SynCust0054,SynAgent06
+S0000055,3,2025-08-01T14:44:00,agent,Give me a minute to check this.,SynCust0054,SynAgent06
+S0000055,4,2025-08-01T14:48:00,customer,"Alright, I'll wait to hear back.",SynCust0054,SynAgent06
+S0000055,5,2025-08-01T14:52:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0054,SynAgent06
+S0000055,6,2025-08-01T14:56:00,customer,"Brilliant, it works now, thank you!",SynCust0054,SynAgent06
+S0000055,7,2025-08-01T15:00:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0054,SynAgent06
+S0000056,0,2025-09-19T10:18:00,customer,"Something is wrong with Flight, it doesn't work at all.",SynCust0055,SynAgent06
+S0000056,1,2025-09-19T10:22:00,agent,Give me a minute to check this.,SynCust0055,SynAgent06
+S0000056,2,2025-09-19T10:26:00,customer,"This still isn't sorted, I want a manager.",SynCust0055,SynAgent06
+S0000056,3,2025-09-19T10:30:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0055,SynAgent06
+S0000056,4,2025-09-19T10:34:00,customer,"Alright, I'll wait to hear back.",SynCust0055,SynAgent06
+S0000056,5,2025-09-19T10:38:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0055,SynAgent06
+S0000057,0,2025-10-21T11:32:00,customer,The app shuts down every time I open Course.,SynCust0056,SynAgent04
+S0000057,1,2025-10-21T11:36:00,agent,Could you confirm the email on the account?,SynCust0056,SynAgent04
+S0000057,2,2025-10-21T11:40:00,customer,"Alright, I'll wait to hear back.",SynCust0056,SynAgent04
+S0000057,3,2025-10-21T11:44:00,agent,I completely understand how annoying this is.,SynCust0056,SynAgent04
+S0000057,4,2025-10-21T11:48:00,customer,"This still isn't sorted, I want a manager.",SynCust0056,SynAgent04
+S0000057,5,2025-10-21T11:52:00,agent,I completely understand how annoying this is.,SynCust0056,SynAgent04
+S0000057,6,2025-10-21T11:56:00,customer,Thanks for the quick help.,SynCust0056,SynAgent04
+S0000057,7,2025-10-21T12:00:00,agent,Thanks for your patience while I check.,SynCust0056,SynAgent04
+S0000057,8,2025-10-21T12:04:00,customer,"Please hurry, this is really urgent.",SynCust0056,SynAgent04
+S0000057,9,2025-10-21T12:08:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0056,SynAgent04
+S0000058,0,2025-11-01T10:22:00,customer,"Something is wrong with Course, it doesn't work at all.",SynCust0057,SynAgent01
+S0000058,1,2025-11-01T10:26:00,agent,Give me a minute to check this.,SynCust0057,SynAgent01
+S0000058,2,2025-11-01T10:30:00,customer,"Brilliant, it works now, thank you!",SynCust0057,SynAgent01
+S0000058,3,2025-11-01T10:34:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0057,SynAgent01
+S0000058,4,2025-11-01T10:38:00,customer,Thanks for the quick help.,SynCust0057,SynAgent01
+S0000058,5,2025-11-01T10:42:00,agent,Could you confirm the email on the account?,SynCust0057,SynAgent01
+S0000058,6,2025-11-01T10:46:00,customer,"Please hurry, this is really urgent.",SynCust0057,SynAgent01
+S0000058,7,2025-11-01T10:50:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0057,SynAgent01
+S0000059,0,2025-09-30T16:04:00,customer,The app shuts down every time I open Flight.,SynCust0058,SynAgent06
+S0000059,1,2025-09-30T16:08:00,agent,Give me a minute to check this.,SynCust0058,SynAgent06
+S0000059,2,2025-09-30T16:12:00,customer,"Brilliant, it works now, thank you!",SynCust0058,SynAgent06
+S0000059,3,2025-09-30T16:16:00,agent,Could you confirm the email on the account?,SynCust0058,SynAgent06
+S0000059,4,2025-09-30T16:20:00,customer,"Alright, I'll wait to hear back.",SynCust0058,SynAgent06
+S0000059,5,2025-09-30T16:24:00,agent,I completely understand how annoying this is.,SynCust0058,SynAgent06
+S0000059,6,2025-09-30T16:28:00,customer,Thanks for the quick help.,SynCust0058,SynAgent06
+S0000059,7,2025-09-30T16:32:00,agent,I completely understand how annoying this is.,SynCust0058,SynAgent06
+S0000059,8,2025-09-30T16:36:00,customer,"This still isn't sorted, I want a manager.",SynCust0058,SynAgent06
+S0000059,9,2025-09-30T16:40:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0058,SynAgent06
+S0000060,0,2025-08-22T11:45:00,customer,Been waiting a week and my Insurance never showed up.,SynCust0059,SynAgent02
+S0000060,1,2025-08-22T11:49:00,agent,Thanks for your patience while I check.,SynCust0059,SynAgent02
+S0000060,2,2025-08-22T11:53:00,customer,"Please hurry, this is really urgent.",SynCust0059,SynAgent02
+S0000060,3,2025-08-22T11:57:00,agent,I completely understand how annoying this is.,SynCust0059,SynAgent02
+S0000060,4,2025-08-22T12:01:00,customer,"Alright, I'll wait to hear back.",SynCust0059,SynAgent02
+S0000060,5,2025-08-22T12:05:00,agent,I completely understand how annoying this is.,SynCust0059,SynAgent02
+S0000060,6,2025-08-22T12:09:00,customer,"Brilliant, it works now, thank you!",SynCust0059,SynAgent02
+S0000060,7,2025-08-22T12:13:00,agent,Could you confirm the email on the account?,SynCust0059,SynAgent02
+S0000060,8,2025-08-22T12:17:00,customer,Thanks for the quick help.,SynCust0059,SynAgent02
+S0000060,9,2025-08-22T12:21:00,agent,Could you confirm the email on the account?,SynCust0059,SynAgent02
+S0000060,10,2025-08-22T12:25:00,customer,"Please hurry, this is really urgent.",SynCust0059,SynAgent02
+S0000060,11,2025-08-22T12:29:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0059,SynAgent02
+S0000061,0,2025-08-12T11:58:00,customer,Paid already but the Flight still isn't active on my account.,SynCust0060,SynAgent06
+S0000061,1,2025-08-12T12:02:00,agent,Give me a minute to check this.,SynCust0060,SynAgent06
+S0000061,2,2025-08-12T12:06:00,customer,"Alright, I'll wait to hear back.",SynCust0060,SynAgent06
+S0000061,3,2025-08-12T12:10:00,agent,Thanks for your patience while I check.,SynCust0060,SynAgent06
+S0000061,4,2025-08-12T12:14:00,customer,"Please hurry, this is really urgent.",SynCust0060,SynAgent06
+S0000061,5,2025-08-12T12:18:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0060,SynAgent06
+S0000061,6,2025-08-12T12:22:00,customer,"Brilliant, it works now, thank you!",SynCust0060,SynAgent06
+S0000061,7,2025-08-12T12:26:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0060,SynAgent06
+S0000062,0,2025-09-19T16:03:00,customer,"Something is wrong with Flight, it doesn't work at all.",SynCust0061,SynAgent04
+S0000062,1,2025-09-19T16:07:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0061,SynAgent04
+S0000062,2,2025-09-19T16:11:00,customer,"Brilliant, it works now, thank you!",SynCust0061,SynAgent04
+S0000062,3,2025-09-19T16:15:00,agent,Give me a minute to check this.,SynCust0061,SynAgent04
+S0000062,4,2025-09-19T16:19:00,customer,Thanks for the quick help.,SynCust0061,SynAgent04
+S0000062,5,2025-09-19T16:23:00,agent,Give me a minute to check this.,SynCust0061,SynAgent04
+S0000062,6,2025-09-19T16:27:00,customer,"Please hurry, this is really urgent.",SynCust0061,SynAgent04
+S0000062,7,2025-09-19T16:31:00,agent,Thanks for your patience while I check.,SynCust0061,SynAgent04
+S0000062,8,2025-09-19T16:35:00,customer,Thanks for the quick help.,SynCust0061,SynAgent04
+S0000062,9,2025-09-19T16:39:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0061,SynAgent04
+S0000063,0,2025-10-20T12:41:00,customer,The app shuts down every time I open Broadband.,SynCust0062,SynAgent02
+S0000063,1,2025-10-20T12:45:00,agent,I completely understand how annoying this is.,SynCust0062,SynAgent02
+S0000063,2,2025-10-20T12:49:00,customer,"Brilliant, it works now, thank you!",SynCust0062,SynAgent02
+S0000063,3,2025-10-20T12:53:00,agent,I completely understand how annoying this is.,SynCust0062,SynAgent02
+S0000063,4,2025-10-20T12:57:00,customer,"Alright, I'll wait to hear back.",SynCust0062,SynAgent02
+S0000063,5,2025-10-20T13:01:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0062,SynAgent02
+S0000063,6,2025-10-20T13:05:00,customer,"Please hurry, this is really urgent.",SynCust0062,SynAgent02
+S0000063,7,2025-10-20T13:09:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0062,SynAgent02
+S0000063,8,2025-10-20T13:13:00,customer,"Brilliant, it works now, thank you!",SynCust0062,SynAgent02
+S0000063,9,2025-10-20T13:17:00,agent,I completely understand how annoying this is.,SynCust0062,SynAgent02
+S0000063,10,2025-10-20T13:21:00,customer,Thanks for the quick help.,SynCust0062,SynAgent02
+S0000063,11,2025-10-20T13:25:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0062,SynAgent02
+S0000064,0,2025-10-02T09:00:00,customer,"Something is wrong with Insurance, it doesn't work at all.",SynCust0063,SynAgent02
+S0000064,1,2025-10-02T09:04:00,agent,I completely understand how annoying this is.,SynCust0063,SynAgent02
+S0000064,2,2025-10-02T09:08:00,customer,"Please hurry, this is really urgent.",SynCust0063,SynAgent02
+S0000064,3,2025-10-02T09:12:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0063,SynAgent02
+S0000064,4,2025-10-02T09:16:00,customer,"Please hurry, this is really urgent.",SynCust0063,SynAgent02
+S0000064,5,2025-10-02T09:20:00,agent,Could you confirm the email on the account?,SynCust0063,SynAgent02
+S0000064,6,2025-10-02T09:24:00,customer,"Please hurry, this is really urgent.",SynCust0063,SynAgent02
+S0000064,7,2025-10-02T09:28:00,agent,Thanks for your patience while I check.,SynCust0063,SynAgent02
+S0000064,8,2025-10-02T09:32:00,customer,"This still isn't sorted, I want a manager.",SynCust0063,SynAgent02
+S0000064,9,2025-10-02T09:36:00,agent,I completely understand how annoying this is.,SynCust0063,SynAgent02
+S0000064,10,2025-10-02T09:40:00,customer,"This still isn't sorted, I want a manager.",SynCust0063,SynAgent02
+S0000064,11,2025-10-02T09:44:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0063,SynAgent02
+S0000065,0,2025-10-10T09:40:00,customer,The promo code just won't work for Broadband.,SynCust0064,SynAgent01
+S0000065,1,2025-10-10T09:44:00,agent,Give me a minute to check this.,SynCust0064,SynAgent01
+S0000065,2,2025-10-10T09:48:00,customer,"Please hurry, this is really urgent.",SynCust0064,SynAgent01
+S0000065,3,2025-10-10T09:52:00,agent,Give me a minute to check this.,SynCust0064,SynAgent01
+S0000065,4,2025-10-10T09:56:00,customer,Thanks for the quick help.,SynCust0064,SynAgent01
+S0000065,5,2025-10-10T10:00:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0064,SynAgent01
+S0000066,0,2025-10-21T16:27:00,customer,Paid already but the Wallet still isn't active on my account.,SynCust0065,SynAgent02
+S0000066,1,2025-10-21T16:31:00,agent,Thanks for your patience while I check.,SynCust0065,SynAgent02
+S0000066,2,2025-10-21T16:35:00,customer,Thanks for the quick help.,SynCust0065,SynAgent02
+S0000066,3,2025-10-21T16:39:00,agent,Could you confirm the email on the account?,SynCust0065,SynAgent02
+S0000066,4,2025-10-21T16:43:00,customer,"Brilliant, it works now, thank you!",SynCust0065,SynAgent02
+S0000066,5,2025-10-21T16:47:00,agent,Give me a minute to check this.,SynCust0065,SynAgent02
+S0000066,6,2025-10-21T16:51:00,customer,"Please hurry, this is really urgent.",SynCust0065,SynAgent02
+S0000066,7,2025-10-21T16:55:00,agent,Thanks for your patience while I check.,SynCust0065,SynAgent02
+S0000066,8,2025-10-21T16:59:00,customer,"This still isn't sorted, I want a manager.",SynCust0065,SynAgent02
+S0000066,9,2025-10-21T17:03:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0065,SynAgent02
+S0000067,0,2025-08-02T18:10:00,customer,Quick question about Flight please.,SynCust0066,SynAgent05
+S0000067,1,2025-08-02T18:14:00,agent,Could you confirm the email on the account?,SynCust0066,SynAgent05
+S0000067,2,2025-08-02T18:18:00,customer,"Brilliant, it works now, thank you!",SynCust0066,SynAgent05
+S0000067,3,2025-08-02T18:22:00,agent,Thanks for your patience while I check.,SynCust0066,SynAgent05
+S0000067,4,2025-08-02T18:26:00,customer,"Please hurry, this is really urgent.",SynCust0066,SynAgent05
+S0000067,5,2025-08-02T18:30:00,agent,Thanks for your patience while I check.,SynCust0066,SynAgent05
+S0000067,6,2025-08-02T18:34:00,customer,"Please hurry, this is really urgent.",SynCust0066,SynAgent05
+S0000067,7,2025-08-02T18:38:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0066,SynAgent05
+S0000067,8,2025-08-02T18:42:00,customer,"Brilliant, it works now, thank you!",SynCust0066,SynAgent05
+S0000067,9,2025-08-02T18:46:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0066,SynAgent05
+S0000068,0,2025-10-30T14:14:00,customer,"My card got billed two times for the Broadband subscription, please sort it.",SynCust0067,SynAgent01
+S0000068,1,2025-10-30T14:18:00,agent,I completely understand how annoying this is.,SynCust0067,SynAgent01
+S0000068,2,2025-10-30T14:22:00,customer,"This still isn't sorted, I want a manager.",SynCust0067,SynAgent01
+S0000068,3,2025-10-30T14:26:00,agent,Give me a minute to check this.,SynCust0067,SynAgent01
+S0000068,4,2025-10-30T14:30:00,customer,"Please hurry, this is really urgent.",SynCust0067,SynAgent01
+S0000068,5,2025-10-30T14:34:00,agent,I completely understand how annoying this is.,SynCust0067,SynAgent01
+S0000068,6,2025-10-30T14:38:00,customer,"Alright, I'll wait to hear back.",SynCust0067,SynAgent01
+S0000068,7,2025-10-30T14:42:00,agent,Could you confirm the email on the account?,SynCust0067,SynAgent01
+S0000068,8,2025-10-30T14:46:00,customer,"Brilliant, it works now, thank you!",SynCust0067,SynAgent01
+S0000068,9,2025-10-30T14:50:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0067,SynAgent01
+S0000068,10,2025-10-30T14:54:00,customer,"Alright, I'll wait to hear back.",SynCust0067,SynAgent01
+S0000068,11,2025-10-30T14:58:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0067,SynAgent01
+S0000069,0,2025-10-31T16:10:00,customer,"Something is wrong with Broadband, it doesn't work at all.",SynCust0068,SynAgent06
+S0000069,1,2025-10-31T16:14:00,agent,Give me a minute to check this.,SynCust0068,SynAgent06
+S0000069,2,2025-10-31T16:18:00,customer,Thanks for the quick help.,SynCust0068,SynAgent06
+S0000069,3,2025-10-31T16:22:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0068,SynAgent06
+S0000069,4,2025-10-31T16:26:00,customer,"Please hurry, this is really urgent.",SynCust0068,SynAgent06
+S0000069,5,2025-10-31T16:30:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0068,SynAgent06
+S0000070,0,2025-10-03T12:25:00,customer,Been waiting a week and my Broadband never showed up.,SynCust0069,SynAgent05
+S0000070,1,2025-10-03T12:29:00,agent,Could you confirm the email on the account?,SynCust0069,SynAgent05
+S0000070,2,2025-10-03T12:33:00,customer,"Alright, I'll wait to hear back.",SynCust0069,SynAgent05
+S0000070,3,2025-10-03T12:37:00,agent,Give me a minute to check this.,SynCust0069,SynAgent05
+S0000070,4,2025-10-03T12:41:00,customer,"This still isn't sorted, I want a manager.",SynCust0069,SynAgent05
+S0000070,5,2025-10-03T12:45:00,agent,Thanks for your patience while I check.,SynCust0069,SynAgent05
+S0000070,6,2025-10-03T12:49:00,customer,"Brilliant, it works now, thank you!",SynCust0069,SynAgent05
+S0000070,7,2025-10-03T12:53:00,agent,Thanks for your patience while I check.,SynCust0069,SynAgent05
+S0000070,8,2025-10-03T12:57:00,customer,"Please hurry, this is really urgent.",SynCust0069,SynAgent05
+S0000070,9,2025-10-03T13:01:00,agent,Could you confirm the email on the account?,SynCust0069,SynAgent05
+S0000070,10,2025-10-03T13:05:00,customer,"Brilliant, it works now, thank you!",SynCust0069,SynAgent05
+S0000070,11,2025-10-03T13:09:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0069,SynAgent05
+S0000071,0,2025-09-23T09:57:00,customer,"Something is wrong with Wallet, it doesn't work at all.",SynCust0070,SynAgent03
+S0000071,1,2025-09-23T10:01:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0070,SynAgent03
+S0000071,2,2025-09-23T10:05:00,customer,Thanks for the quick help.,SynCust0070,SynAgent03
+S0000071,3,2025-09-23T10:09:00,agent,Could you confirm the email on the account?,SynCust0070,SynAgent03
+S0000071,4,2025-09-23T10:13:00,customer,"Brilliant, it works now, thank you!",SynCust0070,SynAgent03
+S0000071,5,2025-09-23T10:17:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0070,SynAgent03
+S0000071,6,2025-09-23T10:21:00,customer,"This still isn't sorted, I want a manager.",SynCust0070,SynAgent03
+S0000071,7,2025-09-23T10:25:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0070,SynAgent03
+S0000072,0,2025-08-24T15:42:00,customer,I'm locked out of my account and can't sign in.,SynCust0071,SynAgent08
+S0000072,1,2025-08-24T15:46:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0071,SynAgent08
+S0000072,2,2025-08-24T15:50:00,customer,"Please hurry, this is really urgent.",SynCust0071,SynAgent08
+S0000072,3,2025-08-24T15:54:00,agent,Give me a minute to check this.,SynCust0071,SynAgent08
+S0000072,4,2025-08-24T15:58:00,customer,"Please hurry, this is really urgent.",SynCust0071,SynAgent08
+S0000072,5,2025-08-24T16:02:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0071,SynAgent08
+S0000073,0,2025-08-24T17:57:00,customer,"My card got billed two times for the Flight subscription, please sort it.",SynCust0072,SynAgent08
+S0000073,1,2025-08-24T18:01:00,agent,Give me a minute to check this.,SynCust0072,SynAgent08
+S0000073,2,2025-08-24T18:05:00,customer,"Alright, I'll wait to hear back.",SynCust0072,SynAgent08
+S0000073,3,2025-08-24T18:09:00,agent,I completely understand how annoying this is.,SynCust0072,SynAgent08
+S0000073,4,2025-08-24T18:13:00,customer,"Please hurry, this is really urgent.",SynCust0072,SynAgent08
+S0000073,5,2025-08-24T18:17:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0072,SynAgent08
+S0000073,6,2025-08-24T18:21:00,customer,"This still isn't sorted, I want a manager.",SynCust0072,SynAgent08
+S0000073,7,2025-08-24T18:25:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0072,SynAgent08
+S0000073,8,2025-08-24T18:29:00,customer,"Alright, I'll wait to hear back.",SynCust0072,SynAgent08
+S0000073,9,2025-08-24T18:33:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0072,SynAgent08
+S0000073,10,2025-08-24T18:37:00,customer,"Alright, I'll wait to hear back.",SynCust0072,SynAgent08
+S0000073,11,2025-08-24T18:41:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0072,SynAgent08
+S0000074,0,2025-09-23T11:06:00,customer,"Something is wrong with Flight, it doesn't work at all.",SynCust0073,SynAgent04
+S0000074,1,2025-09-23T11:10:00,agent,I completely understand how annoying this is.,SynCust0073,SynAgent04
+S0000074,2,2025-09-23T11:14:00,customer,"This still isn't sorted, I want a manager.",SynCust0073,SynAgent04
+S0000074,3,2025-09-23T11:18:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0073,SynAgent04
+S0000074,4,2025-09-23T11:22:00,customer,"Brilliant, it works now, thank you!",SynCust0073,SynAgent04
+S0000074,5,2025-09-23T11:26:00,agent,Could you confirm the email on the account?,SynCust0073,SynAgent04
+S0000074,6,2025-09-23T11:30:00,customer,"Alright, I'll wait to hear back.",SynCust0073,SynAgent04
+S0000074,7,2025-09-23T11:34:00,agent,Thanks for your patience while I check.,SynCust0073,SynAgent04
+S0000074,8,2025-09-23T11:38:00,customer,"Brilliant, it works now, thank you!",SynCust0073,SynAgent04
+S0000074,9,2025-09-23T11:42:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0073,SynAgent04
+S0000075,0,2025-08-25T14:31:00,customer,Quick question about Wallet please.,SynCust0074,SynAgent06
+S0000075,1,2025-08-25T14:35:00,agent,Could you confirm the email on the account?,SynCust0074,SynAgent06
+S0000075,2,2025-08-25T14:39:00,customer,"Brilliant, it works now, thank you!",SynCust0074,SynAgent06
+S0000075,3,2025-08-25T14:43:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0074,SynAgent06
+S0000075,4,2025-08-25T14:47:00,customer,"Brilliant, it works now, thank you!",SynCust0074,SynAgent06
+S0000075,5,2025-08-25T14:51:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0074,SynAgent06
+S0000075,6,2025-08-25T14:55:00,customer,"Brilliant, it works now, thank you!",SynCust0074,SynAgent06
+S0000075,7,2025-08-25T14:59:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0074,SynAgent06
+S0000075,8,2025-08-25T15:03:00,customer,"This still isn't sorted, I want a manager.",SynCust0074,SynAgent06
+S0000075,9,2025-08-25T15:07:00,agent,Give me a minute to check this.,SynCust0074,SynAgent06
+S0000075,10,2025-08-25T15:11:00,customer,"Please hurry, this is really urgent.",SynCust0074,SynAgent06
+S0000075,11,2025-08-25T15:15:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0074,SynAgent06
+S0000076,0,2025-11-04T10:04:00,customer,I'm locked out of my account and can't sign in.,SynCust0075,SynAgent06
+S0000076,1,2025-11-04T10:08:00,agent,Thanks for your patience while I check.,SynCust0075,SynAgent06
+S0000076,2,2025-11-04T10:12:00,customer,"This still isn't sorted, I want a manager.",SynCust0075,SynAgent06
+S0000076,3,2025-11-04T10:16:00,agent,Give me a minute to check this.,SynCust0075,SynAgent06
+S0000076,4,2025-11-04T10:20:00,customer,"Alright, I'll wait to hear back.",SynCust0075,SynAgent06
+S0000076,5,2025-11-04T10:24:00,agent,Give me a minute to check this.,SynCust0075,SynAgent06
+S0000076,6,2025-11-04T10:28:00,customer,"Alright, I'll wait to hear back.",SynCust0075,SynAgent06
+S0000076,7,2025-11-04T10:32:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0075,SynAgent06
+S0000076,8,2025-11-04T10:36:00,customer,Thanks for the quick help.,SynCust0075,SynAgent06
+S0000076,9,2025-11-04T10:40:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0075,SynAgent06
+S0000077,0,2025-11-26T10:06:00,customer,Been waiting a week and my Wallet never showed up.,SynCust0076,SynAgent01
+S0000077,1,2025-11-26T10:10:00,agent,I completely understand how annoying this is.,SynCust0076,SynAgent01
+S0000077,2,2025-11-26T10:14:00,customer,"Brilliant, it works now, thank you!",SynCust0076,SynAgent01
+S0000077,3,2025-11-26T10:18:00,agent,Give me a minute to check this.,SynCust0076,SynAgent01
+S0000077,4,2025-11-26T10:22:00,customer,"Brilliant, it works now, thank you!",SynCust0076,SynAgent01
+S0000077,5,2025-11-26T10:26:00,agent,I completely understand how annoying this is.,SynCust0076,SynAgent01
+S0000077,6,2025-11-26T10:30:00,customer,"Please hurry, this is really urgent.",SynCust0076,SynAgent01
+S0000077,7,2025-11-26T10:34:00,agent,I completely understand how annoying this is.,SynCust0076,SynAgent01
+S0000077,8,2025-11-26T10:38:00,customer,"Please hurry, this is really urgent.",SynCust0076,SynAgent01
+S0000077,9,2025-11-26T10:42:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0076,SynAgent01
+S0000077,10,2025-11-26T10:46:00,customer,"Alright, I'll wait to hear back.",SynCust0076,SynAgent01
+S0000077,11,2025-11-26T10:50:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0076,SynAgent01
+S0000078,0,2025-11-14T11:34:00,customer,I'm locked out of my account and can't sign in.,SynCust0077,SynAgent04
+S0000078,1,2025-11-14T11:38:00,agent,Give me a minute to check this.,SynCust0077,SynAgent04
+S0000078,2,2025-11-14T11:42:00,customer,Thanks for the quick help.,SynCust0077,SynAgent04
+S0000078,3,2025-11-14T11:46:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0077,SynAgent04
+S0000078,4,2025-11-14T11:50:00,customer,Thanks for the quick help.,SynCust0077,SynAgent04
+S0000078,5,2025-11-14T11:54:00,agent,Could you confirm the email on the account?,SynCust0077,SynAgent04
+S0000078,6,2025-11-14T11:58:00,customer,"Brilliant, it works now, thank you!",SynCust0077,SynAgent04
+S0000078,7,2025-11-14T12:02:00,agent,Could you confirm the email on the account?,SynCust0077,SynAgent04
+S0000078,8,2025-11-14T12:06:00,customer,"Please hurry, this is really urgent.",SynCust0077,SynAgent04
+S0000078,9,2025-11-14T12:10:00,agent,I completely understand how annoying this is.,SynCust0077,SynAgent04
+S0000078,10,2025-11-14T12:14:00,customer,"This still isn't sorted, I want a manager.",SynCust0077,SynAgent04
+S0000078,11,2025-11-14T12:18:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0077,SynAgent04
+S0000079,0,2025-10-23T09:34:00,customer,I'm locked out of my account and can't sign in.,SynCust0078,SynAgent08
+S0000079,1,2025-10-23T09:38:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0078,SynAgent08
+S0000079,2,2025-10-23T09:42:00,customer,"This still isn't sorted, I want a manager.",SynCust0078,SynAgent08
+S0000079,3,2025-10-23T09:46:00,agent,Give me a minute to check this.,SynCust0078,SynAgent08
+S0000079,4,2025-10-23T09:50:00,customer,Thanks for the quick help.,SynCust0078,SynAgent08
+S0000079,5,2025-10-23T09:54:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0078,SynAgent08
+S0000079,6,2025-10-23T09:58:00,customer,"Please hurry, this is really urgent.",SynCust0078,SynAgent08
+S0000079,7,2025-10-23T10:02:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0078,SynAgent08
+S0000079,8,2025-10-23T10:06:00,customer,"Brilliant, it works now, thank you!",SynCust0078,SynAgent08
+S0000079,9,2025-10-23T10:10:00,agent,I completely understand how annoying this is.,SynCust0078,SynAgent08
+S0000079,10,2025-10-23T10:14:00,customer,"Brilliant, it works now, thank you!",SynCust0078,SynAgent08
+S0000079,11,2025-10-23T10:18:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0078,SynAgent08
+S0000080,0,2025-08-23T12:59:00,customer,"Something is wrong with Course, it doesn't work at all.",SynCust0079,SynAgent03
+S0000080,1,2025-08-23T13:03:00,agent,Thanks for your patience while I check.,SynCust0079,SynAgent03
+S0000080,2,2025-08-23T13:07:00,customer,"This still isn't sorted, I want a manager.",SynCust0079,SynAgent03
+S0000080,3,2025-08-23T13:11:00,agent,Give me a minute to check this.,SynCust0079,SynAgent03
+S0000080,4,2025-08-23T13:15:00,customer,"Alright, I'll wait to hear back.",SynCust0079,SynAgent03
+S0000080,5,2025-08-23T13:19:00,agent,Give me a minute to check this.,SynCust0079,SynAgent03
+S0000080,6,2025-08-23T13:23:00,customer,Thanks for the quick help.,SynCust0079,SynAgent03
+S0000080,7,2025-08-23T13:27:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0079,SynAgent03
+S0000081,0,2025-09-04T15:21:00,customer,The app shuts down every time I open Broadband.,SynCust0080,SynAgent05
+S0000081,1,2025-09-04T15:25:00,agent,Could you confirm the email on the account?,SynCust0080,SynAgent05
+S0000081,2,2025-09-04T15:29:00,customer,"Please hurry, this is really urgent.",SynCust0080,SynAgent05
+S0000081,3,2025-09-04T15:33:00,agent,Could you confirm the email on the account?,SynCust0080,SynAgent05
+S0000081,4,2025-09-04T15:37:00,customer,"Please hurry, this is really urgent.",SynCust0080,SynAgent05
+S0000081,5,2025-09-04T15:41:00,agent,Could you confirm the email on the account?,SynCust0080,SynAgent05
+S0000081,6,2025-09-04T15:45:00,customer,"Alright, I'll wait to hear back.",SynCust0080,SynAgent05
+S0000081,7,2025-09-04T15:49:00,agent,Thanks for your patience while I check.,SynCust0080,SynAgent05
+S0000081,8,2025-09-04T15:53:00,customer,"Please hurry, this is really urgent.",SynCust0080,SynAgent05
+S0000081,9,2025-09-04T15:57:00,agent,Give me a minute to check this.,SynCust0080,SynAgent05
+S0000081,10,2025-09-04T16:01:00,customer,"This still isn't sorted, I want a manager.",SynCust0080,SynAgent05
+S0000081,11,2025-09-04T16:05:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0080,SynAgent05
+S0000082,0,2025-09-20T13:17:00,customer,Been waiting a week and my Order never showed up.,SynCust0081,SynAgent04
+S0000082,1,2025-09-20T13:21:00,agent,I completely understand how annoying this is.,SynCust0081,SynAgent04
+S0000082,2,2025-09-20T13:25:00,customer,"This still isn't sorted, I want a manager.",SynCust0081,SynAgent04
+S0000082,3,2025-09-20T13:29:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0081,SynAgent04
+S0000082,4,2025-09-20T13:33:00,customer,"This still isn't sorted, I want a manager.",SynCust0081,SynAgent04
+S0000082,5,2025-09-20T13:37:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0081,SynAgent04
+S0000083,0,2025-09-30T12:56:00,customer,I'm locked out of my account and can't sign in.,SynCust0082,SynAgent08
+S0000083,1,2025-09-30T13:00:00,agent,Could you confirm the email on the account?,SynCust0082,SynAgent08
+S0000083,2,2025-09-30T13:04:00,customer,"This still isn't sorted, I want a manager.",SynCust0082,SynAgent08
+S0000083,3,2025-09-30T13:08:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0082,SynAgent08
+S0000083,4,2025-09-30T13:12:00,customer,"Please hurry, this is really urgent.",SynCust0082,SynAgent08
+S0000083,5,2025-09-30T13:16:00,agent,Thanks for your patience while I check.,SynCust0082,SynAgent08
+S0000083,6,2025-09-30T13:20:00,customer,Thanks for the quick help.,SynCust0082,SynAgent08
+S0000083,7,2025-09-30T13:24:00,agent,Could you confirm the email on the account?,SynCust0082,SynAgent08
+S0000083,8,2025-09-30T13:28:00,customer,"This still isn't sorted, I want a manager.",SynCust0082,SynAgent08
+S0000083,9,2025-09-30T13:32:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0082,SynAgent08
+S0000084,0,2025-09-17T17:44:00,customer,Quick question about Insurance please.,SynCust0083,SynAgent03
+S0000084,1,2025-09-17T17:48:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0083,SynAgent03
+S0000084,2,2025-09-17T17:52:00,customer,"This still isn't sorted, I want a manager.",SynCust0083,SynAgent03
+S0000084,3,2025-09-17T17:56:00,agent,Thanks for your patience while I check.,SynCust0083,SynAgent03
+S0000084,4,2025-09-17T18:00:00,customer,Thanks for the quick help.,SynCust0083,SynAgent03
+S0000084,5,2025-09-17T18:04:00,agent,Give me a minute to check this.,SynCust0083,SynAgent03
+S0000084,6,2025-09-17T18:08:00,customer,"Please hurry, this is really urgent.",SynCust0083,SynAgent03
+S0000084,7,2025-09-17T18:12:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0083,SynAgent03
+S0000084,8,2025-09-17T18:16:00,customer,"Alright, I'll wait to hear back.",SynCust0083,SynAgent03
+S0000084,9,2025-09-17T18:20:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0083,SynAgent03
+S0000085,0,2025-09-13T11:24:00,customer,Been waiting a week and my Flight never showed up.,SynCust0084,SynAgent01
+S0000085,1,2025-09-13T11:28:00,agent,Thanks for your patience while I check.,SynCust0084,SynAgent01
+S0000085,2,2025-09-13T11:32:00,customer,"Please hurry, this is really urgent.",SynCust0084,SynAgent01
+S0000085,3,2025-09-13T11:36:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0084,SynAgent01
+S0000085,4,2025-09-13T11:40:00,customer,"Alright, I'll wait to hear back.",SynCust0084,SynAgent01
+S0000085,5,2025-09-13T11:44:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0084,SynAgent01
+S0000086,0,2025-09-22T15:20:00,customer,The app shuts down every time I open Wallet.,SynCust0085,SynAgent03
+S0000086,1,2025-09-22T15:24:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0085,SynAgent03
+S0000086,2,2025-09-22T15:28:00,customer,"Brilliant, it works now, thank you!",SynCust0085,SynAgent03
+S0000086,3,2025-09-22T15:32:00,agent,Thanks for your patience while I check.,SynCust0085,SynAgent03
+S0000086,4,2025-09-22T15:36:00,customer,"Brilliant, it works now, thank you!",SynCust0085,SynAgent03
+S0000086,5,2025-09-22T15:40:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0085,SynAgent03
+S0000086,6,2025-09-22T15:44:00,customer,"Brilliant, it works now, thank you!",SynCust0085,SynAgent03
+S0000086,7,2025-09-22T15:48:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0085,SynAgent03
+S0000087,0,2025-08-13T15:44:00,customer,Paid already but the Order still isn't active on my account.,SynCust0086,SynAgent03
+S0000087,1,2025-08-13T15:48:00,agent,I completely understand how annoying this is.,SynCust0086,SynAgent03
+S0000087,2,2025-08-13T15:52:00,customer,"Alright, I'll wait to hear back.",SynCust0086,SynAgent03
+S0000087,3,2025-08-13T15:56:00,agent,I completely understand how annoying this is.,SynCust0086,SynAgent03
+S0000087,4,2025-08-13T16:00:00,customer,"Alright, I'll wait to hear back.",SynCust0086,SynAgent03
+S0000087,5,2025-08-13T16:04:00,agent,Give me a minute to check this.,SynCust0086,SynAgent03
+S0000087,6,2025-08-13T16:08:00,customer,"Brilliant, it works now, thank you!",SynCust0086,SynAgent03
+S0000087,7,2025-08-13T16:12:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0086,SynAgent03
+S0000088,0,2025-08-07T14:19:00,customer,"Something is wrong with Course, it doesn't work at all.",SynCust0087,SynAgent06
+S0000088,1,2025-08-07T14:23:00,agent,Give me a minute to check this.,SynCust0087,SynAgent06
+S0000088,2,2025-08-07T14:27:00,customer,"Please hurry, this is really urgent.",SynCust0087,SynAgent06
+S0000088,3,2025-08-07T14:31:00,agent,I completely understand how annoying this is.,SynCust0087,SynAgent06
+S0000088,4,2025-08-07T14:35:00,customer,"Brilliant, it works now, thank you!",SynCust0087,SynAgent06
+S0000088,5,2025-08-07T14:39:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0087,SynAgent06
+S0000089,0,2025-08-27T09:06:00,customer,The promo code just won't work for Course.,SynCust0088,SynAgent07
+S0000089,1,2025-08-27T09:10:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0088,SynAgent07
+S0000089,2,2025-08-27T09:14:00,customer,"Brilliant, it works now, thank you!",SynCust0088,SynAgent07
+S0000089,3,2025-08-27T09:18:00,agent,Thanks for your patience while I check.,SynCust0088,SynAgent07
+S0000089,4,2025-08-27T09:22:00,customer,"Alright, I'll wait to hear back.",SynCust0088,SynAgent07
+S0000089,5,2025-08-27T09:26:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0088,SynAgent07
+S0000090,0,2025-09-28T11:46:00,customer,"My card got billed two times for the Wallet subscription, please sort it.",SynCust0089,SynAgent03
+S0000090,1,2025-09-28T11:50:00,agent,I completely understand how annoying this is.,SynCust0089,SynAgent03
+S0000090,2,2025-09-28T11:54:00,customer,"This still isn't sorted, I want a manager.",SynCust0089,SynAgent03
+S0000090,3,2025-09-28T11:58:00,agent,Thanks for your patience while I check.,SynCust0089,SynAgent03
+S0000090,4,2025-09-28T12:02:00,customer,Thanks for the quick help.,SynCust0089,SynAgent03
+S0000090,5,2025-09-28T12:06:00,agent,Give me a minute to check this.,SynCust0089,SynAgent03
+S0000090,6,2025-09-28T12:10:00,customer,Thanks for the quick help.,SynCust0089,SynAgent03
+S0000090,7,2025-09-28T12:14:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0089,SynAgent03
+S0000091,0,2025-08-22T11:29:00,customer,The app shuts down every time I open Broadband.,SynCust0090,SynAgent06
+S0000091,1,2025-08-22T11:33:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0090,SynAgent06
+S0000091,2,2025-08-22T11:37:00,customer,"This still isn't sorted, I want a manager.",SynCust0090,SynAgent06
+S0000091,3,2025-08-22T11:41:00,agent,I completely understand how annoying this is.,SynCust0090,SynAgent06
+S0000091,4,2025-08-22T11:45:00,customer,"Brilliant, it works now, thank you!",SynCust0090,SynAgent06
+S0000091,5,2025-08-22T11:49:00,agent,Could you confirm the email on the account?,SynCust0090,SynAgent06
+S0000091,6,2025-08-22T11:53:00,customer,"Alright, I'll wait to hear back.",SynCust0090,SynAgent06
+S0000091,7,2025-08-22T11:57:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0090,SynAgent06
+S0000092,0,2025-08-17T09:44:00,customer,I'm locked out of my account and can't sign in.,SynCust0091,SynAgent08
+S0000092,1,2025-08-17T09:48:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0091,SynAgent08
+S0000092,2,2025-08-17T09:52:00,customer,Thanks for the quick help.,SynCust0091,SynAgent08
+S0000092,3,2025-08-17T09:56:00,agent,Could you confirm the email on the account?,SynCust0091,SynAgent08
+S0000092,4,2025-08-17T10:00:00,customer,"Please hurry, this is really urgent.",SynCust0091,SynAgent08
+S0000092,5,2025-08-17T10:04:00,agent,Thanks for your patience while I check.,SynCust0091,SynAgent08
+S0000092,6,2025-08-17T10:08:00,customer,"Brilliant, it works now, thank you!",SynCust0091,SynAgent08
+S0000092,7,2025-08-17T10:12:00,agent,Thanks for your patience while I check.,SynCust0091,SynAgent08
+S0000092,8,2025-08-17T10:16:00,customer,"Please hurry, this is really urgent.",SynCust0091,SynAgent08
+S0000092,9,2025-08-17T10:20:00,agent,I completely understand how annoying this is.,SynCust0091,SynAgent08
+S0000092,10,2025-08-17T10:24:00,customer,"Please hurry, this is really urgent.",SynCust0091,SynAgent08
+S0000092,11,2025-08-17T10:28:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0091,SynAgent08
+S0000093,0,2025-10-12T12:43:00,customer,"Something is wrong with Insurance, it doesn't work at all.",SynCust0092,SynAgent01
+S0000093,1,2025-10-12T12:47:00,agent,I completely understand how annoying this is.,SynCust0092,SynAgent01
+S0000093,2,2025-10-12T12:51:00,customer,"Alright, I'll wait to hear back.",SynCust0092,SynAgent01
+S0000093,3,2025-10-12T12:55:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0092,SynAgent01
+S0000093,4,2025-10-12T12:59:00,customer,"Please hurry, this is really urgent.",SynCust0092,SynAgent01
+S0000093,5,2025-10-12T13:03:00,agent,Could you confirm the email on the account?,SynCust0092,SynAgent01
+S0000093,6,2025-10-12T13:07:00,customer,"Please hurry, this is really urgent.",SynCust0092,SynAgent01
+S0000093,7,2025-10-12T13:11:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0092,SynAgent01
+S0000094,0,2025-08-06T18:35:00,customer,I'm locked out of my account and can't sign in.,SynCust0093,SynAgent01
+S0000094,1,2025-08-06T18:39:00,agent,Thanks for your patience while I check.,SynCust0093,SynAgent01
+S0000094,2,2025-08-06T18:43:00,customer,"Brilliant, it works now, thank you!",SynCust0093,SynAgent01
+S0000094,3,2025-08-06T18:47:00,agent,Thanks for your patience while I check.,SynCust0093,SynAgent01
+S0000094,4,2025-08-06T18:51:00,customer,"Alright, I'll wait to hear back.",SynCust0093,SynAgent01
+S0000094,5,2025-08-06T18:55:00,agent,I completely understand how annoying this is.,SynCust0093,SynAgent01
+S0000094,6,2025-08-06T18:59:00,customer,"Alright, I'll wait to hear back.",SynCust0093,SynAgent01
+S0000094,7,2025-08-06T19:03:00,agent,Thanks for your patience while I check.,SynCust0093,SynAgent01
+S0000094,8,2025-08-06T19:07:00,customer,"Please hurry, this is really urgent.",SynCust0093,SynAgent01
+S0000094,9,2025-08-06T19:11:00,agent,I completely understand how annoying this is.,SynCust0093,SynAgent01
+S0000094,10,2025-08-06T19:15:00,customer,"Brilliant, it works now, thank you!",SynCust0093,SynAgent01
+S0000094,11,2025-08-06T19:19:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0093,SynAgent01
+S0000095,0,2025-10-24T15:16:00,customer,Quick question about Broadband please.,SynCust0094,SynAgent08
+S0000095,1,2025-10-24T15:20:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0094,SynAgent08
+S0000095,2,2025-10-24T15:24:00,customer,Thanks for the quick help.,SynCust0094,SynAgent08
+S0000095,3,2025-10-24T15:28:00,agent,I completely understand how annoying this is.,SynCust0094,SynAgent08
+S0000095,4,2025-10-24T15:32:00,customer,"Brilliant, it works now, thank you!",SynCust0094,SynAgent08
+S0000095,5,2025-10-24T15:36:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0094,SynAgent08
+S0000096,0,2025-08-31T16:37:00,customer,The promo code just won't work for Course.,SynCust0095,SynAgent08
+S0000096,1,2025-08-31T16:41:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0095,SynAgent08
+S0000096,2,2025-08-31T16:45:00,customer,"This still isn't sorted, I want a manager.",SynCust0095,SynAgent08
+S0000096,3,2025-08-31T16:49:00,agent,Could you confirm the email on the account?,SynCust0095,SynAgent08
+S0000096,4,2025-08-31T16:53:00,customer,"Alright, I'll wait to hear back.",SynCust0095,SynAgent08
+S0000096,5,2025-08-31T16:57:00,agent,I completely understand how annoying this is.,SynCust0095,SynAgent08
+S0000096,6,2025-08-31T17:01:00,customer,"Alright, I'll wait to hear back.",SynCust0095,SynAgent08
+S0000096,7,2025-08-31T17:05:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0095,SynAgent08
+S0000096,8,2025-08-31T17:09:00,customer,"Brilliant, it works now, thank you!",SynCust0095,SynAgent08
+S0000096,9,2025-08-31T17:13:00,agent,Thanks for your patience while I check.,SynCust0095,SynAgent08
+S0000096,10,2025-08-31T17:17:00,customer,Thanks for the quick help.,SynCust0095,SynAgent08
+S0000096,11,2025-08-31T17:21:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0095,SynAgent08
+S0000097,0,2025-10-24T09:41:00,customer,The promo code just won't work for Wallet.,SynCust0096,SynAgent01
+S0000097,1,2025-10-24T09:45:00,agent,Thanks for your patience while I check.,SynCust0096,SynAgent01
+S0000097,2,2025-10-24T09:49:00,customer,"This still isn't sorted, I want a manager.",SynCust0096,SynAgent01
+S0000097,3,2025-10-24T09:53:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0096,SynAgent01
+S0000097,4,2025-10-24T09:57:00,customer,Thanks for the quick help.,SynCust0096,SynAgent01
+S0000097,5,2025-10-24T10:01:00,agent,I completely understand how annoying this is.,SynCust0096,SynAgent01
+S0000097,6,2025-10-24T10:05:00,customer,"Please hurry, this is really urgent.",SynCust0096,SynAgent01
+S0000097,7,2025-10-24T10:09:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0096,SynAgent01
+S0000097,8,2025-10-24T10:13:00,customer,"This still isn't sorted, I want a manager.",SynCust0096,SynAgent01
+S0000097,9,2025-10-24T10:17:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0096,SynAgent01
+S0000098,0,2025-10-18T10:52:00,customer,The promo code just won't work for Course.,SynCust0097,SynAgent04
+S0000098,1,2025-10-18T10:56:00,agent,Could you confirm the email on the account?,SynCust0097,SynAgent04
+S0000098,2,2025-10-18T11:00:00,customer,"Please hurry, this is really urgent.",SynCust0097,SynAgent04
+S0000098,3,2025-10-18T11:04:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0097,SynAgent04
+S0000098,4,2025-10-18T11:08:00,customer,"Alright, I'll wait to hear back.",SynCust0097,SynAgent04
+S0000098,5,2025-10-18T11:12:00,agent,Thanks for your patience while I check.,SynCust0097,SynAgent04
+S0000098,6,2025-10-18T11:16:00,customer,"Alright, I'll wait to hear back.",SynCust0097,SynAgent04
+S0000098,7,2025-10-18T11:20:00,agent,Could you confirm the email on the account?,SynCust0097,SynAgent04
+S0000098,8,2025-10-18T11:24:00,customer,"Alright, I'll wait to hear back.",SynCust0097,SynAgent04
+S0000098,9,2025-10-18T11:28:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0097,SynAgent04
+S0000099,0,2025-11-23T13:41:00,customer,The promo code just won't work for Flight.,SynCust0098,SynAgent08
+S0000099,1,2025-11-23T13:45:00,agent,Could you confirm the email on the account?,SynCust0098,SynAgent08
+S0000099,2,2025-11-23T13:49:00,customer,Thanks for the quick help.,SynCust0098,SynAgent08
+S0000099,3,2025-11-23T13:53:00,agent,Give me a minute to check this.,SynCust0098,SynAgent08
+S0000099,4,2025-11-23T13:57:00,customer,Thanks for the quick help.,SynCust0098,SynAgent08
+S0000099,5,2025-11-23T14:01:00,agent,Thanks for your patience while I check.,SynCust0098,SynAgent08
+S0000099,6,2025-11-23T14:05:00,customer,"Please hurry, this is really urgent.",SynCust0098,SynAgent08
+S0000099,7,2025-11-23T14:09:00,agent,Give me a minute to check this.,SynCust0098,SynAgent08
+S0000099,8,2025-11-23T14:13:00,customer,"Alright, I'll wait to hear back.",SynCust0098,SynAgent08
+S0000099,9,2025-11-23T14:17:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0098,SynAgent08
+S0000099,10,2025-11-23T14:21:00,customer,"Please hurry, this is really urgent.",SynCust0098,SynAgent08
+S0000099,11,2025-11-23T14:25:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0098,SynAgent08
+S0000100,0,2025-08-24T15:53:00,customer,The app shuts down every time I open Order.,SynCust0099,SynAgent03
+S0000100,1,2025-08-24T15:57:00,agent,I completely understand how annoying this is.,SynCust0099,SynAgent03
+S0000100,2,2025-08-24T16:01:00,customer,"Please hurry, this is really urgent.",SynCust0099,SynAgent03
+S0000100,3,2025-08-24T16:05:00,agent,Give me a minute to check this.,SynCust0099,SynAgent03
+S0000100,4,2025-08-24T16:09:00,customer,"This still isn't sorted, I want a manager.",SynCust0099,SynAgent03
+S0000100,5,2025-08-24T16:13:00,agent,Thanks for your patience while I check.,SynCust0099,SynAgent03
+S0000100,6,2025-08-24T16:17:00,customer,"This still isn't sorted, I want a manager.",SynCust0099,SynAgent03
+S0000100,7,2025-08-24T16:21:00,agent,Give me a minute to check this.,SynCust0099,SynAgent03
+S0000100,8,2025-08-24T16:25:00,customer,"Brilliant, it works now, thank you!",SynCust0099,SynAgent03
+S0000100,9,2025-08-24T16:29:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0099,SynAgent03
+S0000101,0,2025-10-11T17:53:00,customer,The app shuts down every time I open Insurance.,SynCust0100,SynAgent02
+S0000101,1,2025-10-11T17:57:00,agent,Give me a minute to check this.,SynCust0100,SynAgent02
+S0000101,2,2025-10-11T18:01:00,customer,"Alright, I'll wait to hear back.",SynCust0100,SynAgent02
+S0000101,3,2025-10-11T18:05:00,agent,I completely understand how annoying this is.,SynCust0100,SynAgent02
+S0000101,4,2025-10-11T18:09:00,customer,"Alright, I'll wait to hear back.",SynCust0100,SynAgent02
+S0000101,5,2025-10-11T18:13:00,agent,Thanks for your patience while I check.,SynCust0100,SynAgent02
+S0000101,6,2025-10-11T18:17:00,customer,"Please hurry, this is really urgent.",SynCust0100,SynAgent02
+S0000101,7,2025-10-11T18:21:00,agent,Give me a minute to check this.,SynCust0100,SynAgent02
+S0000101,8,2025-10-11T18:25:00,customer,"Alright, I'll wait to hear back.",SynCust0100,SynAgent02
+S0000101,9,2025-10-11T18:29:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0100,SynAgent02
+S0000101,10,2025-10-11T18:33:00,customer,"Brilliant, it works now, thank you!",SynCust0100,SynAgent02
+S0000101,11,2025-10-11T18:37:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0100,SynAgent02
+S0000102,0,2025-08-30T12:00:00,customer,The app shuts down every time I open Insurance.,SynCust0101,SynAgent01
+S0000102,1,2025-08-30T12:04:00,agent,Give me a minute to check this.,SynCust0101,SynAgent01
+S0000102,2,2025-08-30T12:08:00,customer,Thanks for the quick help.,SynCust0101,SynAgent01
+S0000102,3,2025-08-30T12:12:00,agent,Give me a minute to check this.,SynCust0101,SynAgent01
+S0000102,4,2025-08-30T12:16:00,customer,"This still isn't sorted, I want a manager.",SynCust0101,SynAgent01
+S0000102,5,2025-08-30T12:20:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0101,SynAgent01
+S0000102,6,2025-08-30T12:24:00,customer,"Please hurry, this is really urgent.",SynCust0101,SynAgent01
+S0000102,7,2025-08-30T12:28:00,agent,Could you confirm the email on the account?,SynCust0101,SynAgent01
+S0000102,8,2025-08-30T12:32:00,customer,"Alright, I'll wait to hear back.",SynCust0101,SynAgent01
+S0000102,9,2025-08-30T12:36:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0101,SynAgent01
+S0000103,0,2025-10-18T16:22:00,customer,I'm locked out of my account and can't sign in.,SynCust0102,SynAgent07
+S0000103,1,2025-10-18T16:26:00,agent,I completely understand how annoying this is.,SynCust0102,SynAgent07
+S0000103,2,2025-10-18T16:30:00,customer,"Please hurry, this is really urgent.",SynCust0102,SynAgent07
+S0000103,3,2025-10-18T16:34:00,agent,Thanks for your patience while I check.,SynCust0102,SynAgent07
+S0000103,4,2025-10-18T16:38:00,customer,"This still isn't sorted, I want a manager.",SynCust0102,SynAgent07
+S0000103,5,2025-10-18T16:42:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0102,SynAgent07
+S0000103,6,2025-10-18T16:46:00,customer,"This still isn't sorted, I want a manager.",SynCust0102,SynAgent07
+S0000103,7,2025-10-18T16:50:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0102,SynAgent07
+S0000104,0,2025-08-01T18:40:00,customer,The app shuts down every time I open Wallet.,SynCust0103,SynAgent06
+S0000104,1,2025-08-01T18:44:00,agent,Thanks for your patience while I check.,SynCust0103,SynAgent06
+S0000104,2,2025-08-01T18:48:00,customer,"Please hurry, this is really urgent.",SynCust0103,SynAgent06
+S0000104,3,2025-08-01T18:52:00,agent,I completely understand how annoying this is.,SynCust0103,SynAgent06
+S0000104,4,2025-08-01T18:56:00,customer,Thanks for the quick help.,SynCust0103,SynAgent06
+S0000104,5,2025-08-01T19:00:00,agent,Give me a minute to check this.,SynCust0103,SynAgent06
+S0000104,6,2025-08-01T19:04:00,customer,Thanks for the quick help.,SynCust0103,SynAgent06
+S0000104,7,2025-08-01T19:08:00,agent,Could you confirm the email on the account?,SynCust0103,SynAgent06
+S0000104,8,2025-08-01T19:12:00,customer,"Please hurry, this is really urgent.",SynCust0103,SynAgent06
+S0000104,9,2025-08-01T19:16:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0103,SynAgent06
+S0000105,0,2025-09-16T17:06:00,customer,The promo code just won't work for Wallet.,SynCust0104,SynAgent03
+S0000105,1,2025-09-16T17:10:00,agent,Could you confirm the email on the account?,SynCust0104,SynAgent03
+S0000105,2,2025-09-16T17:14:00,customer,"Brilliant, it works now, thank you!",SynCust0104,SynAgent03
+S0000105,3,2025-09-16T17:18:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0104,SynAgent03
+S0000105,4,2025-09-16T17:22:00,customer,"This still isn't sorted, I want a manager.",SynCust0104,SynAgent03
+S0000105,5,2025-09-16T17:26:00,agent,Could you confirm the email on the account?,SynCust0104,SynAgent03
+S0000105,6,2025-09-16T17:30:00,customer,"Alright, I'll wait to hear back.",SynCust0104,SynAgent03
+S0000105,7,2025-09-16T17:34:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0104,SynAgent03
+S0000106,0,2025-09-21T13:30:00,customer,"My card got billed two times for the Order subscription, please sort it.",SynCust0105,SynAgent01
+S0000106,1,2025-09-21T13:34:00,agent,Thanks for your patience while I check.,SynCust0105,SynAgent01
+S0000106,2,2025-09-21T13:38:00,customer,Thanks for the quick help.,SynCust0105,SynAgent01
+S0000106,3,2025-09-21T13:42:00,agent,I completely understand how annoying this is.,SynCust0105,SynAgent01
+S0000106,4,2025-09-21T13:46:00,customer,Thanks for the quick help.,SynCust0105,SynAgent01
+S0000106,5,2025-09-21T13:50:00,agent,Thanks for your patience while I check.,SynCust0105,SynAgent01
+S0000106,6,2025-09-21T13:54:00,customer,"Brilliant, it works now, thank you!",SynCust0105,SynAgent01
+S0000106,7,2025-09-21T13:58:00,agent,Could you confirm the email on the account?,SynCust0105,SynAgent01
+S0000106,8,2025-09-21T14:02:00,customer,"Please hurry, this is really urgent.",SynCust0105,SynAgent01
+S0000106,9,2025-09-21T14:06:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0105,SynAgent01
+S0000107,0,2025-11-24T09:00:00,customer,"My card got billed two times for the Insurance subscription, please sort it.",SynCust0106,SynAgent01
+S0000107,1,2025-11-24T09:04:00,agent,I completely understand how annoying this is.,SynCust0106,SynAgent01
+S0000107,2,2025-11-24T09:08:00,customer,"Please hurry, this is really urgent.",SynCust0106,SynAgent01
+S0000107,3,2025-11-24T09:12:00,agent,Could you confirm the email on the account?,SynCust0106,SynAgent01
+S0000107,4,2025-11-24T09:16:00,customer,"Please hurry, this is really urgent.",SynCust0106,SynAgent01
+S0000107,5,2025-11-24T09:20:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0106,SynAgent01
+S0000108,0,2025-08-08T10:47:00,customer,Been waiting a week and my Broadband never showed up.,SynCust0107,SynAgent01
+S0000108,1,2025-08-08T10:51:00,agent,Could you confirm the email on the account?,SynCust0107,SynAgent01
+S0000108,2,2025-08-08T10:55:00,customer,Thanks for the quick help.,SynCust0107,SynAgent01
+S0000108,3,2025-08-08T10:59:00,agent,Thanks for your patience while I check.,SynCust0107,SynAgent01
+S0000108,4,2025-08-08T11:03:00,customer,Thanks for the quick help.,SynCust0107,SynAgent01
+S0000108,5,2025-08-08T11:07:00,agent,I completely understand how annoying this is.,SynCust0107,SynAgent01
+S0000108,6,2025-08-08T11:11:00,customer,Thanks for the quick help.,SynCust0107,SynAgent01
+S0000108,7,2025-08-08T11:15:00,agent,Could you confirm the email on the account?,SynCust0107,SynAgent01
+S0000108,8,2025-08-08T11:19:00,customer,Thanks for the quick help.,SynCust0107,SynAgent01
+S0000108,9,2025-08-08T11:23:00,agent,Give me a minute to check this.,SynCust0107,SynAgent01
+S0000108,10,2025-08-08T11:27:00,customer,"This still isn't sorted, I want a manager.",SynCust0107,SynAgent01
+S0000108,11,2025-08-08T11:31:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0107,SynAgent01
+S0000109,0,2025-09-08T09:49:00,customer,"My card got billed two times for the Course subscription, please sort it.",SynCust0108,SynAgent08
+S0000109,1,2025-09-08T09:53:00,agent,I completely understand how annoying this is.,SynCust0108,SynAgent08
+S0000109,2,2025-09-08T09:57:00,customer,"This still isn't sorted, I want a manager.",SynCust0108,SynAgent08
+S0000109,3,2025-09-08T10:01:00,agent,I completely understand how annoying this is.,SynCust0108,SynAgent08
+S0000109,4,2025-09-08T10:05:00,customer,"Please hurry, this is really urgent.",SynCust0108,SynAgent08
+S0000109,5,2025-09-08T10:09:00,agent,Could you confirm the email on the account?,SynCust0108,SynAgent08
+S0000109,6,2025-09-08T10:13:00,customer,"This still isn't sorted, I want a manager.",SynCust0108,SynAgent08
+S0000109,7,2025-09-08T10:17:00,agent,Give me a minute to check this.,SynCust0108,SynAgent08
+S0000109,8,2025-09-08T10:21:00,customer,"Please hurry, this is really urgent.",SynCust0108,SynAgent08
+S0000109,9,2025-09-08T10:25:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0108,SynAgent08
+S0000109,10,2025-09-08T10:29:00,customer,"This still isn't sorted, I want a manager.",SynCust0108,SynAgent08
+S0000109,11,2025-09-08T10:33:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0108,SynAgent08
+S0000110,0,2025-09-12T13:29:00,customer,The app shuts down every time I open Order.,SynCust0109,SynAgent01
+S0000110,1,2025-09-12T13:33:00,agent,Thanks for your patience while I check.,SynCust0109,SynAgent01
+S0000110,2,2025-09-12T13:37:00,customer,"Alright, I'll wait to hear back.",SynCust0109,SynAgent01
+S0000110,3,2025-09-12T13:41:00,agent,Give me a minute to check this.,SynCust0109,SynAgent01
+S0000110,4,2025-09-12T13:45:00,customer,"Please hurry, this is really urgent.",SynCust0109,SynAgent01
+S0000110,5,2025-09-12T13:49:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0109,SynAgent01
+S0000110,6,2025-09-12T13:53:00,customer,Thanks for the quick help.,SynCust0109,SynAgent01
+S0000110,7,2025-09-12T13:57:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0109,SynAgent01
+S0000110,8,2025-09-12T14:01:00,customer,"Please hurry, this is really urgent.",SynCust0109,SynAgent01
+S0000110,9,2025-09-12T14:05:00,agent,Give me a minute to check this.,SynCust0109,SynAgent01
+S0000110,10,2025-09-12T14:09:00,customer,"Please hurry, this is really urgent.",SynCust0109,SynAgent01
+S0000110,11,2025-09-12T14:13:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0109,SynAgent01
+S0000111,0,2025-11-16T12:27:00,customer,I'm locked out of my account and can't sign in.,SynCust0110,SynAgent03
+S0000111,1,2025-11-16T12:31:00,agent,Give me a minute to check this.,SynCust0110,SynAgent03
+S0000111,2,2025-11-16T12:35:00,customer,Thanks for the quick help.,SynCust0110,SynAgent03
+S0000111,3,2025-11-16T12:39:00,agent,Could you confirm the email on the account?,SynCust0110,SynAgent03
+S0000111,4,2025-11-16T12:43:00,customer,"Brilliant, it works now, thank you!",SynCust0110,SynAgent03
+S0000111,5,2025-11-16T12:47:00,agent,Thanks for your patience while I check.,SynCust0110,SynAgent03
+S0000111,6,2025-11-16T12:51:00,customer,"Brilliant, it works now, thank you!",SynCust0110,SynAgent03
+S0000111,7,2025-11-16T12:55:00,agent,I completely understand how annoying this is.,SynCust0110,SynAgent03
+S0000111,8,2025-11-16T12:59:00,customer,Thanks for the quick help.,SynCust0110,SynAgent03
+S0000111,9,2025-11-16T13:03:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0110,SynAgent03
+S0000111,10,2025-11-16T13:07:00,customer,"This still isn't sorted, I want a manager.",SynCust0110,SynAgent03
+S0000111,11,2025-11-16T13:11:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0110,SynAgent03
+S0000112,0,2025-09-25T12:59:00,customer,Been waiting a week and my Course never showed up.,SynCust0111,SynAgent05
+S0000112,1,2025-09-25T13:03:00,agent,Thanks for your patience while I check.,SynCust0111,SynAgent05
+S0000112,2,2025-09-25T13:07:00,customer,"Please hurry, this is really urgent.",SynCust0111,SynAgent05
+S0000112,3,2025-09-25T13:11:00,agent,Could you confirm the email on the account?,SynCust0111,SynAgent05
+S0000112,4,2025-09-25T13:15:00,customer,"This still isn't sorted, I want a manager.",SynCust0111,SynAgent05
+S0000112,5,2025-09-25T13:19:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0111,SynAgent05
+S0000113,0,2025-08-04T10:54:00,customer,The promo code just won't work for Flight.,SynCust0112,SynAgent02
+S0000113,1,2025-08-04T10:58:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0112,SynAgent02
+S0000113,2,2025-08-04T11:02:00,customer,"This still isn't sorted, I want a manager.",SynCust0112,SynAgent02
+S0000113,3,2025-08-04T11:06:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0112,SynAgent02
+S0000113,4,2025-08-04T11:10:00,customer,"Please hurry, this is really urgent.",SynCust0112,SynAgent02
+S0000113,5,2025-08-04T11:14:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0112,SynAgent02
+S0000113,6,2025-08-04T11:18:00,customer,"This still isn't sorted, I want a manager.",SynCust0112,SynAgent02
+S0000113,7,2025-08-04T11:22:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0112,SynAgent02
+S0000114,0,2025-11-03T09:47:00,customer,I'm locked out of my account and can't sign in.,SynCust0113,SynAgent02
+S0000114,1,2025-11-03T09:51:00,agent,I completely understand how annoying this is.,SynCust0113,SynAgent02
+S0000114,2,2025-11-03T09:55:00,customer,"This still isn't sorted, I want a manager.",SynCust0113,SynAgent02
+S0000114,3,2025-11-03T09:59:00,agent,Could you confirm the email on the account?,SynCust0113,SynAgent02
+S0000114,4,2025-11-03T10:03:00,customer,"Please hurry, this is really urgent.",SynCust0113,SynAgent02
+S0000114,5,2025-11-03T10:07:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0113,SynAgent02
+S0000115,0,2025-08-27T10:54:00,customer,"My card got billed two times for the Order subscription, please sort it.",SynCust0114,SynAgent01
+S0000115,1,2025-08-27T10:58:00,agent,Give me a minute to check this.,SynCust0114,SynAgent01
+S0000115,2,2025-08-27T11:02:00,customer,"Brilliant, it works now, thank you!",SynCust0114,SynAgent01
+S0000115,3,2025-08-27T11:06:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0114,SynAgent01
+S0000115,4,2025-08-27T11:10:00,customer,"Please hurry, this is really urgent.",SynCust0114,SynAgent01
+S0000115,5,2025-08-27T11:14:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0114,SynAgent01
+S0000116,0,2025-08-13T12:29:00,customer,I'm locked out of my account and can't sign in.,SynCust0115,SynAgent05
+S0000116,1,2025-08-13T12:33:00,agent,Give me a minute to check this.,SynCust0115,SynAgent05
+S0000116,2,2025-08-13T12:37:00,customer,"This still isn't sorted, I want a manager.",SynCust0115,SynAgent05
+S0000116,3,2025-08-13T12:41:00,agent,Give me a minute to check this.,SynCust0115,SynAgent05
+S0000116,4,2025-08-13T12:45:00,customer,"Alright, I'll wait to hear back.",SynCust0115,SynAgent05
+S0000116,5,2025-08-13T12:49:00,agent,Give me a minute to check this.,SynCust0115,SynAgent05
+S0000116,6,2025-08-13T12:53:00,customer,"This still isn't sorted, I want a manager.",SynCust0115,SynAgent05
+S0000116,7,2025-08-13T12:57:00,agent,Give me a minute to check this.,SynCust0115,SynAgent05
+S0000116,8,2025-08-13T13:01:00,customer,"Alright, I'll wait to hear back.",SynCust0115,SynAgent05
+S0000116,9,2025-08-13T13:05:00,agent,Thanks for your patience while I check.,SynCust0115,SynAgent05
+S0000116,10,2025-08-13T13:09:00,customer,Thanks for the quick help.,SynCust0115,SynAgent05
+S0000116,11,2025-08-13T13:13:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0115,SynAgent05
+S0000117,0,2025-09-30T13:54:00,customer,"Something is wrong with Wallet, it doesn't work at all.",SynCust0116,SynAgent01
+S0000117,1,2025-09-30T13:58:00,agent,Thanks for your patience while I check.,SynCust0116,SynAgent01
+S0000117,2,2025-09-30T14:02:00,customer,"This still isn't sorted, I want a manager.",SynCust0116,SynAgent01
+S0000117,3,2025-09-30T14:06:00,agent,Give me a minute to check this.,SynCust0116,SynAgent01
+S0000117,4,2025-09-30T14:10:00,customer,"Brilliant, it works now, thank you!",SynCust0116,SynAgent01
+S0000117,5,2025-09-30T14:14:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0116,SynAgent01
+S0000117,6,2025-09-30T14:18:00,customer,Thanks for the quick help.,SynCust0116,SynAgent01
+S0000117,7,2025-09-30T14:22:00,agent,Thanks for your patience while I check.,SynCust0116,SynAgent01
+S0000117,8,2025-09-30T14:26:00,customer,"Please hurry, this is really urgent.",SynCust0116,SynAgent01
+S0000117,9,2025-09-30T14:30:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0116,SynAgent01
+S0000117,10,2025-09-30T14:34:00,customer,Thanks for the quick help.,SynCust0116,SynAgent01
+S0000117,11,2025-09-30T14:38:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0116,SynAgent01
+S0000118,0,2025-11-13T13:54:00,customer,"Something is wrong with Wallet, it doesn't work at all.",SynCust0117,SynAgent03
+S0000118,1,2025-11-13T13:58:00,agent,Give me a minute to check this.,SynCust0117,SynAgent03
+S0000118,2,2025-11-13T14:02:00,customer,"This still isn't sorted, I want a manager.",SynCust0117,SynAgent03
+S0000118,3,2025-11-13T14:06:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0117,SynAgent03
+S0000118,4,2025-11-13T14:10:00,customer,"Alright, I'll wait to hear back.",SynCust0117,SynAgent03
+S0000118,5,2025-11-13T14:14:00,agent,I completely understand how annoying this is.,SynCust0117,SynAgent03
+S0000118,6,2025-11-13T14:18:00,customer,"This still isn't sorted, I want a manager.",SynCust0117,SynAgent03
+S0000118,7,2025-11-13T14:22:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0117,SynAgent03
+S0000119,0,2025-10-02T12:08:00,customer,I'm locked out of my account and can't sign in.,SynCust0118,SynAgent08
+S0000119,1,2025-10-02T12:12:00,agent,Thanks for your patience while I check.,SynCust0118,SynAgent08
+S0000119,2,2025-10-02T12:16:00,customer,"Please hurry, this is really urgent.",SynCust0118,SynAgent08
+S0000119,3,2025-10-02T12:20:00,agent,Give me a minute to check this.,SynCust0118,SynAgent08
+S0000119,4,2025-10-02T12:24:00,customer,"Please hurry, this is really urgent.",SynCust0118,SynAgent08
+S0000119,5,2025-10-02T12:28:00,agent,Could you confirm the email on the account?,SynCust0118,SynAgent08
+S0000119,6,2025-10-02T12:32:00,customer,"Brilliant, it works now, thank you!",SynCust0118,SynAgent08
+S0000119,7,2025-10-02T12:36:00,agent,Could you confirm the email on the account?,SynCust0118,SynAgent08
+S0000119,8,2025-10-02T12:40:00,customer,"This still isn't sorted, I want a manager.",SynCust0118,SynAgent08
+S0000119,9,2025-10-02T12:44:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0118,SynAgent08
+S0000120,0,2025-11-29T10:22:00,customer,Paid already but the Order still isn't active on my account.,SynCust0119,SynAgent08
+S0000120,1,2025-11-29T10:26:00,agent,Give me a minute to check this.,SynCust0119,SynAgent08
+S0000120,2,2025-11-29T10:30:00,customer,"This still isn't sorted, I want a manager.",SynCust0119,SynAgent08
+S0000120,3,2025-11-29T10:34:00,agent,I completely understand how annoying this is.,SynCust0119,SynAgent08
+S0000120,4,2025-11-29T10:38:00,customer,"Brilliant, it works now, thank you!",SynCust0119,SynAgent08
+S0000120,5,2025-11-29T10:42:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0119,SynAgent08
+S0000120,6,2025-11-29T10:46:00,customer,"Brilliant, it works now, thank you!",SynCust0119,SynAgent08
+S0000120,7,2025-11-29T10:50:00,agent,"I'm really sorry for the hassle, let me look into it.",SynCust0119,SynAgent08
+S0000120,8,2025-11-29T10:54:00,customer,"Alright, I'll wait to hear back.",SynCust0119,SynAgent08
+S0000120,9,2025-11-29T10:58:00,agent,I've escalated this to our specialist team; you'll hear back soon.,SynCust0119,SynAgent08

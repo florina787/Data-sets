@@ -1,0 +1,171 @@
+{
+  "id": "banking-incident-investigation",
+  "name": "NorthStar Bank \u2014 Cross-system incident investigation",
+  "company": "NorthStar Bank",
+  "industry": "banking",
+  "summary": "Same bank and platform as the transaction-rules scenario, but a variable, cross-system investigation workload.",
+  "expected": {
+    "primary_architecture": "agentic_ai",
+    "agentic_verdict": "constrained",
+    "ai_recommended": true,
+    "requires_human_approval": true
+  },
+  "request": {
+    "organization": {
+      "name": "NorthStar Bank (fictional)",
+      "industry": "banking",
+      "size": "enterprise",
+      "ai_maturity": 2,
+      "gpu_available": false,
+      "data_residency_regions": [
+        "Domestic"
+      ]
+    },
+    "current_architecture": {
+      "deployment": [
+        "on_premises"
+      ],
+      "compute": [
+        "kubernetes"
+      ],
+      "styles": [
+        "microservices",
+        "api_based"
+      ],
+      "integration": [
+        "rest",
+        "kafka",
+        "message_queue"
+      ],
+      "identity_security": [
+        "active_directory",
+        "oidc",
+        "rbac",
+        "api_gateway",
+        "secrets_management",
+        "private_networking",
+        "service_accounts"
+      ],
+      "data_stores": [
+        "oracle",
+        "postgresql",
+        "data_warehouse",
+        "search_engine"
+      ],
+      "devops": [
+        "jenkins",
+        "argocd",
+        "prometheus",
+        "grafana",
+        "splunk"
+      ],
+      "existing_systems": [
+        "Transaction Rules Engine",
+        "Core Banking Microservices",
+        "Incident Management (ITSM)",
+        "Runbook Repository"
+      ]
+    },
+    "data_profile": {
+      "availability": 4,
+      "quality": 3,
+      "freshness": 5,
+      "ownership": 3,
+      "lineage": 3,
+      "metadata": 3,
+      "permissions": 4,
+      "document_quality": 3,
+      "structured_share_pct": 50,
+      "knowledge_fragmentation": 5,
+      "contains_pii": false,
+      "contains_financial_data": false,
+      "confidential": true,
+      "privileged": false,
+      "data_residency_required": false,
+      "data_sources": [
+        "Logs",
+        "Metrics",
+        "ITSM tickets",
+        "Runbooks",
+        "Service APIs",
+        "Deployment history"
+      ]
+    },
+    "use_case": {
+      "title": "Cross-system incident investigation for operations engineers",
+      "description": "Operations engineers investigate production incidents by manually correlating logs, tickets, runbooks, monitoring dashboards and service APIs. Investigation paths differ per incident.",
+      "users": "Site reliability / operations engineers (on-call)",
+      "workflow": "Alert fires -> engineer queries logs, metrics, recent deployments, related tickets and runbooks -> forms hypothesis -> iterates -> applies remediation via change process.",
+      "pain_points": [
+        "Mean time to resolution dominated by evidence gathering",
+        "Knowledge fragmented across tools",
+        "Runbooks outdated or hard to find",
+        "Junior engineers escalate frequently"
+      ],
+      "desired_outcome": "Faster, evidence-backed root-cause hypotheses with a human-approved remediation path.",
+      "current_solution": "Manual investigation across monitoring, logging, ITSM and wiki tools.",
+      "constraints": [
+        "Production changes go through change management",
+        "No autonomous production writes",
+        "Full audit trail required"
+      ],
+      "primary_tasks": [
+        "investigation",
+        "orchestration",
+        "summarization",
+        "knowledge_search"
+      ],
+      "action_types": [
+        "read_only",
+        "ticket_update",
+        "production_remediation"
+      ],
+      "deterministic_requirement": 2,
+      "prediction_requirement": 2,
+      "generation_requirement": 3,
+      "workflow_variability": 4,
+      "multi_step_reasoning": 5,
+      "cross_system_interaction": 5,
+      "tool_requirements": 5,
+      "proprietary_knowledge_need": 4,
+      "citation_requirement": 3,
+      "knowledge_change_frequency": 4,
+      "autonomy_benefit": 4,
+      "hallucination_tolerance": 1,
+      "transaction_criticality": 3,
+      "explainability_requirement": 4,
+      "latency_sensitivity": 3,
+      "availability_requirement": 4,
+      "human_oversight_available": 4
+    },
+    "cost_inputs": {
+      "requests_per_month": 12000,
+      "avg_input_tokens": 3000,
+      "avg_output_tokens": 700,
+      "rag_top_k": 6,
+      "tokens_per_chunk": 400,
+      "cache_hit_rate": 0.3,
+      "small_model_routing_pct": 0.5,
+      "human_review_pct": 0.3,
+      "human_review_minutes": 5,
+      "reviewer_hourly_cost": 95,
+      "infrastructure_cost_month": 6500,
+      "current_monthly_cost": 0,
+      "max_output_tokens": 1000
+    },
+    "roi_inputs": {
+      "people_involved": 45,
+      "tasks_per_month": 1500,
+      "minutes_per_task": 75,
+      "hourly_cost": 95,
+      "error_rate_pct": 5,
+      "rework_cost_per_error": 800,
+      "existing_technology_cost_annual": 0,
+      "implementation_cost": 550000,
+      "expected_time_reduction_pct": 35,
+      "expected_error_reduction_pct": 25
+    }
+  },
+  "order": 7,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}

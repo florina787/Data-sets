@@ -1,0 +1,14 @@
+[
+  {
+    "question": "What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?",
+    "session_id": null
+  },
+  {
+    "question": "Compare the top two topics.",
+    "session_id": "<from previous response>"
+  },
+  {
+    "question": "What about the previous month?",
+    "session_id": "<from previous response>"
+  }
+]

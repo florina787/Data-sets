@@ -1,0 +1,1601 @@
+{
+  "label": "before",
+  "base_url": "http://127.0.0.1:8001",
+  "runs_per_category": 20,
+  "health": {
+    "status": "ok",
+    "checked_at": "2026-10-28T00:07:56.586684+00:00",
+    "checks": [
+      {
+        "check": "raw_dataset",
+        "status": "ok",
+        "detail": "cs_conversations.csv.zip",
+        "required": true
+      },
+      {
+        "check": "analytics_database",
+        "status": "ok",
+        "detail": "built 2026-10-23T00:57:21Z, 41965 labelled messages",
+        "required": true
+      },
+      {
+        "check": "retrieval_index",
+        "status": "ok",
+        "detail": "18639 chunks, lsa-tfidf-svd192 + sentence-transformers/all-MiniLM-L6-v2",
+        "required": false
+      },
+      {
+        "check": "llm",
+        "status": "ok",
+        "detail": "local \u00b7 qwen2.5-1.5b-instruct-q4_k_m: llm",
+        "required": false
+      },
+      {
+        "check": "dependency:duckdb",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "dependency:faiss",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "dependency:langgraph",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "dependency:google.genai",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "memory_store",
+        "status": "ok",
+        "detail": "SQLite ready; 0 expired session(s) purged",
+        "required": true
+      }
+    ],
+    "dataset_mode": "original"
+  },
+  "categories": {
+    "greeting": {
+      "n": 20,
+      "p50_ms": 8584.9,
+      "p95_ms": 14921.1,
+      "max_ms": 17284.3,
+      "mean_ms": 9304.9,
+      "correct": 0,
+      "failures": 20,
+      "model_calls": 20,
+      "runs": [
+        {
+          "question": "Hi",
+          "wall_ms": 9489.0,
+          "server_ms": 9451.9,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "Hello",
+          "wall_ms": 7451.1,
+          "server_ms": 7419.4,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "hey there",
+          "wall_ms": 6618.8,
+          "server_ms": 6589.0,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "How are you?",
+          "wall_ms": 14796.7,
+          "server_ms": 14763.1,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "The copilot cannot provide a specific answer to 'How are you?'."
+        },
+        {
+          "question": "Good morning",
+          "wall_ms": 8462.7,
+          "server_ms": 8424.6,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "thanks!",
+          "wall_ms": 10137.1,
+          "server_ms": 10106.0,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Thank you for the greeting."
+        },
+        {
+          "question": "What can you do?",
+          "wall_ms": 17284.3,
+          "server_ms": 17252.8,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "The copilot can analyze sentiment, topics, products, agents' observable communication, conversation trajectories, resolution fit, and recurring concerns in the provided conversations."
+        },
+        {
+          "question": "Hi",
+          "wall_ms": 12624.6,
+          "server_ms": 12588.3,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "Hello",
+          "wall_ms": 7882.3,
+          "server_ms": 7807.4,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Response"
+        },
+        {
+          "question": "hey there",
+          "wall_ms": 9118.5,
+          "server_ms": 9083.3,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "How are you?",
+          "wall_ms": 6911.0,
+          "server_ms": 6870.4,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "The analyst asks for a greeting."
+        },
+        {
+          "question": "Good morning",
+          "wall_ms": 5295.1,
+          "server_ms": 5253.0,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "thanks!",
+          "wall_ms": 8707.0,
+          "server_ms": 8671.6,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Thank you for saying hello!"
+        },
+        {
+          "question": "What can you do?",
+          "wall_ms": 12193.2,
+          "server_ms": 12151.1,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "The copilot can analyze sentiment, topics, products, agents' observable communication, conversation trajectories, resolution fit, and recurring concerns in the provided conversations."
+        },
+        {
+          "question": "Hi",
+          "wall_ms": 5360.1,
+          "server_ms": 5316.3,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "Hello",
+          "wall_ms": 7023.0,
+          "server_ms": 6984.5,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "hey there",
+          "wall_ms": 7908.8,
+          "server_ms": 7874.6,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "How are you?",
+          "wall_ms": 10260.0,
+          "server_ms": 10225.9,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "The analyst's question is not within the copilot's dataset capabilities."
+        },
+        {
+          "question": "Good morning",
+          "wall_ms": 11451.9,
+          "server_ms": 11410.3,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        },
+        {
+          "question": "thanks!",
+          "wall_ms": 7123.7,
+          "server_ms": 7088.4,
+          "correct": false,
+          "problems": [
+            "not answered by the fast path (route hybrid_ai, category unsupported)",
+            "model was called for small talk"
+          ],
+          "route": "hybrid_ai",
+          "category": "unsupported",
+          "model_calls": 1,
+          "explanation_source": "general_knowledge",
+          "qa": "pass",
+          "headline": "Greeting Analysis"
+        }
+      ]
+    },
+    "positive_statements": {
+      "n": 8,
+      "p50_ms": 32744.2,
+      "p95_ms": 95720.0,
+      "max_ms": 97177.6,
+      "mean_ms": 40906.0,
+      "correct": 0,
+      "failures": 8,
+      "model_calls": 12,
+      "runs": [
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "wall_ms": 93013.1,
+          "server_ms": 92963.4,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category root_cause, operations ['root_cause_investigation']"
+          ],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Top 5 Positive Statements from Users"
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "wall_ms": 20363.9,
+          "server_ms": 20323.6,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_xray, operations ['sentiment_trajectory']"
+          ],
+          "route": "hybrid_ai",
+          "category": "conversation_xray",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Top 5 Positive Statements Made by Customers"
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "wall_ms": 99.4,
+          "server_ms": 66.1,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category topic_frequency, operations ['topic_frequency']"
+          ],
+          "route": "analytics_only",
+          "category": "topic_frequency",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "The most common topic in all dates is General help request (662 conversations, 22.1%)."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "wall_ms": 34605.4,
+          "server_ms": 34570.3,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_xray, operations ['sentiment_trajectory']"
+          ],
+          "route": "hybrid_ai",
+          "category": "conversation_xray",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Top 3 Positive Customer Statements"
+        },
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "wall_ms": 97177.6,
+          "server_ms": 97123.5,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category root_cause, operations ['root_cause_investigation']"
+          ],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Top 5 Positive Statements from Users"
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "wall_ms": 50975.6,
+          "server_ms": 50910.0,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_xray, operations ['sentiment_trajectory']"
+          ],
+          "route": "hybrid_ai",
+          "category": "conversation_xray",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Top 5 Positive Statements by Customers"
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "wall_ms": 129.9,
+          "server_ms": 75.8,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category topic_frequency, operations ['topic_frequency']"
+          ],
+          "route": "analytics_only",
+          "category": "topic_frequency",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "The most common topic in all dates is General help request (662 conversations, 22.1%)."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "wall_ms": 30882.9,
+          "server_ms": 30783.8,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_xray, operations ['sentiment_trajectory']"
+          ],
+          "route": "hybrid_ai",
+          "category": "conversation_xray",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "The top 3 positive customer statements are: "
+        }
+      ]
+    },
+    "negative_statements": {
+      "n": 4,
+      "p50_ms": 103057.3,
+      "p95_ms": 135163.2,
+      "max_ms": 139091.2,
+      "mean_ms": 86324.6,
+      "correct": 0,
+      "failures": 4,
+      "model_calls": 6,
+      "runs": [
+        {
+          "question": "What are the top 5 negative statements from users?",
+          "wall_ms": 93209.8,
+          "server_ms": 93178.6,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category negative_topics, operations ['rank_negative_topics', 'sentiment_distribution', 'sentiment_trend']"
+          ],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Top 5 Negative Statements from Users"
+        },
+        {
+          "question": "Show the top 3 negative statements customers made",
+          "wall_ms": 112904.8,
+          "server_ms": 112867.9,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category negative_topics, operations ['rank_negative_topics', 'sentiment_distribution', 'sentiment_trend']"
+          ],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Top 3 Negative Statements by Customers"
+        },
+        {
+          "question": "What are the most common negative comments from customers?",
+          "wall_ms": 92.5,
+          "server_ms": 60.2,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category topic_frequency, operations ['topic_frequency']"
+          ],
+          "route": "analytics_only",
+          "category": "topic_frequency",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "The most common topic in all dates is General help request (662 conversations, 22.1%)."
+        },
+        {
+          "question": "List the top 10 negative customer statements",
+          "wall_ms": 139091.2,
+          "server_ms": 139055.9,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category negative_topics, operations ['rank_negative_topics', 'sentiment_distribution', 'sentiment_trend']"
+          ],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Top 10 Negative Customer Statements"
+        }
+      ]
+    },
+    "complaints": {
+      "n": 8,
+      "p50_ms": 45422.8,
+      "p95_ms": 91905.9,
+      "max_ms": 92274.5,
+      "mean_ms": 45736.2,
+      "correct": 8,
+      "failures": 0,
+      "model_calls": 8,
+      "runs": [
+        {
+          "question": "What are the top complaints?",
+          "wall_ms": 90572.0,
+          "server_ms": 90533.3,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Top Complaints in Contact Center"
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "wall_ms": 202.3,
+          "server_ms": 159.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "negative_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "wall_ms": 273.7,
+          "server_ms": 235.6,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "negative_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "wall_ms": 90956.1,
+          "server_ms": 90910.6,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Customers complain most about General help request, Duplicate charge, Item or service not received, Paid but service not delivered, and Feature not working."
+        },
+        {
+          "question": "What are the top complaints?",
+          "wall_ms": 91221.3,
+          "server_ms": 91176.6,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Top Complaints in Contact Center"
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "wall_ms": 193.8,
+          "server_ms": 156.4,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "negative_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "wall_ms": 196.2,
+          "server_ms": 160.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "negative_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "wall_ms": 92274.5,
+          "server_ms": 92235.4,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "negative_topics",
+          "model_calls": 2,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Customers complain most about General help request, Duplicate charge, and Item or service not received."
+        }
+      ]
+    },
+    "sentiment_percentages": {
+      "n": 20,
+      "p50_ms": 113.8,
+      "p95_ms": 151.4,
+      "max_ms": 152.9,
+      "mean_ms": 118.3,
+      "correct": 15,
+      "failures": 5,
+      "model_calls": 0,
+      "runs": [
+        {
+          "question": "What is the overall sentiment mix?",
+          "wall_ms": 112.5,
+          "server_ms": 79.6,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "wall_ms": 102.0,
+          "server_ms": 65.2,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "wall_ms": 127.6,
+          "server_ms": 92.0,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_list, operations ['list_conversations']"
+          ],
+          "route": "analytics_only",
+          "category": "conversation_list",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "3000 conversations match; showing the 25 most relevant."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "wall_ms": 110.9,
+          "server_ms": 71.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "wall_ms": 102.6,
+          "server_ms": 69.6,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "wall_ms": 103.9,
+          "server_ms": 69.0,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "wall_ms": 152.9,
+          "server_ms": 105.6,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_list, operations ['list_conversations']"
+          ],
+          "route": "analytics_only",
+          "category": "conversation_list",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "3000 conversations match; showing the 25 most relevant."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "wall_ms": 108.2,
+          "server_ms": 73.7,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "wall_ms": 108.2,
+          "server_ms": 73.3,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "wall_ms": 115.4,
+          "server_ms": 75.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "wall_ms": 141.1,
+          "server_ms": 101.5,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_list, operations ['list_conversations']"
+          ],
+          "route": "analytics_only",
+          "category": "conversation_list",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "3000 conversations match; showing the 25 most relevant."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "wall_ms": 100.9,
+          "server_ms": 63.4,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "wall_ms": 118.3,
+          "server_ms": 79.2,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "wall_ms": 115.2,
+          "server_ms": 71.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "wall_ms": 129.5,
+          "server_ms": 94.1,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_list, operations ['list_conversations']"
+          ],
+          "route": "analytics_only",
+          "category": "conversation_list",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "3000 conversations match; showing the 25 most relevant."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "wall_ms": 109.4,
+          "server_ms": 71.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "wall_ms": 109.5,
+          "server_ms": 75.3,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "wall_ms": 119.5,
+          "server_ms": 77.6,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "wall_ms": 151.3,
+          "server_ms": 104.6,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category conversation_list, operations ['list_conversations']"
+          ],
+          "route": "analytics_only",
+          "category": "conversation_list",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "3000 conversations match; showing the 25 most relevant."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "wall_ms": 127.1,
+          "server_ms": 73.3,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_distribution",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "33.5% of conversations in all dates are negative."
+        }
+      ]
+    },
+    "sentiment_trend": {
+      "n": 20,
+      "p50_ms": 118.3,
+      "p95_ms": 187.2,
+      "max_ms": 260.3,
+      "mean_ms": 134.1,
+      "correct": 15,
+      "failures": 5,
+      "model_calls": 0,
+      "runs": [
+        {
+          "question": "Show the sentiment trend over time.",
+          "wall_ms": 123.5,
+          "server_ms": 71.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "wall_ms": 160.6,
+          "server_ms": 123.5,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category compare_topics, operations ['compare_topics']"
+          ],
+          "route": "analytics_only",
+          "category": "compare_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Duplicate charge is more often negative than General help request (48.3% vs 31.4%), a statistically significant difference (p = 0.0092)."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "wall_ms": 107.1,
+          "server_ms": 68.2,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "wall_ms": 101.8,
+          "server_ms": 61.6,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "wall_ms": 111.9,
+          "server_ms": 68.3,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "wall_ms": 172.2,
+          "server_ms": 136.3,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category compare_topics, operations ['compare_topics']"
+          ],
+          "route": "analytics_only",
+          "category": "compare_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Duplicate charge is more often negative than General help request (48.3% vs 31.4%), a statistically significant difference (p = 0.0092)."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "wall_ms": 109.0,
+          "server_ms": 64.2,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "wall_ms": 119.1,
+          "server_ms": 72.3,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "wall_ms": 109.1,
+          "server_ms": 67.1,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "wall_ms": 183.4,
+          "server_ms": 139.9,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category compare_topics, operations ['compare_topics']"
+          ],
+          "route": "analytics_only",
+          "category": "compare_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Duplicate charge is more often negative than General help request (48.3% vs 31.4%), a statistically significant difference (p = 0.0092)."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "wall_ms": 116.0,
+          "server_ms": 67.0,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "wall_ms": 115.5,
+          "server_ms": 74.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "wall_ms": 117.5,
+          "server_ms": 70.0,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "wall_ms": 260.3,
+          "server_ms": 214.7,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category compare_topics, operations ['compare_topics']"
+          ],
+          "route": "analytics_only",
+          "category": "compare_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Duplicate charge is more often negative than General help request (48.3% vs 31.4%), a statistically significant difference (p = 0.0092)."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "wall_ms": 124.1,
+          "server_ms": 77.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "wall_ms": 103.9,
+          "server_ms": 64.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "wall_ms": 110.4,
+          "server_ms": 65.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "wall_ms": 166.7,
+          "server_ms": 117.1,
+          "correct": false,
+          "problems": [
+            "wrong analysis: category compare_topics, operations ['compare_topics']"
+          ],
+          "route": "analytics_only",
+          "category": "compare_topics",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Duplicate charge is more often negative than General help request (48.3% vs 31.4%), a statistically significant difference (p = 0.0092)."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "wall_ms": 131.5,
+          "server_ms": 86.0,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "wall_ms": 137.5,
+          "server_ms": 73.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "sentiment_trend",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Negative sentiment was 33.2% in 2025-08 and 35.2% in 2025-11."
+        }
+      ]
+    },
+    "rankings": {
+      "n": 20,
+      "p50_ms": 477.8,
+      "p95_ms": 735.8,
+      "max_ms": 756.4,
+      "mean_ms": 481.6,
+      "correct": 20,
+      "failures": 0,
+      "model_calls": 0,
+      "runs": [
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "wall_ms": 372.4,
+          "server_ms": 298.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "wall_ms": 706.9,
+          "server_ms": 661.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "wall_ms": 334.3,
+          "server_ms": 300.1,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "wall_ms": 585.0,
+          "server_ms": 552.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "wall_ms": 344.5,
+          "server_ms": 296.7,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "wall_ms": 578.8,
+          "server_ms": 529.1,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "wall_ms": 336.2,
+          "server_ms": 285.1,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "wall_ms": 653.1,
+          "server_ms": 609.0,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "wall_ms": 362.1,
+          "server_ms": 326.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "wall_ms": 575.1,
+          "server_ms": 532.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "wall_ms": 307.4,
+          "server_ms": 265.3,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "wall_ms": 549.8,
+          "server_ms": 512.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "wall_ms": 435.9,
+          "server_ms": 389.6,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "wall_ms": 756.4,
+          "server_ms": 702.5,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "wall_ms": 297.8,
+          "server_ms": 258.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "wall_ms": 734.7,
+          "server_ms": 687.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "wall_ms": 334.7,
+          "server_ms": 279.7,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "wall_ms": 519.8,
+          "server_ms": 477.0,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "wall_ms": 305.9,
+          "server_ms": 262.8,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "leadership_priorities",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "wall_ms": 541.4,
+          "server_ms": 487.9,
+          "correct": true,
+          "problems": [],
+          "route": "analytics_only",
+          "category": "agent_coaching",
+          "model_calls": 0,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement"
+        }
+      ]
+    },
+    "llm_explanation": {
+      "n": 2,
+      "p50_ms": 175869.9,
+      "p95_ms": 214702.3,
+      "max_ms": 219017.0,
+      "mean_ms": 175869.9,
+      "correct": 2,
+      "failures": 0,
+      "model_calls": 2,
+      "runs": [
+        {
+          "question": "Why is duplicate charge so negative?",
+          "wall_ms": 132722.7,
+          "server_ms": 132680.5,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "pass",
+          "headline": "In Duplicate charge, negative sentiment is most strongly associated with: replies to negative turns rarely acknowledge frustration."
+        },
+        {
+          "question": "Why are coupon conversations so negative?",
+          "wall_ms": 219017.0,
+          "server_ms": 218975.5,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "No agent or context factor is clearly associated with negative sentiment in Coupon not applying."
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-10-28T00:07:56Z",
+  "deterministic_overall": {
+    "n": 100,
+    "p50_ms": 320.9,
+    "p95_ms": 92311.4,
+    "max_ms": 139091.2
+  }
+}

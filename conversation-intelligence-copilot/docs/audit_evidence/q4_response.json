@@ -1,0 +1,2382 @@
+{
+ "version": "1.0",
+ "request_id": "R-2bd097e8e08f",
+ "session_id": "S-1b266782c96f",
+ "status": "completed",
+ "question": "Which recurring customer concerns should contact-centre leadership review first?",
+ "resolved_intent": {
+  "category": "leadership_priorities",
+  "time_window": {
+   "type": "inherit",
+   "month": null,
+   "n": null
+  },
+  "dimension": "topic",
+  "rank_by": "count",
+  "top_n": null,
+  "topics": [],
+  "products": [],
+  "agents": [],
+  "sentiments": [],
+  "conversation_ids": [],
+  "search_query": null,
+  "group_by": null,
+  "is_follow_up": false,
+  "reference_ranks": [],
+  "audience": "leadership",
+  "needs_evidence": false,
+  "reasoning": "Rule-based interpretation."
+ },
+ "dataset_scope": {
+  "dataset_mode": "original",
+  "window": {
+   "start": null,
+   "end": null,
+   "label": "All dates",
+   "rule": "all",
+   "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+  },
+  "topics": [],
+  "products": [],
+  "domains": [],
+  "agents": [],
+  "sentiments": [],
+  "conversation_ids": []
+ },
+ "plan": {
+  "category": "leadership_priorities",
+  "specialist": "leadership_agent",
+  "steps": [
+   {
+    "op": "leadership_priorities",
+    "params": {
+     "top_n": 5
+    },
+    "purpose": "Priority score for recurring concerns"
+   },
+   {
+    "op": "sentiment_trend",
+    "params": {},
+    "purpose": "Trend context"
+   },
+   {
+    "op": "resolution_quality",
+    "params": {},
+    "purpose": "Resolution fit context"
+   }
+  ],
+  "retrieval": {
+   "mode": "after_analysis",
+   "query": null,
+   "k": 3,
+   "scope": null
+  },
+  "notes": [],
+  "resolved_references": {},
+  "audience": "leadership"
+ },
+ "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge.",
+ "answer": "Across 3000 conversations (all dates), Item or service not received ranks first. Item or service not received: 338 conversations (11% of scope), 39% negative, 54% end unresolved, 53% closing actions misfit the issue. Stands out most on negative rate relative to the other concerns; that signal contributes 25.0 of its 67.1 priority points. Suggested action: Run a root-cause review of negative conversations for this issue with the owning product team. Owner: Customer experience lead.",
+ "key_points": [
+  "High \u00b7 #1 Item or service not received: Run a root-cause review of negative conversations for this issue with the owning product team.",
+  "High \u00b7 #2 Coupon not applying: Audit the escalation path for this issue and check first-contact resolution guidance.",
+  "Medium \u00b7 #3 Duplicate charge: Run a root-cause review of negative conversations for this issue with the owning product team.",
+  "Medium \u00b7 #4 Paid but service not delivered: Run a root-cause review of negative conversations for this issue with the owning product team.",
+  "Low \u00b7 #5 General help request: Investigate upstream causes and self-service deflection for this high-volume issue."
+ ],
+ "metrics": [
+  {
+   "id": "conversations_in_scope",
+   "label": "Conversations in scope",
+   "value": 3000,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "concerns",
+   "label": "Recurring concerns",
+   "value": 8,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "top_concern",
+   "label": "Top concern",
+   "value": "Item or service not received",
+   "unit": null,
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "top_score",
+   "label": "Top priority score",
+   "value": 67.1,
+   "unit": "score",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "top1_stability",
+   "label": "Top-1 stability under weight changes",
+   "value": 0.923,
+   "unit": "percent",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "unresolved_rate_overall",
+   "label": "Conversations ending unresolved",
+   "value": 0.5123,
+   "unit": "percent",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "months",
+   "label": "Months",
+   "value": 4,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "latest_negative_rate",
+   "label": "Negative rate 2025-11",
+   "value": 0.3504,
+   "unit": "percent",
+   "numerator": 239,
+   "denominator": 682,
+   "description": ""
+  },
+  {
+   "id": "misfit_rate",
+   "label": "Closing action does not fit the issue",
+   "value": 0.5731,
+   "unit": "percent",
+   "numerator": 1340,
+   "denominator": 2338,
+   "description": ""
+  }
+ ],
+ "rankings": [
+  {
+   "rank": 1,
+   "name": "Item or service not received",
+   "key": "not_received",
+   "priority": "High",
+   "priority_score": 67.1,
+   "conversations": 338,
+   "negative": 132.0,
+   "negative_rate": 0.3905,
+   "escalation_rate": 1.1065,
+   "unresolved_rate": 0.5444,
+   "resolution_misfit_rate": 0.5296,
+   "trend": -0.1034,
+   "main_driver": "negative_rate",
+   "contrib_frequency": 2.8,
+   "contrib_negative_rate": 25.0,
+   "contrib_escalation_rate": 14.5,
+   "contrib_unresolved_rate": 15.0,
+   "contrib_resolution_misfit_rate": 7.8,
+   "contrib_trend": 2.0
+  },
+  {
+   "rank": 2,
+   "name": "Coupon not applying",
+   "key": "coupon_not_applied",
+   "priority": "High",
+   "priority_score": 60.3,
+   "conversations": 331,
+   "negative": 112.0,
+   "negative_rate": 0.3384,
+   "escalation_rate": 1.1088,
+   "unresolved_rate": 0.5347,
+   "resolution_misfit_rate": 0.6375,
+   "trend": 0.3125,
+   "main_driver": "escalation_rate",
+   "contrib_frequency": 2.3,
+   "contrib_negative_rate": 16.0,
+   "contrib_escalation_rate": 15.0,
+   "contrib_unresolved_rate": 12.7,
+   "contrib_resolution_misfit_rate": 9.4,
+   "contrib_trend": 5.0
+  },
+  {
+   "rank": 3,
+   "name": "Duplicate charge",
+   "key": "duplicate_charge",
+   "priority": "Medium",
+   "priority_score": 59.8,
+   "conversations": 362,
+   "negative": 140.0,
+   "negative_rate": 0.3867,
+   "escalation_rate": 1.0884,
+   "unresolved_rate": 0.5193,
+   "resolution_misfit_rate": 0.6326,
+   "trend": -0.1635,
+   "main_driver": "negative_rate",
+   "contrib_frequency": 4.9,
+   "contrib_negative_rate": 24.3,
+   "contrib_escalation_rate": 10.8,
+   "contrib_unresolved_rate": 8.9,
+   "contrib_resolution_misfit_rate": 9.3,
+   "contrib_trend": 1.5
+  },
+  {
+   "rank": 4,
+   "name": "Paid but service not delivered",
+   "key": "payment_not_reflected",
+   "priority": "Medium",
+   "priority_score": 52.9,
+   "conversations": 335,
+   "negative": 124.0,
+   "negative_rate": 0.3701,
+   "escalation_rate": 1.0836,
+   "unresolved_rate": 0.5224,
+   "resolution_misfit_rate": 0.5075,
+   "trend": -0.1176,
+   "main_driver": "negative_rate",
+   "contrib_frequency": 2.6,
+   "contrib_negative_rate": 21.5,
+   "contrib_escalation_rate": 9.8,
+   "contrib_unresolved_rate": 9.7,
+   "contrib_resolution_misfit_rate": 7.5,
+   "contrib_trend": 1.8
+  },
+  {
+   "rank": 5,
+   "name": "General help request",
+   "key": "general_help",
+   "priority": "Low",
+   "priority_score": 39.0,
+   "conversations": 662,
+   "negative": 163.0,
+   "negative_rate": 0.2462,
+   "escalation_rate": 1.0453,
+   "unresolved_rate": 0.5015,
+   "resolution_misfit_rate": 0.0,
+   "trend": -0.025,
+   "main_driver": "frequency",
+   "contrib_frequency": 30.0,
+   "contrib_negative_rate": 0.0,
+   "contrib_escalation_rate": 1.9,
+   "contrib_unresolved_rate": 4.6,
+   "contrib_resolution_misfit_rate": 0.0,
+   "contrib_trend": 2.5
+  },
+  {
+   "rank": 6,
+   "name": "Login / account locked",
+   "key": "account_locked",
+   "priority": "Low",
+   "priority_score": 37.2,
+   "conversations": 304,
+   "negative": 111.0,
+   "negative_rate": 0.3651,
+   "escalation_rate": 1.0362,
+   "unresolved_rate": 0.5099,
+   "resolution_misfit_rate": 0.6776,
+   "trend": -0.3696,
+   "main_driver": "resolution_misfit_rate",
+   "contrib_frequency": 0.0,
+   "contrib_negative_rate": 20.6,
+   "contrib_escalation_rate": 0.0,
+   "contrib_unresolved_rate": 6.6,
+   "contrib_resolution_misfit_rate": 10.0,
+   "contrib_trend": 0.0
+  },
+  {
+   "rank": 7,
+   "name": "Feature not working",
+   "key": "service_malfunction",
+   "priority": "Low",
+   "priority_score": 32.6,
+   "conversations": 344,
+   "negative": 117.0,
+   "negative_rate": 0.3401,
+   "escalation_rate": 1.0552,
+   "unresolved_rate": 0.4826,
+   "resolution_misfit_rate": 0.5465,
+   "trend": -0.24,
+   "main_driver": "resolution_misfit_rate",
+   "contrib_frequency": 3.4,
+   "contrib_negative_rate": 16.3,
+   "contrib_escalation_rate": 3.9,
+   "contrib_unresolved_rate": 0.0,
+   "contrib_resolution_misfit_rate": 8.1,
+   "contrib_trend": 0.9
+  },
+  {
+   "rank": 8,
+   "name": "App crash",
+   "key": "app_crash",
+   "priority": "Low",
+   "priority_score": 27.7,
+   "conversations": 324,
+   "negative": 103.0,
+   "negative_rate": 0.3179,
+   "escalation_rate": 1.0494,
+   "unresolved_rate": 0.4938,
+   "resolution_misfit_rate": 0.4846,
+   "trend": -0.2273,
+   "main_driver": "resolution_misfit_rate",
+   "contrib_frequency": 1.7,
+   "contrib_negative_rate": 12.4,
+   "contrib_escalation_rate": 2.7,
+   "contrib_unresolved_rate": 2.7,
+   "contrib_resolution_misfit_rate": 7.2,
+   "contrib_trend": 1.0
+  }
+ ],
+ "charts": [
+  {
+   "chart_id": "R-2bd097e8e08f_lead_kpis",
+   "chart_type": "kpi",
+   "title": "Key figures",
+   "description": "",
+   "x_field": null,
+   "y_field": null,
+   "series": [],
+   "data": [
+    {
+     "id": "conversations_in_scope",
+     "label": "Conversations in scope",
+     "value": 3000,
+     "unit": "count",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "concerns",
+     "label": "Recurring concerns",
+     "value": 8,
+     "unit": "count",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "top_concern",
+     "label": "Top concern",
+     "value": "Item or service not received",
+     "unit": null,
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "top_score",
+     "label": "Top priority score",
+     "value": 67.1,
+     "unit": "score",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "top1_stability",
+     "label": "Top-1 stability under weight changes",
+     "value": 0.923,
+     "unit": "percent",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "unresolved_rate_overall",
+     "label": "Conversations ending unresolved",
+     "value": 0.5123,
+     "unit": "percent",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f_lead",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Conversations in scope: 3000; Recurring concerns: 8; Top concern: Item or service not received; Top priority score: 67.1; Top-1 stability under weight changes: 0.923; Conversations ending unresolved: 0.5123"
+  },
+  {
+   "chart_id": "priority_matrix",
+   "chart_type": "priority_matrix",
+   "title": "Priority matrix: volume vs negative rate",
+   "description": "Bubble size = priority score. Top-right = high volume and high negativity.",
+   "x_field": "conversations",
+   "y_field": "negative_rate",
+   "series": [],
+   "data": [
+    {
+     "name": "Item or service not received",
+     "key": "not_received",
+     "conversations": 338,
+     "negative_rate": 0.3905,
+     "priority_score": 67.1,
+     "priority": "High"
+    },
+    {
+     "name": "Coupon not applying",
+     "key": "coupon_not_applied",
+     "conversations": 331,
+     "negative_rate": 0.3384,
+     "priority_score": 60.3,
+     "priority": "High"
+    },
+    {
+     "name": "Duplicate charge",
+     "key": "duplicate_charge",
+     "conversations": 362,
+     "negative_rate": 0.3867,
+     "priority_score": 59.8,
+     "priority": "Medium"
+    },
+    {
+     "name": "Paid but service not delivered",
+     "key": "payment_not_reflected",
+     "conversations": 335,
+     "negative_rate": 0.3701,
+     "priority_score": 52.9,
+     "priority": "Medium"
+    },
+    {
+     "name": "General help request",
+     "key": "general_help",
+     "conversations": 662,
+     "negative_rate": 0.2462,
+     "priority_score": 39.0,
+     "priority": "Low"
+    },
+    {
+     "name": "Login / account locked",
+     "key": "account_locked",
+     "conversations": 304,
+     "negative_rate": 0.3651,
+     "priority_score": 37.2,
+     "priority": "Low"
+    },
+    {
+     "name": "Feature not working",
+     "key": "service_malfunction",
+     "conversations": 344,
+     "negative_rate": 0.3401,
+     "priority_score": 32.6,
+     "priority": "Low"
+    },
+    {
+     "name": "App crash",
+     "key": "app_crash",
+     "conversations": 324,
+     "negative_rate": 0.3179,
+     "priority_score": 27.7,
+     "priority": "Low"
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f",
+   "evidence_ids": [],
+   "uncertainty_note": "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
+   "drilldown": {
+    "kind": "topic",
+    "field": "key"
+   },
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Item or service not received: 338 conversations, 39.1% negative, score 67.1; Coupon not applying: 331 conversations, 33.8% negative, score 60.3; Duplicate charge: 362 conversations, 38.7% negative, score 59.8; Paid but service not delivered: 335 conversations, 37.0% negative, score 52.9; General help request: 662 conversations, 24.6% negative, score 39.0; Login / account locked: 304 conversations, 36.5% negative, score 37.2; Feature not working: 344 conversations, 34.0% negative, score 32.6; App crash: 324 conversations, 31.8% negative, score 27.7"
+  },
+  {
+   "chart_id": "priority_scores",
+   "chart_type": "stacked_bar",
+   "title": "Priority score and what drives it",
+   "description": "",
+   "x_field": "name",
+   "y_field": null,
+   "series": [
+    {
+     "key": "contrib_frequency",
+     "label": "Volume",
+     "color": "indigo"
+    },
+    {
+     "key": "contrib_negative_rate",
+     "label": "Negative rate",
+     "color": "negative"
+    },
+    {
+     "key": "contrib_escalation_rate",
+     "label": "Escalation requests / conv.",
+     "color": "warning"
+    },
+    {
+     "key": "contrib_unresolved_rate",
+     "label": "Ends unresolved",
+     "color": "violet"
+    },
+    {
+     "key": "contrib_resolution_misfit_rate",
+     "label": "Resolution misfit",
+     "color": "cyan"
+    },
+    {
+     "key": "contrib_trend",
+     "label": "Month-on-month change",
+     "color": "muted"
+    }
+   ],
+   "data": [
+    {
+     "name": "Item or service not received",
+     "key": "not_received",
+     "priority_score": 67.1,
+     "contrib_frequency": 2.8,
+     "contrib_negative_rate": 25.0,
+     "contrib_escalation_rate": 14.5,
+     "contrib_unresolved_rate": 15.0,
+     "contrib_resolution_misfit_rate": 7.8,
+     "contrib_trend": 2.0
+    },
+    {
+     "name": "Coupon not applying",
+     "key": "coupon_not_applied",
+     "priority_score": 60.3,
+     "contrib_frequency": 2.3,
+     "contrib_negative_rate": 16.0,
+     "contrib_escalation_rate": 15.0,
+     "contrib_unresolved_rate": 12.7,
+     "contrib_resolution_misfit_rate": 9.4,
+     "contrib_trend": 5.0
+    },
+    {
+     "name": "Duplicate charge",
+     "key": "duplicate_charge",
+     "priority_score": 59.8,
+     "contrib_frequency": 4.9,
+     "contrib_negative_rate": 24.3,
+     "contrib_escalation_rate": 10.8,
+     "contrib_unresolved_rate": 8.9,
+     "contrib_resolution_misfit_rate": 9.3,
+     "contrib_trend": 1.5
+    },
+    {
+     "name": "Paid but service not delivered",
+     "key": "payment_not_reflected",
+     "priority_score": 52.9,
+     "contrib_frequency": 2.6,
+     "contrib_negative_rate": 21.5,
+     "contrib_escalation_rate": 9.8,
+     "contrib_unresolved_rate": 9.7,
+     "contrib_resolution_misfit_rate": 7.5,
+     "contrib_trend": 1.8
+    },
+    {
+     "name": "General help request",
+     "key": "general_help",
+     "priority_score": 39.0,
+     "contrib_frequency": 30.0,
+     "contrib_negative_rate": 0.0,
+     "contrib_escalation_rate": 1.9,
+     "contrib_unresolved_rate": 4.6,
+     "contrib_resolution_misfit_rate": 0.0,
+     "contrib_trend": 2.5
+    },
+    {
+     "name": "Login / account locked",
+     "key": "account_locked",
+     "priority_score": 37.2,
+     "contrib_frequency": 0.0,
+     "contrib_negative_rate": 20.6,
+     "contrib_escalation_rate": 0.0,
+     "contrib_unresolved_rate": 6.6,
+     "contrib_resolution_misfit_rate": 10.0,
+     "contrib_trend": 0.0
+    },
+    {
+     "name": "Feature not working",
+     "key": "service_malfunction",
+     "priority_score": 32.6,
+     "contrib_frequency": 3.4,
+     "contrib_negative_rate": 16.3,
+     "contrib_escalation_rate": 3.9,
+     "contrib_unresolved_rate": 0.0,
+     "contrib_resolution_misfit_rate": 8.1,
+     "contrib_trend": 0.9
+    },
+    {
+     "name": "App crash",
+     "key": "app_crash",
+     "priority_score": 27.7,
+     "contrib_frequency": 1.7,
+     "contrib_negative_rate": 12.4,
+     "contrib_escalation_rate": 2.7,
+     "contrib_unresolved_rate": 2.7,
+     "contrib_resolution_misfit_rate": 7.2,
+     "contrib_trend": 1.0
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": {
+    "kind": "topic",
+    "field": "key"
+   },
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Item or service not received: 67.1; Coupon not applying: 60.3; Duplicate charge: 59.8; Paid but service not delivered: 52.9; General help request: 39.0; Login / account locked: 37.2; Feature not working: 32.6; App crash: 27.7"
+  },
+  {
+   "chart_id": "sentiment_trend",
+   "chart_type": "line",
+   "title": "Negative rate by month",
+   "description": "",
+   "x_field": "month",
+   "y_field": "negative_rate",
+   "series": [
+    {
+     "key": "negative_rate",
+     "label": "Negative rate",
+     "color": "cyan"
+    }
+   ],
+   "data": [
+    {
+     "month": "2025-08",
+     "negative_rate": 0.3325,
+     "rate_ci_low": 0.3005,
+     "rate_ci_high": 0.3661,
+     "conversations": 788,
+     "negative": 262.0
+    },
+    {
+     "month": "2025-09",
+     "negative_rate": 0.32,
+     "rate_ci_low": 0.2876,
+     "rate_ci_high": 0.3542,
+     "conversations": 750,
+     "negative": 240.0
+    },
+    {
+     "month": "2025-10",
+     "negative_rate": 0.3346,
+     "rate_ci_low": 0.3024,
+     "rate_ci_high": 0.3685,
+     "conversations": 780,
+     "negative": 261.0
+    },
+    {
+     "month": "2025-11",
+     "negative_rate": 0.3504,
+     "rate_ci_low": 0.3156,
+     "rate_ci_high": 0.387,
+     "conversations": 682,
+     "negative": 239.0
+    }
+   ],
+   "value_format": "percent",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f",
+   "evidence_ids": [],
+   "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+   "drilldown": {
+    "kind": "month",
+    "field": "month"
+   },
+   "error_low_field": "rate_ci_low",
+   "error_high_field": "rate_ci_high",
+   "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.5%; 2025-11: 35.0%"
+  },
+  {
+   "chart_id": "resolution_misfit",
+   "chart_type": "horizontal_bar",
+   "title": "Closing action does not fit the issue",
+   "description": "",
+   "x_field": "topic_label",
+   "y_field": null,
+   "series": [
+    {
+     "key": "misfit_rate",
+     "label": "Misfit rate",
+     "color": "warning"
+    }
+   ],
+   "data": [
+    {
+     "topic_label": "Login / account locked",
+     "misfit_rate": 0.6776,
+     "conversations": 304
+    },
+    {
+     "topic_label": "Coupon not applying",
+     "misfit_rate": 0.6375,
+     "conversations": 331
+    },
+    {
+     "topic_label": "Duplicate charge",
+     "misfit_rate": 0.6326,
+     "conversations": 362
+    },
+    {
+     "topic_label": "Feature not working",
+     "misfit_rate": 0.5465,
+     "conversations": 344
+    },
+    {
+     "topic_label": "Item or service not received",
+     "misfit_rate": 0.5296,
+     "conversations": 338
+    },
+    {
+     "topic_label": "Paid but service not delivered",
+     "misfit_rate": 0.5075,
+     "conversations": 335
+    },
+    {
+     "topic_label": "App crash",
+     "misfit_rate": 0.4846,
+     "conversations": 324
+    }
+   ],
+   "value_format": "percent",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f",
+   "evidence_ids": [],
+   "uncertainty_note": "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner.",
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Login / account locked: 68%; Coupon not applying: 64%; Duplicate charge: 63%; Feature not working: 55%; Item or service not received: 53%; Paid but service not delivered: 51%; App crash: 48%"
+  },
+  {
+   "chart_id": "sensitivity",
+   "chart_type": "table",
+   "title": "Sensitivity of the ranking to weight changes",
+   "description": "",
+   "x_field": null,
+   "y_field": null,
+   "series": [],
+   "data": [
+    {
+     "scenario": "equal weights",
+     "top_concern": "coupon_not_applied",
+     "kendall_tau": 0.786,
+     "top_n_overlap": 0.8
+    },
+    {
+     "scenario": "frequency \u00d70.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.786,
+     "top_n_overlap": 0.8
+    },
+    {
+     "scenario": "frequency \u00d71.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.929,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "negative_rate \u00d70.5",
+     "top_concern": "not_received",
+     "kendall_tau": 1.0,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "negative_rate \u00d71.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.786,
+     "top_n_overlap": 0.8
+    },
+    {
+     "scenario": "escalation_rate \u00d70.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.929,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "escalation_rate \u00d71.5",
+     "top_concern": "not_received",
+     "kendall_tau": 1.0,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "unresolved_rate \u00d70.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.929,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "unresolved_rate \u00d71.5",
+     "top_concern": "not_received",
+     "kendall_tau": 1.0,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "resolution_misfit_rate \u00d70.5",
+     "top_concern": "not_received",
+     "kendall_tau": 1.0,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "resolution_misfit_rate \u00d71.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.929,
+     "top_n_overlap": 0.8
+    },
+    {
+     "scenario": "trend \u00d70.5",
+     "top_concern": "not_received",
+     "kendall_tau": 0.929,
+     "top_n_overlap": 1.0
+    },
+    {
+     "scenario": "trend \u00d71.5",
+     "top_concern": "not_received",
+     "kendall_tau": 1.0,
+     "top_n_overlap": 1.0
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "13 weight scenarios tested."
+  },
+  {
+   "chart_id": "retrieval_results",
+   "chart_type": "horizontal_bar",
+   "title": "Retrieved passages by similarity",
+   "description": "",
+   "x_field": "conversation_id",
+   "y_field": null,
+   "series": [
+    {
+     "key": "similarity",
+     "label": "Cosine similarity",
+     "color": "cyan"
+    }
+   ],
+   "data": [
+    {
+     "conversation_id": "C0004076",
+     "similarity": 0.621,
+     "topic": "Item or service not received"
+    },
+    {
+     "conversation_id": "C0009871",
+     "similarity": 0.608,
+     "topic": "Item or service not received"
+    },
+    {
+     "conversation_id": "C0006016",
+     "similarity": 0.605,
+     "topic": "Item or service not received"
+    }
+   ],
+   "value_format": "number",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-2bd097e8e08f",
+   "evidence_ids": [
+    "C0004076#12-14",
+    "C0009871#12-14",
+    "C0006016#6-9"
+   ],
+   "uncertainty_note": "Similarity is a ranking signal between embeddings, not a probability or confidence.",
+   "drilldown": {
+    "kind": "conversation",
+    "field": "conversation_id"
+   },
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "C0004076: 0.62; C0009871: 0.61; C0006016: 0.60"
+  }
+ ],
+ "graphs": [
+  {
+   "graph_id": "issue_resolution_graph",
+   "title": "Issue \u2192 agent closing action",
+   "description": "Edges are observed counts of conversations with that issue ending in that action.",
+   "nodes": [
+    {
+     "id": "issue:App crash",
+     "label": "App crash",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "res:account_reset",
+     "label": "account reset",
+     "kind": "resolution",
+     "value": null
+    },
+    {
+     "id": "res:coupon_applied",
+     "label": "coupon applied",
+     "kind": "resolution",
+     "value": null
+    },
+    {
+     "id": "res:escalated",
+     "label": "escalated",
+     "kind": "resolution",
+     "value": null
+    },
+    {
+     "id": "res:out_for_delivery",
+     "label": "out for delivery",
+     "kind": "resolution",
+     "value": null
+    },
+    {
+     "id": "res:refund_issued",
+     "label": "refund issued",
+     "kind": "resolution",
+     "value": null
+    },
+    {
+     "id": "res:service_activated",
+     "label": "service activated",
+     "kind": "resolution",
+     "value": null
+    },
+    {
+     "id": "issue:Coupon not applying",
+     "label": "Coupon not applying",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "issue:Duplicate charge",
+     "label": "Duplicate charge",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "issue:Feature not working",
+     "label": "Feature not working",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "issue:General help request",
+     "label": "General help request",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "issue:Item or service not received",
+     "label": "Item or service not received",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "issue:Login / account locked",
+     "label": "Login / account locked",
+     "kind": "issue",
+     "value": null
+    },
+    {
+     "id": "issue:Paid but service not delivered",
+     "label": "Paid but service not delivered",
+     "kind": "issue",
+     "value": null
+    }
+   ],
+   "edges": [
+    {
+     "source": "issue:App crash",
+     "target": "res:account_reset",
+     "weight": 57.0,
+     "label": "57",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:App crash",
+     "target": "res:coupon_applied",
+     "weight": 45.0,
+     "label": "45",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:App crash",
+     "target": "res:escalated",
+     "weight": 47.0,
+     "label": "47",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:App crash",
+     "target": "res:out_for_delivery",
+     "weight": 58.0,
+     "label": "58",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:App crash",
+     "target": "res:refund_issued",
+     "weight": 54.0,
+     "label": "54",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:App crash",
+     "target": "res:service_activated",
+     "weight": 63.0,
+     "label": "63",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Coupon not applying",
+     "target": "res:account_reset",
+     "weight": 50.0,
+     "label": "50",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Coupon not applying",
+     "target": "res:coupon_applied",
+     "weight": 41.0,
+     "label": "41",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Coupon not applying",
+     "target": "res:escalated",
+     "weight": 79.0,
+     "label": "79",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Coupon not applying",
+     "target": "res:out_for_delivery",
+     "weight": 49.0,
+     "label": "49",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Coupon not applying",
+     "target": "res:refund_issued",
+     "weight": 48.0,
+     "label": "48",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Coupon not applying",
+     "target": "res:service_activated",
+     "weight": 64.0,
+     "label": "64",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Duplicate charge",
+     "target": "res:account_reset",
+     "weight": 60.0,
+     "label": "60",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Duplicate charge",
+     "target": "res:coupon_applied",
+     "weight": 62.0,
+     "label": "62",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Duplicate charge",
+     "target": "res:escalated",
+     "weight": 67.0,
+     "label": "67",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Duplicate charge",
+     "target": "res:out_for_delivery",
+     "weight": 48.0,
+     "label": "48",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Duplicate charge",
+     "target": "res:refund_issued",
+     "weight": 66.0,
+     "label": "66",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Duplicate charge",
+     "target": "res:service_activated",
+     "weight": 59.0,
+     "label": "59",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Feature not working",
+     "target": "res:account_reset",
+     "weight": 54.0,
+     "label": "54",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Feature not working",
+     "target": "res:coupon_applied",
+     "weight": 61.0,
+     "label": "61",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Feature not working",
+     "target": "res:escalated",
+     "weight": 53.0,
+     "label": "53",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Feature not working",
+     "target": "res:out_for_delivery",
+     "weight": 70.0,
+     "label": "70",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Feature not working",
+     "target": "res:refund_issued",
+     "weight": 57.0,
+     "label": "57",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Feature not working",
+     "target": "res:service_activated",
+     "weight": 49.0,
+     "label": "49",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:General help request",
+     "target": "res:account_reset",
+     "weight": 108.0,
+     "label": "108",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:General help request",
+     "target": "res:coupon_applied",
+     "weight": 110.0,
+     "label": "110",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:General help request",
+     "target": "res:escalated",
+     "weight": 107.0,
+     "label": "107",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:General help request",
+     "target": "res:out_for_delivery",
+     "weight": 108.0,
+     "label": "108",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:General help request",
+     "target": "res:refund_issued",
+     "weight": 105.0,
+     "label": "105",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:General help request",
+     "target": "res:service_activated",
+     "weight": 124.0,
+     "label": "124",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Item or service not received",
+     "target": "res:account_reset",
+     "weight": 48.0,
+     "label": "48",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Item or service not received",
+     "target": "res:coupon_applied",
+     "weight": 62.0,
+     "label": "62",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Item or service not received",
+     "target": "res:escalated",
+     "weight": 59.0,
+     "label": "59",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Item or service not received",
+     "target": "res:out_for_delivery",
+     "weight": 52.0,
+     "label": "52",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Item or service not received",
+     "target": "res:refund_issued",
+     "weight": 48.0,
+     "label": "48",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Item or service not received",
+     "target": "res:service_activated",
+     "weight": 69.0,
+     "label": "69",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Login / account locked",
+     "target": "res:account_reset",
+     "weight": 48.0,
+     "label": "48",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Login / account locked",
+     "target": "res:coupon_applied",
+     "weight": 54.0,
+     "label": "54",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Login / account locked",
+     "target": "res:escalated",
+     "weight": 50.0,
+     "label": "50",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Login / account locked",
+     "target": "res:out_for_delivery",
+     "weight": 57.0,
+     "label": "57",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Login / account locked",
+     "target": "res:refund_issued",
+     "weight": 55.0,
+     "label": "55",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Login / account locked",
+     "target": "res:service_activated",
+     "weight": 40.0,
+     "label": "40",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Paid but service not delivered",
+     "target": "res:account_reset",
+     "weight": 54.0,
+     "label": "54",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Paid but service not delivered",
+     "target": "res:coupon_applied",
+     "weight": 55.0,
+     "label": "55",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Paid but service not delivered",
+     "target": "res:escalated",
+     "weight": 49.0,
+     "label": "49",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Paid but service not delivered",
+     "target": "res:out_for_delivery",
+     "weight": 61.0,
+     "label": "61",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Paid but service not delivered",
+     "target": "res:refund_issued",
+     "weight": 67.0,
+     "label": "67",
+     "relation": "observed"
+    },
+    {
+     "source": "issue:Paid but service not delivered",
+     "target": "res:service_activated",
+     "weight": 49.0,
+     "label": "49",
+     "relation": "observed"
+    }
+   ],
+   "source_analysis_id": "R-2bd097e8e08f"
+  }
+ ],
+ "evidence": [
+  {
+   "evidence_id": "C0004076#12-14",
+   "kind": "retrieval",
+   "conversation_id": "C0004076",
+   "message_ids": [
+    "C0004076-T12",
+    "C0004076-T13",
+    "C0004076-T14"
+   ],
+   "turn_range": [
+    12,
+    14
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0004076-T12",
+     "turn_index": 12,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 11222"
+    },
+    {
+     "message_id": "C0004076-T13",
+     "turn_index": 13,
+     "role": "agent",
+     "text": "The order is out for delivery. Expected by tomorrow evening.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 11223"
+    },
+    {
+     "message_id": "C0004076-T14",
+     "turn_index": 14,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 11224"
+    }
+   ],
+   "topic": "Item or service not received",
+   "product": "Return",
+   "sentiment": "negative",
+   "agent_id": "AgentQLWR",
+   "date": "2025-11-25",
+   "similarity": 0.621,
+   "reason": "Hybrid match (MiniLM #1, LSA #7; fused by RRF; similarity 0.62)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 1,
+     "similarity": 0.621
+    },
+    "lsa": {
+     "rank": 7,
+     "similarity": 0.5762
+    }
+   }
+  },
+  {
+   "evidence_id": "C0009871#12-14",
+   "kind": "retrieval",
+   "conversation_id": "C0009871",
+   "message_ids": [
+    "C0009871-T12",
+    "C0009871-T13",
+    "C0009871-T14"
+   ],
+   "turn_range": [
+    12,
+    14
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0009871-T12",
+     "turn_index": 12,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 28037"
+    },
+    {
+     "message_id": "C0009871-T13",
+     "turn_index": 13,
+     "role": "agent",
+     "text": "We escalated the case to our specialist team. You'll get an update soon.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 28038"
+    },
+    {
+     "message_id": "C0009871-T14",
+     "turn_index": 14,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 28039"
+    }
+   ],
+   "topic": "Item or service not received",
+   "product": "Report",
+   "sentiment": "negative",
+   "agent_id": "AgentTYIU",
+   "date": "2025-09-01",
+   "similarity": 0.608,
+   "reason": "Hybrid match (MiniLM #2, LSA #16; fused by RRF; similarity 0.61)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 2,
+     "similarity": 0.608
+    },
+    "lsa": {
+     "rank": 16,
+     "similarity": 0.5327
+    }
+   }
+  },
+  {
+   "evidence_id": "C0006016#6-9",
+   "kind": "retrieval",
+   "conversation_id": "C0006016",
+   "message_ids": [
+    "C0006016-T06",
+    "C0006016-T07",
+    "C0006016-T08",
+    "C0006016-T09"
+   ],
+   "turn_range": [
+    6,
+    9
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0006016-T06",
+     "turn_index": 6,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 16947"
+    },
+    {
+     "message_id": "C0006016-T07",
+     "turn_index": 7,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 16948"
+    },
+    {
+     "message_id": "C0006016-T08",
+     "turn_index": 8,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 16949"
+    },
+    {
+     "message_id": "C0006016-T09",
+     "turn_index": 9,
+     "role": "agent",
+     "text": "I understand this is frustrating. I'm investigating now.",
+     "sentiment": "neutral",
+     "act": "empathy_acknowledgement",
+     "source_reference": "cs_conversations.csv:line 16950"
+    }
+   ],
+   "topic": "Item or service not received",
+   "product": "Gift Card",
+   "sentiment": "negative",
+   "agent_id": "AgentNRGR",
+   "date": "2025-08-17",
+   "similarity": 0.605,
+   "reason": "Hybrid match (MiniLM #3, LSA #10; fused by RRF; similarity 0.60)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 3,
+     "similarity": 0.605
+    },
+    "lsa": {
+     "rank": 10,
+     "similarity": 0.5631
+    }
+   }
+  },
+  {
+   "evidence_id": "C0007482#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0007482",
+   "message_ids": [
+    "C0007482-T00",
+    "C0007482-T02",
+    "C0007482-T03",
+    "C0007482-T11"
+   ],
+   "turn_range": [
+    0,
+    11
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0007482-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "The Webhooks hasn\u2019t arrived yet. Can you check?",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 21268"
+    },
+    {
+     "message_id": "C0007482-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 21270"
+    },
+    {
+     "message_id": "C0007482-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 21271"
+    },
+    {
+     "message_id": "C0007482-T11",
+     "turn_index": 11,
+     "role": "agent",
+     "text": "I\u2019ve reset your account. Please try logging in again.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 21279"
+    }
+   ],
+   "topic": "Item or service not received",
+   "product": "Webhooks",
+   "sentiment": "negative",
+   "agent_id": "AgentRGPW",
+   "date": "2025-09-12",
+   "similarity": null,
+   "reason": "Representative negative conversation for a top-priority concern"
+  },
+  {
+   "evidence_id": "C0000179#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0000179",
+   "message_ids": [
+    "C0000179-T00",
+    "C0000179-T02",
+    "C0000179-T03",
+    "C0000179-T10"
+   ],
+   "turn_range": [
+    0,
+    10
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0000179-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "The Hotel hasn\u2019t arrived yet. Can you check?",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 480"
+    },
+    {
+     "message_id": "C0000179-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 482"
+    },
+    {
+     "message_id": "C0000179-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+     "sentiment": "neutral",
+     "act": "courtesy_greeting",
+     "source_reference": "cs_conversations.csv:line 483"
+    },
+    {
+     "message_id": "C0000179-T10",
+     "turn_index": 10,
+     "role": "customer",
+     "text": "It\u2019s urgent. Please expedite.",
+     "sentiment": "negative",
+     "act": "urgency",
+     "source_reference": "cs_conversations.csv:line 490"
+    }
+   ],
+   "topic": "Item or service not received",
+   "product": "Hotel",
+   "sentiment": "negative",
+   "agent_id": "AgentNMRA",
+   "date": "2025-09-29",
+   "similarity": null,
+   "reason": "Representative negative conversation for a top-priority concern"
+  },
+  {
+   "evidence_id": "C0003298#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0003298",
+   "message_ids": [
+    "C0003298-T00",
+    "C0003298-T04",
+    "C0003298-T05",
+    "C0003298-T11"
+   ],
+   "turn_range": [
+    0,
+    11
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0003298-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Coupon isn\u2019t applying on checkout for the 4G Pack.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 8820"
+    },
+    {
+     "message_id": "C0003298-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 8824"
+    },
+    {
+     "message_id": "C0003298-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "I understand this is frustrating. I'm investigating now.",
+     "sentiment": "neutral",
+     "act": "empathy_acknowledgement",
+     "source_reference": "cs_conversations.csv:line 8825"
+    },
+    {
+     "message_id": "C0003298-T11",
+     "turn_index": 11,
+     "role": "agent",
+     "text": "I have applied the coupon manually and adjusted your invoice.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 8831"
+    }
+   ],
+   "topic": "Coupon not applying",
+   "product": "4G Pack",
+   "sentiment": "negative",
+   "agent_id": "AgentQRGU",
+   "date": "2025-09-28",
+   "similarity": null,
+   "reason": "Representative negative conversation for a top-priority concern"
+  },
+  {
+   "evidence_id": "C0004839#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0004839",
+   "message_ids": [
+    "C0004839-T00",
+    "C0004839-T04",
+    "C0004839-T05",
+    "C0004839-T09"
+   ],
+   "turn_range": [
+    0,
+    9
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0004839-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Coupon isn\u2019t applying on checkout for the Assignment.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 13442"
+    },
+    {
+     "message_id": "C0004839-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 13446"
+    },
+    {
+     "message_id": "C0004839-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "I'm sorry about the trouble. Let me check your account.",
+     "sentiment": "neutral",
+     "act": "apology",
+     "source_reference": "cs_conversations.csv:line 13447"
+    },
+    {
+     "message_id": "C0004839-T09",
+     "turn_index": 9,
+     "role": "agent",
+     "text": "I have applied the coupon manually and adjusted your invoice.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 13451"
+    }
+   ],
+   "topic": "Coupon not applying",
+   "product": "Assignment",
+   "sentiment": "negative",
+   "agent_id": "AgentZGOB",
+   "date": "2025-09-10",
+   "similarity": null,
+   "reason": "Representative negative conversation for a top-priority concern"
+  },
+  {
+   "evidence_id": "C0014263#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0014263",
+   "message_ids": [
+    "C0014263-T00",
+    "C0014263-T04",
+    "C0014263-T05",
+    "C0014263-T15"
+   ],
+   "turn_range": [
+    0,
+    15
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0014263-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "I was charged twice for my Bus.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 39935"
+    },
+    {
+     "message_id": "C0014263-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 39939"
+    },
+    {
+     "message_id": "C0014263-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "Main abhi verify kar rahi/raha hoon, kindly wait.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 39940"
+    },
+    {
+     "message_id": "C0014263-T15",
+     "turn_index": 15,
+     "role": "agent",
+     "text": "I have applied the coupon manually and adjusted your invoice.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 39950"
+    }
+   ],
+   "topic": "Duplicate charge",
+   "product": "Bus",
+   "sentiment": "negative",
+   "agent_id": "AgentDKUJ",
+   "date": "2025-11-12",
+   "similarity": null,
+   "reason": "Representative negative conversation for a top-priority concern"
+  },
+  {
+   "evidence_id": "C0002874#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0002874",
+   "message_ids": [
+    "C0002874-T00",
+    "C0002874-T02",
+    "C0002874-T03",
+    "C0002874-T11"
+   ],
+   "turn_range": [
+    0,
+    11
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0002874-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "I was charged twice for my Mutual Fund.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 7764"
+    },
+    {
+     "message_id": "C0002874-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 7766"
+    },
+    {
+     "message_id": "C0002874-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "I understand this is frustrating. I'm investigating now.",
+     "sentiment": "neutral",
+     "act": "empathy_acknowledgement",
+     "source_reference": "cs_conversations.csv:line 7767"
+    },
+    {
+     "message_id": "C0002874-T11",
+     "turn_index": 11,
+     "role": "agent",
+     "text": "Service activated. Please restart the app and confirm.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 7775"
+    }
+   ],
+   "topic": "Duplicate charge",
+   "product": "Mutual Fund",
+   "sentiment": "negative",
+   "agent_id": "AgentBHNP",
+   "date": "2025-11-23",
+   "similarity": null,
+   "reason": "Representative negative conversation for a top-priority concern"
+  }
+ ],
+ "recommendations": [
+  {
+   "concern": "Item or service not received",
+   "topic": "not_received",
+   "rank": 1,
+   "priority": "High",
+   "finding": "Item or service not received: 338 conversations (11% of scope), 39% negative, 54% end unresolved, 53% closing actions misfit the issue.",
+   "supporting_metric": {
+    "label": "Negative rate",
+    "value": 0.3905,
+    "signal": "negative_rate"
+   },
+   "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 25.0 of its 67.1 priority points.",
+   "suggested_action": "Run a root-cause review of negative conversations for this issue with the owning product team.",
+   "decision_owner": "Customer experience lead",
+   "evidence": [
+    "C0007482",
+    "C0000179"
+   ],
+   "uncertainty": "Score differences under ~5 points are within the range that weight changes can reorder."
+  },
+  {
+   "concern": "Coupon not applying",
+   "topic": "coupon_not_applied",
+   "rank": 2,
+   "priority": "High",
+   "finding": "Coupon not applying: 331 conversations (11% of scope), 34% negative, 53% end unresolved, 64% closing actions misfit the issue.",
+   "supporting_metric": {
+    "label": "Escalation requests / conv.",
+    "value": 1.1088,
+    "signal": "escalation_rate"
+   },
+   "rationale": "Stands out most on escalation requests / conv. relative to the other concerns; that signal contributes 15.0 of its 60.3 priority points.",
+   "suggested_action": "Audit the escalation path for this issue and check first-contact resolution guidance.",
+   "decision_owner": "Escalations / tier-2 manager",
+   "evidence": [
+    "C0003298",
+    "C0004839"
+   ],
+   "uncertainty": "Score differences under ~5 points are within the range that weight changes can reorder."
+  },
+  {
+   "concern": "Duplicate charge",
+   "topic": "duplicate_charge",
+   "rank": 3,
+   "priority": "Medium",
+   "finding": "Duplicate charge: 362 conversations (12% of scope), 39% negative, 52% end unresolved, 63% closing actions misfit the issue.",
+   "supporting_metric": {
+    "label": "Negative rate",
+    "value": 0.3867,
+    "signal": "negative_rate"
+   },
+   "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 24.3 of its 59.8 priority points.",
+   "suggested_action": "Run a root-cause review of negative conversations for this issue with the owning product team.",
+   "decision_owner": "Customer experience lead",
+   "evidence": [
+    "C0014263",
+    "C0002874"
+   ],
+   "uncertainty": "Score differences under ~5 points are within the range that weight changes can reorder."
+  },
+  {
+   "concern": "Paid but service not delivered",
+   "topic": "payment_not_reflected",
+   "rank": 4,
+   "priority": "Medium",
+   "finding": "Paid but service not delivered: 335 conversations (11% of scope), 37% negative, 52% end unresolved, 51% closing actions misfit the issue.",
+   "supporting_metric": {
+    "label": "Negative rate",
+    "value": 0.3701,
+    "signal": "negative_rate"
+   },
+   "rationale": "Stands out most on negative rate relative to the other concerns; that signal contributes 21.5 of its 52.9 priority points.",
+   "suggested_action": "Run a root-cause review of negative conversations for this issue with the owning product team.",
+   "decision_owner": "Customer experience lead",
+   "evidence": [
+    "C0008088",
+    "C0004943"
+   ],
+   "uncertainty": "Score differences under ~5 points are within the range that weight changes can reorder."
+  },
+  {
+   "concern": "General help request",
+   "topic": "general_help",
+   "rank": 5,
+   "priority": "Low",
+   "finding": "General help request: 662 conversations (22% of scope), 25% negative, 50% end unresolved, 0% closing actions misfit the issue.",
+   "supporting_metric": {
+    "label": "Volume",
+    "value": 662.0,
+    "signal": "frequency"
+   },
+   "rationale": "Stands out most on volume relative to the other concerns; that signal contributes 30.0 of its 39.0 priority points.",
+   "suggested_action": "Investigate upstream causes and self-service deflection for this high-volume issue.",
+   "decision_owner": "Product owner for the affected journey",
+   "evidence": [
+    "C0010028",
+    "C0004986"
+   ],
+   "uncertainty": "Score differences under ~5 points are within the range that weight changes can reorder."
+  }
+ ],
+ "uncertainty_notes": [
+  "Financial impact, churn, handle time and repeat contact are not in the dataset and are not part of the score.",
+  "Sensitivity: the #1 concern stays #1 in 92% of 13 weight scenarios; mean top-5 overlap 94%.",
+  "Trend compares 2025-11 with 2025-10 conversation counts.",
+  "Negative rate moved from 33.2% (2025-08) to 35.0% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+  "In this synthetic dataset the agent's closing action appears unrelated to the issue raised, so misfit rates are high everywhere; this is a property of the data generator and worth flagging to the data owner."
+ ],
+ "method_notes": [
+  "priority = \u03a3 weight \u00d7 min-max normalised signal across concerns, scaled to 0\u2013100.",
+  "Weights: Volume 0.30, Negative rate 0.25, Escalation requests / conv. 0.15, Ends unresolved 0.15, Resolution misfit 0.10, Month-on-month change 0.05.",
+  "A concern is the primary issue raised in the customer's opening message.",
+  "A conversation is negative when the mean sentiment score of its customer turns is -0.25 or lower.",
+  "Months are assigned by each conversation's earliest timestamp.",
+  "Fit uses the documented issue\u2192action mapping in ASSUMPTIONS.md; general help requests are excluded as not assessable."
+ ],
+ "follow_up_questions": [
+  "Why was Item or service not received ranked first?",
+  "Compare the top two.",
+  "Which findings are uncertain?",
+  "Summarize this for senior leadership."
+ ],
+ "execution_trace_id": "R-2bd097e8e08f",
+ "model_metadata": {
+  "provider": "local",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m",
+  "mode": "deterministic",
+  "available": true,
+  "reason": null,
+  "intent_source": "rules",
+  "explanation_source": "deterministic",
+  "label_source": "rules",
+  "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2 + lsa-tfidf-svd192",
+  "routing": {
+   "requested_mode": "auto",
+   "route": "analytics_only",
+   "reason": "Rules recognised 'leadership_priorities' and registered operations compute the full answer; a model would add cost without adding facts.",
+   "llm_available": true,
+   "llm_steps": [],
+   "rules_category": "leadership_priorities",
+   "interpretive_cue": null,
+   "intent_precheck": {
+    "method": "rules",
+    "reason": "High-precision rule 'leadership'.",
+    "rule": "leadership",
+    "label": "leadership_priorities"
+   }
+  },
+  "intent_routing": {
+   "method": "rules",
+   "reason": "High-precision rule 'leadership'.",
+   "rule": "leadership",
+   "label": "leadership_priorities",
+   "llm_calls": 0,
+   "semantic": null,
+   "llm": null,
+   "stages": [
+    "policy",
+    "rules"
+   ],
+   "latency_ms": 0.4
+  },
+  "token_usage": {
+   "calls": 0,
+   "model_calls": 0,
+   "cache_hits": 0,
+   "reported_calls": 0,
+   "unreported_calls": 0,
+   "complete": true,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "total_tokens": 0,
+   "estimated_cost_usd": 0.0,
+   "by_purpose": []
+  }
+ },
+ "routing": {
+  "requested_mode": "auto",
+  "route": "analytics_only",
+  "reason": "Rules recognised 'leadership_priorities' and registered operations compute the full answer; a model would add cost without adding facts.",
+  "llm_available": true,
+  "llm_steps": [],
+  "rules_category": "leadership_priorities",
+  "interpretive_cue": null,
+  "intent_precheck": {
+   "method": "rules",
+   "reason": "High-precision rule 'leadership'.",
+   "rule": "leadership",
+   "label": "leadership_priorities"
+  }
+ },
+ "token_usage": {
+  "calls": 0,
+  "model_calls": 0,
+  "cache_hits": 0,
+  "reported_calls": 0,
+  "unreported_calls": 0,
+  "complete": true,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "by_purpose": []
+ },
+ "xray": null,
+ "root_cause": null,
+ "dashboard": {
+  "title": "Leadership priorities",
+  "generated_from": "Which recurring customer concerns should contact-centre leadership review first?",
+  "kpi_chart_ids": [
+   "R-2bd097e8e08f_lead_kpis"
+  ],
+  "sections": [
+   {
+    "title": "Answer",
+    "items": [
+     {
+      "chart_id": "priority_matrix",
+      "why": "Volume vs negativity: concerns in the top-right deserve review first.",
+      "width": "half"
+     },
+     {
+      "chart_id": "priority_scores",
+      "why": "Shows what drives each priority score, so the ranking is auditable.",
+      "width": "half"
+     }
+    ]
+   },
+   {
+    "title": "Reliability",
+    "items": [
+     {
+      "chart_id": "sensitivity",
+      "why": "Does the ranking survive changes to the weights?",
+      "width": "full"
+     }
+    ]
+   },
+   {
+    "title": "Context",
+    "items": [
+     {
+      "chart_id": "sentiment_trend",
+      "why": "Month-by-month negative rate with intervals: is it changing?",
+      "width": "half"
+     },
+     {
+      "chart_id": "resolution_misfit",
+      "why": "Whether agents' closing actions fit the issue raised.",
+      "width": "half"
+     }
+    ]
+   },
+   {
+    "title": "Evidence",
+    "items": [
+     {
+      "chart_id": "retrieval_results",
+      "why": "Semantically similar passages (hybrid MiniLM + LSA retrieval).",
+      "width": "half"
+     }
+    ]
+   }
+  ],
+  "filters": [
+   {
+    "field": "window",
+    "value": "All dates"
+   }
+  ],
+  "refinements": [
+   {
+    "label": "Latest month",
+    "question": "Same analysis for the last month only."
+   },
+   {
+    "label": "Why Item or service not received?",
+    "question": "What is driving negative sentiment in item or service not received?"
+   },
+   {
+    "label": "Compare top two",
+    "question": "Compare the top two topics."
+   },
+   {
+    "label": "Show examples",
+    "question": "Show supporting examples for the first one."
+   }
+  ],
+  "operations": [
+   "leadership_priorities",
+   "sentiment_trend",
+   "resolution_quality"
+  ],
+  "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+ },
+ "evidence_review": {
+  "verdict": "supported",
+  "checks": [
+   {
+    "check": "excerpt_fidelity",
+    "status": "pass",
+    "detail": "34/34 quoted excerpts match their source message word for word",
+    "items": []
+   },
+   {
+    "check": "evidence_coverage",
+    "status": "pass",
+    "detail": "3/3 top-ranked groups have a supporting conversation attached",
+    "items": []
+   },
+   {
+    "check": "evidence_relevance",
+    "status": "pass",
+    "detail": "9/9 evidence conversations are negative, matching a claim about negative sentiment",
+    "items": []
+   },
+   {
+    "check": "sample_size",
+    "status": "pass",
+    "detail": "No group below 30 conversations",
+    "items": []
+   },
+   {
+    "check": "counter_evidence",
+    "status": "pass",
+    "detail": "Counter-evidence stated alongside the claim",
+    "items": [
+     "61% of Item or service not received conversations were not negative."
+    ]
+   },
+   {
+    "check": "causal_language",
+    "status": "pass",
+    "detail": "No unqualified causal claims",
+    "items": []
+   }
+  ],
+  "challenges": [],
+  "counter_evidence": [
+   "61% of Item or service not received conversations were not negative."
+  ],
+  "added_notes": [],
+  "replaced_explanation": false,
+  "passed": 6,
+  "total": 6
+ },
+ "quality_status": {
+  "status": "pass",
+  "checks": [
+   {
+    "check": "registered_operations",
+    "passed": true,
+    "critical": true,
+    "detail": "Operations: ['leadership_priorities', 'sentiment_trend', 'resolution_quality']"
+   },
+   {
+    "check": "filters_applied",
+    "passed": true,
+    "critical": false,
+    "detail": "All results use the planned scope"
+   },
+   {
+    "check": "ranking_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "Priority scores in descending order"
+   },
+   {
+    "check": "denominators",
+    "passed": true,
+    "critical": true,
+    "detail": "Concern volumes sum to conversations in scope"
+   },
+   {
+    "check": "proportions_valid",
+    "passed": true,
+    "critical": true,
+    "detail": "All proportions within [0, 1]"
+   },
+   {
+    "check": "chart_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "7 charts match their source tables"
+   },
+   {
+    "check": "evidence_valid",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items resolved to source messages"
+   },
+   {
+    "check": "evidence_present",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items attached"
+   },
+   {
+    "check": "explanation_grounded",
+    "passed": true,
+    "critical": true,
+    "detail": "All numbers in the answer trace to verified results"
+   },
+   {
+    "check": "uncertainty_disclosed",
+    "passed": true,
+    "critical": false,
+    "detail": "5 uncertainty notes attached to the response"
+   },
+   {
+    "check": "excerpt_fidelity",
+    "passed": true,
+    "critical": true,
+    "detail": "34/34 quoted excerpts match their source message word for word"
+   },
+   {
+    "check": "evidence_coverage",
+    "passed": true,
+    "critical": false,
+    "detail": "3/3 top-ranked groups have a supporting conversation attached"
+   },
+   {
+    "check": "evidence_relevance",
+    "passed": true,
+    "critical": false,
+    "detail": "9/9 evidence conversations are negative, matching a claim about negative sentiment"
+   },
+   {
+    "check": "sample_size",
+    "passed": true,
+    "critical": false,
+    "detail": "No group below 30 conversations"
+   },
+   {
+    "check": "causal_language",
+    "passed": true,
+    "critical": false,
+    "detail": "No unqualified causal claims"
+   }
+  ],
+  "passed": 15,
+  "total": 15
+ },
+ "governance": [
+  {
+   "policy": "pii_masking",
+   "outcome": "pass",
+   "detail": "Evidence excerpts are PII-masked at ingestion"
+  },
+  {
+   "policy": "prompt_injection",
+   "outcome": "pass",
+   "detail": "No injection patterns in the question"
+  },
+  {
+   "policy": "human_review",
+   "outcome": "required",
+   "detail": "A human owner must review before acting on these recommendations."
+  },
+  {
+   "policy": "tool_safety",
+   "outcome": "pass",
+   "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+  },
+  {
+   "policy": "dataset_authorisation",
+   "outcome": "pass",
+   "detail": "Dataset mode: original"
+  }
+ ],
+ "human_review_required": true,
+ "errors": [],
+ "latency_ms": 246.1,
+ "_wall_ms": 276
+}

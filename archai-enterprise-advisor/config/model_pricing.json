@@ -1,0 +1,50 @@
+{
+  "_disclaimer": "ILLUSTRATIVE SAMPLE VALUES ONLY. These are configurable placeholders for deterministic what-if modelling, not current vendor pricing. Replace them with your negotiated/current prices before using any estimate for budgeting.",
+  "currency": "USD",
+  "unit": "per 1M tokens",
+  "batch_discount": 0.5,
+  "models": {
+    "premium_model": {
+      "description": "Frontier-class hosted model (sample tier)",
+      "input_per_mtok": 3.0,
+      "cached_input_per_mtok": 0.3,
+      "output_per_mtok": 15.0,
+      "latency_ms_per_call": 2200,
+      "deployment": "commercial_api"
+    },
+    "standard_model": {
+      "description": "Mid-tier hosted model (sample tier)",
+      "input_per_mtok": 1.0,
+      "cached_input_per_mtok": 0.1,
+      "output_per_mtok": 5.0,
+      "latency_ms_per_call": 1400,
+      "deployment": "commercial_api"
+    },
+    "small_model": {
+      "description": "Small, fast hosted model for routing/classification/simple answers (sample tier)",
+      "input_per_mtok": 0.25,
+      "cached_input_per_mtok": 0.025,
+      "output_per_mtok": 1.25,
+      "latency_ms_per_call": 700,
+      "deployment": "commercial_api"
+    },
+    "self_hosted_open_weight": {
+      "description": "Self-hosted open-weight model; marginal token cost approximated, GPU cost belongs in infrastructure (sample tier)",
+      "input_per_mtok": 0.05,
+      "cached_input_per_mtok": 0.05,
+      "output_per_mtok": 0.2,
+      "latency_ms_per_call": 1600,
+      "deployment": "self_hosted"
+    }
+  },
+  "default_llm_calls_per_request": {
+    "keep_existing": 0,
+    "traditional_software": 0,
+    "traditional_ml": 0,
+    "generative_ai": 1,
+    "rag_genai": 1.2,
+    "agentic_ai": 5,
+    "hybrid": 1.2
+  },
+  "retrieval_latency_ms": {"base": 120, "per_chunk": 15, "rerank": 150}
+}

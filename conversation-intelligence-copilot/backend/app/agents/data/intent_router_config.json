@@ -1,0 +1,5 @@
+{
+ "min_similarity": 1.1,
+ "min_margin": 1.1,
+ "note": "No threshold reached 95% precision on validation; semantic stage disabled."
+}

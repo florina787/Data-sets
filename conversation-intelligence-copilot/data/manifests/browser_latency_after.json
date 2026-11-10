@@ -1,0 +1,770 @@
+{
+  "label": "after",
+  "base": "http://127.0.0.1:4173",
+  "runs_per_category": 20,
+  "categories": {
+    "greeting": {
+      "n": 20,
+      "p50_ms": 80.6,
+      "p95_ms": 105.8,
+      "max_ms": 110.1,
+      "runs": [
+        {
+          "question": "Hi",
+          "ms": 86.9,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "Hello",
+          "ms": 82.1,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "hey there",
+          "ms": 60,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "How are you?",
+          "ms": 67.4,
+          "rendered": "I'm running normally and ready to help. I'm software, so I don't have feelings, but everything is working. I analyse the 3,000 customer-support conversations in"
+        },
+        {
+          "question": "Good morning",
+          "ms": 105.6,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "thanks!",
+          "ms": 74.9,
+          "rendered": "You're welcome. Ask a follow-up whenever you like; I keep the context of this session."
+        },
+        {
+          "question": "What can you do?",
+          "ms": 80.9,
+          "rendered": "Here's what I can do. I analyse the 3,000 customer-support conversations in this dataset. I can rank complaints and the topics most associated with negative sen"
+        },
+        {
+          "question": "Hi",
+          "ms": 73.9,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "Hello",
+          "ms": 90.3,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "hey there",
+          "ms": 67.7,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "How are you?",
+          "ms": 63.1,
+          "rendered": "I'm running normally and ready to help. I'm software, so I don't have feelings, but everything is working. I analyse the 3,000 customer-support conversations in"
+        },
+        {
+          "question": "Good morning",
+          "ms": 68,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "thanks!",
+          "ms": 97.3,
+          "rendered": "You're welcome. Ask a follow-up whenever you like; I keep the context of this session."
+        },
+        {
+          "question": "What can you do?",
+          "ms": 89.2,
+          "rendered": "Here's what I can do. I analyse the 3,000 customer-support conversations in this dataset. I can rank complaints and the topics most associated with negative sen"
+        },
+        {
+          "question": "Hi",
+          "ms": 93.5,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "Hello",
+          "ms": 80.3,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "hey there",
+          "ms": 69.3,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "How are you?",
+          "ms": 78.4,
+          "rendered": "I'm running normally and ready to help. I'm software, so I don't have feelings, but everything is working. I analyse the 3,000 customer-support conversations in"
+        },
+        {
+          "question": "Good morning",
+          "ms": 91.1,
+          "rendered": "Hello! I'm the Conversation Intelligence Copilot. What would you like to know about the customer conversations? I analyse the 3,000 customer-support conversatio"
+        },
+        {
+          "question": "thanks!",
+          "ms": 110.1,
+          "rendered": "You're welcome. Ask a follow-up whenever you like; I keep the context of this session."
+        }
+      ]
+    },
+    "positive_statements": {
+      "n": 20,
+      "p50_ms": 220.3,
+      "p95_ms": 282.7,
+      "max_ms": 308.6,
+      "runs": [
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "ms": 308.6,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "ms": 226.6,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "ms": 281.3,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "ms": 205.5,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "ms": 211.5,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "ms": 255.3,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "ms": 236.8,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "ms": 254.5,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "ms": 205.2,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "ms": 217,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "ms": 221.9,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "ms": 207.2,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "ms": 219.3,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "ms": 228.5,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "ms": 221.2,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "ms": 213.3,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the top 5 positive statements from users?",
+          "ms": 207.5,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "Show the top 5 positive statements customers made",
+          "ms": 208.7,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "What are the most common positive comments from customers?",
+          "ms": 254.3,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        },
+        {
+          "question": "List the top 3 positive customer statements",
+          "ms": 182.2,
+          "rendered": "Only 2 distinct positive statements appear in customer messages in all dates."
+        }
+      ]
+    },
+    "negative_statements": {
+      "n": 20,
+      "p50_ms": 216,
+      "p95_ms": 265.5,
+      "max_ms": 272.6,
+      "runs": [
+        {
+          "question": "What are the top 5 negative statements from users?",
+          "ms": 200.3,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "Show the top 3 negative statements customers made",
+          "ms": 195.6,
+          "rendered": "The 3 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the most common negative comments from customers?",
+          "ms": 212,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "List the top 10 negative customer statements",
+          "ms": 234.7,
+          "rendered": "The 10 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the top 5 negative statements from users?",
+          "ms": 209.7,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "Show the top 3 negative statements customers made",
+          "ms": 202,
+          "rendered": "The 3 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the most common negative comments from customers?",
+          "ms": 229.8,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "List the top 10 negative customer statements",
+          "ms": 233.6,
+          "rendered": "The 10 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the top 5 negative statements from users?",
+          "ms": 218.5,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "Show the top 3 negative statements customers made",
+          "ms": 229.8,
+          "rendered": "The 3 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the most common negative comments from customers?",
+          "ms": 228.4,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "List the top 10 negative customer statements",
+          "ms": 265.1,
+          "rendered": "The 10 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the top 5 negative statements from users?",
+          "ms": 205,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "Show the top 3 negative statements customers made",
+          "ms": 210.4,
+          "rendered": "The 3 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the most common negative comments from customers?",
+          "ms": 224.3,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "List the top 10 negative customer statements",
+          "ms": 272.6,
+          "rendered": "The 10 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the top 5 negative statements from users?",
+          "ms": 196.6,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "Show the top 3 negative statements customers made",
+          "ms": 211.7,
+          "rendered": "The 3 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "What are the most common negative comments from customers?",
+          "ms": 213.5,
+          "rendered": "The 5 most common negative statements customers made in all dates."
+        },
+        {
+          "question": "List the top 10 negative customer statements",
+          "ms": 251.2,
+          "rendered": "The 10 most common negative statements customers made in all dates."
+        }
+      ]
+    },
+    "complaints": {
+      "n": 20,
+      "p50_ms": 253.2,
+      "p95_ms": 281.7,
+      "max_ms": 294.6,
+      "runs": [
+        {
+          "question": "What are the top complaints?",
+          "ms": 228.3,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "ms": 294.6,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "ms": 268.8,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "ms": 249.4,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What are the top complaints?",
+          "ms": 238.4,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "ms": 254,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "ms": 281,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "ms": 222,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What are the top complaints?",
+          "ms": 277.1,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "ms": 265.3,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "ms": 252.6,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "ms": 260.5,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What are the top complaints?",
+          "ms": 253.7,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "ms": 242.3,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "ms": 256.6,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "ms": 237.9,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What are the top complaints?",
+          "ms": 254.5,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What were the top 5 topics most associated with negative sentiment?",
+          "ms": 250.7,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "Which topics have the most negative conversations?",
+          "ms": 234.4,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        },
+        {
+          "question": "What do customers complain about most?",
+          "ms": 245.4,
+          "rendered": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working."
+        }
+      ]
+    },
+    "sentiment_percentages": {
+      "n": 20,
+      "p50_ms": 150.1,
+      "p95_ms": 177.2,
+      "max_ms": 188.6,
+      "runs": [
+        {
+          "question": "What is the overall sentiment mix?",
+          "ms": 153.9,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "ms": 144.6,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "ms": 188.6,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "ms": 172.1,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "ms": 149.4,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "ms": 132.5,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "ms": 141.3,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "ms": 156.5,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "ms": 149,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "ms": 135.1,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "ms": 163,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "ms": 145.6,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "ms": 157.3,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "ms": 150.5,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "ms": 167,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "ms": 176.6,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What is the overall sentiment mix?",
+          "ms": 149.5,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "What percentage of conversations are negative?",
+          "ms": 137.4,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "Show the sentiment distribution across conversations",
+          "ms": 149.7,
+          "rendered": "33.5% of conversations in all dates are negative."
+        },
+        {
+          "question": "How many conversations are positive, neutral and negative?",
+          "ms": 153,
+          "rendered": "33.5% of conversations in all dates are negative."
+        }
+      ]
+    },
+    "sentiment_trend": {
+      "n": 20,
+      "p50_ms": 149,
+      "p95_ms": 184.9,
+      "max_ms": 187.2,
+      "runs": [
+        {
+          "question": "Show the sentiment trend over time.",
+          "ms": 158.9,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "ms": 138.5,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "ms": 137.6,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "ms": 140.9,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "ms": 154.3,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "ms": 154.2,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "ms": 133.6,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "ms": 147.3,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "ms": 184.8,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "ms": 141.5,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "ms": 137.4,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "ms": 155.9,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "ms": 163.1,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "ms": 135.6,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "ms": 187.2,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "ms": 150.6,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Show the sentiment trend over time.",
+          "ms": 144.3,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "Compare sentiment this month vs last month",
+          "ms": 157.7,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "How has negative sentiment changed month over month?",
+          "ms": 153.6,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        },
+        {
+          "question": "What is the monthly sentiment trend?",
+          "ms": 141.1,
+          "rendered": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10."
+        }
+      ]
+    },
+    "rankings": {
+      "n": 20,
+      "p50_ms": 568.2,
+      "p95_ms": 637.6,
+      "max_ms": 643.4,
+      "runs": [
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "ms": 455.9,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "ms": 636.2,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "ms": 397.5,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "ms": 637.3,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "ms": 480.7,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "ms": 624.3,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "ms": 411.8,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "ms": 585.9,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "ms": 408.9,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "ms": 615.5,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "ms": 550.4,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "ms": 615.2,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "ms": 363.1,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "ms": 594.9,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "ms": 394.8,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "ms": 643.4,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Which recurring customer concerns should leadership review first?",
+          "ms": 411.1,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which support agents may benefit from coaching on empathy?",
+          "ms": 627.4,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        },
+        {
+          "question": "Rank the customer concerns leadership should prioritise",
+          "ms": 369.4,
+          "rendered": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge."
+        },
+        {
+          "question": "Which agents need coaching on empathy?",
+          "ms": 626.2,
+          "rendered": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-10-27T23:53:05.095Z",
+  "deterministic_overall": {
+    "n": 140,
+    "p50_ms": 208.1,
+    "p95_ms": 615.2,
+    "max_ms": 643.4
+  }
+}

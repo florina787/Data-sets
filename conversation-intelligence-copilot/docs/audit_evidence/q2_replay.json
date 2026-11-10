@@ -1,0 +1,530 @@
+{
+ "intent_routing": {
+  "method": "rules",
+  "reason": "High-precision rule 'coaching'.",
+  "rule": "coaching",
+  "label": "agent_coaching",
+  "llm_calls": 0,
+  "semantic": null,
+  "llm": null,
+  "stages": [
+   "policy",
+   "rules"
+  ],
+  "latency_ms": 0.3
+ },
+ "request_id": "R-c7045ce1bcb3",
+ "question": "Which support agents may benefit from additional coaching on empathy or customer communication, and what evidence supports that view?",
+ "created_at": "2026-10-23T00:45:25.380797+00:00",
+ "status": "completed",
+ "latency_ms": 522.5,
+ "routing": {
+  "requested_mode": "auto",
+  "route": "analytics_only",
+  "reason": "Rules recognised 'agent_coaching' and registered operations compute the full answer; a model would add cost without adding facts.",
+  "llm_available": true,
+  "llm_steps": [],
+  "rules_category": "agent_coaching",
+  "interpretive_cue": null,
+  "intent_precheck": {
+   "method": "rules",
+   "reason": "High-precision rule 'coaching'.",
+   "rule": "coaching",
+   "label": "agent_coaching"
+  }
+ },
+ "token_usage": {
+  "calls": 0,
+  "model_calls": 0,
+  "cache_hits": 0,
+  "reported_calls": 0,
+  "unreported_calls": 0,
+  "complete": true,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "by_purpose": []
+ },
+ "decisions": [
+  {
+   "at": "router",
+   "decision": "Route: analytics_only",
+   "why": "Rules recognised 'agent_coaching' and registered operations compute the full answer; a model would add cost without adding facts."
+  },
+  {
+   "at": "intent",
+   "decision": "Intent: agent_coaching (via rules)",
+   "why": "High-precision rule 'coaching'.",
+   "stages": [
+    "policy",
+    "rules"
+   ],
+   "semantic": null,
+   "llm": null
+  },
+  {
+   "at": "supervisor",
+   "decision": "Plan: agent_coaching_review",
+   "why": "Specialist: coaching_agent; retrieval: parallel"
+  },
+  {
+   "at": "explanation",
+   "decision": "Explanation: deterministic",
+   "why": "router: analytics only"
+  },
+  {
+   "at": "qa",
+   "decision": "Evidence review: supported",
+   "why": "No challenges raised."
+  }
+ ],
+ "steps": [
+  {
+   "node": "input_validation",
+   "label": "Input validation",
+   "role": "Sanitise the question, enforce limits, flag injection attempts.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.837479+00:00",
+   "duration_ms": 0.0,
+   "output": {
+    "chars": 133,
+    "flags": 0
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "session_context",
+   "label": "Session memory",
+   "role": "Load prior turns and references for follow-up resolution.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.839060+00:00",
+   "duration_ms": 1.0,
+   "output": {
+    "history_turns": 0,
+    "has_previous": false
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "router",
+   "label": "Intelligence router",
+   "role": "Zero-LLM routing: decide whether a model is needed at all, and record why.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.841614+00:00",
+   "duration_ms": 0.4,
+   "output": {
+    "route": "analytics_only",
+    "requested": "auto",
+    "reason": "Rules recognised 'agent_coaching' and registered operations compute the full answer; a model would add cost without adding facts.",
+    "llm_steps": []
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "intent",
+   "label": "Intent agent",
+   "role": "Interpret the question into a typed intent (LLM, or rules).",
+   "engine": "rules / LLM",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.844017+00:00",
+   "duration_ms": 1.0,
+   "output": {
+    "category": "agent_coaching",
+    "source": "rules",
+    "method": "rules",
+    "reason": "High-precision rule 'coaching'.",
+    "window": {
+     "type": "inherit",
+     "month": null,
+     "n": null
+    },
+    "follow_up": false
+   },
+   "meta": {
+    "routing": {
+     "method": "rules",
+     "reason": "High-precision rule 'coaching'.",
+     "rule": "coaching",
+     "label": "agent_coaching",
+     "llm_calls": 0,
+     "semantic": null,
+     "llm": null,
+     "stages": [
+      "policy",
+      "rules"
+     ],
+     "latency_ms": 0.3
+    }
+   },
+   "error": null
+  },
+  {
+   "node": "supervisor",
+   "label": "Supervisor / planner",
+   "role": "Resolve references and date window; choose registered operations and agents.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.846677+00:00",
+   "duration_ms": 7.6,
+   "output": {
+    "steps": [
+     "agent_coaching_review"
+    ],
+    "specialist": "coaching_agent",
+    "retrieval": "parallel",
+    "window": "All dates",
+    "notes": []
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "coaching_agent",
+   "label": "Coaching agent",
+   "role": "Agent communication signals with sample-size safeguards.",
+   "engine": "DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.855714+00:00",
+   "duration_ms": 416.3,
+   "output": {
+    "agent_coaching_review": {
+     "status": "ok",
+     "metrics": {
+      "agents_in_scope": 2987,
+      "eligible_agents": 0,
+      "empathy_response_rate": 0.2932,
+      "irrelevant_resolution_rate": 0.5731
+     }
+    }
+   },
+   "meta": {
+    "operations": [
+     {
+      "op": "agent_coaching_review",
+      "engine": "duckdb",
+      "params": {
+       "min_conversations": "\u2026"
+      },
+      "status": "ok",
+      "duration_ms": 416.3,
+      "rows": 10,
+      "metrics": 5
+     }
+    ]
+   },
+   "error": null
+  },
+  {
+   "node": "retrieval",
+   "label": "Retrieval agent",
+   "role": "Semantic search over the FAISS index with metadata filters.",
+   "engine": "FAISS",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:24.856312+00:00",
+   "duration_ms": 418.1,
+   "output": {
+    "results": 4,
+    "candidates": 212,
+    "latency_ms": 418.0,
+    "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2 + lsa-tfidf-svd192",
+    "query": "customer still not fixed asks to escalate urgent; agent asks for details without acknowledging frustration"
+   },
+   "meta": {
+    "engine": "faiss",
+    "k": 4,
+    "mode": "hybrid",
+    "methods": {
+     "dense": "sentence-transformers/all-MiniLM-L6-v2",
+     "lsa": "lsa-tfidf-svd192"
+    },
+    "fusion": "weighted reciprocal rank fusion (k=60, MiniLM 1.0, LSA 0.15)",
+    "filters": {
+     "topics": [],
+     "sentiments": [
+      "negative"
+     ],
+     "window": "All dates"
+    },
+    "returned": 4,
+    "latency_ms": 418.0
+   },
+   "error": null
+  },
+  {
+   "node": "evidence",
+   "label": "Evidence assembly",
+   "role": "Resolve cited IDs to source messages and validate them.",
+   "engine": "DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.276482+00:00",
+   "duration_ms": 45.3,
+   "output": {
+    "items": 9,
+    "validation": {}
+   },
+   "meta": {
+    "requested": 9,
+    "resolved": 9,
+    "invalid": [],
+    "out_of_scope": []
+   },
+   "error": null
+  },
+  {
+   "node": "explanation",
+   "label": "Explanation agent",
+   "role": "Grounded narrative (LLM with numeric check, or deterministic).",
+   "engine": "deterministic / LLM",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.323554+00:00",
+   "duration_ms": 0.1,
+   "output": {
+    "source": "deterministic",
+    "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negati"
+   },
+   "meta": {
+    "reason": "router: analytics only"
+   },
+   "error": null
+  },
+  {
+   "node": "visualization",
+   "label": "Visualization planner",
+   "role": "Choose charts and build validated specs from results.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.325137+00:00",
+   "duration_ms": 0.5,
+   "output": {
+    "charts": [
+     "R-c7045ce1bcb3_coach_kpis",
+     "coaching_heatmap",
+     "empathy_distribution",
+     "sample_size",
+     "coaching_by_topic",
+     "retrieval_results"
+    ],
+    "graphs": 0,
+    "dashboard_sections": [
+     "Answer",
+     "Reliability",
+     "Context",
+     "Evidence"
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "qa",
+   "label": "QA agent",
+   "role": "Check filters, denominators, rankings, charts, citations and grounding.",
+   "engine": "rules + DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.327102+00:00",
+   "duration_ms": 9.0,
+   "output": {
+    "status": "pass",
+    "passed": "13/13",
+    "evidence_verdict": "supported",
+    "challenges": 0
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "governance",
+   "label": "Governance agent",
+   "role": "PII, coaching safeguards, dataset authorisation, audit.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.337474+00:00",
+   "duration_ms": 0.8,
+   "output": {
+    "findings": [
+     "pii_masking:pass",
+     "prompt_injection:pass",
+     "coaching_safeguard:enforced",
+     "human_review:required",
+     "tool_safety:pass",
+     "dataset_authorisation:pass"
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "response",
+   "label": "Response assembly",
+   "role": "Build the unified, versioned response contract.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.340005+00:00",
+   "duration_ms": 0.8,
+   "output": {
+    "status": "completed",
+    "charts": 6
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "memory_telemetry",
+   "label": "Memory + telemetry",
+   "role": "Persist session references and execution telemetry.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.342072+00:00",
+   "duration_ms": 2.4,
+   "output": {
+    "saved": true
+   },
+   "meta": {},
+   "error": null
+  }
+ ],
+ "operations": [
+  {
+   "op": "agent_coaching_review",
+   "engine": "duckdb",
+   "params": {
+    "min_conversations": 3
+   },
+   "status": "ok",
+   "duration_ms": 416.3,
+   "rows": 10,
+   "metrics": 5
+  }
+ ],
+ "retrieval": [
+  {
+   "node": "retrieval",
+   "engine": "faiss",
+   "mode": "hybrid",
+   "methods": {
+    "dense": "sentence-transformers/all-MiniLM-L6-v2",
+    "lsa": "lsa-tfidf-svd192"
+   },
+   "fusion": "weighted reciprocal rank fusion (k=60, MiniLM 1.0, LSA 0.15)",
+   "k": 4,
+   "filters": {
+    "topics": [],
+    "sentiments": [
+     "negative"
+    ],
+    "window": "All dates"
+   },
+   "returned": 4,
+   "latency_ms": 418.0,
+   "query": "customer still not fixed asks to escalate urgent; agent asks for details without acknowledging frustration"
+  }
+ ],
+ "llm_calls": [],
+ "qa": {
+  "status": "pass",
+  "passed": 13,
+  "total": 13,
+  "checks": [
+   {
+    "check": "registered_operations",
+    "passed": true,
+    "critical": true,
+    "detail": "Operations: ['agent_coaching_review']"
+   },
+   {
+    "check": "filters_applied",
+    "passed": true,
+    "critical": false,
+    "detail": "All results use the planned scope"
+   },
+   {
+    "check": "proportions_valid",
+    "passed": true,
+    "critical": true,
+    "detail": "All proportions within [0, 1]"
+   },
+   {
+    "check": "chart_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "6 charts match their source tables"
+   },
+   {
+    "check": "evidence_valid",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items resolved to source messages"
+   },
+   {
+    "check": "evidence_present",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items attached"
+   },
+   {
+    "check": "explanation_grounded",
+    "passed": true,
+    "critical": true,
+    "detail": "All numbers in the answer trace to verified results"
+   },
+   {
+    "check": "uncertainty_disclosed",
+    "passed": true,
+    "critical": false,
+    "detail": "3 uncertainty notes attached to the response"
+   },
+   {
+    "check": "coaching_sample_size_gate",
+    "passed": true,
+    "critical": false,
+    "detail": "Minimum 3 conversations per agent enforced; safeguard attached"
+   },
+   {
+    "check": "excerpt_fidelity",
+    "passed": true,
+    "critical": true,
+    "detail": "36/36 quoted excerpts match their source message word for word"
+   },
+   {
+    "check": "evidence_relevance",
+    "passed": true,
+    "critical": false,
+    "detail": "7/9 evidence conversations are negative, matching a claim about negative sentiment"
+   },
+   {
+    "check": "sample_size",
+    "passed": true,
+    "critical": false,
+    "detail": "No group below 30 conversations"
+   },
+   {
+    "check": "causal_language",
+    "passed": true,
+    "critical": false,
+    "detail": "No unqualified causal claims"
+   }
+  ]
+ },
+ "evidence_review": {
+  "verdict": "supported",
+  "passed": 5,
+  "total": 5,
+  "challenges": []
+ },
+ "counts": {
+  "nodes": 14,
+  "duckdb_operations": 1,
+  "faiss_searches": 1,
+  "llm_calls": 0,
+  "llm_calls_live": 0
+ },
+ "started_at": "2026-10-23T00:45:24.837479+00:00",
+ "sanitisation": "Secrets redacted, secret-named fields and tracebacks dropped, text truncated to 300 characters; prompt bodies are not included."
+}

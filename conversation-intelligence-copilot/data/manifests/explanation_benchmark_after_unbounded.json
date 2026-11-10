@@ -1,0 +1,237 @@
+{
+  "label": "after_unbounded",
+  "question": "Why is duplicate charge so negative?",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "provider": "local",
+  "hardware": {
+    "cpus": 4,
+    "platform": "Linux-6.18.44-fc-v180-x86_64-with-glibc2.39",
+    "gpu_offload_supported": false,
+    "llama_cpp": "0.3.36",
+    "n_threads": 4,
+    "n_ctx": 8192
+  },
+  "model_load_ms": 1340.2,
+  "runs": [
+    {
+      "latency_fallback": [],
+      "governance": [
+        "evidence_challenger:rejected_model_output: Model explanation named factors the analysis does not support; deterministic narrative used.",
+        "pii_masking:pass: Evidence excerpts are PII-masked at ingestion",
+        "prompt_injection:pass: No injection patterns in the question",
+        "tool_safety:pass: Only registered read-only operations ran; no model-generated SQL or code.",
+        "dataset_authorisation:pass: Dataset mode: original"
+      ],
+      "run": 1,
+      "wall_s": 39.42,
+      "cpu_s": 109.22,
+      "avg_cores_busy": 2.77,
+      "nodes_ms": {
+        "input_validation": 0,
+        "session_context": 0.8,
+        "router": 3.2,
+        "intent": 2.1,
+        "supervisor": 78.5,
+        "leadership_agent": 603.1,
+        "retrieval": 7854.8,
+        "evidence": 45.6,
+        "explanation": 30685.5,
+        "visualization": 0.4,
+        "qa": 14.5,
+        "governance": 0.4,
+        "response": 9.8,
+        "memory_telemetry": 3.3
+      },
+      "explanation_ms": 30685.5,
+      "llm_calls": [
+        {
+          "prompt": "explanation",
+          "max_tokens": 350,
+          "stream": true,
+          "wall_ms": 30671.6,
+          "prompt_tokens": 1169,
+          "prompt_eval_ms": 13797.4,
+          "generated_tokens": 184,
+          "generation_ms": 9931.4,
+          "prompt_tok_per_s": 84.7,
+          "gen_tok_per_s": 18.5,
+          "reused_tokens": 182
+        }
+      ],
+      "retries": 0,
+      "telemetry_calls": [
+        {
+          "purpose": "explanation",
+          "input_tokens": 1351,
+          "output_tokens": 184,
+          "latency_ms": 30673.2,
+          "status": "ok",
+          "retries": 0
+        }
+      ],
+      "explanation_source": "deterministic",
+      "qa": "12/14 warn",
+      "groundedness": "Grounded 100%",
+      "grounding_rejections": [],
+      "headline": "In Duplicate charge, negative sentiment is most strongly associated with: replies to negative turns rarely acknowledge frustration.",
+      "answer": "140 of 362 Duplicate charge conversations in all dates were negative (38.7%). Candidate drivers (association, not proof of cause): Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%): 43% negative with it vs 25% without (n=269 vs 93, p=0.0014). In 100% of the negative conversations with this behaviour it occurs before the customer's last negative message, which is consistent with (but does not prove) it contributing. Symptoms that accompany negativity rather than explain it: Customer asked to escalate: 50% negative with it vs 15% without (n=248 vs 114, p=0.0).",
+      "key_points": [
+        "Product mix: Among products with at least 8 conversations, the negative rate is highest for Cab (50% of 10); product differences are within chance, so product mix is not a strong alternative explanation.",
+        "Agent concentration: AgentASVV handled 1% of the negative conversations; negativity is spread across agents, so one agent does not explain it.",
+        "Topic baseline: Duplicate charge: 39% negative vs 33% for other topics \u2014 distinctly more negative than other topics, so something topic-specific is plausible.",
+        "low empathy \u2014 strong association",
+        "scripted repeats \u2014 weak \u2014 not distinguishable from noise",
+        "resolution mismatch \u2014 weak \u2014 not distinguishable from noise",
+        "long conversation \u2014 weak \u2014 not distinguishable from noise"
+      ],
+      "evidence_items": 6
+    },
+    {
+      "latency_fallback": [],
+      "governance": [
+        "evidence_challenger:rejected_model_output: Model explanation named factors the analysis does not support; deterministic narrative used.",
+        "pii_masking:pass: Evidence excerpts are PII-masked at ingestion",
+        "prompt_injection:pass: No injection patterns in the question",
+        "tool_safety:pass: Only registered read-only operations ran; no model-generated SQL or code.",
+        "dataset_authorisation:pass: Dataset mode: original"
+      ],
+      "run": 2,
+      "wall_s": 27.27,
+      "cpu_s": 89.95,
+      "avg_cores_busy": 3.3,
+      "nodes_ms": {
+        "input_validation": 0,
+        "session_context": 1.1,
+        "router": 2.7,
+        "intent": 1.4,
+        "supervisor": 7.1,
+        "leadership_agent": 556.5,
+        "retrieval": 43.3,
+        "evidence": 38.7,
+        "explanation": 26448.0,
+        "visualization": 0.4,
+        "qa": 15.7,
+        "governance": 0.5,
+        "response": 1.3,
+        "memory_telemetry": 3.0
+      },
+      "explanation_ms": 26448.0,
+      "llm_calls": [
+        {
+          "prompt": "explanation",
+          "max_tokens": 350,
+          "stream": true,
+          "wall_ms": 26437.0,
+          "prompt_tokens": 1169,
+          "prompt_eval_ms": 12835.6,
+          "generated_tokens": 149,
+          "generation_ms": 8219.9,
+          "prompt_tok_per_s": 91.1,
+          "gen_tok_per_s": 18.1,
+          "reused_tokens": 147
+        }
+      ],
+      "retries": 0,
+      "telemetry_calls": [
+        {
+          "purpose": "explanation",
+          "input_tokens": 1316,
+          "output_tokens": 149,
+          "latency_ms": 26437.8,
+          "status": "ok",
+          "retries": 0
+        }
+      ],
+      "explanation_source": "deterministic",
+      "qa": "12/14 warn",
+      "groundedness": "Grounded 100%",
+      "grounding_rejections": [],
+      "headline": "In Duplicate charge, negative sentiment is most strongly associated with: replies to negative turns rarely acknowledge frustration.",
+      "answer": "140 of 362 Duplicate charge conversations in all dates were negative (38.7%). Candidate drivers (association, not proof of cause): Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%): 43% negative with it vs 25% without (n=269 vs 93, p=0.0014). In 100% of the negative conversations with this behaviour it occurs before the customer's last negative message, which is consistent with (but does not prove) it contributing. Symptoms that accompany negativity rather than explain it: Customer asked to escalate: 50% negative with it vs 15% without (n=248 vs 114, p=0.0).",
+      "key_points": [
+        "Product mix: Among products with at least 8 conversations, the negative rate is highest for Cab (50% of 10); product differences are within chance, so product mix is not a strong alternative explanation.",
+        "Agent concentration: AgentASVV handled 1% of the negative conversations; negativity is spread across agents, so one agent does not explain it.",
+        "Topic baseline: Duplicate charge: 39% negative vs 33% for other topics \u2014 distinctly more negative than other topics, so something topic-specific is plausible.",
+        "low empathy \u2014 strong association",
+        "scripted repeats \u2014 weak \u2014 not distinguishable from noise",
+        "resolution mismatch \u2014 weak \u2014 not distinguishable from noise",
+        "long conversation \u2014 weak \u2014 not distinguishable from noise"
+      ],
+      "evidence_items": 6
+    },
+    {
+      "latency_fallback": [],
+      "governance": [
+        "evidence_challenger:rejected_model_output: Model explanation named factors the analysis does not support; deterministic narrative used.",
+        "pii_masking:pass: Evidence excerpts are PII-masked at ingestion",
+        "prompt_injection:pass: No injection patterns in the question",
+        "tool_safety:pass: Only registered read-only operations ran; no model-generated SQL or code.",
+        "dataset_authorisation:pass: Dataset mode: original"
+      ],
+      "run": 3,
+      "wall_s": 26.59,
+      "cpu_s": 87.84,
+      "avg_cores_busy": 3.3,
+      "nodes_ms": {
+        "input_validation": 0,
+        "session_context": 1.4,
+        "router": 0.3,
+        "intent": 1.1,
+        "supervisor": 7.6,
+        "leadership_agent": 683.1,
+        "retrieval": 60.1,
+        "evidence": 35.3,
+        "explanation": 25679.4,
+        "visualization": 0.5,
+        "qa": 13.7,
+        "governance": 0.4,
+        "response": 1.6,
+        "memory_telemetry": 8.6
+      },
+      "explanation_ms": 25679.4,
+      "llm_calls": [
+        {
+          "prompt": "explanation",
+          "max_tokens": 350,
+          "stream": true,
+          "wall_ms": 25671.0,
+          "prompt_tokens": 1169,
+          "prompt_eval_ms": 12977.8,
+          "generated_tokens": 140,
+          "generation_ms": 7597.7,
+          "prompt_tok_per_s": 90.1,
+          "gen_tok_per_s": 18.4,
+          "reused_tokens": 138
+        }
+      ],
+      "retries": 0,
+      "telemetry_calls": [
+        {
+          "purpose": "explanation",
+          "input_tokens": 1307,
+          "output_tokens": 140,
+          "latency_ms": 25672.0,
+          "status": "ok",
+          "retries": 0
+        }
+      ],
+      "explanation_source": "deterministic",
+      "qa": "12/14 warn",
+      "groundedness": "Grounded 100%",
+      "grounding_rejections": [],
+      "headline": "In Duplicate charge, negative sentiment is most strongly associated with: replies to negative turns rarely acknowledge frustration.",
+      "answer": "140 of 362 Duplicate charge conversations in all dates were negative (38.7%). Candidate drivers (association, not proof of cause): Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%): 43% negative with it vs 25% without (n=269 vs 93, p=0.0014). In 100% of the negative conversations with this behaviour it occurs before the customer's last negative message, which is consistent with (but does not prove) it contributing. Symptoms that accompany negativity rather than explain it: Customer asked to escalate: 50% negative with it vs 15% without (n=248 vs 114, p=0.0).",
+      "key_points": [
+        "Product mix: Among products with at least 8 conversations, the negative rate is highest for Cab (50% of 10); product differences are within chance, so product mix is not a strong alternative explanation.",
+        "Agent concentration: AgentASVV handled 1% of the negative conversations; negativity is spread across agents, so one agent does not explain it.",
+        "Topic baseline: Duplicate charge: 39% negative vs 33% for other topics \u2014 distinctly more negative than other topics, so something topic-specific is plausible.",
+        "low empathy \u2014 strong association",
+        "scripted repeats \u2014 weak \u2014 not distinguishable from noise",
+        "resolution mismatch \u2014 weak \u2014 not distinguishable from noise",
+        "long conversation \u2014 weak \u2014 not distinguishable from noise"
+      ],
+      "evidence_items": 6
+    }
+  ],
+  "generated_at": "2026-10-27T23:26:10Z"
+}
