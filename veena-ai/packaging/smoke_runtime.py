@@ -90,7 +90,12 @@ def main() -> int:
         # A fresh port, so the test cannot accidentally use some other Ollama.
         "OLLAMA_URL": f"http://127.0.0.1:{ollama_port}",
     }
-    proc = subprocess.Popen([args.exe], env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)  # noqa: S603
+    # The backend's output goes to a file, never an unread pipe: Windows pipes hold
+    # only a few KB, and download progress bars filled one and blocked the backend
+    # (CI runs 42717356914 and 42723464530). The real app (Electron) drains both streams.
+    log_path = os.path.join(data_dir, "backend.log")
+    log_file = open(log_path, "w", encoding="utf-8", errors="replace")  # noqa: SIM115 - closed in finally
+    proc = subprocess.Popen([args.exe], env=env, stdout=log_file, stderr=subprocess.STDOUT)  # noqa: S603
     api = Api(f"http://127.0.0.1:{port}", token)
     ok = False
     try:
@@ -189,12 +194,14 @@ def main() -> int:
     finally:
         proc.terminate()
         try:
-            out, _ = proc.communicate(timeout=15)
+            proc.wait(timeout=15)
         except subprocess.TimeoutExpired:
             proc.kill()
-            out, _ = proc.communicate()
+            proc.wait()
+        log_file.close()
         if not ok:
-            print(out[-6000:])
+            with open(log_path, encoding="utf-8", errors="replace") as f:
+                print(f.read()[-6000:])
         with open(args.out, "w") as f:
             json.dump(results, f, indent=2)
     return 0 if ok else 1
