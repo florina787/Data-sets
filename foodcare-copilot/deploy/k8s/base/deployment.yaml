@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foodcare-copilot
+spec:
+  # ONE replica on purpose: memory and audit live in SQLite on a ReadWriteOnce volume.
+  # Scaling out needs a shared database first (see docs/MCCAIN_INTEGRATION.md, "Limits").
+  replicas: 1
+  strategy:
+    type: Recreate          # never two pods writing the same SQLite file
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8700"
+        prometheus.io/path: /metrics
+    spec:
+      serviceAccountName: foodcare-copilot
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: api
+          image: foodcare-copilot
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8700
+          envFrom:
+            - configMapRef:
+                name: foodcare-copilot
+          env:
+            - name: FOODCARE_LLM_API_KEY      # only if the model gateway needs one
+              valueFrom:
+                secretKeyRef:
+                  name: foodcare-llm
+                  key: api-key
+                  optional: true
+          resources:
+            requests:
+              cpu: 500m
+              memory: 768Mi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          startupProbe:
+            httpGet: {path: /api/health, port: http}
+            periodSeconds: 5
+            failureThreshold: 24
+          readinessProbe:
+            httpGet: {path: /api/health, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /api/health, port: http}
+            periodSeconds: 20
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/foodcare
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: foodcare-data
+        - name: tmp
+          emptyDir:
+            sizeLimit: 512Mi

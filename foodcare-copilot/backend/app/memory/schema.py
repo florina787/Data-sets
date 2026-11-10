@@ -149,6 +149,16 @@ ALTER TABLE inspection_potatoes ADD COLUMN corrected_grade TEXT;
 ALTER TABLE inspection_potatoes ADD COLUMN corrected_by TEXT;
 ALTER TABLE inspection_potatoes ADD COLUMN corrected_at TEXT;
 """),
+    (6, "llm_usage", """
+CREATE TABLE llm_usage (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, model TEXT NOT NULL, purpose TEXT NOT NULL,
+    status TEXT NOT NULL, cached INTEGER NOT NULL DEFAULT 0, prompt_tokens INTEGER, completion_tokens INTEGER,
+    prompt_chars INTEGER NOT NULL DEFAULT 0, output_chars INTEGER NOT NULL DEFAULT 0, latency_ms REAL,
+    username TEXT, conversation_id TEXT, error TEXT
+);
+CREATE INDEX llm_usage_ts ON llm_usage (ts);
+CREATE INDEX llm_usage_user ON llm_usage (username, ts);
+"""),
 ]
 
 

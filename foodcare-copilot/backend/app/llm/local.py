@@ -78,19 +78,43 @@ class LocalLLM:
 
     # --- public ----------------------------------------------------------------------
 
+    def _record(self, meta: dict | None, status: str, prompt: str, usage: dict | None = None,
+                cached: bool = False, error: str | None = None) -> None:
+        """Persist one model call for token-usage reporting. Token counts are stored only when the
+        server reports them; they are never estimated."""
+        try:
+            from app.db import now_iso
+            from app.memory.store import get_store
+
+            u, m = usage or {}, meta or {}
+            get_store().write([(
+                "INSERT INTO llm_usage (ts, model, purpose, status, cached, prompt_tokens, completion_tokens,"
+                " prompt_chars, output_chars, latency_ms, username, conversation_id, error)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (now_iso(), self.model, m.get("purpose", "unspecified"), status, int(cached),
+                 None if cached else u.get("input_tokens"), None if cached else u.get("output_tokens"),
+                 len(prompt), int(u.get("output_chars") or 0), u.get("latency_ms"), m.get("username"),
+                 m.get("conversation_id"), (error or "")[:300] or None))])
+        except Exception:  # noqa: BLE001 - usage accounting must never break an answer
+            pass
+
     def structured(self, system: str, prompt: str, schema: type[T],
-                   request_id: str | None = None) -> tuple[T, dict]:
+                   request_id: str | None = None, meta: dict | None = None) -> tuple[T, dict]:
         if len(prompt) > self.settings.llm_max_prompt_chars:
             raise PlatformError("Prompt exceeds the configured context limit",
                                 chars=len(prompt), limit=self.settings.llm_max_prompt_chars)
         key = hashlib.sha256(f"{self.model}\0{schema.__name__}\0{system}\0{prompt}".encode()).hexdigest()
+        cached_usage: dict | None = None
         with self._lock:
             self.stats["calls"] += 1
             if key in self._cache:
                 self._cache.move_to_end(key)
                 self.stats["cache_hits"] += 1
                 data, usage = self._cache[key]
-                return schema.model_validate(data), {**usage, "cached": True, "latency_ms": 0.0}
+                cached_usage = {**usage, "cached": True, "latency_ms": 0.0}
+        if cached_usage is not None:
+            self._record(meta, "ok", prompt, cached_usage, cached=True)
+            return schema.model_validate(data), cached_usage
         request_id = request_id or uuid.uuid4().hex
         cancel = self._register(request_id)
         try:
@@ -101,9 +125,11 @@ class LocalLLM:
                 with self._lock:
                     self._in_flight -= 1
                 self._slots.release()
-        except PlatformError:
+        except PlatformError as exc:
             with self._lock:
                 self.stats["errors"] += 1
+            self._record(meta, "cancelled" if "cancelled" in exc.message.lower() else "error", prompt,
+                         error=exc.message)
             raise
         finally:
             with self._lock:
@@ -113,6 +139,7 @@ class LocalLLM:
         except ValidationError as exc:
             with self._lock:
                 self.stats["errors"] += 1
+            self._record(meta, "invalid_output", prompt, usage, error="schema validation failed")
             raise PlatformError("Model output failed schema validation", error=str(exc)[:300]) from exc
         with self._lock:
             self.stats["ok"] += 1
@@ -121,6 +148,7 @@ class LocalLLM:
                 self._cache[key] = (parsed.model_dump(), usage)
                 while len(self._cache) > self.settings.llm_cache_entries:
                     self._cache.popitem(last=False)
+        self._record(meta, "ok", prompt, usage)
         return parsed, {**usage, "cached": False, "request_id": request_id}
 
     def cancel(self, request_id: str) -> bool:
@@ -185,6 +213,7 @@ class LocalLLM:
 
     def _body(self, system: str, prompt: str, schema: type[BaseModel]) -> dict:
         body: dict = {"model": self.model, "stream": True, "temperature": 0.1,
+                      **({"stream_options": {"include_usage": True}} if self.settings.llm_stream_usage else {}),
                       "max_tokens": self.settings.llm_max_tokens,
                       "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]}
         fmt = self.settings.llm_response_format
@@ -237,7 +266,8 @@ class LocalLLM:
         with self._lock:
             self.stats["prompt_tokens"] += int(usage.get("prompt_tokens") or 0)
             self.stats["completion_tokens"] += int(usage.get("completion_tokens") or 0)
-        return extract_json("".join(parts)), {
+        text = "".join(parts)
+        return extract_json(text), {"output_chars": len(text),
             "model": self.model, "latency_ms": latency,
             "input_tokens": usage.get("prompt_tokens"), "output_tokens": usage.get("completion_tokens")}
 

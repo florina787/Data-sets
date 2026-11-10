@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: foodcare-copilot
+data:
+  FOODCARE_BIND_HOST: "0.0.0.0"
+  FOODCARE_VAR_DIR: /var/lib/foodcare
+  HOME: /tmp                           # root filesystem is read-only
+  FOODCARE_MODE: demo
+  # The plant's EXISTING OpenAI-compatible Qwen server (in-cluster Service or internal URL).
+  # Nothing here starts or downloads a model. Leave empty to run in demo mode.
+  FOODCARE_LLM_BASE_URL: ""            # e.g. http://qwen.ai-platform.svc.cluster.local:8000/v1
+  FOODCARE_LLM_MODEL: ""               # e.g. Qwen2.5-7B-Instruct
+  FOODCARE_LLM_STREAM_USAGE: "1"       # ask the server for real token counts
+  FOODCARE_LLM_CONCURRENCY: "1"
+  FOODCARE_LLM_QUEUE_SIZE: "4"
+  FOODCARE_VISION_CONCURRENCY: "1"
+  FOODCARE_VISION_QUEUE_SIZE: "2"
+  FOODCARE_METRICS_ENABLED: "1"
+  FOODCARE_MEMORY_RETENTION_DAYS: "180"

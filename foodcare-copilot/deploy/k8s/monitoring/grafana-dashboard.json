@@ -1,0 +1,409 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "type": "datasource",
+      "pluginId": "prometheus"
+    }
+  ],
+  "title": "Flo & Jerry — Food Copilot",
+  "uid": "foodcare-copilot",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": [
+    "foodcare",
+    "llm",
+    "kubernetes"
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "1m",
+  "description": "Token usage, local-model queue, HTTP latency and resource use. Token counts come from the model server and are never estimated.",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Backend up",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "max(foodcare_up)",
+          "refId": "A"
+        }
+      ],
+      "id": 1
+    },
+    {
+      "type": "stat",
+      "title": "LLM tokens (24h)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(foodcare_llm_tokens_total[24h]))",
+          "refId": "A"
+        }
+      ],
+      "id": 2
+    },
+    {
+      "type": "stat",
+      "title": "LLM calls (24h)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(foodcare_llm_requests_total[24h]))",
+          "refId": "A"
+        }
+      ],
+      "id": 3
+    },
+    {
+      "type": "stat",
+      "title": "Calls without token counts (24h)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(increase(foodcare_llm_calls_without_token_counts_total[24h]))",
+          "refId": "A"
+        }
+      ],
+      "id": 4
+    },
+    {
+      "type": "stat",
+      "title": "LLM queue depth",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "max(foodcare_llm_queue_depth)",
+          "refId": "A"
+        }
+      ],
+      "id": 5
+    },
+    {
+      "type": "stat",
+      "title": "Process memory",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "targets": [
+        {
+          "expr": "max(foodcare_process_resident_memory_bytes)",
+          "refId": "A"
+        }
+      ],
+      "id": 6
+    },
+    {
+      "type": "timeseries",
+      "title": "Token usage by purpose (tokens/min)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (purpose, type) (rate(foodcare_llm_tokens_total[5m])) * 60",
+          "legendFormat": "{{purpose}} {{type}}",
+          "refId": "A"
+        }
+      ],
+      "id": 7
+    },
+    {
+      "type": "timeseries",
+      "title": "Local-model calls by status (calls/min)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (status) (rate(foodcare_llm_requests_total[5m])) * 60",
+          "legendFormat": "{{status}}",
+          "refId": "A"
+        }
+      ],
+      "id": 8
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP p95 latency by route",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, route) (rate(foodcare_http_request_duration_seconds_bucket[5m])))",
+          "legendFormat": "{{route}}",
+          "refId": "A"
+        }
+      ],
+      "id": 9
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP 5xx rate",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 12,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (route) (rate(foodcare_http_requests_total{status=~\"5..\"}[5m]))",
+          "legendFormat": "{{route}}",
+          "refId": "A"
+        }
+      ],
+      "id": 10
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        }
+      },
+      "targets": [
+        {
+          "expr": "max(foodcare_process_cpu_percent)",
+          "legendFormat": "process",
+          "refId": "A"
+        },
+        {
+          "expr": "max(foodcare_machine_cpu_percent)",
+          "legendFormat": "node",
+          "refId": "B"
+        }
+      ],
+      "id": 11
+    },
+    {
+      "type": "timeseries",
+      "title": "Vision queue",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 20,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "max(foodcare_vision_jobs_running)",
+          "legendFormat": "running",
+          "refId": "A"
+        },
+        {
+          "expr": "max(foodcare_vision_jobs_queued)",
+          "legendFormat": "queued",
+          "refId": "B"
+        }
+      ],
+      "id": 12
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent runs by status (runs/min)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 28,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum by (agent, status) (rate(foodcare_agent_runs_total[5m])) * 60",
+          "legendFormat": "{{agent}} {{status}}",
+          "refId": "A"
+        }
+      ],
+      "id": 13
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory database size",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 28,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "targets": [
+        {
+          "expr": "max(foodcare_memory_db_bytes)",
+          "legendFormat": "SQLite",
+          "refId": "A"
+        }
+      ],
+      "id": 14
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: foodcare
+labels:
+  - pairs:
+      app.kubernetes.io/name: foodcare-copilot
+      app.kubernetes.io/part-of: flo-and-jerry
+    includeSelectors: true
+resources:
+  - namespace.yaml
+  - serviceaccount.yaml
+  - configmap.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+  - networkpolicy.yaml
+images:
+  - name: foodcare-copilot
+    newName: REGISTRY/foodcare-copilot   # e.g. <region>-docker.pkg.dev/<project>/apps or <name>.azurecr.io
+    newTag: 0.1.0

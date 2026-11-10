@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: foodcare-copilot
+  labels:
+    release: kube-prometheus-stack   # match the operator's serviceMonitorSelector
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s

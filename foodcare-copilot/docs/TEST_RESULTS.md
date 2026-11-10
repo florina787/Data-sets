@@ -9,9 +9,10 @@ Recorded on 2026-10-09 in the build container (backend and browser test counts u
 | Platform lint | `ruff check backend scripts` | passed |
 | Storefront lint (policy config) | `ruff check` in `v1.2-timeout-repair` | passed |
 | Fixture patches in sync with stage trees | `python scripts/regen_fixture_patches.py --check` | passed |
-| Backend tests | `python -m pytest` | **99 passed** in 164 s (23 delivery platform + 20 enterprise/copilot + 11 memory + 14 local model + 11 vision + 7 inspection Q&A + 7 metrics/registry/datasets + 2 dashboards + 4 graphs) |
+| Backend tests | `python -m pytest` | **111 passed** in 162 s (23 delivery platform + 20 enterprise/copilot + 11 memory + 14 local model + 11 vision + 7 inspection Q&A + 7 metrics/registry/datasets + 2 dashboards + 4 graphs + 6 token usage & `/metrics` + 6 Kubernetes manifests) |
 | UI typecheck | `npm run typecheck` (strict TS, both apps) | passed |
 | UI build | `npm run build` | passed (control room 234 kB JS / 71 kB gzip) |
+| Container image | `docker build --build-arg WITH_TORCH=0 .` then `docker run --read-only --cap-drop ALL` (uid 10001) | built (253 MB compressed); `/api/health`, `/metrics`, web UI and the git-backed storefront deploy all worked. Not run on a real GKE/AKS cluster |
 | Browser end-to-end | `npm run e2e` | **7 passed** (incl. agent intelligence); (flagship delivery, guided demo, enterprise copilot, conversation memory, potato inspection + correction + copilot, model evaluation lab) |
 | Vision on SYNTHETIC rendered images | `scripts/eval_vision.py --synthetic 20` | precision 1.0, recall 1.0, F1 1.0, grade agreement 99.2%, ~340 ms/image. Drawn shapes only; **accuracy on real potatoes is not measured** |
 | Performance and persistence | see [LOCAL_LLM_AND_MEMORY.md](LOCAL_LLM_AND_MEMORY.md#measured-results) | measured, DEMO mode |

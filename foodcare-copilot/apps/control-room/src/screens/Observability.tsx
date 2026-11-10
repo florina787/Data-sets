@@ -1,6 +1,8 @@
 import { Fragment, useState } from "react";
 import { Card, Empty, Notice } from "../components/ui";
 import { usePoll } from "../hooks";
+import { useApp } from "../context";
+import { HBars } from "../components/charts";
 
 function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
@@ -44,6 +46,7 @@ export default function Observability() {
           )}
         </>
       )}
+      <TokenUsage />
       <Card title="Recent agent executions (recorded traces)">
         {!runs?.runs?.length ? <Empty>No agent runs recorded yet. Ask the copilot or inspect an image.</Empty> : (
           <table className="table">
@@ -72,5 +75,69 @@ export default function Observability() {
         )}
       </Card>
     </div>
+  );
+}
+
+const fmt = (n: number | null | undefined) => (n == null ? "–" : n.toLocaleString());
+
+function TokenUsage() {
+  const { user } = useApp();
+  const [days, setDays] = useState(30);
+  const [mine, setMine] = useState(false);
+  const { data: u, error } = usePoll<any>(user ? `/api/llm/usage?days=${days}&mine=${mine}` : null, 15000);
+  const t = u?.totals;
+  const maxDay = Math.max(1, ...(u?.by_day ?? []).map((d: any) => d.prompt_tokens + d.completion_tokens));
+  return (
+    <Card title="Local-model token usage">
+      {!user ? <p className="text-sm text-navy-600">Sign in to see token usage.</p> : error ? <Notice kind="error">{error}</Notice> : !u ? <Empty>Loading…</Empty> : (
+        <div className="space-y-4" data-testid="token-usage">
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            {[1, 7, 30].map((d) => (
+              <button key={d} className={days === d ? "btn-primary" : "btn-ghost"} aria-pressed={days === d} onClick={() => setDays(d)}>{d === 1 ? "24 h" : `${d} days`}</button>
+            ))}
+            <label className="ml-2 flex items-center gap-1.5 text-navy-600">
+              <input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} /> Only my calls
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+            <Stat label="Prompt tokens" value={fmt(t.prompt_tokens)} sub="reported by the model server" />
+            <Stat label="Completion tokens" value={fmt(t.completion_tokens)} sub="reported by the model server" />
+            <Stat label="Model calls" value={fmt(t.calls)} sub={`${fmt(t.ok)} ok · ${fmt(t.failed)} failed`} />
+            <Stat label="Cache hits" value={fmt(t.cached)} sub={t.cache_hit_rate == null ? "no calls yet" : `${Math.round(t.cache_hit_rate * 100)}% of calls · 0 tokens each`} />
+            <Stat label="Latency p50 / p95" value={u.latency_ms.p50 == null ? "–" : `${Math.round(u.latency_ms.p50)} / ${Math.round(u.latency_ms.p95)} ms`} sub={`${u.latency_ms.samples} uncached calls`} />
+            <Stat label="Calls without counts" value={fmt(t.unreported)} sub="server sent no usage; never estimated" />
+          </div>
+          {t.calls === 0 ? <Empty>No local-model calls in this window. Configure FOODCARE_LLM_BASE_URL and ask the copilot in LIVE mode.</Empty> : (
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div>
+                <div className="label mb-2">Tokens per day</div>
+                <div className="space-y-1.5" role="list" aria-label="Tokens per day">
+                  {u.by_day.map((d: any) => {
+                    const total = d.prompt_tokens + d.completion_tokens;
+                    return (
+                      <div key={d.day} role="listitem" className="flex items-center gap-2 text-xs">
+                        <span className="w-20 font-mono text-navy-600">{d.day.slice(5)}</span>
+                        <div className="flex h-3 flex-1 overflow-hidden rounded bg-navy-100" title={`${fmt(d.prompt_tokens)} prompt + ${fmt(d.completion_tokens)} completion`}>
+                          <div style={{ background: "#38bdf8", width: `${(d.prompt_tokens / maxDay) * 100}%` }} />
+                          <div style={{ background: "#fbbf24", width: `${(d.completion_tokens / maxDay) * 100}%` }} />
+                        </div>
+                        <span className="w-24 text-right font-mono">{fmt(total)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-xs text-navy-600"><span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#38bdf8" }} /> prompt · <span className="inline-block h-2 w-2 rounded-sm" style={{ background: "#fbbf24" }} /> completion</p>
+              </div>
+              <div>
+                <div className="label mb-2">Tokens by purpose</div>
+                <HBars ariaLabel="Tokens by purpose" format={fmt}
+                  items={u.by_purpose.map((p: any) => ({ label: p.purpose, value: p.prompt_tokens + p.completion_tokens, note: `${p.calls} calls · ${p.model}` }))} />
+              </div>
+            </div>
+          )}
+          <p className="text-xs text-navy-600">{u.note} Prometheus: <code>/metrics</code> → <code>foodcare_llm_tokens_total</code>.</p>
+        </div>
+      )}
+    </Card>
   );
 }

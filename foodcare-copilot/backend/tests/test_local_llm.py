@@ -35,6 +35,7 @@ class MockModel:
         self.requests: list[dict] = []
         self.paths: list[str] = []
         self.closed_early = threading.Event()
+        self.send_usage = True
 
 
 @pytest.fixture()
@@ -73,13 +74,15 @@ def mock_model():
                     self.wfile.write(f"data: {json.dumps(chunk)}\n\n".encode())
                     self.wfile.flush()
                     time.sleep(state.chunk_delay)
-                final = {"choices": [{"delta": {}, "finish_reason": "stop"}],
-                         "usage": {"prompt_tokens": 120, "completion_tokens": 20}}
+                final = {"choices": [{"delta": {}, "finish_reason": "stop"}]}
+                if state.send_usage:
+                    final["usage"] = {"prompt_tokens": 120, "completion_tokens": 20}
                 self.wfile.write(f"data: {json.dumps(final)}\n\ndata: [DONE]\n\n".encode())
                 self.wfile.flush()
             except (BrokenPipeError, ConnectionResetError):
                 state.closed_early.set()
 
+    before = config.get_settings()  # tests below tweak limits; restore them afterwards
     server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -88,6 +91,7 @@ def mock_model():
     yield state
     server.shutdown()
     server.server_close()
+    config._settings = before
 
 
 @pytest.fixture()

@@ -50,6 +50,19 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="FoodCare Enterprise Copilot control room (demo)", lifespan=lifespan)
+@app.middleware("http")
+async def _metrics_middleware(request: Request, call_next):
+    """Count requests and latency per route template (never the raw path, which can carry IDs)."""
+    started = time.perf_counter()
+    response = await call_next(request)
+    route = request.scope.get("route")
+    template = getattr(route, "path", None) or ("static" if request.method == "GET" else "unmatched")
+    from app import observability
+
+    observability.observe_request(request.method, template, response.status_code, time.perf_counter() - started)
+    return response
+
+
 app.add_middleware(CORSMiddleware, allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],
                    allow_methods=["*"], allow_headers=["*"])
 app.include_router(inventory_sim.router)
@@ -662,6 +675,26 @@ def data_sources(user: User = Depends(current_user)) -> dict:
     from app import datasources
 
     return {"sources": datasources.sources(user.username)}
+
+
+@app.get("/metrics", include_in_schema=False)
+def metrics() -> Response:
+    """Prometheus exposition format. Disable with FOODCARE_METRICS_ENABLED=0; on Kubernetes, restrict it to
+    the monitoring namespace with the NetworkPolicy in deploy/k8s."""
+    from app import observability
+
+    if not get_settings().metrics_enabled:
+        raise NotFound("Metrics are disabled")
+    return Response(observability.prometheus_text(), media_type="text/plain; version=0.0.4; charset=utf-8")
+
+
+@app.get("/api/llm/usage")
+def llm_usage(days: int = Query(default=30, ge=1, le=365), mine: bool = False,
+              user: User = Depends(current_user)) -> dict:
+    """Local-model token usage (all users, aggregated; or only yours with mine=true)."""
+    from app import observability
+
+    return observability.token_usage(days, user.username if mine else None)
 
 
 @app.get("/api/system/resources")

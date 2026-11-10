@@ -10,6 +10,15 @@ This folder (`foodcare-copilot/`) is a FastAPI + React portfolio prototype with 
    Wait for `Uvicorn running on http://127.0.0.1:8700`, then open http://127.0.0.1:8700.
    The VS Code task "Flo & Jerry: start (demo mode)" does the same.
 4. Tests: `scripts/test.sh` (lint, backend tests, UI build) and `npm run e2e` (browser tests).
+5. Metrics and token usage: `curl -s http://127.0.0.1:8700/metrics` (Prometheus format) and the
+   "Local-model token usage" panel on System Observability (`GET /api/llm/usage`, needs sign-in).
+
+## Optional: container / Kubernetes
+- Only if the user asks: `docker build --build-arg WITH_TORCH=0 -t foodcare-copilot:dev .` (lean image, no PyTorch).
+  The image contains no language model; it calls the existing Qwen server via `FOODCARE_LLM_BASE_URL`.
+- Manifests are in `deploy/k8s/` (base + `overlays/gke` + `overlays/aks`); Grafana dashboard in `deploy/k8s/monitoring/`.
+  Never run `kubectl apply` against a cluster without the user's explicit request.
+- Keep `replicas: 1` and the `Recreate` strategy: memory is SQLite (single writer).
 
 ## Optional: the user's local Qwen model
 - Use ONLY a model server that is already running (Ollama on port 11434 or LM Studio on 1234).
@@ -25,9 +34,12 @@ This folder (`foodcare-copilot/`) is a FastAPI + React portfolio prototype with 
 - Do NOT commit `.env`, push to git, or change the branch without the user's explicit request.
 - Do NOT describe the potato inspection as a trained AI model: it is classical image processing with colour heuristics.
 - Keep CPU and RAM low: one model request and one image inspection at a time are the defaults.
+- Never estimate token counts: they come only from the model server's `usage` field.
 
 ## Where things are
 - Backend: `backend/app/` (`main.py` API, `copilot/` question answering, `vision/` potato pipeline,
-  `memory/` SQLite memory, `llm/local.py` local model client, `resources.py` CPU/RAM).
+  `memory/` SQLite memory, `llm/local.py` local model client, `resources.py` CPU/RAM,
+  `observability.py` /metrics and token usage).
+- Deployment: `Dockerfile`, `deploy/k8s/`, `deploy/flux/`; research note in `docs/MCCAIN_INTEGRATION.md`.
 - Frontend: `apps/control-room/src/` (screens in `screens/`, theme in `tailwind.config.js` and `index.css`).
 - Docs: `README.md` (layman guide) and `docs/`.

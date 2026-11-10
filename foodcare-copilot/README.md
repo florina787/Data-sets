@@ -1,10 +1,77 @@
+<div align="center">
+
+<img src="docs/media/orbit.gif" alt="Jerry, the smiling fries carton, with potatoes orbiting around him" width="300">
+
 # Flo & Jerry — Food Copilot 2.0
 
 ### Agentic AI for end-to-end food manufacturing, explained so anyone can follow it
 
+![Python](https://img.shields.io/badge/Python-3.11%2B-1e3a5f?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.118-1e3a5f?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-TypeScript-1e3a5f?logo=react&logoColor=white)
+![LLM](https://img.shields.io/badge/LLM-your%20local%20Qwen%20only-c8102e)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-GKE%20%C2%B7%20AKS%20ready-326ce5?logo=kubernetes&logoColor=white)
+![Prometheus](https://img.shields.io/badge/metrics-Prometheus%20%2B%20Grafana-e6522c?logo=prometheus&logoColor=white)
+![Data](https://img.shields.io/badge/data-100%25%20synthetic-f2b705)
+
+**Ask questions about sales, stock, compliance and potato quality, and get answers with receipts.**<br>
+Runs on a laptop. Deploys to Kubernetes. Uses *your* local model, never a cloud AI.
+
+[See it move](#-see-it-in-motion) · [Run it locally](#4-run-it-on-your-own-computer-step-by-step) · [Deploy to Kubernetes](#18-run-it-on-kubernetes-enterprise-integration) · [Token usage & metrics](#19-system-metrics-and-token-usage) · [Honesty rules](#13-honesty-rules-this-project-follows)
+
+</div>
+
 > **Read this first.** This is a **portfolio prototype**, not a product, and **everything in it is made up on purpose**. The company (*Food Beverage Food Care*), its products, sales, warehouses and customers are all synthetic. Payments are fake ("mock"), and no real money, email or delivery is involved. A banner on every screen repeats this. A demo that pretends to be real data misleads people, so this one says plainly that it is not.
 
-![Executive Command, the home screen](docs/screenshots/29-executive-command.png)
+![Executive Command: scrolling from the hero to the potato data sources](docs/media/executive.gif)
+
+## 🎬 See it in motion
+
+Every animation below is **a real recording of the running app**: a script (`e2e/record-media.mjs`) clicks through it in a browser, and `scripts/make_gifs.py` turns the frames into GIFs. Nothing is drawn by hand.
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**🥔 Inspect a batch of potatoes**<br>
+<img src="docs/media/inspection.gif" alt="Uploading a synthetic potato image, getting 12 graded potatoes and opening several close-ups">
+<sub>Upload a photo → every potato is found, numbered, measured and graded. Click one for its close-up and the reasons. (Synthetic drawn image.)</sub>
+
+</td>
+<td width="50%" valign="top">
+
+**💬 Ask Copilot, get receipts**<br>
+<img src="docs/media/copilot.gif" alt="Typing a stock question and receiving an answer with [S1] citations">
+<sub>Type a question in plain English. Every number in the answer carries a citation such as <code>[S1]</code>, pointing to the data it came from.</sub>
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**🧠 Watch the agents think**<br>
+<img src="docs/media/agents.gif" alt="Scrolling the Agent Intelligence page: knowledge graph, context graph, procedural graph, agent activity">
+<sub>The knowledge, context and procedural graphs behind that answer, plus a timeline of every agent run.</sub>
+
+</td>
+<td width="50%" valign="top">
+
+**🧭 A quick tour**<br>
+<img src="docs/media/tour.gif" alt="Moving through Executive Command, Quality Intelligence, Inspection, Inventory, Agent Intelligence, Observability and the Model Evaluation Lab">
+<sub>Executive Command → Quality Intelligence → Inspection → Inventory shelf → Agent Intelligence → Observability → Evaluation Lab.</sub>
+
+</td>
+</tr>
+</table>
+
+### What's new in this version
+
+| | Feature | Where |
+|---|---|---|
+| ☸️ | **Kubernetes-ready**: Dockerfile, Kustomize base, GKE and AKS overlays, Flux GitOps example, NetworkPolicy, non-root and read-only filesystem | [section 18](#18-run-it-on-kubernetes-enterprise-integration) |
+| 📈 | **Prometheus `/metrics`** and a ready-made **Grafana dashboard** | [section 19](#19-system-metrics-and-token-usage) |
+| 🔢 | **Token usage** per call, per purpose and per user, **as reported by your model server** (never estimated) | [section 19](#19-system-metrics-and-token-usage) |
+| 🏭 | A research note on fitting into a large food manufacturer's platform, with sources and confidence labels | [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md) |
 
 ---
 
@@ -27,6 +94,8 @@
 15. [Learn by doing: exercises](#15-learn-by-doing-exercises)
 16. [Where everything lives (repository map)](#16-where-everything-lives-repository-map)
 17. [More documentation](#17-more-documentation)
+18. [Run it on Kubernetes (enterprise integration)](#18-run-it-on-kubernetes-enterprise-integration)
+19. [System metrics and token usage](#19-system-metrics-and-token-usage)
 
 ---
 
@@ -188,6 +257,15 @@ This page shows **how Jerry thinks**, in four layers, following the idea *what i
 
 This page shows only **measured** information: machine CPU and RAM, the app's own memory use, the image-inspection queue, the local-model queue, the size of the memory database, and a list of **recent agent runs**. Click a run to see each step and how many milliseconds it took.
 
+**Local-model token usage** (new). This panel shows how many tokens your local model read (*prompt*) and wrote (*completion*), per day and per purpose. It also shows cache hits, latency, and how many calls came back **without** a count. Choose 24 hours, 7 days or 30 days, and tick "Only my calls" to see just your own.
+
+![Token usage panel](docs/screenshots/37-token-usage.png)
+
+<sub>In this screenshot the figures come from a <b>stand-in test server</b> used only for the capture (not Qwen, not a model), so the numbers are tiny. With your own Qwen the same panel shows your real counts.</sub>
+
+* **Why "never estimated"?** A common shortcut divides characters by 4 to guess tokens. That guess is off by 20–50% for code, numbers and non-English text, and it *looks* exact on a dashboard. So if the server doesn't report a count, the app shows "Calls without counts" and leaves the number empty.
+* **Why no dollar figure?** A model running on your own machine has no per-token price. Turning tokens into money needs your organisation's own internal rate, so the app doesn't invent one.
+
 ### 3.10 Model Evaluation Lab
 
 ![Model Evaluation Lab](docs/screenshots/33-model-evaluation-lab.png)
@@ -268,7 +346,7 @@ The server checks permissions on **every action**, not just in the screen. A rej
 
 ```bash
 scripts/reset_demo.sh     # back to a clean demo (your saved conversations and inspections are kept)
-scripts/test.sh           # code checks, 99 backend tests, interface build
+scripts/test.sh           # code checks, 111 backend tests, interface build
 npm run e2e               # 7 browser tests that click through the app
 .venv/bin/python scripts/eval_vision.py --synthetic 20   # measure the potato detector on drawn test images
 ```
@@ -557,8 +635,10 @@ flowchart TB
         GIT[storefront-repo<br/>git history of the shop]
     end
     SHOP[FreshSip demo shop<br/>separate process, port 8801]
-    LLM[Your local model server<br/>Ollama / LM Studio, optional]
+    LLM[Your local model server<br/>Ollama / LM Studio / vLLM, optional]
+    PROM[Prometheus + Grafana<br/>optional, scrapes /metrics]
     UI <--> Server
+    PROM -. scrape .-> Server
     CP --> EN & DL & MDB
     CP -. LIVE only .-> LLM
     VI --> MDB & IMG
@@ -575,6 +655,8 @@ flowchart TB
 | Image maths | Pillow + NumPy | Small and standard. **No model weights** |
 | CPU and RAM | psutil | Works on Mac, Linux and Windows. Macs have no `/proc` file system to read these from |
 | Charts | Hand-made SVG | No heavy chart library. Every chart has a table view and tooltips |
+| Metrics | Prometheus text format, written by hand (`observability.py`) | Any Prometheus / Grafana stack can read it, and no extra library is needed |
+| Deployment | Docker + Kustomize (GKE / AKS overlays) + Flux | Plain Kubernetes YAML works on any cloud; see [section 18](#18-run-it-on-kubernetes-enterprise-integration) |
 
 ---
 
@@ -630,9 +712,10 @@ pie showData
 
 | Test suite | Count | Result |
 |---|---|---|
-| Backend (Python) | 99 | all pass |
+| Backend (Python) | 111 | all pass |
 | Browser, clicking through the real app | 7 | all pass |
-| Of which use a **mock** model server instead of real Qwen | 14 | pass (no real Qwen run in the cloud) |
+| Of which use a **mock** model server instead of real Qwen | 17 | pass (no real Qwen run in the cloud) |
+| Of which check the Kubernetes files against the app | 6 | pass |
 
 ---
 
@@ -727,12 +810,16 @@ foodcare-copilot/
 │   ├── enterprise/             Synthetic sales, stock and compliance data + queries
 │   ├── graph/, agents/         Delivery workflow (LangGraph) and its agents
 │   ├── resources.py            Measured CPU / RAM (psutil)
+│   ├── observability.py        Prometheus /metrics + token-usage report
 │   └── main.py                 All web API endpoints
-├── backend/tests/              99 automated tests
-├── e2e/                        7 browser tests (Playwright) + a synthetic test image
+├── backend/tests/              111 automated tests
+├── e2e/                        Browser tests (Playwright), a synthetic test image, record-media.mjs (README GIFs)
 ├── fixtures/vision/            Default potato grading thresholds
 ├── fixtures/enterprise/        The fictional company's products, regions, warehouses
-├── scripts/                    start, reset, test, eval_vision
+├── deploy/k8s/                 Kubernetes: base, overlays/gke, overlays/aks, ServiceMonitor, Grafana dashboard
+├── deploy/flux/                Flux GitOps example
+├── Dockerfile                  Container image (non-root; optional lean build without PyTorch)
+├── scripts/                    start, reset, test, eval_vision, make_gifs
 └── docs/                       Detailed documents and all screenshots
 ```
 
@@ -752,8 +839,115 @@ foodcare-copilot/
 | [docs/AGENTS_AND_TOOLS.md](docs/AGENTS_AND_TOOLS.md) | What each agent and tool is allowed to do |
 | [docs/SECURITY_AND_SANDBOX.md](docs/SECURITY_AND_SANDBOX.md) | How commands are restricted and secrets kept out |
 | [docs/TEST_RESULTS.md](docs/TEST_RESULTS.md) | Exact test commands and results |
+| [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md) | Research note: how a large food manufacturer's platform looks from public sources, and how this app plugs into it |
 | [docs/PRODUCTION_GAPS.md](docs/PRODUCTION_GAPS.md) | What a real deployment would still need |
 | [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | Feature-by-feature status |
+
+---
+
+## 18. Run it on Kubernetes (enterprise integration)
+
+Large food manufacturers run their software on **Kubernetes**: a system that keeps containers running, restarts them when they crash, and lets one team operate hundreds of apps the same way. This repository includes everything needed to drop Flo & Jerry into such a cluster.
+
+> **In plain words:** a *container* is the app packed in a box with everything it needs. *Kubernetes* is the warehouse robot that keeps the boxes running. *Kustomize* is a set of labelled instructions for the robot. *GKE* (Google) and *AKS* (Microsoft Azure) are two companies that rent out such robots.
+
+```mermaid
+flowchart LR
+    subgraph Cluster["Kubernetes cluster (GKE · AKS · EKS · on-prem)"]
+        ING[Ingress / gateway<br/>TLS + SSO] --> SVC[Service] --> POD["Pod: Flo and Jerry<br/>1 replica · non-root · read-only FS"]
+        POD --> PVC[(Persistent volume<br/>SQLite memory)]
+        POD -- "OpenAI-compatible HTTP" --> QWEN[Existing Qwen server<br/>not shipped here]
+        PROM[Prometheus] -- "scrape /metrics" --> POD
+        PROM --> GRAF[Grafana dashboard]
+        FLUX[Flux GitOps] -- "applies overlays/gke or /aks" --> POD
+    end
+```
+
+### 18.1 What is included
+
+| File | What it does | Why |
+|---|---|---|
+| `Dockerfile` | Builds the web UIs, then a small Python image that runs as user 10001 | Non-root containers are a baseline security rule in most clusters |
+| `--build-arg WITH_TORCH=0` | A "lean" image without PyTorch | The classical inspection doesn't need it, and it saves a lot of space |
+| `--secret id=corp_ca,...` | Trusts a corporate proxy's certificate **during the build only** | Factory networks usually inspect TLS traffic; the certificate never ends up inside the image |
+| `deploy/k8s/base/` | Namespace (Pod Security `restricted`), Deployment, Service, ConfigMap, volume, NetworkPolicy, ServiceAccount | One copy of the truth for every cloud |
+| `deploy/k8s/overlays/gke` and `/aks` | Choose the right disk type per cloud (`standard-rwo` / `managed-csi`) | The only real difference between the two clouds here |
+| `deploy/k8s/components/servicemonitor` | Optional `ServiceMonitor` for the Prometheus Operator | Clusters that use the operator ignore scrape annotations |
+| `deploy/k8s/monitoring/grafana-dashboard.json` | Import into Grafana: tokens, calls, p95 latency, errors, CPU, queues | So the operations team sees the app the same way they see everything else |
+| `deploy/flux/foodcare-copilot.yaml` | Flux watches git and applies the overlay | "GitOps": the cluster changes only when git changes, which leaves an audit trail |
+
+### 18.2 Deploy in four steps
+
+```bash
+docker build -t <registry>/foodcare-copilot:0.1.0 . && docker push <registry>/foodcare-copilot:0.1.0
+# edit deploy/k8s/base/kustomization.yaml (registry) and configmap.yaml (FOODCARE_LLM_BASE_URL / _MODEL)
+kubectl label namespace <qwen-namespace> foodcare.io/llm-server=true     # the only place the pod may call
+kubectl apply -k deploy/k8s/overlays/gke                                  # or overlays/aks
+```
+
+### 18.3 Verified, not just written
+
+* The **lean image was built and run** in this repository's test environment the same way the manifest runs it: read-only filesystem, all Linux capabilities dropped, user 10001. `/api/health`, `/metrics`, the web UI and the git-backed demo shop all worked.
+* `backend/tests/test_k8s_manifests.py` checks that:
+  * every YAML file parses;
+  * the app runs as **one replica with `Recreate`** (two copies must never write the same SQLite file);
+  * the probes point at `/api/health`;
+  * the NetworkPolicy has **no general internet egress** (no cloud AI APIs, by design);
+  * the ConfigMap only sets variables the app actually reads;
+  * **every metric the Grafana dashboard asks for is really exported**.
+* **Not verified:** a run on a real GKE or AKS cluster. No cluster was available.
+
+### 18.4 Why it is built this way, and why not the alternatives
+
+| Choice | Why | Why not the alternative |
+|---|---|---|
+| **One replica** | Memory lives in SQLite, a single file that suits a single writer | Running several copies would need PostgreSQL first. Pretending otherwise would corrupt data |
+| **Kustomize** rather than a Helm chart | It is built into `kubectl`, so there is no extra tool to trust or install | Helm is popular, and job postings in this industry mention it. The base maps 1:1 to a chart if a platform team requires one |
+| **Cloud-neutral base + thin overlays** | Public job postings for a large potato processor name GKE *and* Azure | Betting on one cloud would make the integration useless on the other |
+| **NetworkPolicy allowing only DNS and the model namespace** | The app must never reach a cloud AI service | An open egress would allow it silently |
+
+Read the full research note, with sources and confidence labels, in [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md).
+
+---
+
+## 19. System metrics and token usage
+
+### 19.1 `/metrics`: the app's health in a format every ops team reads
+
+Open `http://127.0.0.1:8700/metrics` and you'll see lines like:
+
+```text
+foodcare_llm_tokens_total{model="Qwen2.5-7B-Instruct",purpose="copilot.answer",type="prompt"} 18234
+foodcare_http_request_duration_seconds_bucket{method="POST",route="/api/copilot/ask",le="0.5"} 41
+foodcare_vision_jobs_queued 0
+```
+
+(The numbers above only illustrate the format.)
+
+| Family | Examples | Answers the question |
+|---|---|---|
+| Health | `foodcare_up`, `foodcare_uptime_seconds` | Is it alive? |
+| Web traffic | `foodcare_http_requests_total`, `..._duration_seconds` (histogram) | How busy is it, and how slow is each **route**? |
+| Resources | process and machine CPU, resident memory | Is it starving the computer? |
+| Local model | `foodcare_llm_requests_total`, `foodcare_llm_tokens_total`, `foodcare_llm_cache_hits_total`, queue depth, in flight | How much is the model used, and by what? |
+| Work | agent runs, tool calls, vision queue, memory-database size | What is the app doing? |
+
+**Privacy:** metric labels never contain usernames, questions or answers. Routes are recorded as templates (`/api/inspections/{id}`), so one label never turns into thousands. Turn the endpoint off with `FOODCARE_METRICS_ENABLED=0`.
+
+### 19.2 Token usage: counted honestly
+
+1. When the app calls your model, it asks the server to report usage (`stream_options.include_usage`, part of the OpenAI-compatible API that vLLM, llama.cpp, LM Studio and recent Ollama all follow).
+2. Each call is saved in the memory database (`llm_usage` table) with its purpose, status, latency, cache flag and the **reported** token counts.
+3. Cache hits are saved too, with zero tokens, because no model work was done.
+4. If the server reports nothing, the count stays empty and the call is counted under "calls without counts". **No guessing.**
+
+See it in three places: the **System Observability** page ([section 3.9](#39-system-observability)), `GET /api/llm/usage?days=30&mine=true`, or Grafana.
+
+| Setting | Default | What it does |
+|---|---|---|
+| `FOODCARE_LLM_STREAM_USAGE` | `1` | Ask the model server for token counts (set `0` for an old server that rejects the field) |
+| `FOODCARE_METRICS_ENABLED` | `1` | Serve `/metrics` |
+| `FOODCARE_BIND_HOST` | `127.0.0.1` | The address the server listens on. A laptop stays private; containers set `0.0.0.0` |
 
 ---
 

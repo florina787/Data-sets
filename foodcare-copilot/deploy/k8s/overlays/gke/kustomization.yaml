@@ -1,0 +1,11 @@
+# Google Kubernetes Engine (Standard or Autopilot)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+patches:
+  - target: {kind: PersistentVolumeClaim, name: foodcare-data}
+    patch: |-
+      - op: add
+        path: /spec/storageClassName
+        value: standard-rwo        # GKE Persistent Disk CSI (balanced PD)

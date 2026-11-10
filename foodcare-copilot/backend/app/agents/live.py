@@ -66,7 +66,7 @@ class LiveClient:
         self.llm = get_llm()  # raises LiveModeUnavailable when not configured
 
     def structured(self, run_id: str | None, prompt: str, schema: type[T],
-                   request_id: str | None = None) -> tuple[T, dict]:
+                   request_id: str | None = None, meta: dict | None = None) -> tuple[T, dict]:
         """Validated structured call. ``run_id`` charges the per-run call budget (copilot
         calls pass None and enforce their own per-conversation budget)."""
         settings = get_settings()
@@ -79,7 +79,7 @@ class LiveClient:
             if not updated:
                 used = row("SELECT llm_calls FROM runs WHERE id = ?", (run_id,))
                 raise PlatformError("LLM call budget for this run is exhausted", used=used and used["llm_calls"])
-        return self.llm.structured(SYSTEM, prompt, schema, request_id)
+        return self.llm.structured(SYSTEM, prompt, schema, request_id, {"run_id": run_id, **(meta or {})})
 
 
 def analyse_brief(run_id: str, brief_text: str) -> tuple[LiveBriefAnalysis, dict]:
@@ -90,7 +90,7 @@ def analyse_brief(run_id: str, brief_text: str) -> tuple[LiveBriefAnalysis, dict
         "returns, identity, pricing edge cases).\n"
         f"<untrusted_brief>\n{brief_text}\n</untrusted_brief>"
     )
-    return LiveClient().structured(run_id, prompt, LiveBriefAnalysis)
+    return LiveClient().structured(run_id, prompt, LiveBriefAnalysis, meta={"purpose": "delivery.brief_analysis"})
 
 
 def draft_requirements(run_id: str, brief_text: str, decisions: list[dict]) -> tuple[LiveRequirementSet, dict]:
@@ -101,4 +101,4 @@ def draft_requirements(run_id: str, brief_text: str, decisions: list[dict]) -> t
         "decisions.\n"
         f"<untrusted_brief>\n{brief_text}\n</untrusted_brief>\nRecorded decisions:\n{lines}"
     )
-    return LiveClient().structured(run_id, prompt, LiveRequirementSet)
+    return LiveClient().structured(run_id, prompt, LiveRequirementSet, meta={"purpose": "delivery.requirements"})

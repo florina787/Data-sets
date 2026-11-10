@@ -1,0 +1,6 @@
+# Optional: for clusters running the Prometheus Operator (kube-prometheus-stack).
+# Add "components: [../../components/servicemonitor]" to an overlay to enable it.
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - servicemonitor.yaml

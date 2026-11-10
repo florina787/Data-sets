@@ -484,7 +484,7 @@ class LiveAnswer(BaseModel):
 
 
 def _live_answer(question: str, draft: list[str], c: Ctx, window: dict,
-                 request_id: str | None = None) -> tuple[str, dict]:
+                 request_id: str | None = None, meta: dict | None = None) -> tuple[str, dict]:
     from app.agents import live
 
     settings = get_settings()
@@ -507,7 +507,8 @@ def _live_answer(question: str, draft: list[str], c: Ctx, window: dict,
     started = now_iso()
     t0 = time.perf_counter()
     try:
-        result, usage = live.LiveClient().structured(None, prompt, LiveAnswer, request_id)
+        result, usage = live.LiveClient().structured(None, prompt, LiveAnswer, request_id,
+                                                     {"purpose": "copilot.answer", **(meta or {})})
     except PlatformError as exc:
         c.tool_calls.append({"tool": "local_llm.answer", "args": {"prompt_chars": len(prompt)}, "status": "error",
                              "started_at": started, "error": exc.message[:300],
@@ -586,7 +587,8 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
                 with _active_lock:
                     _active_requests[request_id] = user.username
             try:
-                text, usage = _live_answer(question, paragraphs, c, window, request_id)
+                text, usage = _live_answer(question, paragraphs, c, window, request_id,
+                                           {"username": user.username, "conversation_id": conversation_id})
                 paragraphs, answer_mode, provenance = [text], "live", "live_ai"
                 live_answers += 1
             except PlatformError as exc:

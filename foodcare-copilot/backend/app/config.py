@@ -13,7 +13,9 @@ FIXTURES = ROOT / "fixtures"
 @dataclass(frozen=True)
 class Settings:
     var_dir: Path = field(default_factory=lambda: Path(os.environ.get("FOODCARE_VAR_DIR", ROOT / "var")).resolve())
-    api_host: str = "127.0.0.1"
+    api_host: str = "127.0.0.1"  # used for in-process calls (inventory simulator, storefront)
+    # Address the API listens on. Keep 127.0.0.1 on a laptop; containers set 0.0.0.0.
+    bind_host: str = os.environ.get("FOODCARE_BIND_HOST", "127.0.0.1")
     api_port: int = int(os.environ.get("FOODCARE_API_PORT", "8700"))
     storefront_port: int = int(os.environ.get("FOODCARE_STOREFRONT_PORT", "8801"))
     demo_clock: str = os.environ.get("FOODCARE_DEMO_CLOCK", "2026-10-31T12:00:00-04:00")
@@ -32,6 +34,8 @@ class Settings:
     llm_queue_size: int = int(os.environ.get("FOODCARE_LLM_QUEUE_SIZE", "4"))
     llm_queue_wait_s: float = float(os.environ.get("FOODCARE_LLM_QUEUE_WAIT_S", "20"))
     llm_cache_entries: int = int(os.environ.get("FOODCARE_LLM_CACHE_ENTRIES", "64"))
+    llm_stream_usage: bool = os.environ.get("FOODCARE_LLM_STREAM_USAGE", "1") not in ("0", "false", "no")
+    metrics_enabled: bool = os.environ.get("FOODCARE_METRICS_ENABLED", "1") not in ("0", "false", "no")
     memory_backend: str = os.environ.get("FOODCARE_MEMORY_BACKEND", "sqlite")
     memory_retention_days: int = int(os.environ.get("FOODCARE_MEMORY_RETENTION_DAYS", "180"))
     memory_backups_kept: int = int(os.environ.get("FOODCARE_MEMORY_BACKUPS_KEPT", "5"))
