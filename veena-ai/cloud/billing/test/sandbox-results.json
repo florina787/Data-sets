@@ -1,0 +1,112 @@
+{
+  "ran_at": "2026-11-11T15:30:02.021Z",
+  "stripe_mode": "test",
+  "signature_note": "event payloads from Stripe; delivery signed locally",
+  "results": [
+    {
+      "name": "sign-in (local code)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "checkout session created by Stripe (credits_1)",
+      "pass": true,
+      "detail": "amount 1900 usd, livemode false"
+    },
+    {
+      "name": "no credit before Stripe confirms",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "test card 4242 payment completed on Stripe Checkout",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real checkout.session.completed event received from Stripe",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "event processed -> 60 credit minutes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "replayed event processed once",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "declined card 4000…0002 does not complete checkout",
+      "pass": true,
+      "detail": "Stripe showed a decline message"
+    },
+    {
+      "name": "no completion event for the declined session; balance unchanged",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real checkout.session.expired -> nothing granted",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real charge.refunded -> credit minutes removed",
+      "pass": true,
+      "detail": "balance 0"
+    },
+    {
+      "name": "subscription checkout session (monthly, USD 74.95)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "subscription paid on Stripe Checkout",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real invoice.paid -> Unlimited active",
+      "pass": true,
+      "detail": "period end 2026-12-11T15:29:17.000Z"
+    },
+    {
+      "name": "customer portal session",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real customer.subscription.deleted -> Unlimited ended",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "all six packages priced exactly by Stripe",
+      "pass": true,
+      "detail": "{\"credits_1\":1900,\"credits_3\":2950,\"credits_8\":5900,\"credits_15\":8850,\"unlimited_monthly\":7495,\"unlimited_annual\":29995}"
+    },
+    {
+      "name": "annual plan recurs yearly",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "renewal: real renewal invoice.paid extends the paid period",
+      "pass": true,
+      "detail": "2026-12-11T15:29:25.000Z -> 2027-01-11T15:29:25.000Z"
+    },
+    {
+      "name": "failed renewal: real invoice.payment_failed -> past_due",
+      "pass": true,
+      "detail": "status past_due"
+    },
+    {
+      "name": "payment history recorded",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}
