@@ -115,6 +115,12 @@ class Billing:
         return self.status()
 
     def sign_out(self) -> dict:
+        if self.state["token"]:
+            try:  # revoke the session on the server too (best effort; it also expires on its own)
+                with self._client() as c:
+                    c.post("/v1/auth/logout")
+            except httpx.HTTPError:
+                pass
         with self._lock:
             self.state.update(token=None, cached=None)  # install_id and trial usage stay
             self._save()

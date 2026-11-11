@@ -41,7 +41,7 @@ const sign = (payload, t = Math.floor(Date.now() / 1000), secret = WHSEC) =>
 
 function mkEnv(over = {}) {
   const sim = stripeSim(), mail = [];
-  return { sim, mail, env: { DB: d1(), CODE_PEPPER: "pepper", STRIPE_SECRET_KEY: "sk_test_simulator", STRIPE_WEBHOOK_SECRET: WHSEC, SITE_URL: "https://florina787.github.io/Data-sets",
+  return { sim, mail, env: { DB: d1(), CODE_PEPPER: "test-pepper-0123456789abcdef", STRIPE_SECRET_KEY: "sk_test_simulator", STRIPE_WEBHOOK_SECRET: WHSEC, SITE_URL: "https://florina787.github.io/Data-sets",
     fetch: sim.fetch, sendEmail: async (to, subj, text) => mail.push({ to, code: text.match(/\d{6}/)[0] }), ...over } };
 }
 const call = (env, method, p, body, token, headers = {}) => B.default.fetch(new Request("https://billing.example" + p, {
@@ -213,4 +213,74 @@ test("abandoned reservations expire and are never charged", async () => {
   assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.trial_remaining.interview, 2, "reserved");
   assert.equal(await B.expireReservations(ctx.env, new Date(Date.now() + 4 * 3600000)), 1);
   assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.trial_remaining.interview, 3, "released, not consumed");
+});
+
+// ---------------- security fixes (2026-11-11 audit) ----------------
+test("security: another account's operation id is refused, not reported as allowed", async () => {
+  const ctx = mkEnv(), a = await signIn(ctx, "sa@example.com", install()), b = await signIn(ctx, "sb@example.com", install());
+  const op = crypto.randomUUID();
+  await call(ctx.env, "POST", "/v1/usage/authorize", { op_id: op, feature: "chat" }, a);
+  assert.equal((await call(ctx.env, "POST", "/v1/usage/authorize", { op_id: op, feature: "chat" }, b)).status, 409);
+});
+
+test("security: credits granted only for the exact package amount in USD", async () => {
+  const ctx = mkEnv(), tok = await signIn(ctx, "amt@example.com", install());
+  const acct = ctx.env.DB.db.prepare("SELECT id FROM accounts").get().id;
+  const base = { client_reference_id: acct, customer: "cus_a", payment_status: "paid", currency: "usd", metadata: { package: "credits_15" } };
+  assert.equal((await webhook(ctx.env, { id: "ea1", type: "checkout.session.completed", data: { object: { ...base, id: "cs_a1", payment_intent: "pi_a1", amount_total: 1900 } } })).body.result, "amount_mismatch");
+  assert.equal((await webhook(ctx.env, { id: "ea2", type: "checkout.session.completed", data: { object: { ...base, id: "cs_a2", payment_intent: "pi_a2", amount_total: 8850, currency: "eur" } } })).body.result, "amount_mismatch");
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.credit_minutes, 0);
+  assert.equal((await webhook(ctx.env, { id: "ea3", type: "checkout.session.completed", data: { object: { ...base, id: "cs_a3", payment_intent: "pi_a3", amount_total: 8850 } } })).body.result, "ok");
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.credit_minutes, 900);
+});
+
+test("security: expired checkout grants nothing; delayed payment success credits once", async () => {
+  const ctx = mkEnv(), tok = await signIn(ctx, "exp@example.com", install());
+  const acct = ctx.env.DB.db.prepare("SELECT id FROM accounts").get().id;
+  const o = { id: "cs_e", client_reference_id: acct, customer: "cus_e", payment_intent: "pi_e", amount_total: 1900, currency: "usd", metadata: { package: "credits_1" } };
+  assert.equal((await webhook(ctx.env, { id: "ex1", type: "checkout.session.expired", data: { object: { ...o, payment_status: "unpaid" } } })).body.result, "expired");
+  assert.equal((await webhook(ctx.env, { id: "ex2", type: "checkout.session.completed", data: { object: { ...o, payment_status: "unpaid" } } })).body.result, "unpaid");
+  assert.equal((await webhook(ctx.env, { id: "ex3", type: "checkout.session.async_payment_succeeded", data: { object: { ...o, payment_status: "paid" } } })).body.result, "ok");
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.credit_minutes, 60);
+});
+
+test("security: checkout and portal are rate limited per account", async () => {
+  const ctx = mkEnv(), tok = await signIn(ctx, "rl@example.com", install());
+  let last;
+  for (let i = 0; i < 21; i++) last = await call(ctx.env, "POST", "/v1/checkout", { package: "credits_1" }, tok);
+  assert.equal(last.status, 429);
+});
+
+test("security: sign-out revokes the server session", async () => {
+  const ctx = mkEnv(), tok = await signIn(ctx, "lo@example.com", install());
+  assert.equal((await call(ctx.env, "POST", "/v1/auth/logout", undefined, tok)).status, 200);
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).status, 401);
+});
+
+test("security: sign-in refuses to run without a strong code pepper", async () => {
+  const ctx = mkEnv({ CODE_PEPPER: "" });
+  assert.equal((await call(ctx.env, "POST", "/v1/auth/start", { email: "p@example.com", install_id: install() })).status, 503);
+});
+
+test("security: a fully refunded subscription payment ends Unlimited; an active row with no paid period is not unlimited", async () => {
+  const ctx = mkEnv(), tok = await signIn(ctx, "rf@example.com", install());
+  const acct = ctx.env.DB.db.prepare("SELECT id FROM accounts").get().id;
+  await webhook(ctx.env, { id: "r1", type: "checkout.session.completed", data: { object: { id: "cs_r", client_reference_id: acct, customer: "cus_r", subscription: "sub_r", payment_status: "paid", metadata: { package: "unlimited_annual" } } } });
+  ctx.env.DB.db.prepare("UPDATE subscriptions SET status='active' WHERE account_id=?").run(acct);
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.unlimited, false, "no paid period yet");
+  await webhook(ctx.env, { id: "r2", type: "invoice.paid", data: { object: { id: "in_r", customer: "cus_r", amount_paid: 29995, currency: "usd", lines: { data: [{ period: { end: Math.floor(Date.now() / 1000) + 365 * 86400 } }] } } } });
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.unlimited, true);
+  await webhook(ctx.env, { id: "r3", type: "charge.refunded", data: { object: { id: "ch_r", invoice: "in_r", customer: "cus_r", amount: 29995, amount_refunded: 29995, currency: "usd", metadata: {} } } });
+  assert.equal((await call(ctx.env, "GET", "/v1/me", undefined, tok)).body.unlimited, false);
+});
+
+test("email: Resend provider sends only the address and the code; unconfigured provider fails closed", async () => {
+  const sent = [];
+  const mailer = B.makeMailer({ EMAIL_PROVIDER: "resend", RESEND_API_KEY: "re_test", EMAIL_FROM: "VEENA <codes@example.com>",
+    fetch: async (url, init) => { sent.push({ url, body: JSON.parse(init.body), auth: init.headers.authorization }); return new Response("{}", { status: 200 }); } });
+  await mailer("user@example.com", "Your VEENA sign-in code", "Your VEENA code is 123456.");
+  assert.equal(sent[0].url, "https://api.resend.com/emails");
+  assert.deepEqual(Object.keys(sent[0].body).sort(), ["from", "subject", "text", "to"]);
+  await assert.rejects(B.makeMailer({})("a@b.co", "s", "t"), /not configured/);
+  await assert.rejects(B.makeMailer({ EMAIL_PROVIDER: "resend" })("a@b.co", "s", "t"), /not configured/);
 });

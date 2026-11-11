@@ -51,7 +51,12 @@ async function bump(env, key, limit, now) {
 }
 
 // ---------------- accounts ----------------
+function requirePepper(env) {
+  if (!env.CODE_PEPPER || env.CODE_PEPPER.length < 16) throw new HttpError(503, "sign-in is not configured");
+}
+
 export async function authStart(env, b, now = new Date()) {
+  requirePepper(env);
   const email = String(b.email || "").trim().toLowerCase();
   if (!EMAIL.test(email)) throw new HttpError(400, "enter a valid email address");
   if (!UUID.test(b.install_id || "")) throw new HttpError(400, "bad install_id");
@@ -65,6 +70,7 @@ export async function authStart(env, b, now = new Date()) {
 }
 
 export async function authVerify(env, b, now = new Date()) {
+  requirePepper(env);
   const email = String(b.email || "").trim().toLowerCase();
   if (!UUID.test(b.install_id || "")) throw new HttpError(400, "bad install_id");
   const row = await env.DB.prepare("SELECT * FROM email_codes WHERE email = ?1").bind(email).first();
@@ -114,7 +120,8 @@ export async function trialRemaining(env, accountId, installId) {
 
 export async function entitlements(env, s, now = new Date()) {
   const sub = await env.DB.prepare("SELECT * FROM subscriptions WHERE account_id = ?1").bind(s.account_id).first();
-  const unlimited = !!sub && ["active", "past_due"].includes(sub.status) && (!sub.current_period_end || sub.current_period_end >= nowIso(now));
+  // Unlimited only while a paid period is running (past_due keeps access until that period ends).
+  const unlimited = !!sub && ["active", "past_due"].includes(sub.status) && !!sub.current_period_end && sub.current_period_end >= nowIso(now);
   const bal = (await env.DB.prepare(balanceSql).bind(s.account_id).first()).available;
   return { unlimited, plan: unlimited ? sub.plan : null, subscription: sub || null, credit_minutes: bal, trial_remaining: await trialRemaining(env, s.account_id, s.install_id), trial_uses: TRIAL_USES };
 }
@@ -124,6 +131,7 @@ export async function authorize(env, s, b, now = new Date()) {
   if (!UUID.test(b.op_id || "")) throw new HttpError(400, "op_id must be a UUID v4");
   if (!FEATURES.includes(b.feature)) throw new HttpError(400, "unknown feature");
   const prev = await env.DB.prepare("SELECT * FROM operations WHERE op_id = ?1").bind(b.op_id).first();
+  if (prev && prev.account_id !== s.account_id) throw new HttpError(409, "operation id already used");
   if (prev) return { allowed: prev.status !== "released", kind: prev.kind, idempotent: true };
   const e = await entitlements(env, s, now);
   const t = nowIso(now);
@@ -175,7 +183,8 @@ async function stripe(env, path, params, method = "POST") {
   return data;
 }
 
-export async function checkout(env, s, b) {
+export async function checkout(env, s, b, now = new Date()) {
+  await bump(env, "checkout:" + s.account_id, 20, now);
   const p = PRICES[b.package];
   if (!p) throw new HttpError(400, "unknown package");
   const acct = await env.DB.prepare("SELECT * FROM accounts WHERE id = ?1").bind(s.account_id).first();
@@ -197,7 +206,8 @@ export async function checkout(env, s, b) {
   return { url: cs.url, id: cs.id };
 }
 
-export async function portal(env, s) {
+export async function portal(env, s, now = new Date()) {
+  await bump(env, "portal:" + s.account_id, 20, now);
   const acct = await env.DB.prepare("SELECT stripe_customer_id FROM accounts WHERE id = ?1").bind(s.account_id).first();
   if (!acct?.stripe_customer_id) throw new HttpError(404, "no billing account yet");
   const ps = await stripe(env, "billing_portal/sessions", { customer: acct.stripe_customer_id, return_url: env.SITE_URL + "/pricing.html" });
@@ -222,12 +232,17 @@ export async function handleEvent(env, ev, now = new Date()) {
   const o = ev.data.object, t = nowIso(now);
   const accountFor = async (meta, customer) => meta?.account_id || (customer && (await env.DB.prepare("SELECT id FROM accounts WHERE stripe_customer_id = ?1").bind(customer).first())?.id);
   switch (ev.type) {
+    case "checkout.session.expired":
+      return "expired";                                        // abandoned checkout: nothing is granted
+    case "checkout.session.async_payment_succeeded":
     case "checkout.session.completed": {
       const accountId = o.client_reference_id || o.metadata?.account_id, p = PRICES[o.metadata?.package];
       if (!accountId || !p) return "ignored";
       if (o.customer) await env.DB.prepare("UPDATE accounts SET stripe_customer_id = ?2 WHERE id = ?1 AND stripe_customer_id IS NULL").bind(accountId, o.customer).run();
       if (p.kind === "credits") {
         if (o.payment_status !== "paid") return "unpaid";      // e.g. delayed payment methods: wait for async_payment_succeeded
+        // Defence in depth: credit only if Stripe confirms exactly this package's price in USD.
+        if (o.amount_total !== p.usd_cents || String(o.currency).toLowerCase() !== "usd") return "amount_mismatch";
         await env.DB.batch([
           env.DB.prepare("INSERT OR IGNORE INTO credit_ledger (account_id, delta, reason, ref, created_at) VALUES (?1, ?2, 'purchase', ?3, ?4)").bind(accountId, p.minutes, "cs:" + o.id, t),
           env.DB.prepare("INSERT OR IGNORE INTO payments (id, account_id, kind, description, amount_cents, currency, status, created_at) VALUES (?1, ?2, 'credits', ?3, ?4, ?5, 'paid', ?6)").bind(o.payment_intent || o.id, accountId, p.name, o.amount_total, o.currency, t),
@@ -270,9 +285,12 @@ export async function handleEvent(env, ev, now = new Date()) {
       const accountId = await accountFor(o.metadata, o.customer);
       if (!accountId) return "ignored";
       // Credit purchase refunded: remove the refunded share of its minutes (balance may go to zero, never below via usage).
-      const pay = await env.DB.prepare("SELECT * FROM payments WHERE id = ?1").bind(o.payment_intent).first();
+      const pay = await env.DB.prepare("SELECT * FROM payments WHERE id = ?1 OR id = ?2").bind(o.payment_intent || "", o.invoice || "").first();
       const p = pay && Object.values(PRICES).find((x) => x.name === pay.description);
       const stmts = [env.DB.prepare("INSERT OR IGNORE INTO payments (id, account_id, kind, description, amount_cents, currency, status, created_at) VALUES (?1, ?2, 'refund', 'Refund', ?3, ?4, 'refunded', ?5)").bind("re:" + o.id, accountId, -o.amount_refunded, o.currency, t)];
+      // A fully refunded subscription payment ends Unlimited immediately.
+      if (pay?.kind === "subscription" && o.amount_refunded >= o.amount)
+        stmts.push(env.DB.prepare("UPDATE subscriptions SET status = 'refunded', updated_at = ?2 WHERE account_id = ?1").bind(accountId, t));
       if (p?.kind === "credits") stmts.push(env.DB.prepare("INSERT OR IGNORE INTO credit_ledger (account_id, delta, reason, ref, created_at) VALUES (?1, ?2, 'refund', ?3, ?4)")
         .bind(accountId, -Math.round(p.minutes * o.amount_refunded / o.amount), "refund:" + o.id, t));
       await env.DB.batch(stmts);
@@ -289,14 +307,33 @@ export async function history(env, s) {
 }
 
 export async function expireReservations(env, now = new Date()) {
+  await env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?1").bind(nowIso(now)).run();
+  await env.DB.prepare("DELETE FROM email_codes WHERE expires_at < ?1").bind(nowIso(now)).run();
   const cutoff = nowIso(new Date(now.getTime() - RESERVE_TTL_MIN * 60000));
   return (await env.DB.prepare("UPDATE operations SET status = 'released', updated_at = ?2 WHERE status = 'reserved' AND created_at < ?1").bind(cutoff, nowIso(now)).run()).meta.changes;
+}
+
+// ---------------- email (provider-independent) ----------------
+// EMAIL_PROVIDER = "resend" (RESEND_API_KEY secret, EMAIL_FROM var) | unset (sign-in disabled).
+// Add a provider by returning another async (to, subject, text) function here. Only the address and
+// the code are sent; no other user data.
+export function makeMailer(env) {
+  if (env.EMAIL_PROVIDER === "resend") {
+    if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return async () => { throw new HttpError(503, "email provider is not configured"); };
+    return async (to, subject, text) => {
+      const r = await env.fetch("https://api.resend.com/emails", { method: "POST",
+        headers: { authorization: "Bearer " + env.RESEND_API_KEY, "content-type": "application/json" },
+        body: JSON.stringify({ from: env.EMAIL_FROM, to: [to], subject, text }) });
+      if (!r.ok) throw new HttpError(502, "could not send the email, try again later");
+    };
+  }
+  return async () => { throw new HttpError(503, "email sending is not configured yet"); };
 }
 
 export default {
   async fetch(request, env) {
     env.fetch = env.fetch || fetch.bind(globalThis);
-    env.sendEmail = env.sendEmail || (async () => { throw new HttpError(503, "email sending is not configured yet"); });
+    env.sendEmail = env.sendEmail || makeMailer(env);
     const url = new URL(request.url), p = url.pathname, m = request.method;
     try {
       if (m === "GET" && p === "/v1/prices") return json({ currency: "usd", prices: PRICES, trial_uses: TRIAL_USES, trial_features: FEATURES, credit_features: SESSION_FEATURES });
@@ -310,6 +347,11 @@ export default {
       }
       const s = await session(env, request);
       if (m === "GET" && p === "/v1/me") return json(await entitlements(env, s));
+      if (m === "POST" && p === "/v1/auth/logout") {
+        const tok = (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+        await env.DB.prepare("DELETE FROM sessions WHERE token_hash = ?1").bind(await sha256(tok)).run();
+        return json({ signed_out: true });
+      }
       if (m === "POST" && p === "/v1/usage/authorize") return json(await authorize(env, s, await body(request)));
       if (m === "POST" && p === "/v1/usage/commit") return json(await commit(env, s, await body(request)));
       if (m === "POST" && p === "/v1/usage/release") return json(await release(env, s, await body(request)));

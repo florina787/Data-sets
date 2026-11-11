@@ -20,7 +20,7 @@ const prep = (sql) => { const st = { args: [], bind(...a) { return { ...st, args
   async run() { const r = db.prepare(norm(sql)).run(...expand(sql, this.args)); return { meta: { changes: Number(r.changes) } }; } }; return st; };
 const mail = [];
 const env = { DB: { prepare: prep, async batch(l) { db.exec("BEGIN"); try { for (const s of l) await s.run(); db.exec("COMMIT"); } catch (e) { db.exec("ROLLBACK"); throw e; } } },
-  CODE_PEPPER: "pepper", STRIPE_SECRET_KEY: "sk_test_simulator", STRIPE_WEBHOOK_SECRET: "whsec_sim", SITE_URL: "https://example.invalid",
+  CODE_PEPPER: "test-pepper-0123456789abcdef", STRIPE_SECRET_KEY: "sk_test_simulator", STRIPE_WEBHOOK_SECRET: "whsec_sim", SITE_URL: "https://example.invalid",
   sendEmail: async (to, s, text) => mail.push({ to, code: text.match(/\d{6}/)[0] }),
   fetch: async () => new Response(JSON.stringify({ id: "cs_test_sim", url: "https://checkout.stripe.com/c/pay/cs_test_sim" })) };
 
