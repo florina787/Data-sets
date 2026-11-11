@@ -1,0 +1,2 @@
+# Known false positive: a made-up Stripe-shaped string used to test the redactor (since rewritten to be assembled at runtime).
+1b393dfe10e2d998e1122e19a689f627c4a8bba5:careerflo/backend/tests/test_resume_matching.py:stripe-access-token:92
