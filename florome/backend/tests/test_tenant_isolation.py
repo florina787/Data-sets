@@ -39,3 +39,12 @@ def test_audit_chains_are_per_tenant(client):
     h = c.get("/api/v1/governance/audit?limit=500", headers=H("admin", "halcyon")).json()
     assert {e["id"] for e in m["items"]}.isdisjoint({e["id"] for e in h["items"]})
     assert c.get("/api/v1/governance/audit/verify", headers=H("admin", "halcyon")).json()["valid"]
+
+
+def test_evidence_listing_is_paginated_and_scoped(client):
+    c = client
+    rca_and_plan(c)
+    page = c.get("/api/v1/evidence?limit=5&kind=log", headers=H("viewer")).json()
+    assert page["total"] >= 5 and len(page["items"]) == 5 and all(i["kind"] == "log" for i in page["items"])
+    assert sum(x["count"] for x in page["counts"]) >= page["total"]
+    assert c.get("/api/v1/evidence", headers=H("admin", "halcyon")).json()["total"] == 0

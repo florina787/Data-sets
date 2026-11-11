@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -196,6 +196,27 @@ def latest_rca(incident_id: str, p: Principal = Depends(require("read")), db: Se
         raise HTTPException(404, "No RCA has been run for this incident")
     return {"id": rca.id, "report_hash": rca.report_hash, "created_at": _iso(rca.created_at),
             "integrity_ok": audit.sha256(rca.report) == rca.report_hash, **rca.report}
+
+
+@router.get("/evidence", tags=["evidence"])
+def list_evidence(incident_id: str | None = None, kind: str | None = None, source_system: str | None = None,
+                  limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0),
+                  p: Principal = Depends(require("read")), db: Session = Depends(get_db)) -> dict[str, Any]:
+    q = select(Evidence).where(Evidence.tenant_id == p.tenant_id)
+    if incident_id:
+        q = q.where(Evidence.incident_id == incident_id)
+    if kind:
+        q = q.where(Evidence.kind == kind)
+    if source_system:
+        q = q.where(Evidence.source_system == source_system)
+    total = db.scalar(select(func.count()).select_from(q.subquery()))
+    counts = db.execute(select(Evidence.source_system, Evidence.kind, func.count()).where(Evidence.tenant_id == p.tenant_id)
+                        .group_by(Evidence.source_system, Evidence.kind)).all()
+    rows = db.scalars(q.order_by(Evidence.observed_at.desc()).limit(limit).offset(offset)).all()
+    return {"total": total, "counts": [{"source_system": s_, "kind": k, "count": n} for s_, k, n in counts],
+            "items": [{"id": e.id, "incident_id": e.incident_id, "resource_id": e.resource_id, "kind": e.kind, "observed_at": _iso(e.observed_at),
+                       "summary": e.summary, "source_system": e.source_system, "source_ref": e.source_ref, "content_hash": e.content_hash,
+                       "is_demo": e.is_demo} for e in rows]}
 
 
 @router.get("/evidence/{evidence_id}", tags=["evidence"])
@@ -543,6 +564,29 @@ async def demo_reset(p: Principal = Depends(require("demo:reset")), db: Session 
         ctx.registry.remove(c.id)
     await seed_demo(db, ctx, p.tenant_id)
     return {"reset": p.tenant_id}
+
+
+@router.get("/system/metrics", tags=["analytics"])
+def system_metrics(request: Request, p: Principal = Depends(require("read"))) -> dict[str, Any]:
+    """Measured request latency of this API process since start (last 5,000 requests). Not a benchmark."""
+    samples = list(request.app.state.request_samples)
+
+    def pct(vals: list[float], q: float) -> float | None:
+        if not vals:
+            return None
+        vals = sorted(vals)
+        return vals[min(len(vals) - 1, int(round(q * (len(vals) - 1))))]
+
+    by_path: dict[str, list[float]] = defaultdict(list)
+    errors = 0
+    for path, status, ms in samples:
+        by_path[path].append(ms)
+        errors += status >= 500
+    allms = [ms for _, _, ms in samples]
+    return {"requests": len(samples), "server_errors": errors, "p50_ms": pct(allms, 0.5), "p95_ms": pct(allms, 0.95),
+            "routes": sorted([{"path": k, "count": len(v), "p50_ms": pct(v, 0.5), "p95_ms": pct(v, 0.95)} for k, v in by_path.items()],
+                             key=lambda r: -r["count"])[:15],
+            "note": "Measured in-process since API start; resets on restart."}
 
 
 @router.get("/health", tags=["health"])

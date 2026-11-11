@@ -82,3 +82,16 @@ def test_learning_similar_incident_lookup(client, db):
     db.commit()
     sim = c.get(f"/api/v1/incidents/{inc}/similar", headers=H("viewer")).json()
     assert sim[0]["incident_id"] == twin.id and sim[0]["similarity"] == 1.0 and sim[0]["outcome"] == {"resolved": True}
+
+
+def test_step_progress_is_persisted_not_just_in_memory(client, db):
+    """Regression: step statuses must survive a fresh read (JSON column change detection)."""
+    from florome.models import RemediationPlan
+    from tests.conftest import rca_and_plan
+
+    _, plan = rca_and_plan(client)
+    approve(client, plan)
+    client.post("/api/v1/executions", json={"plan_id": plan["id"]}, headers=H("operator"))
+    fresh = db.get(RemediationPlan, plan["id"])
+    assert [s["status"] for s in fresh.steps] == ["succeeded"] * 5
+    assert [s["status"] for s in client.get(f"/api/v1/remediations/{plan['id']}", headers=H("viewer")).json()["steps"]] == ["succeeded"] * 5

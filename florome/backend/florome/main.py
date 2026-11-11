@@ -6,6 +6,7 @@ import json
 import logging
 import time
 import uuid
+from collections import deque
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -60,6 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                   description="One Intelligence. Every Cloud. From Root Cause to Resolution. "
                               "Demo tenants are synthetic; see /api/v1/platforms for the real status of every integration.")
     app.state.ctx = ctx
+    app.state.request_samples = deque(maxlen=5000)  # (path template, status, ms): measured, in-process only
     app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["*"],
                        allow_headers=["Authorization", "Content-Type"])
 
@@ -70,6 +72,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         response = await call_next(request)
         ms = round((time.perf_counter() - start) * 1000, 1)
         response.headers["x-request-id"] = rid
+        route = request.scope.get("route")
+        app.state.request_samples.append((getattr(route, "path", request.url.path), response.status_code, ms))
         log.info("request", extra={"fields": {"request_id": rid, "method": request.method, "path": request.url.path,
                                               "status": response.status_code, "duration_ms": ms}})
         return response

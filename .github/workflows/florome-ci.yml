@@ -1,0 +1,34 @@
+name: Florome CI
+
+on:
+  pull_request:
+    paths: ["florome/**", "archai-enterprise-advisor/**", ".github/workflows/florome-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["florome/**", ".github/workflows/florome-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: florome/backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e ".[dev]" -r ../../archai-enterprise-advisor/requirements.txt
+      - run: pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: florome/frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

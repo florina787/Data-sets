@@ -179,7 +179,7 @@ async def execute(db: Session, ctx: AppContext, actor: Principal, plan: Remediat
         step = steps[i]
         ok, message = await _run_step(db, ctx, actor, plan, step)
         steps[i] = {**step, "status": "succeeded" if ok else "failed", "message": message}
-        plan.steps = steps
+        plan.steps = [dict(x) for x in steps]  # new object each time: JSON columns only persist on reassignment
         if not ok:
             plan.status, plan.current_step, plan.last_error = "failed", i, message
             plan.version += 1

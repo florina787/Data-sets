@@ -68,3 +68,9 @@ def test_rbac_matrix(client):
     assert c.post("/api/v1/remediations", json={"incident_id": inc}, headers=H("approver")).status_code == 403
     assert c.post("/api/v1/governance/emergency-stop", json={"active": True}, headers=H("operator")).status_code == 403
     assert c.post("/api/v1/demo/reset", headers=H("viewer")).status_code == 403
+
+
+def test_system_metrics_are_measured(client):
+    client.get("/api/v1/incidents", headers=H("viewer"))
+    m = client.get("/api/v1/system/metrics", headers=H("viewer")).json()
+    assert m["requests"] >= 1 and m["p50_ms"] is not None and any(r["path"] == "/api/v1/incidents" for r in m["routes"])
