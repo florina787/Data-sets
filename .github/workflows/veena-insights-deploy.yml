@@ -13,6 +13,9 @@ name: VEENA Insights deploy
 # Free plan only: no paid Cloudflare products are created or enabled by this workflow.
 
 on:
+  # Pushes only run the offline checks (config + Worker tests); nothing is deployed on push.
+  push:
+    paths: ["veena-ai/cloud/insights/**", ".github/workflows/veena-insights-deploy.yml"]
   workflow_dispatch:
     inputs:
       action:
@@ -51,7 +54,25 @@ env:
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
 jobs:
+  offline-checks:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: veena-ai/cloud/insights
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Configuration is the approved one; Worker tests pass
+        run: |
+          grep -qx 'name = "veena-insights"' wrangler.toml
+          grep -qx "database_id = \"$DB_ID\"" wrangler.toml
+          node --test test/pipeline.test.mjs
+
   insights:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
