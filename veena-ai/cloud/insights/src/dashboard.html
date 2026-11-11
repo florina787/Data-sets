@@ -41,6 +41,16 @@ svg text { fill: var(--muted); font-size: 11px; }
 #login { max-width: 420px; margin: 18vh auto; text-align: center; }
 #login input { width: 100%; border-radius: 12px; margin: 18px 0 12px; }
 .err { color: #f0a58a; font-size: 13px; min-height: 18px; }
+.hero { grid-column: span 12; display: grid; grid-template-columns: 1fr 1.6fr; gap: 28px; align-items: end; padding: 26px 28px; }
+.seg { display: inline-flex; gap: 4px; background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.seg button { border: 0; background: transparent; padding: 6px 14px; color: var(--muted); font-weight: 600; font-size: 13px; }
+.seg button[aria-pressed="true"] { background: #2c211c; color: var(--ivory); box-shadow: inset 0 0 0 1px var(--line); }
+.big { font-size: 64px; font-weight: 700; letter-spacing: -.04em; line-height: 1; margin-top: 10px; }
+.delta { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-weight: 650; font-size: 14px; }
+.delta .pct { padding: 3px 10px; border-radius: 8px; background: rgba(201,162,122,.18); color: var(--gold); }
+.delta.down .pct { background: rgba(240,165,138,.15); color: #f0a58a; }
+.tabs { display: flex; gap: 22px; margin-bottom: 14px; font-size: 14px; } .tabs span { color: var(--muted); } .tabs span.on { color: var(--ivory); background: #2c211c; padding: 4px 14px; border-radius: 999px; }
+@media (max-width: 1000px) { .hero { grid-template-columns: 1fr; } .big { font-size: 48px; } }
 footer { color: var(--muted); font-size: 12px; margin-top: 26px; line-height: 1.6; }
 @media (max-width: 1000px) { .kpi { grid-column: span 4; } .span4, .span6, .span8 { grid-column: span 12; } }
 @media (max-width: 560px) { .kpi { grid-column: span 6; } .funnel .row { grid-template-columns: 110px 1fr 50px; } }
@@ -61,13 +71,24 @@ footer { color: var(--muted); font-size: 12px; margin-top: 26px; line-height: 1.
     <div><h1>VEENA <em>Insights</em></h1><div class="sub" id="gen"></div></div>
     <span class="test" id="testBadge">SYNTHETIC TEST DATA</span>
     <div class="controls">
-      <select id="days" aria-label="Period"><option value="7">7 days</option><option value="30">30 days</option><option value="90" selected>90 days</option><option value="365">365 days</option></select>
+      <div class="seg" role="group" aria-label="Period" id="period"><button data-d="7">7D</button><button data-d="30">1M</button><button data-d="90" aria-pressed="true">3M</button><button data-d="365">1Y</button></div>
+      <input type="hidden" id="days" value="90" />
       <select id="test" aria-label="Data set"><option value="0">Real data</option><option value="1">Test data</option></select>
       <button id="out">Sign out</button>
     </div>
   </header>
 
   <div class="grid">
+    <div class="card hero">
+      <div>
+        <div class="tabs"><span class="on">Overview</span><span>Opted-in installations</span></div>
+        <div class="sub">Weekly active installations</div>
+        <div class="big" id="h-big">0</div>
+        <div class="delta" id="h-delta"><span id="h-abs"></span><span class="pct" id="h-pct"></span></div>
+        <p class="sub" style="margin-top:12px" id="h-asof"></p>
+      </div>
+      <div id="h-chart"></div>
+    </div>
     <div class="card kpi web"><div class="l">Page views</div><div class="v" id="k-pv"></div><div class="d">Page loads, not people</div></div>
     <div class="card kpi web"><div class="l">Download clicks</div><div class="v" id="k-dc"></div><div class="d">Clicks on download buttons</div></div>
     <div class="card kpi gh"><div class="l">Downloads</div><div class="v" id="k-gh"></div><div class="d">All time; includes repeats</div></div>
@@ -106,7 +127,24 @@ function show(app, err = "") { $("app").hidden = !app; $("login").hidden = app; 
 $("go").onclick = () => { token = $("token").value.trim(); sessionStorage.setItem("veena-insights-token", token); load(); };
 $("token").onkeydown = (e) => { if (e.key === "Enter") $("go").click(); };
 $("out").onclick = () => { sessionStorage.removeItem("veena-insights-token"); token = ""; show(false); };
-$("days").onchange = load; $("test").onchange = load;
+$("test").onchange = load;
+document.querySelectorAll("#period button").forEach((b) => b.onclick = () => {
+  document.querySelectorAll("#period button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  $("days").value = b.dataset.d; load();
+});
+function area(series, key) {
+  const W = 760, H = 220, P = 6, n = series.length;
+  if (n < 2) return `<p class="sub">Not enough data yet.</p>`;
+  const max = Math.max(1, ...series.map((s) => s[key]));
+  const x = (i) => P + (W - 2 * P) * i / (n - 1), y = (v) => H - 24 - (H - 40) * v / max;
+  const pts = series.map((s, i) => `${x(i).toFixed(1)},${y(s[key]).toFixed(1)}`);
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="weekly active installations">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7c0a1" stop-opacity=".45"/><stop offset="1" stop-color="#d7c0a1" stop-opacity="0"/></linearGradient></defs>
+    <path d="M${pts[0]} L${pts.join(" L")} L${x(n - 1)},${H - 24} L${x(0)},${H - 24} Z" fill="url(#g)"/>
+    <path d="M${pts.join(" L")}" fill="none" stroke="#d7c0a1" stroke-width="2.6" stroke-linejoin="round"/>
+    <circle cx="${x(n - 1)}" cy="${y(series[n - 1][key])}" r="5" fill="#f7f3ec" stroke="#c9a27a" stroke-width="3"/>
+    <text x="${x(0)}" y="${H - 6}">${esc(series[0].week.slice(5))}</text><text x="${x(n - 1)}" y="${H - 6}" text-anchor="end">${esc(series[n - 1].week.slice(5))}</text></svg>`;
+}
 
 function bars(rows, label, value, suffix = "") {
   const max = Math.max(1, ...rows.map(value));
@@ -126,6 +164,15 @@ function line(series, keys, colors) {
 function render(d) {
   $("testBadge").style.display = d.test_data ? "inline-block" : "none";
   $("gen").textContent = `Last ${d.window_days} days · generated ${new Date(d.generated_at).toLocaleString()}`;
+  const wk = d.weekly_active, cur = wk.length ? wk[wk.length - 2]?.installs ?? 0 : 0, prev = wk.length > 2 ? wk[wk.length - 3].installs : 0;
+  // The current week is still in progress, so the headline compares the last two complete weeks.
+  $("h-big").textContent = fmt(cur);
+  const diff = cur - prev, pct = prev ? Math.round(100 * diff / prev) : 0;
+  $("h-abs").textContent = (diff >= 0 ? "▲ +" : "▼ ") + fmt(diff);
+  $("h-pct").textContent = (pct >= 0 ? "+" : "") + pct + "%";
+  $("h-delta").classList.toggle("down", diff < 0);
+  $("h-asof").textContent = "Last complete week vs the week before · as of " + new Date(d.generated_at).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+  $("h-chart").innerHTML = area(wk, "installs");
   $("k-pv").textContent = fmt(d.web.page_views); $("k-dc").textContent = fmt(d.web.download_clicks); $("k-gh").textContent = fmt(d.downloads.total);
   $("k-fl").textContent = fmt(d.installs.first_launches); $("k-wau").textContent = fmt(d.installs.active_7d); $("k-mau").textContent = fmt(d.installs.active_30d);
   const max = Math.max(1, ...d.funnel.map((f) => f.n));

@@ -48,6 +48,10 @@ def main() -> int:
             if not re.fullmatch(r"entry\.\d+", str((fb.get("entries") or {}).get(k))):
                 problems.append(f"feedback.entries.{k} must be an entry.<number> ID from the pre-filled link")
 
+    ins = cfg.get("insightsUrl")
+    if ins is not None and not re.fullmatch(r"https://[A-Za-z0-9.-]+(/[A-Za-z0-9._-]*)*", str(ins)):
+        problems.append("insightsUrl must be the https:// URL of the deployed VEENA Insights Worker")
+
     token = cfg.get("cloudflareToken")
     if token is not None and not re.fullmatch(r"[a-f0-9]{32}", str(token)):
         problems.append("cloudflareToken must be the 32-character site token from Cloudflare Web Analytics")

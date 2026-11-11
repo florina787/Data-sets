@@ -19,4 +19,8 @@ window.VEENA_CONFIG = {
   // Cloudflare Web Analytics site token (public, cookieless page-view counts).
   // Leave null until the owner creates the site in their Cloudflare dashboard.
   cloudflareToken: null,
+
+  // VEENA Insights (cloud/insights): cookieless page-view and download-click COUNTERS, no identifier.
+  // Leave null until the owner deploys the Worker; then set to its https:// URL.
+  insightsUrl: null,
 };

@@ -106,11 +106,30 @@
     });
   }
 
+  // VEENA Insights counters: one anonymous count per page view / download click. No cookies, no
+  // storage, no identifier; skipped when the browser sends Global Privacy Control or Do Not Track.
+  var insights = typeof cfg.insightsUrl === "string" && /^https:\/\/[a-z0-9.-]+(\/[a-z0-9._-]*)*$/i.test(cfg.insightsUrl) ? cfg.insightsUrl.replace(/\/$/, "") : null;
+  var optedOut = navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
+  function count(body) {
+    if (!insights || optedOut) return;
+    try {
+      fetch(insights + "/v1/web", { method: "POST", mode: "cors", credentials: "omit", keepalive: true, referrerPolicy: "no-referrer",
+        headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).catch(function () {});
+    } catch (e) { /* counting must never affect the page */ }
+  }
+  (function () {
+    var page = location.pathname.replace(/^\/Data-sets/, "") || "/";
+    var ref = "";
+    try { if (document.referrer) { var h = new URL(document.referrer).hostname; if (h !== location.hostname) ref = h; } } catch (e) {}
+    count({ kind: "pageview", page: page, referrer: ref, campaign: campaign === "none" ? "" : campaign });
+  })();
+
   // Download clicks: a page-local event with platform, version and campaign, for an analytics
   // tool that supports custom events if one is ever added. Today nothing leaves the page;
   // download totals come from GitHub's own per-file counts (site/tools/release_downloads.py).
   function trackDownload(os, version) {
     try { document.dispatchEvent(new CustomEvent("veena:download", { detail: { os: os, version: version, campaign: campaign } })); } catch (e) { /* old browser */ }
+    count({ kind: "download_click", os: os === "mac" ? "macos" : os, campaign: campaign === "none" ? "" : campaign });
   }
 
   // Download: only offer files that exist in the newest PUBLISHED VEENA release.
