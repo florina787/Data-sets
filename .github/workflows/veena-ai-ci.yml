@@ -42,7 +42,17 @@ jobs:
           cache: pip
           cache-dependency-path: veena-ai/pyproject.toml
       - name: Install Tesseract (retried; Ubuntu mirrors are occasionally unreachable)
-        run: for i in 1 2 3; do sudo apt-get update && sudo apt-get install -y tesseract-ocr && exit 0; sleep 20; done; exit 1
+        run: |
+          for i in 1 2 3; do
+            timeout 300 sh -c 'sudo apt-get update && sudo apt-get install -y tesseract-ocr' && exit 0
+            sleep 20
+          done
+          # Runner DNS outages to Ubuntu mirrors have lasted 25+ minutes; conda-forge is a separate source.
+          echo "::warning::Ubuntu mirrors unreachable; installing Tesseract from conda-forge instead"
+          curl -fsSL --retry 3 https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xj -C "$RUNNER_TEMP" bin/micromamba
+          "$RUNNER_TEMP/bin/micromamba" create -y -q -r "$RUNNER_TEMP/mamba" -p "$RUNNER_TEMP/tess" -c conda-forge tesseract
+          "$RUNNER_TEMP/tess/bin/tesseract" --list-langs | grep -qx eng
+          echo "$RUNNER_TEMP/tess/bin" >> "$GITHUB_PATH"
       - run: pip install -e ".[dev]"
       - run: ruff check backend tests packaging
       - run: ruff format --check backend tests
