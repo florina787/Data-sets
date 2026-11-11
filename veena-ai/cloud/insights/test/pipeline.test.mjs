@@ -151,6 +151,9 @@ test("full synthetic pipeline -> summary and dashboard", async () => {
       await W.ingest(env, batch, new Date(e.day + "T12:00:00Z"));
     }
   }
+  const fbText = [["chat", 5, "Faster answers on CPU"], ["documents", 4, "Import a whole folder"], ["screen", 3, "Explain a selected region only"], ["meeting", 4, "Speaker names in transcripts"]];
+  for (let i = 0; i < 24; i++) { const [f, r, n] = fbText[i % 4]; await W.saveFeedback(env, W.validateFeedback({ kind: i % 7 ? "feedback" : "bug", rating: r, feature: f, worked: "Works offline", next: n, didnt: i % 7 ? "" : "Setup stalled at the model download", email: i % 3 ? null : `tester${i}@example.com`, contact_ok: i % 3 === 0, elapsed_ms: 8000, test: true }), "c" + i, new Date(day(i * 3) + "T12:00:00Z")); }
+  for (let d = 60; d >= 0; d -= 3) env.DB.db.prepare("INSERT OR IGNORE INTO release_downloads (day,release,os,file,downloads,is_test) VALUES (?,?,?,?,?,1)").run(day(d), "veena-ai-v0.1.0", "windows", "VEENA.AI-Windows-Setup.exe", 412 - d * 6);
   const real = await W.summary(env, { days: 90, test: false }, NOW);
   assert.equal(real.web.page_views, 0, "real view must not include test data");
   assert.equal(real.installs.first_launches, 0);
@@ -166,4 +169,46 @@ test("full synthetic pipeline -> summary and dashboard", async () => {
   // A standalone dashboard preview with the synthetic summary baked in (for screenshots only).
   fs.writeFileSync(path.join(out, "dashboard.html"), html.replace("if (token) load(); else show(false);",
     `$("test").value = "1"; render(${JSON.stringify(s)}); show(true);`));
+});
+
+// ---------------- feedback (public beta) ----------------
+const fbReq = (body, headers = { origin: "https://florina787.github.io", "cf-connecting-ip": "203.0.113.7" }) =>
+  new Request("https://insights.example/v1/feedback", { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json", ...headers } });
+const good = { kind: "feedback", rating: 4, feature: "documents", worked: "Citations", didnt: "", next: "Folder import", elapsed_ms: 9000, test: true };
+
+test("feedback: valid submission stored; spam and bad input rejected", async () => {
+  const env = mkEnv();
+  assert.equal((await W.default.fetch(fbReq(good), env)).status, 200);
+  for (const [name, b] of [["honeypot", { ...good, website: "http://spam" }], ["too fast", { ...good, elapsed_ms: 400 }], ["rating", { ...good, rating: 9 }],
+    ["unknown field", { ...good, prompt: "my private question" }], ["empty", { ...good, worked: "", next: "" }], ["email", { ...good, email: "not-an-email" }]])
+    assert.equal((await W.default.fetch(fbReq(b), env)).status, 400, name);
+  assert.equal((await W.default.fetch(fbReq(good, { origin: "https://evil.example" }), env)).status, 403);
+  const row = env.DB.db.prepare("SELECT * FROM feedback").get();
+  assert.equal(row.feature, "documents"); assert.equal(row.email, null); assert.equal(row.contact_ok, 0);
+  assert.equal(env.DB.db.prepare("SELECT COUNT(*) n FROM feedback").get().n, 1);
+});
+
+test("feedback: 5 per client per day; contact permission only with an email", async () => {
+  const env = mkEnv();
+  let last;
+  for (let i = 0; i < 6; i++) last = await W.default.fetch(fbReq({ ...good, email: "Person@Example.com", contact_ok: true }), env);
+  assert.equal(last.status, 429);
+  const row = env.DB.db.prepare("SELECT email, contact_ok FROM feedback").get();
+  assert.equal(row.email, "person@example.com"); assert.equal(row.contact_ok, 1);
+  assert.equal((await W.default.fetch(fbReq({ ...good, contact_ok: true }, { origin: "https://florina787.github.io", "cf-connecting-ip": "198.51.100.1" }), env)).status, 200);
+  assert.equal(env.DB.db.prepare("SELECT contact_ok FROM feedback ORDER BY id DESC").get().contact_ok, 0, "no email -> not contactable");
+});
+
+test("feedback: dashboard statistics, test data separated, retention removes addresses after a year", async () => {
+  const env = mkEnv();
+  for (const [r, f, ip] of [[5, "chat", "1"], [3, "chat", "2"], [4, "screen", "3"]])
+    await W.saveFeedback(env, W.validateFeedback({ ...good, rating: r, feature: f, email: "a@b.co", contact_ok: true }), ip, NOW);
+  await W.saveFeedback(env, W.validateFeedback({ kind: "bug", feature: "setup", didnt: "Crash on start", elapsed_ms: 5000, test: true }), "4", NOW);
+  const s = await W.summary(env, { days: 30, test: true }, NOW);
+  assert.equal(s.feedback.total, 4); assert.equal(s.feedback.bugs, 1); assert.equal(s.feedback.avg_rating, 4);
+  assert.equal(s.feedback.contactable, 3); assert.equal(s.feedback.anonymous, 1);
+  assert.equal((await W.summary(env, { days: 30, test: false }, NOW)).feedback.total, 0, "real view shows no test feedback");
+  env.DB.db.prepare("UPDATE feedback SET day = '2025-06-01'").run();
+  await W.daily(env, NOW, async () => new Response("[]"));
+  assert.equal(env.DB.db.prepare("SELECT COUNT(*) n FROM feedback WHERE email IS NOT NULL").get().n, 0);
 });

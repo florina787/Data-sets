@@ -65,6 +65,40 @@ export function validateBatch(body, now = new Date()) {
   return { install_id: body.install_id, os: body.os, app_version: body.app_version, is_test: body.test === true ? 1 : 0, events };
 }
 
+export const FEEDBACK_FEATURES = ["chat", "documents", "screen", "meeting", "interview", "agents", "setup", "other"];
+const text = (v, max) => (typeof v === "string" ? v.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "").trim().slice(0, max) : "");
+
+/** Feedback form. Spam protection: hidden honeypot, minimum fill time, strict fields. */
+export function validateFeedback(b) {
+  const allowed = new Set(["kind", "rating", "feature", "worked", "didnt", "next", "email", "contact_ok", "app_version", "os", "test", "website", "elapsed_ms"]);
+  if (typeof b !== "object" || b === null) throw new HttpError(400, "object expected");
+  for (const k of Object.keys(b)) if (!allowed.has(k)) throw new HttpError(400, `unknown field ${k}`);
+  if (b.website) throw new HttpError(400, "rejected");                       // honeypot: people never see this field
+  if (!(Number(b.elapsed_ms) >= 3000)) throw new HttpError(400, "too fast");  // bots submit instantly
+  const kind = b.kind === "bug" ? "bug" : "feedback";
+  const rating = kind === "feedback" ? Number(b.rating) : null;
+  if (kind === "feedback" && !(Number.isInteger(rating) && rating >= 1 && rating <= 5)) throw new HttpError(400, "rating must be 1-5");
+  if (!FEEDBACK_FEATURES.includes(b.feature)) throw new HttpError(400, "bad feature");
+  const worked = text(b.worked, 1500), didnt = text(b.didnt, 1500), next = text(b.next, 1500);
+  if (!worked && !didnt && !next) throw new HttpError(400, "write at least one answer");
+  const email = text(b.email, 254).toLowerCase();
+  if (email && !/^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/.test(email)) throw new HttpError(400, "check the email address");
+  const os = OS.includes(b.os) ? b.os : "", app_version = VERSION.test(b.app_version || "") ? b.app_version : "";
+  return { kind, rating, feature: b.feature, worked, didnt, next, email: email || null, contact_ok: email && b.contact_ok === true ? 1 : 0, os, app_version, is_test: b.test === true ? 1 : 0 };
+}
+
+export async function saveFeedback(env, f, clientKey, now = new Date()) {
+  // Rate limits without storing addresses: a daily-salted hash of the client, purged after 2 days.
+  const k = "fb:" + (await sha256((env.RATE_SALT || "") + today(now) + clientKey)).slice(0, 32);
+  for (const [key, limit] of [[k, 5], ["fb:all", 500]]) {
+    const r = await env.DB.prepare("INSERT INTO rate (install_id, hour, n) VALUES (?1, ?2, 1) ON CONFLICT (install_id, hour) DO UPDATE SET n = n + 1 RETURNING n").bind(key, today(now)).first();
+    if (r.n > limit) throw new HttpError(429, "thank you, we have received a lot of feedback today; please try tomorrow");
+  }
+  await env.DB.prepare("INSERT INTO feedback (day, kind, rating, feature, worked, didnt, next, email, contact_ok, app_version, os, is_test, created_at) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13)")
+    .bind(today(now), f.kind, f.rating, f.feature, f.worked, f.didnt, f.next, f.email, f.contact_ok, f.app_version, f.os, f.is_test, now.toISOString()).run();
+}
+async function sha256(s) { return [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)))].map((b) => b.toString(16).padStart(2, "0")).join(""); }
+
 export function validateWeb(body) {
   const allowed = new Set(["kind", "page", "referrer", "campaign", "os", "test"]);
   if (typeof body !== "object" || body === null) throw new HttpError(400, "object expected");
@@ -132,6 +166,9 @@ export async function daily(env, now = new Date(), fetchImpl = fetch) {
   const cutoff = addDays(today(now), -keep), cutoffWeb = addDays(today(now), -keepWeb);
   const ev = await env.DB.prepare("DELETE FROM events WHERE day < ?1").bind(cutoff).run();
   const web = await env.DB.prepare("DELETE FROM web_daily WHERE day < ?1").bind(cutoffWeb).run();
+  // Feedback text kept 2 years; contact addresses removed after 1 year.
+  await env.DB.prepare("DELETE FROM feedback WHERE day < ?1").bind(addDays(today(now), -730)).run();
+  await env.DB.prepare("UPDATE feedback SET email = NULL, contact_ok = 0 WHERE day < ?1 AND email IS NOT NULL").bind(addDays(today(now), -365)).run();
   await env.DB.prepare("DELETE FROM rate WHERE hour < ?1").bind(addDays(today(now), -2)).run();
   const purged = (ev.meta?.changes ?? 0) + (web.meta?.changes ?? 0);
   if (purged) await env.DB.prepare("INSERT INTO deletions (day, source, rows) VALUES (?1, 'retention', ?2)").bind(today(now), purged).run();
@@ -174,6 +211,16 @@ export async function summary(env, { days = 90, test = false } = {}, now = new D
     all("SELECT os, SUM(count) n FROM web_daily WHERE kind='download_click' AND is_test=?1 AND day>=?2 GROUP BY os", T, start),
   ]);
   const gh = await all("SELECT r.release, r.os, r.file, r.downloads FROM release_downloads r JOIN (SELECT file, release, MAX(day) d FROM release_downloads WHERE is_test=?1 GROUP BY file, release) m ON r.file=m.file AND r.release=m.release AND r.day=m.d WHERE r.is_test=?1", T);
+  const [dau, newInstalls, returning, ghDaily, fb, fbByFeature, fbNext, fbWeekly] = await Promise.all([
+    one("SELECT COUNT(DISTINCT install_id) n FROM events WHERE event='active' AND is_test=?1 AND day=?2", T, end),
+    one("SELECT COUNT(*) n FROM events WHERE event='first_launch' AND is_test=?1 AND day>=?2", T, d7),
+    one("SELECT COUNT(DISTINCT a.install_id) n FROM events a WHERE a.event='active' AND a.is_test=?1 AND a.day>=?2 AND EXISTS (SELECT 1 FROM events f WHERE f.install_id=a.install_id AND f.event='first_launch' AND f.day<?2)", T, d7),
+    all("SELECT day, SUM(downloads) n FROM release_downloads WHERE is_test=?1 AND day>=?2 GROUP BY day ORDER BY day", T, start),
+    one("SELECT COUNT(*) total, AVG(rating) avg_rating, SUM(kind='bug') bugs, SUM(email IS NOT NULL AND contact_ok=1) contactable FROM feedback WHERE is_test=?1 AND day>=?2", T, start),
+    all("SELECT feature, COUNT(*) n, AVG(rating) avg_rating FROM feedback WHERE is_test=?1 AND day>=?2 GROUP BY feature ORDER BY n DESC", T, start),
+    all("SELECT next, day FROM feedback WHERE is_test=?1 AND day>=?2 AND next<>'' ORDER BY id DESC LIMIT 12", T, start),
+    all("SELECT day, COUNT(*) n, AVG(rating) avg_rating FROM feedback WHERE is_test=?1 AND day>=?2 GROUP BY day ORDER BY day", T, start),
+  ]);
   const [launches, firstAi, wau, mau, byOs, versions, featureUse, errors] = await Promise.all([
     one("SELECT COUNT(*) n FROM events WHERE event='first_launch' AND is_test=?1 AND day>=?2", T, start),
     one("SELECT COUNT(*) n FROM events WHERE event='ai_first_success' AND is_test=?1 AND day>=?2", T, start),
@@ -212,7 +259,10 @@ export async function summary(env, { days = 90, test = false } = {}, now = new D
     },
     web: { page_views: pv.n, download_clicks: clicks.n, referrers: refs, campaigns: camps, daily: pvDaily, clicks_by_os: clicksByOs },
     downloads: { total: ghTotal, files: gh },
-    installs: { first_launches: launches.n, first_ai_success: firstAi.n, active_7d: wau.n, active_30d: mau.n, by_os: byOs, versions },
+    feedback: { total: fb.total, avg_rating: fb.avg_rating === null ? null : Math.round(fb.avg_rating * 10) / 10, bugs: fb.bugs || 0,
+      contactable: fb.contactable || 0, anonymous: fb.total - (fb.contactable || 0), by_feature: fbByFeature, requests: fbNext, daily: fbWeekly },
+    downloads_daily: ghDaily,
+    installs: { active_1d: dau.n, new_7d: newInstalls.n, returning_7d: returning.n, first_launches: launches.n, first_ai_success: firstAi.n, active_7d: wau.n, active_30d: mau.n, by_os: byOs, versions },
     funnel: [
       { step: "Page views", n: pv.n, note: "website, not people" },
       { step: "Download clicks", n: clicks.n, note: "website" },
@@ -247,6 +297,17 @@ export default {
         if (!c) return json({ error: "origin not allowed" }, 403);
         await countWeb(env, validateWeb(await readJson(request)));
         return new Response(null, { status: 204, headers: c });
+      }
+      if (request.method === "OPTIONS" && url.pathname === "/v1/feedback") {
+        const c = cors(request, env);
+        return new Response(null, { status: c ? 204 : 403, headers: { ...(c || {}), "access-control-allow-methods": "POST", "access-control-allow-headers": "content-type", "access-control-max-age": "86400" } });
+      }
+      if (request.method === "POST" && url.pathname === "/v1/feedback") {
+        const c = cors(request, env);
+        if (!c) return json({ error: "origin not allowed" }, 403);
+        const client = request.headers.get("cf-connecting-ip") || "unknown";
+        await saveFeedback(env, validateFeedback(await readJson(request)), client);
+        return json({ received: true }, 200, c);
       }
       if (request.method === "GET" && url.pathname === "/dashboard") {
         return new Response(DASHBOARD_HTML, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store",

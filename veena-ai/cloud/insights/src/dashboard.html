@@ -105,6 +105,16 @@ footer { color: var(--muted); font-size: 12px; margin-top: 26px; line-height: 1.
     <div class="card span8"><h2>Retention by first-launch week</h2><div class="hint">Share of each week's new opted-in installs active again 1–4 weeks later</div><div id="retention"></div></div>
     <div class="card span4"><h2>Errors</h2><div class="hint">Last 30 days, by code (no messages are collected)</div><div id="errors"></div></div>
 
+    <div class="card span12" id="fb-card"><h2>Feedback</h2><div class="hint">Submitted through the feedback form; written by people, nothing collected automatically</div>
+      <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px">
+        <div><div class="sub">Submissions</div><div class="v" style="font-size:26px;font-weight:650" id="f-total">0</div></div>
+        <div><div class="sub">Average rating</div><div class="v" style="font-size:26px;font-weight:650" id="f-avg">–</div></div>
+        <div><div class="sub">Bug reports</div><div class="v" style="font-size:26px;font-weight:650" id="f-bugs">0</div></div>
+        <div><div class="sub">Contactable / anonymous</div><div class="v" style="font-size:26px;font-weight:650" id="f-contact">0 / 0</div></div>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr 1fr;gap:20px"><div id="f-features"></div><div id="f-requests"></div></div>
+    </div>
+    <div class="card span6"><h2>GitHub downloads over time</h2><div class="hint">Cumulative installer downloads from GitHub's own counters (daily snapshots)</div><div id="dl-trend"></div></div>
     <div class="card span6"><h2>Website traffic</h2><div class="hint">Daily page views and download clicks</div><div id="web"></div></div>
     <div class="card span6"><h2>Referrers and campaigns</h2><div class="hint">Referring sites (host only) and utm_campaign labels</div><div id="refs"></div></div>
   </div>
@@ -173,6 +183,15 @@ function render(d) {
   $("h-delta").classList.toggle("down", diff < 0);
   $("h-asof").textContent = "Last complete week vs the week before · as of " + new Date(d.generated_at).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
   $("h-chart").innerHTML = area(wk, "installs");
+  $("h-asof").textContent += ` · today ${fmt(d.installs.active_1d)} · new this week ${fmt(d.installs.new_7d)} · returning ${fmt(d.installs.returning_7d)}`;
+  const f = d.feedback;
+  $("f-total").textContent = fmt(f.total); $("f-avg").textContent = f.avg_rating === null ? "–" : f.avg_rating + " / 5";
+  $("f-bugs").textContent = fmt(f.bugs); $("f-contact").textContent = `${fmt(f.contactable)} / ${fmt(f.anonymous)}`;
+  $("f-features").innerHTML = f.by_feature.length ? `<table><tr><th>Feature</th><th class="r">Responses</th><th class="r">Avg rating</th></tr>` +
+    f.by_feature.map((r) => `<tr><td>${esc(r.feature)}</td><td class="r">${fmt(r.n)}</td><td class="r">${r.avg_rating === null ? "–" : (Math.round(r.avg_rating * 10) / 10)}</td></tr>`).join("") + `</table>` : `<p class="sub">No feedback yet.</p>`;
+  $("f-requests").innerHTML = `<div class="sub" style="margin-bottom:6px">What should we build next (latest)</div>` +
+    (f.requests.length ? f.requests.map((r) => `<p style="margin:0 0 8px;font-size:13.5px">“${esc(r.next)}” <span class="sub">${esc(r.day)}</span></p>`).join("") : `<p class="sub">No requests yet.</p>`);
+  $("dl-trend").innerHTML = d.downloads_daily.length > 1 ? line(d.downloads_daily.map((r) => ({ day: r.day, n: r.n })), ["n"], ["#d7c0a1"]) : `<p class="sub">No download history yet: the daily snapshot starts once the first release is published.</p>`;
   $("k-pv").textContent = fmt(d.web.page_views); $("k-dc").textContent = fmt(d.web.download_clicks); $("k-gh").textContent = fmt(d.downloads.total);
   $("k-fl").textContent = fmt(d.installs.first_launches); $("k-wau").textContent = fmt(d.installs.active_7d); $("k-mau").textContent = fmt(d.installs.active_30d);
   const max = Math.max(1, ...d.funnel.map((f) => f.n));
