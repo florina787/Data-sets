@@ -6,3 +6,6 @@
 *.db-*
 .env
 *.tsbuildinfo
+.hf-staging/
+test-results/
+playwright-report/

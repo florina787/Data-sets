@@ -56,7 +56,12 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           ))}
         </div>
       ))}
-      {me?.is_admin && <NavLink to="/app/admin" className="mx-3 text-[12.5px] text-violet">Admin revenue dashboard</NavLink>}
+      {me?.is_admin && (
+        <div className="mx-3 flex flex-col gap-1 text-[12.5px]">
+          <NavLink to="/app/admin" className="text-violet">Admin revenue dashboard</NavLink>
+          <NavLink to="/app/ops" className="text-violet">Operations dashboard</NavLink>
+        </div>
+      )}
       <button onClick={async () => { await signOut(); nav("/login"); }} className="mx-3 mt-auto flex items-center gap-2 text-[12.5px] text-slate-500">
         <LogOut className="h-3.5 w-3.5" /> Sign out {me?.email && <span className="truncate">({me.email})</span>}
       </button>

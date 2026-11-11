@@ -32,12 +32,17 @@ class Settings(BaseSettings):
     # "ollama" and "llamacpp" both expose an OpenAI-compatible endpoint.
     # "scripted" is a deterministic stand-in used by automated tests.
     # "disabled" runs every feature on its deterministic path only.
-    llm_provider: Literal["ollama", "llamacpp", "scripted", "disabled"] = "ollama"
+    # "hf": Hugging Face Inference Providers router (OpenAI-compatible, billed to the HF account; needs HF_TOKEN).
+    llm_provider: Literal["ollama", "llamacpp", "hf", "scripted", "disabled"] = "ollama"
     llm_base_url: str = "http://127.0.0.1:11434"
     llm_model: str = "qwen3:1.7b"
     llm_timeout_seconds: float = 120.0
     llm_max_concurrency: int = 1
     llm_max_tokens: int = 700
+    hf_token: str = ""  # server-side only; fine-grained token with "Make calls to Inference Providers"
+    hf_router_url: str = "https://router.huggingface.co"
+    hf_hub_url: str = "https://huggingface.co"
+    hf_bill_to: str = ""  # optional organisation to bill (X-HF-Bill-To)
 
     # --- Job providers --------------------------------------------------
     jsearch_api_key: str = ""
@@ -57,9 +62,11 @@ class Settings(BaseSettings):
     stripe_price_pro: str = ""
     stripe_price_premium: str = ""
     stripe_allow_live: bool = False
+    stripe_api_base: str = ""  # only for tests against stripe-mock (CI); empty = Stripe's real API
 
     # --- Limits ----------------------------------------------------------
     rate_limit_per_minute: int = 60
+    register_limit_per_hour: int = 5  # per client IP, local auth mode (Supabase applies its own limits)
     max_upload_bytes: int = 5 * 1024 * 1024
     reservation_stale_minutes: int = 15
 

@@ -65,11 +65,13 @@ async def bench(model: str) -> dict:
     get_settings.cache_clear()
     qwen.reset_llm()
     llm = qwen.get_llm()
-    async with httpx.AsyncClient(timeout=300) as c:
-        await c.post(f"{BASE}/api/generate", json={"model": model, "keep_alive": 0})  # unload
-        t0 = time.perf_counter()
-        await c.post(f"{BASE}/api/generate", json={"model": model, "prompt": "", "keep_alive": "10m"})
-        load_s = round(time.perf_counter() - t0, 2)
+    load_s = None
+    if os.environ.get("LLM_PROVIDER", "ollama") == "ollama":
+        async with httpx.AsyncClient(timeout=300) as c:
+            await c.post(f"{BASE}/api/generate", json={"model": model, "keep_alive": 0})  # unload
+            t0 = time.perf_counter()
+            await c.post(f"{BASE}/api/generate", json={"model": model, "prompt": "", "keep_alive": "10m"})
+            load_s = round(time.perf_counter() - t0, 2)
     psutil.cpu_percent(None)
     speed = []
     for prompt in ["Give three tips for a resume summary.", "Explain RAG in two sentences."]:
@@ -108,7 +110,16 @@ async def bench(model: str) -> dict:
         r = await llm.complete([{"role": "system", "content": "You are an interviewer. Give 2 sentences of feedback naming what is missing."},
                                 {"role": "user", "content": f"Question: {q}\nAnswer: {a}"}], purpose="bench", max_tokens=120)
         iv_ok += any(m in r.text.lower() for m in must)
-    return {"model": model, "load_seconds": load_s, "server_rss_gb": server_rss(), "cpu_percent_during_generation": cpu,
+    conc = {}
+    for n in (1, 2, 4):
+        t0 = time.perf_counter()
+        rs = await asyncio.gather(*[llm.complete([{"role": "system", "content": "Be concise."},
+                                                   {"role": "user", "content": f"Give 3 interview tips (variant {i})."}],
+                                                  purpose="bench", max_tokens=120) for i in range(n)])
+        wall = time.perf_counter() - t0
+        conc[str(n)] = {"wall_s": round(wall, 1), "avg_ttft_ms": round(sum(r.ttft_ms or 0 for r in rs) / n),
+                        "aggregate_tok_s": round(sum(r.completion_tokens for r in rs) / wall, 1)}
+    return {"model": model, "provider": os.environ.get("LLM_PROVIDER"), "concurrency": conc, "load_seconds": load_s, "server_rss_gb": server_rss(), "cpu_percent_during_generation": cpu,
             "ttft_ms": round(sum(s.ttft_ms or 0 for s in speed) / len(speed)),
             "tokens_per_second": round(sum(s.tokens_per_second or 0 for s in speed) / len(speed), 1),
             "structured_output_accuracy": f"{ok}/{len(STRUCTURED)}", "tool_selection_accuracy": f"{tool_ok}/{len(TOOL_CASES)}",

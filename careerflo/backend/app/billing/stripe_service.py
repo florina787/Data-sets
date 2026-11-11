@@ -28,6 +28,8 @@ def _client() -> stripe.StripeClient:
         raise HTTPException(503, "Payments are not configured yet (STRIPE_SECRET_KEY).")
     if s.stripe_secret_key.startswith("sk_live") and not s.stripe_allow_live:
         raise HTTPException(503, "Live Stripe keys are blocked until STRIPE_ALLOW_LIVE=true is explicitly set.")
+    if s.stripe_api_base:
+        return stripe.StripeClient(s.stripe_secret_key, base_addresses={"api": s.stripe_api_base})
     return stripe.StripeClient(s.stripe_secret_key)
 
 

@@ -4,8 +4,9 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 
 from fastapi import APIRouter
-from sqlalchemy import select
+from sqlalchemy import func, select
 
+from ..config import get_settings
 from ..features import FEATURES, PLANS
 from ..models import Invoice, Subscription, TrialUsage, UsageEvent, User
 from ..security.auth import AdminUser, DB
@@ -46,4 +47,70 @@ def metrics(admin: AdminUser, db: DB) -> dict:
         "livemode_records": any(s.livemode for s in subs),
         "note": "All figures come from Stripe-synchronised records and server-side usage events; demo accounts are excluded. "
                 "Usage cost is an estimate from per-feature unit costs in app/features.py.",
+    }
+
+
+@router.get("/ops")
+async def ops(admin: AdminUser, db: DB) -> dict:
+    """Operational dashboard. Every block states whether it is MEASURED, ESTIMATED or contains DEMO records."""
+    import os
+    from datetime import timedelta
+
+    import psutil
+
+    from ..llm.qwen import get_llm
+    from ..models import AgentRun, Conversation, InferenceMetric, McpToolCall, utcnow
+    from ..opsmetrics import metrics as reqm
+
+    since = utcnow() - timedelta(days=30)
+    demo_ids = {u.id for u in db.scalars(select(User).where(User.is_demo.is_(True)))}
+    inf = [m for m in db.scalars(select(InferenceMetric).where(InferenceMetric.created_at >= since)) if m.user_id not in demo_ids]
+    ok_inf = [m for m in inf if m.ok]
+    runs = [r for r in db.scalars(select(AgentRun).where(AgentRun.created_at >= since)) if not r.is_synthetic and r.user_id not in demo_ids]
+    calls = [c for c in db.scalars(select(McpToolCall).where(McpToolCall.created_at >= since)) if c.user_id not in demo_ids]
+    consumed = [e for e in db.scalars(select(UsageEvent).where(UsageEvent.outcome == "consumed", UsageEvent.created_at >= since))
+                if e.user_id not in demo_ids]
+    open_convs = db.scalar(select(func.count()).select_from(Conversation).where(Conversation.status == "open"))
+
+    def avg(xs):
+        xs = [x for x in xs if x is not None]
+        return round(sum(xs) / len(xs), 1) if xs else None
+
+    llm = get_llm()
+    vm = psutil.virtual_memory()
+    req = reqm.snapshot()
+    active_30d = len({e.user_id for e in consumed})
+    variable_cost_cents = sum(FEATURES[e.feature_id].est_cost_cents for e in consumed if e.feature_id in FEATURES)
+    fixed_monthly_usd = float(os.environ.get("INFRA_MONTHLY_COST_USD", "0") or 0)
+    revenue = metrics(admin, db)
+    return {
+        "measured": {
+            "note": f"Request counters are in-process and cover the last {req['since_seconds']} s (reset on restart). Database figures cover 30 days and exclude demo accounts.",
+            "api": req,
+            "open_conversations": open_convs,
+            "inference": {"requests": len(inf), "errors": len(inf) - len(ok_inf), "avg_ttft_ms": avg([m.ttft_ms for m in ok_inf]),
+                          "avg_tokens_per_second": avg([m.tokens_per_second for m in ok_inf]), "avg_total_ms": avg([m.total_ms for m in ok_inf]),
+                          "queue_depth_now": llm.queue_depth, "max_concurrency": get_settings().llm_max_concurrency,
+                          "provider": llm.provider, "model": llm.model},
+            "agents": {"runs": len(runs), "completed": sum(r.status == "completed" for r in runs),
+                       "failed": sum(r.status == "failed" for r in runs),
+                       "success_rate": round(sum(r.status == "completed" for r in runs) / len(runs), 3) if runs else None},
+            "mcp": {"calls": len(calls), "failures": sum(c.status in ("error", "timeout") for c in calls),
+                    "denied": sum(c.status == "denied" for c in calls)},
+            "feature_usage_30d": dict(Counter(e.feature_id for e in consumed)),
+            "trial_vs_plan_30d": dict(Counter(e.source for e in consumed)),
+            "resources": {"cpu_percent": psutil.cpu_percent(interval=0.1), "memory_percent": vm.percent,
+                          "memory_used_gb": round(vm.used / 1e9, 2), "memory_total_gb": round(vm.total / 1e9, 2),
+                          "disk_percent": psutil.disk_usage("/").percent},
+        },
+        "estimated": {
+            "note": "Variable cost uses per-feature unit-cost assumptions in app/features.py (CAD cents); fixed cost comes from INFRA_MONTHLY_COST_USD. These are estimates, not invoices.",
+            "active_users_30d": active_30d,
+            "variable_cost_cad_30d": round(variable_cost_cents / 100, 2),
+            "fixed_infra_usd_month": fixed_monthly_usd,
+            "cost_per_active_user_usd": round(fixed_monthly_usd / active_30d, 2) if active_30d and fixed_monthly_usd else None,
+        },
+        "revenue": {"note": "From Stripe-synchronised records only. Null when there is no real revenue yet.",
+                    "mrr_cents": revenue["mrr_cents"] if revenue["mrr_cents"] else None,
+                    "estimated_gross_margin": revenue["estimated_gross_margin"], "livemode_records": revenue["livemode_records"]},
     }

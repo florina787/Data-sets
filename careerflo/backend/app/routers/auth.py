@@ -31,7 +31,7 @@ def register(body: Credentials, request: Request, db: DB) -> dict:
     s = get_settings()
     if s.auth_mode != "local":
         raise HTTPException(400, "Registration is handled by Supabase Auth in this deployment.")
-    limiter.check(f"register:{client_ip(request)}", 5, 3600)  # light abuse control, no fingerprinting
+    limiter.check(f"register:{client_ip(request)}", s.register_limit_per_hour, 3600)  # light abuse control, no fingerprinting
     if not PASSWORD_RE.match(body.password):
         raise HTTPException(422, "Password must be 10–128 characters and include a letter and a number.")
     user = provision_user(db, uuid.uuid4(), body.email, password_hash=hash_password(body.password),

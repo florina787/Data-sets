@@ -6,6 +6,7 @@ from collections import Counter
 
 import psutil
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 
@@ -24,7 +25,37 @@ router = APIRouter(prefix="/api", tags=["mission control & governance"])
 
 @router.get("/health")
 def health() -> dict:
+    """Liveness: the process is up. Cheap and dependency-free (used by the container HEALTHCHECK)."""
     return {"status": "ok"}
+
+
+@router.get("/health/ready")
+async def ready() -> JSONResponse:
+    """Readiness: database must answer; inference and payment providers are reported, and degrade gracefully."""
+    from sqlalchemy import text
+
+    from ..config import get_settings
+    from ..db import SessionLocal
+
+    s = get_settings()
+    checks: dict = {}
+    try:
+        with SessionLocal() as db:
+            db.execute(text("SELECT 1"))
+        checks["database"] = {"ok": True}
+    except Exception as exc:  # noqa: BLE001
+        checks["database"] = {"ok": False, "error": type(exc).__name__}
+    llm = await get_llm().health()
+    checks["inference"] = {"ok": bool(llm.get("ok")), "provider": llm.get("provider"), "model": llm.get("model"),
+                           "fallback": "deterministic features keep working; Qwen narrative/polish is skipped" if not llm.get("ok") else None}
+    checks["auth"] = {"mode": s.auth_mode, "configured": s.auth_mode == "local" or bool(s.supabase_url)}
+    checks["payments"] = {"configured": bool(s.stripe_secret_key and s.stripe_webhook_secret),
+                          "mode": "live" if s.stripe_secret_key.startswith("sk_live") else "test" if s.stripe_secret_key else "off"}
+    checks["job_providers"] = {"jsearch": bool(s.jsearch_api_key), "adzuna": bool(s.adzuna_app_id and s.adzuna_app_key),
+                               "synthetic_demo": s.enable_synthetic_jobs}
+    db_ok = checks["database"]["ok"]
+    status = "ok" if db_ok and checks["inference"]["ok"] else ("degraded" if db_ok else "down")
+    return JSONResponse({"status": status, "checks": checks}, status_code=200 if db_ok else 503)
 
 
 @router.get("/system/llm")

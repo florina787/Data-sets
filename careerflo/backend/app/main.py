@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import logging
+import os
+import time
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,6 +17,7 @@ from .config import get_settings
 from .db import Base, SessionLocal, get_engine
 from .llm.qwen import assert_qwen
 from .mcp_gateway import ToolDenied, ToolFailed
+from .opsmetrics import metrics, route_key
 from .routers import account, admin, auth, billing, careers, chat, crm, jobs, ops, resumes
 from .seed import seed_reference
 
@@ -35,7 +39,7 @@ def init_db() -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     s = get_settings()
-    if s.llm_provider in ("ollama", "llamacpp"):
+    if s.llm_provider in ("ollama", "llamacpp", "hf"):
         assert_qwen(s.llm_model)
     if s.environment == "production" and s.auth_mode == "local" and "dev-only" in s.local_jwt_secret:
         raise RuntimeError("Set LOCAL_JWT_SECRET (or use AUTH_MODE=supabase) in production")
@@ -60,7 +64,16 @@ def create_app() -> FastAPI:
                 limiter.check(f"ip:{client_ip(request)}", s.rate_limit_per_minute * 5)
             except Exception:
                 return JSONResponse({"detail": "Too many requests"}, status_code=429, headers={"Retry-After": "30"})
-        resp = await call_next(request)
+        t0 = time.perf_counter()
+        try:
+            resp = await call_next(request)
+        except Exception:
+            if request.url.path.startswith("/api/"):
+                metrics.record(route_key(request.url.path), 500, (time.perf_counter() - t0) * 1000, None)
+            raise
+        if request.url.path.startswith("/api/"):
+            uid = getattr(request.state, "user_id", None)
+            metrics.record(route_key(request.url.path), resp.status_code, (time.perf_counter() - t0) * 1000, str(uid) if uid else None)
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
         resp.headers.setdefault("X-Frame-Options", "DENY")
         resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
@@ -89,7 +102,33 @@ def create_app() -> FastAPI:
     for r in (auth.router, account.router, jobs.router, resumes.router, careers.router, crm.router, chat.router, ops.router,
               billing.router, billing.webhook_router, admin.router):
         app.include_router(r)
+    _mount_frontend(app)
     return app
+
+
+def _mount_frontend(app: FastAPI) -> None:
+    """Serve the built React app from the same origin (single-container deployments such as a HF Docker Space).
+
+    Set FRONTEND_DIST to the Vite `dist` folder. /api/* is never shadowed; unknown non-API paths fall back to
+    index.html so client-side routes (/app/jobs, /pricing, ...) work on reload.
+    """
+    dist = os.environ.get("FRONTEND_DIST")
+    if not dist or not (Path(dist) / "index.html").is_file():
+        return
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    root = Path(dist).resolve()
+    app.mount("/assets", StaticFiles(directory=root / "assets"), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def spa(full_path: str):
+        if full_path.startswith("api/") or full_path == "api":
+            return JSONResponse({"detail": "Not Found"}, status_code=404)
+        candidate = (root / full_path).resolve()
+        if full_path and candidate.is_file() and root in candidate.parents:
+            return FileResponse(candidate)
+        return FileResponse(root / "index.html", headers={"Cache-Control": "no-cache"})
 
 
 app = create_app()

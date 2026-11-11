@@ -98,12 +98,18 @@ class QwenClient:
         s = get_settings()
         self.provider = s.llm_provider
         self.model = s.llm_model
-        self.base_url = s.llm_base_url.rstrip("/")
+        self.base_url = (s.hf_router_url if s.llm_provider == "hf" else s.llm_base_url).rstrip("/")
+        self.headers: dict[str, str] = {}
+        if s.llm_provider == "hf":
+            if s.hf_token:
+                self.headers["Authorization"] = f"Bearer {s.hf_token}"
+            if s.hf_bill_to:
+                self.headers["X-HF-Bill-To"] = s.hf_bill_to
         self.timeout = s.llm_timeout_seconds
         self.max_tokens = s.llm_max_tokens
         self._sem = asyncio.Semaphore(max(1, s.llm_max_concurrency))
         self.queue_depth = 0
-        if self.provider in ("ollama", "llamacpp"):
+        if self.provider in ("ollama", "llamacpp", "hf"):
             assert_qwen(self.model)
 
     @property
@@ -155,12 +161,24 @@ class QwenClient:
         if self.provider in ("scripted", "disabled"):
             return {"provider": self.provider, "model": self.model, "ok": self.provider == "scripted"}
         try:
-            async with httpx.AsyncClient(timeout=5) as client:
+            async with httpx.AsyncClient(timeout=5, headers=self.headers) as client:
                 r = await client.get(f"{self.base_url}/v1/models")
                 r.raise_for_status()
                 models = [m.get("id") for m in r.json().get("data", [])]
-            return {"provider": self.provider, "model": self.model, "ok": True, "available_models": models,
-                    "model_loaded": any(self.model.split(":")[0] in (m or "") for m in models)}
+            loaded = (self.model.split(":")[0] in models) if self.provider == "hf" else \
+                any(self.model.split(":")[0] in (m or "") for m in models)
+            out = {"provider": self.provider, "model": self.model, "ok": loaded or self.provider != "hf",
+                   "available_models": models if self.provider != "hf" else None, "model_loaded": loaded}
+            if self.provider == "hf":
+                if not self.headers.get("Authorization"):
+                    out |= {"ok": False, "error": "HF_TOKEN is not set"}
+                else:
+                    # The model list is public, so also prove the token is valid.
+                    async with httpx.AsyncClient(timeout=5, headers=self.headers) as client:
+                        who = await client.get(f"{get_settings().hf_hub_url.rstrip('/')}/api/whoami-v2")
+                    if who.status_code != 200:
+                        out |= {"ok": False, "error": f"HF token rejected ({who.status_code})"}
+            return out
         except Exception as exc:  # noqa: BLE001
             return {"provider": self.provider, "model": self.model, "ok": False, "error": str(exc)[:200]}
 
@@ -213,8 +231,10 @@ class QwenClient:
         # in a separate "reasoning" field, leaving "content" empty when max_tokens is reached.
         if self.provider == "ollama":
             body["reasoning_effort"] = "none"
-        else:
+        elif self.provider == "llamacpp":
             body["chat_template_kwargs"] = {"enable_thinking": False}
+        # "hf": no vendor-specific parameters — routed providers differ in what they accept; reasoning text that a
+        # provider returns in a separate field is ignored because only `delta.content` is read.
         if json_mode:
             body["response_format"] = {"type": "json_object"}
         return body
@@ -223,7 +243,9 @@ class QwenClient:
                                  ) -> AsyncIterator[str]:
         body = self.build_body(messages, max_tokens, temperature, json_mode)
         timeout = httpx.Timeout(self.timeout, connect=5.0)
-        async with httpx.AsyncClient(timeout=timeout) as client:
+        if self.provider == "hf" and "Authorization" not in self.headers:
+            raise LLMUnavailable("HF_TOKEN is not set for the Hugging Face inference provider")
+        async with httpx.AsyncClient(timeout=timeout, headers=self.headers) as client:
             async with client.stream("POST", f"{self.base_url}/v1/chat/completions", json=body) as resp:
                 if resp.status_code >= 400:
                     detail = (await resp.aread()).decode(errors="replace")[:300]

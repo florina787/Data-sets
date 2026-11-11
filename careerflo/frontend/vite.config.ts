@@ -8,5 +8,5 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
   server: { port: 5173, proxy: { "/api": "http://127.0.0.1:8000" } },
-  test: { environment: "jsdom", setupFiles: ["./src/test-setup.ts"], globals: true },
+  test: { environment: "jsdom", setupFiles: ["./src/test-setup.ts"], globals: true, include: ["src/**/*.test.{ts,tsx}"] },
 });
