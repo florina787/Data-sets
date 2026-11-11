@@ -19,7 +19,8 @@ Everything runs on open-weight **Qwen** models.
 <img alt="React" src="https://img.shields.io/badge/React-TypeScript-61DAFB?logo=react&logoColor=black">
 <img alt="Supabase" src="https://img.shields.io/badge/Supabase-Postgres_+_RLS-3ECF8E?logo=supabase&logoColor=white">
 <img alt="Stripe" src="https://img.shields.io/badge/Stripe-test_mode-635BFF?logo=stripe&logoColor=white">
-<img alt="Tests" src="https://img.shields.io/badge/tests-97_passing-10B981">
+<img alt="Tests" src="https://img.shields.io/badge/tests-66_backend_·_6_unit_·_10_browser-10B981">
+<img alt="Deployment" src="https://img.shields.io/badge/deployment-ready,_not_deployed-F59E0B">
 </p>
 
 <img src="docs/assets/screens/landing.png" alt="Career_flo AI landing page: an empty canvas with floating cards and AI agents shown as collaborative cursors" width="100%" />
@@ -84,7 +85,11 @@ Everything runs on open-weight **Qwen** models.
 </tr>
 <tr>
 <td><img src="docs/assets/screens/dark-jobs.png" alt="Dark mode jobs" /><br/><sub><b>Dark mode</b>, everywhere.</sub></td>
-<td><img src="docs/assets/screens/billing.png" alt="Billing" /><br/><sub><b>Billing</b>: plan status, per-feature free and monthly balances, payment history, Stripe portal.</sub></td>
+<td><img src="docs/assets/screens/billing.png" alt="Billing" /><br/><sub><b>Billing</b>: plan status, per-feature free and monthly balances, Stripe portal.</sub></td>
+</tr>
+<tr>
+<td><img src="docs/assets/screens/transactions.png" alt="Transactions card: total paid, change versus the previous period, range pills and cumulative chart" /><br/><sub><b>Transactions</b>: a dark card in the style of a market ticker, with Overview, Transactions and Alerts tabs, 1M to ALL ranges and exact amounts. It uses <b>only Stripe-synced invoices</b> (shown here with test-mode webhook data).</sub></td>
+<td align="center"><img src="docs/assets/screens/transactions-mobile.png" alt="Transactions card on a phone" width="62%" /><br/><sub>The same card on a phone.</sub></td>
 </tr>
 </table>
 
@@ -193,9 +198,11 @@ sequenceDiagram
 
 ## ✅ Tested
 
-<img src="docs/assets/charts/tests.svg" alt="46 backend tests on SQLite, 46 on PostgreSQL, 5 frontend tests" width="100%" />
+<img src="docs/assets/charts/tests.svg" alt="66 backend tests on SQLite and on PostgreSQL, 6 frontend unit tests, 10 browser journeys" width="100%" />
 
 The suite covers all six acceptance scenarios (job discovery, resume optimisation, mock interview, trial exhaustion, Stripe subscription, multi-user isolation). It also checks MCP discovery and allowlists, LangGraph workflows, SSE chat, Stripe webhook signature/replay/out-of-order handling, cross-user access, counter tampering, concurrent trials, malicious uploads, prompt injection and the coding sandbox.
+
+**Every push runs CI on GitHub:** backend on SQLite and PostgreSQL, Stripe request validation against Stripe's official `stripe-mock`, gitleaks secret scanning, the frontend build, **10 Playwright browser journeys** (register → resume → jobs → tailored resume → interview → Career Graph → trial limit → isolation → approval → streamed chat), and a build plus smoke test of the deployable container. The same journeys also passed locally against the packaged container with **real Qwen3-1.7B on 2 CPU cores**.
 
 <br/>
 
@@ -273,12 +280,50 @@ Available as a metered feature (`POST /api/career-graph`, two free uses) and as 
 
 <br/>
 
+## 🚢 Deployment (Hugging Face + low-cost hosting)
+
+```mermaid
+flowchart LR
+    U([User]) --> S["🤗 Static Space (free)<br/>React build"]
+    U --> V
+    S -->|HTTPS · VITE_API_URL| V["VPS (same container image)<br/>Caddy → FastAPI + llama.cpp Qwen3-1.7B"]
+    V -->|Postgres 5432 + Auth| DB[(Supabase)]
+    V -->|test mode| ST[Stripe]
+    V -. optional .-> HF["🤗 Inference Providers<br/>Qwen3.5-9B"]
+    style S fill:#FFF7E6,stroke:#F59E0B
+    style HF fill:#FFF7E6,stroke:#F59E0B
+```
+
+**Recommended: hybrid.** The frontend runs on a **free Hugging Face Static Space**. The API and Qwen run in one container on a small VPS, with data and accounts in Supabase. Why not put everything in a Hugging Face Space?
+- **Docker Spaces need a paid plan** (PRO, $9/month).
+- **Free Spaces sleep** after 48 hours without visitors.
+- **Spaces only allow outbound ports 80, 443 and 8080**, so a Space can't reach Supabase's Postgres on 5432/6543.
+
+The all-in-one Space package is still provided (`deploy/hf-space/`), for use if a private test Space confirms database access.
+
+| Usage | Setup | ≈ Monthly cost |
+|---|---|---|
+| Private test | Static Space + free VPS tier + Supabase Free | $0 |
+| Beta (≤ 100 users) | Static Space + 8 GB VPS + Supabase Free | ≈ $10–20 |
+| Paying customers | 8 GB VPS + **Supabase Pro** (backups) | ≈ $35–45 |
+| Growth (≈ 2,000 users) | + Qwen3.5-9B via Inference Providers | ≈ $45–80 |
+
+Measured on 2 vCPU: one instance serves **about 2 simultaneous model replies**. Ten simultaneous users stay under 0.9 s at p95 on everything else.
+
+**Deploy (each step needs owner approval):** `scripts/hf_deploy.py` stages the build, scans for secrets and **dry-runs by default**. `--apply` creates the Space as private, and `--target static-frontend` deploys the frontend only. `scripts/hf_rollback.py` restores an earlier version. Manual, approval-gated GitHub workflows wrap both.
+
+Guides: [Architecture & readiness matrix](docs/HF_DEPLOYMENT_ARCHITECTURE.md) · [HF free-tier research](docs/HF_FREE_TIER_RESEARCH.md) · [Cost & capacity](docs/HF_COST_AND_CAPACITY.md) · [Security checklist](docs/HF_SECURITY_CHECKLIST.md) · [Production readiness & risks](docs/HF_PRODUCTION_READINESS.md) · [Launch runbook](docs/HF_LAUNCH_RUNBOOK.md)
+
+<br/>
+
 ## 📍 Status
 
-Built and tested locally. **Not deployed yet.**
-- Stripe is wired for **test mode**: live keys are refused unless `STRIPE_ALLOW_LIVE=true`.
-- Live job search needs JSearch or Adzuna keys. Until they are set, the app uses clearly labelled synthetic jobs.
-- See [Limitations & costs](docs/LIMITATIONS_AND_COSTS.md) for what is not yet verified end-to-end.
+**Deployment-ready, not deployed.** Nothing runs publicly yet. Before a public launch, the following still have to be verified with your accounts:
+- a real Supabase project (email confirmation, RLS on the live project),
+- a real Stripe **test-mode** checkout,
+- live job-provider keys.
+
+Live billing stays off (`STRIPE_ALLOW_LIVE=false`) until you explicitly approve it. See [production readiness](docs/HF_PRODUCTION_READINESS.md) for the evidence and open risks.
 
 <br/>
 

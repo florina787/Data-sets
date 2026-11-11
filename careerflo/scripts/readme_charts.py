@@ -61,8 +61,8 @@ for mi, r in enumerate(bench):
 
 # Test suite overview (counts from the repository's tests)
 hbars("tests.svg", "Automated tests — all passing", "tests",
-      [("Backend · SQLite", 46, True), ("Backend · PostgreSQL", 46, True), ("Frontend · Vitest", 5, False)], E, maxv=55,
-      note="Scenarios A–F, career graph, MCP, LangGraph, SSE chat, Stripe webhooks, RLS isolation, concurrency, uploads, injection, sandbox")
+      [("Backend · SQLite", 66, True), ("Backend · PostgreSQL", 66, True), ("Frontend · Vitest", 6, False), ("Browser E2E · Playwright", 10, False)], E, maxv=80,
+      note="CI on every push · stripe-mock · gitleaks · scenarios A–F, career graph, MCP, LangGraph, SSE chat, Stripe webhooks, RLS isolation, concurrency, uploads, injection, sandbox")
 
 # Trial model: 16 features x 2 dots
 feats = ["Job Discovery", "Indeed / LinkedIn", "Job Matching", "Resume Optimization", "ATS Intelligence", "Cover Letters",
