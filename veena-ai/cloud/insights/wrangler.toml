@@ -1,0 +1,31 @@
+# VEENA Insights — Cloudflare Worker + D1 on the Workers FREE plan (no payment method on file).
+# Deployed by Cloudflare Workers Builds from this folder. Contains NO secrets: DASHBOARD_TOKEN and
+# RATE_SALT are set as encrypted secrets in the Cloudflare dashboard (Settings > Variables and secrets).
+name = "veena-insights"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+workers_dev = true
+
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+fallthrough = true
+
+[vars]
+ALLOWED_ORIGINS = "https://florina787.github.io"
+GITHUB_REPO = "florina787/Data-sets"
+RETENTION_DAYS = "395"       # desktop events kept ~13 months, then deleted by the daily job
+WEB_RETENTION_DAYS = "395"   # website counters
+
+[[d1_databases]]
+binding = "DB"
+database_name = "veena-insights"
+database_id = "038b31cc-dc3c-4ac2-84f9-8b5dc65949ba"
+migrations_dir = "migrations"
+
+[triggers]
+crons = ["17 3 * * *"]       # daily 03:17 UTC: retention purge + GitHub download snapshot (1 of 5 free cron triggers)
+
+[observability]
+enabled = true
+head_sampling_rate = 0.1     # Workers Logs (free: 200,000 events/day, 3-day retention); the Worker logs no request bodies
