@@ -4,6 +4,7 @@
 //   POST /v1/events    desktop app, opted-in installations only (strict allow-list schema)
 //   POST /v1/delete    desktop app, when the user withdraws consent: deletes that installation's rows
 //   POST /v1/web       website: aggregate page-view / download-click counters (no identifier at all)
+//   GET  /health       liveness + database schema check (no data, no secrets)
 //   GET  /dashboard    the private founder dashboard (HTML; data needs the token)
 //   GET  /api/summary  dashboard data            Authorization: Bearer <DASHBOARD_TOKEN>
 //   POST /api/delete   owner deletion by install id (support requests)   same auth
@@ -276,10 +277,22 @@ export async function summary(env, { days = 90, test = false } = {}, now = new D
   };
 }
 
+export const TABLES = ["deletions", "events", "feedback", "rate", "release_downloads", "web_daily"];
+export async function health(env) {
+  const rows = (await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all()).results.map((r) => r.name);
+  const missing = TABLES.filter((t) => !rows.includes(t));
+  return { ok: missing.length === 0, service: "veena-insights", schema: missing.length ? "missing: " + missing.join(",") : "ok",
+    dashboard_token: (env.DASHBOARD_TOKEN || "").length >= 32 ? "set" : "missing", rate_salt: env.RATE_SALT ? "set" : "missing" };
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     try {
+      if (request.method === "GET" && url.pathname === "/health") {
+        const h = await health(env);
+        return json(h, h.ok ? 200 : 503);
+      }
       if (request.method === "OPTIONS" && url.pathname === "/v1/web") {
         const c = cors(request, env);
         return new Response(null, { status: c ? 204 : 403, headers: { ...(c || {}), "access-control-allow-methods": "POST", "access-control-allow-headers": "content-type", "access-control-max-age": "86400" } });

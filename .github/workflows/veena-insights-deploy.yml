@@ -1,0 +1,189 @@
+name: VEENA Insights deploy
+
+# Deploys the VEENA Insights Worker (feedback + opt-in statistics + private dashboard) to the
+# EXISTING Cloudflare Worker "veena-insights" and D1 database "veena-insights". Manual only.
+# Replaces Cloudflare's Git integration, which kept cloning the wrong branch.
+#
+# Repository secrets (Settings > Secrets and variables > Actions), never printed:
+#   CLOUDFLARE_API_TOKEN       account token: Workers Scripts Edit + D1 Edit (nothing else)
+#   CLOUDFLARE_ACCOUNT_ID      your Cloudflare account ID
+#   INSIGHTS_DASHBOARD_TOKEN   40+ random characters: the founder dashboard password
+#   INSIGHTS_RATE_SALT         20+ random characters: salts the daily rate-limit hashes
+#
+# Free plan only: no paid Cloudflare products are created or enabled by this workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "deploy = migrate + deploy + verify; verify = live checks only; rollback = previous Worker version"
+        type: choice
+        options: [deploy, verify, rollback]
+        default: deploy
+      source_ref:
+        description: "Branch to deploy"
+        type: string
+        default: claude/amazing-babbage-qia83y
+      update_worker_secrets:
+        description: "Copy INSIGHTS_DASHBOARD_TOKEN / INSIGHTS_RATE_SALT into the Worker's encrypted secrets"
+        type: boolean
+        default: true
+      allow_create_worker:
+        description: "Only if no Worker named veena-insights exists yet: allow the first deploy to create it"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# One production deployment at a time; a second run waits instead of cancelling the first.
+concurrency:
+  group: veena-insights-production
+  cancel-in-progress: false
+
+env:
+  WORKER: veena-insights
+  DB_NAME: veena-insights
+  DB_ID: 038b31cc-dc3c-4ac2-84f9-8b5dc65949ba
+  WRANGLER: wrangler@4.160.1
+  WRANGLER_SEND_METRICS: "false"
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  insights:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash   # -eo pipefail: a failing wrangler command is never hidden by tee or jq
+        working-directory: veena-ai/cloud/insights
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Preflight — secrets present (values never shown)
+        env:
+          DT: ${{ secrets.INSIGHTS_DASHBOARD_TOKEN }}
+          RS: ${{ secrets.INSIGHTS_RATE_SALT }}
+        run: |
+          miss=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || miss="$miss CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || miss="$miss CLOUDFLARE_ACCOUNT_ID"
+          [ ${#DT} -ge 32 ] || miss="$miss INSIGHTS_DASHBOARD_TOKEN(min-32-chars)"
+          [ ${#RS} -ge 16 ] || miss="$miss INSIGHTS_RATE_SALT(min-16-chars)"
+          if [ -n "$miss" ]; then echo "::error::Missing repository secrets:$miss"; exit 1; fi
+          echo "### Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, INSIGHTS_DASHBOARD_TOKEN, INSIGHTS_RATE_SALT configured" >> "$GITHUB_STEP_SUMMARY"
+          echo "Source: \`${{ inputs.source_ref }}\` @ \`$(git rev-parse --short HEAD)\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Configuration is the approved one (Worker name, D1 id, free plan)
+        run: |
+          grep -qx 'name = "veena-insights"' wrangler.toml
+          grep -qx "database_id = \"$DB_ID\"" wrangler.toml
+          grep -qx 'binding = "DB"' wrangler.toml
+          ! grep -qiE '^\s*(usage_model|\[\[(queues|r2_buckets|kv_namespaces|durable_objects|ai)|\[ai\]|\[browser\])' wrangler.toml
+
+      - name: Unit tests (real Worker code on SQLite)
+        run: node --test test/pipeline.test.mjs
+
+      - name: Cloudflare token and resources reachable
+        id: target
+        run: |
+          api() { curl -sS -o /tmp/r.json -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/$1"; }
+          code=$(api "d1/database/$DB_ID")
+          if [ "$code" != 200 ]; then
+            echo "::error::D1 database $DB_ID not reachable (HTTP $code). Check the account ID and that the token has Account > D1 > Edit."
+            jq -c '.errors' /tmp/r.json || true; exit 1
+          fi
+          echo "D1 database: $(jq -r '.result.name' /tmp/r.json) ($DB_ID)"
+          code=$(api "workers/scripts")
+          if [ "$code" != 200 ]; then echo "::error::Workers not readable (HTTP $code). The token needs Account > Workers Scripts > Edit."; jq -c '.errors' /tmp/r.json || true; exit 1; fi
+          names=$(jq -r '[.result[].id] | join(", ")' /tmp/r.json)
+          echo "Workers in this account: ${names:-none}"
+          if jq -e --arg w "$WORKER" '[.result[].id] | index($w)' /tmp/r.json >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ inputs.action }}" = "deploy" ] && [ "${{ inputs.allow_create_worker }}" = "true" ]; then
+            echo "::warning::No Worker named $WORKER yet; this first deploy creates it (allowed by input)."
+          else
+            echo "::error::No Worker named '$WORKER' (found: ${names:-none}). Rename the Worker in Cloudflare (Settings > General > Name), or re-run with allow_create_worker."
+            exit 1
+          fi
+          sub=$(api "workers/subdomain"); [ "$sub" = 200 ] && echo "url=https://$WORKER.$(jq -r '.result.subdomain' /tmp/r.json).workers.dev" >> "$GITHUB_OUTPUT"
+
+      - name: Migrations are additive only (no DROP / DELETE / destructive ALTER)
+        if: inputs.action == 'deploy'
+        run: |
+          bad=$(grep -hviE '^\s*--' migrations/*.sql | grep -iE '\b(drop|delete|truncate|replace\s+into)\b|alter\s+table\s+\S+\s+(drop|rename)' || true)
+          if [ -n "$bad" ]; then echo "::error::Destructive SQL found; needs the owner's explicit approval:"; echo "$bad"; exit 1; fi
+
+      - name: Restore point (D1 Time Travel bookmark)
+        if: inputs.action == 'deploy'
+        run: |
+          npx --yes "$WRANGLER" d1 time-travel info "$DB_NAME" | tee /tmp/tt.txt
+          echo "### D1 restore point before this deploy" >> "$GITHUB_STEP_SUMMARY"
+          { echo '```'; grep -iE 'bookmark|timestamp' /tmp/tt.txt || cat /tmp/tt.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply D1 migrations (remote)
+        if: inputs.action == 'deploy'
+        run: |
+          npx --yes "$WRANGLER" d1 migrations list "$DB_NAME" --remote
+          npx --yes "$WRANGLER" d1 migrations apply "$DB_NAME" --remote
+
+      - name: Verify schema (tables, indexes, applied migrations)
+        if: inputs.action != 'rollback'
+        run: |
+          q() { npx --yes "$WRANGLER" d1 execute "$DB_NAME" --remote --json --command "$1" | jq -r '.[0].results[] | [.[]] | join(" ")'; }
+          got=$(q "SELECT type, name FROM sqlite_master WHERE type IN ('table','index') AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' AND name <> 'd1_migrations' ORDER BY type, name")
+          echo "$got"
+          for t in deletions events feedback rate release_downloads web_daily; do echo "$got" | grep -qx "table $t" || { echo "::error::table $t missing"; exit 1; }; done
+          for i in events_install events_day feedback_day; do echo "$got" | grep -qx "index $i" || { echo "::error::index $i missing"; exit 1; }; done
+          applied=$(q "SELECT name FROM d1_migrations ORDER BY id" || true)
+          echo "Applied migrations: $applied"
+          { echo "### D1 schema verified"; echo '```'; echo "$got"; echo "migrations: $applied"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Deploy the Worker
+        id: deploy
+        if: inputs.action == 'deploy'
+        run: |
+          npx --yes "$WRANGLER" deploy 2>&1 | tee /tmp/deploy.txt
+          url=$(grep -oE "https://$WORKER\.[a-z0-9-]+\.workers\.dev" /tmp/deploy.txt | head -1)
+          ver=$(grep -oiE 'Version ID: *[0-9a-f-]+' /tmp/deploy.txt | head -1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "### Deployed $WORKER: ${url:-see log} ($ver)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Worker secrets (encrypted at Cloudflare; values never shown)
+        if: inputs.action == 'deploy' && inputs.update_worker_secrets
+        env:
+          DT: ${{ secrets.INSIGHTS_DASHBOARD_TOKEN }}
+          RS: ${{ secrets.INSIGHTS_RATE_SALT }}
+        run: |
+          printf '%s' "$DT" | npx --yes "$WRANGLER" secret put DASHBOARD_TOKEN >/dev/null
+          printf '%s' "$RS" | npx --yes "$WRANGLER" secret put RATE_SALT >/dev/null
+          echo "Worker secrets now set (names only):"; npx --yes "$WRANGLER" secret list | grep -oE '"name": *"[A-Z_]+"' || true
+
+      - name: Roll back to the previous Worker version
+        if: inputs.action == 'rollback'
+        run: npx --yes "$WRANGLER" rollback --message "Rollback via GitHub Actions run $GITHUB_RUN_ID"
+
+      - name: Live verification (synthetic test records only)
+        if: inputs.action != 'rollback'
+        env:
+          DASHBOARD_TOKEN: ${{ secrets.INSIGHTS_DASHBOARD_TOKEN }}
+          URL: ${{ steps.deploy.outputs.url || steps.target.outputs.url }}
+        run: |
+          test -n "$URL" || { echo "::error::Worker URL unknown (is the workers.dev subdomain enabled?)"; exit 1; }
+          for i in $(seq 1 20); do [ "$(curl -s -o /dev/null -w '%{http_code}' "$URL/health")" = 200 ] && break; sleep 3; done
+          node test/live_check.mjs "$URL" | tee /tmp/live.txt
+          { echo "### Live checks against $URL"; echo '```'; cat /tmp/live.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove synthetic test records
+        if: always() && inputs.action != 'rollback' && steps.target.outcome == 'success'
+        run: |
+          npx --yes "$WRANGLER" d1 execute "$DB_NAME" --remote --command "DELETE FROM feedback WHERE is_test = 1; DELETE FROM events WHERE is_test = 1; DELETE FROM web_daily WHERE is_test = 1;"
+          left=$(npx --yes "$WRANGLER" d1 execute "$DB_NAME" --remote --json --command "SELECT (SELECT COUNT(*) FROM feedback WHERE is_test=1) + (SELECT COUNT(*) FROM events WHERE is_test=1) + (SELECT COUNT(*) FROM web_daily WHERE is_test=1) AS n" | jq -r '.[0].results[0].n')
+          echo "Synthetic rows left: $left"; test "$left" = 0
+          echo "### Synthetic test records removed (0 left)" >> "$GITHUB_STEP_SUMMARY"

@@ -212,3 +212,14 @@ test("feedback: dashboard statistics, test data separated, retention removes add
   await W.daily(env, NOW, async () => new Response("[]"));
   assert.equal(env.DB.db.prepare("SELECT COUNT(*) n FROM feedback WHERE email IS NOT NULL").get().n, 0);
 });
+
+test("health: reports schema and secret presence without revealing values", async () => {
+  const env = mkEnv();
+  const r = await W.default.fetch(new Request("https://x/health"), env);
+  const h = await r.json();
+  assert.equal(r.status, 200); assert.equal(h.schema, "ok"); assert.equal(h.ok, true);
+  assert.ok(!JSON.stringify(h).includes(env.DASHBOARD_TOKEN || "never-present"), "token value never returned");
+  env.DB.db.exec("DROP TABLE feedback");
+  const bad = await W.default.fetch(new Request("https://x/health"), env);
+  assert.equal(bad.status, 503); assert.match((await bad.json()).schema, /missing: feedback/);
+});

@@ -24,7 +24,7 @@ Your system will warn you once. Only continue for a file downloaded from this pa
 * **macOS:** open the `.dmg`, drag VEENA.AI to Applications, open it once, then go to **System Settings → Privacy & Security** and choose **Open Anyway**.
 * **Linux:** make the AppImage executable (`chmod +x`), then run it.
 
-Confirm a download is intact by comparing it with `SHA256SUMS.txt` below.
+Confirm a download is intact by comparing it with `SHA256SUMS` (also listed below). Installation steps: `INSTALLATION.md`; limitations: `KNOWN_LIMITATIONS.md`.
 
 ### What's in this release
 

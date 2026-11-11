@@ -143,6 +143,23 @@ for (const vp of VIEWPORTS) {
   }
 }
 
+// Worker unreachable: the form must say so honestly and offer the email address (no fake "sent").
+{
+  const page = await browser.newPage();
+  await page.route("**/config.js", (r) => r.fulfill({ contentType: "text/javascript", body: 'window.VEENA_CONFIG={insightsUrl:"https://insights.test",discussionsEnabled:false,plansLive:false};' }));
+  await page.route("https://insights.test/**", (route) => route.abort("connectionrefused"));
+  await page.goto(`${base}/feedback.html`);
+  await page.check("input[name=rating][value='5']");
+  await page.fill("#fb-worked", "Works offline");
+  await page.waitForTimeout(3100);
+  await page.click("#fb-submit");
+  await page.waitForTimeout(800);
+  const msg = (await page.isVisible("#fb-error")) ? await page.textContent("#fb-error") : "";
+  if (!/florinaregius@yahoo\.com/.test(msg) || await page.isVisible("text=Thank you.")) fail("feedback: unreachable server must show the email fallback, got: " + msg);
+  else console.log("feedback with server down: honest error + email fallback");
+  await page.close();
+}
+
 // Wording must match the downloadable app: while plansLive is false, no paid-plan claims are visible.
 {
   const page = await browser.newPage();

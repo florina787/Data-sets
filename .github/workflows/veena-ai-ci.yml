@@ -25,6 +25,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  # Production Insights Worker (feedback + opt-in statistics), verified live by the
+  # "VEENA Insights deploy" workflow. A repository variable VEENA_INSIGHTS_URL overrides it.
+  VEENA_INSIGHTS_PROD: ${{ vars.VEENA_INSIGHTS_URL || 'https://veena-insights.florinaregius.workers.dev' }}
   PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu
   HF_HUB_DISABLE_TELEMETRY: "1"
 
@@ -89,16 +92,19 @@ jobs:
             exe: release/win-unpacked/VEENA.AI.exe
             backend: packaging/backend-dist/veena-backend/veena-backend.exe
             artifact: release/VEENA.AI-Windows-Setup.exe
+            asar: release/win-unpacked/resources/app.asar
           - os: ubuntu-latest
             target: --linux
             exe: release/linux-unpacked/veena-ai
             backend: packaging/backend-dist/veena-backend/veena-backend
             artifact: release/VEENA.AI-Linux-x86_64.AppImage
+            asar: release/linux-unpacked/resources/app.asar
           - os: macos-15
             target: --mac
             exe: release/mac-arm64/VEENA.AI.app/Contents/MacOS/VEENA.AI
             backend: packaging/backend-dist/veena-backend/veena-backend
             artifact: release/VEENA.AI-macOS-AppleSilicon.dmg
+            asar: release/mac-arm64/VEENA.AI.app/Contents/Resources/app.asar
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -164,7 +170,7 @@ jobs:
           # Free beta (default): empty = billing OFF. Release candidate: the deployed Worker, or an
           # unreachable placeholder so the RC fails closed until the Worker exists.
           VEENA_BILLING_URL: ${{ inputs.release_channel == 'rc' && (vars.VEENA_BILLING_URL || 'https://veena-billing.invalid') || '' }}
-          VEENA_INSIGHTS_URL: ${{ vars.VEENA_INSIGHTS_URL }}
+          VEENA_INSIGHTS_URL: ${{ env.VEENA_INSIGHTS_PROD }}
         run: |
           node scripts/write-build-config.mjs
           # Each OS uses only its own certificate (electron-builder falls back to CSC_LINK on Windows).
@@ -182,6 +188,16 @@ jobs:
           npm ci
           npm run build
           npx electron-builder ${{ matrix.target }} --publish never
+      - name: Installer contents (production Insights endpoint baked in and live, no credentials)
+        working-directory: veena-ai/apps/desktop
+        run: |
+          node scripts/check-installer-contents.mjs "${{ matrix.asar }}" ../../packaging/backend-dist/veena-backend "$VEENA_INSIGHTS_PROD"
+          # Release builds (manual runs) must point at an endpoint that is actually up with a complete schema.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            curl -sS --retry 3 "$VEENA_INSIGHTS_PROD/health" | tee /tmp/health.json; echo
+            grep -q '"ok":true' /tmp/health.json || { echo "::error::Insights endpoint $VEENA_INSIGHTS_PROD is not healthy"; exit 1; }
+          fi
+          echo "### Insights endpoint in this installer: $VEENA_INSIGHTS_PROD" >> "$GITHUB_STEP_SUMMARY"
       - name: Smoke-test packaged app (Linux)
         if: runner.os == 'Linux'
         working-directory: veena-ai/apps/desktop
@@ -349,6 +365,73 @@ jobs:
             licenses-python.md
           retention-days: 30
 
+  # Downloadable release files from a manual beta run: one ZIP-able package plus one artifact per
+  # installer. Every file is checked (exists, non-empty, real installer format) before upload.
+  release-package:
+    needs: [package, security]
+    if: github.event_name == 'workflow_dispatch' && inputs.release_channel == 'beta'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: veena-ai-*
+          path: dist
+          merge-multiple: true
+      - name: Verify installers and assemble the package
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./veena-ai/apps/desktop/package.json').version")
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          mkdir pkg
+          win=VEENA.AI-Windows-Setup.exe mac=VEENA.AI-macOS-AppleSilicon.dmg lin=VEENA.AI-Linux-x86_64.AppImage
+          for f in $win $mac $lin; do test -s "dist/$f" || { echo "::error::$f missing or empty"; exit 1; }; cp "dist/$f" pkg/; done
+          # Real formats, not renamed archives: PE executable, ELF AppImage (type-2 magic), UDIF disk image ("koly" trailer).
+          [ "$(head -c 2 pkg/$win)" = "MZ" ] || { echo "::error::$win is not a Windows executable"; exit 1; }
+          [ "$(head -c 4 pkg/$lin | tail -c 3)" = "ELF" ] && [ "$(dd if=pkg/$lin bs=1 skip=8 count=3 2>/dev/null | od -An -tx1 | tr -d ' ')" = "414902" ] || { echo "::error::$lin is not a type-2 AppImage"; exit 1; }
+          [ "$(tail -c 512 pkg/$mac | head -c 4)" = "koly" ] || { echo "::error::$mac is not a macOS disk image"; exit 1; }
+          # Each installer must match the checksum its own build job recorded.
+          for f in $win $mac $lin; do [ "$(cut -d' ' -f1 dist/$f.sha256)" = "$(sha256sum pkg/$f | cut -d' ' -f1)" ] || { echo "::error::$f checksum changed after build"; exit 1; }; done
+          (cd pkg && sha256sum $win $mac $lin > SHA256SUMS && sha256sum -c SHA256SUMS)
+          cp veena-ai/packaging/RELEASE_NOTES.md veena-ai/packaging/INSTALLATION.md veena-ai/packaging/KNOWN_LIMITATIONS.md pkg/
+          { echo "### VEENA.AI $version release files (commit \`${GITHUB_SHA::7}\`)"; echo '| File | Bytes | Type |'; echo '|---|---|---|'
+            for f in pkg/*; do echo "| $(basename "$f") | $(stat -c %s "$f") | $(file -b "$f" | cut -c1-60) |"; done
+            echo; echo '```'; cat pkg/SHA256SUMS; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VEENA-AI-${{ env.VERSION }}-RELEASE-PACKAGE
+          path: pkg/
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VEENA-AI-${{ env.VERSION }}-Windows-Setup.exe
+          path: pkg/VEENA.AI-Windows-Setup.exe
+          retention-days: 30
+          compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VEENA-AI-${{ env.VERSION }}-macOS-AppleSilicon.dmg
+          path: pkg/VEENA.AI-macOS-AppleSilicon.dmg
+          retention-days: 30
+          compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VEENA-AI-${{ env.VERSION }}-Linux-x86_64.AppImage
+          path: pkg/VEENA.AI-Linux-x86_64.AppImage
+          retention-days: 30
+          compression-level: 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VEENA-AI-${{ env.VERSION }}-SHA256SUMS-and-docs
+          path: |
+            pkg/SHA256SUMS
+            pkg/RELEASE_NOTES.md
+            pkg/INSTALLATION.md
+            pkg/KNOWN_LIMITATIONS.md
+          retention-days: 30
+
   # Creates a DRAFT GitHub Release from a manual run only. A draft is not public:
   # the owner reviews it on GitHub and presses "Publish release" themselves.
   # Protect it further with Settings > Environments > release > Required reviewers.
@@ -382,17 +465,19 @@ jobs:
           cd dist
           files="VEENA.AI-Windows-Setup.exe VEENA.AI-macOS-AppleSilicon.dmg VEENA.AI-Linux-x86_64.AppImage"
           for f in $files; do test -s "$f"; done
-          sha256sum $files > SHA256SUMS.txt
+          sha256sum $files > SHA256SUMS
           cd ..
           notes_src=veena-ai/packaging/RELEASE_NOTES.md; case "$version" in *-*) notes_src=veena-ai/packaging/RELEASE_NOTES_MONETIZED_RC.md ;; esac
-          { cat "$notes_src"; echo; echo "Built from commit \`${GITHUB_SHA::7}\` by [this CI run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; echo; echo '```'; cat dist/SHA256SUMS.txt; echo '```'; } > notes.md
+          { cat "$notes_src"; echo; echo "Built from commit \`${GITHUB_SHA::7}\` by [this CI run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; echo; echo '```'; cat dist/SHA256SUMS; echo '```'; } > notes.md
+          cp veena-ai/packaging/INSTALLATION.md veena-ai/packaging/KNOWN_LIMITATIONS.md dist/
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" dist/VEENA.AI-* dist/SHA256SUMS.txt dist/*.cdx.json --clobber
+            gh release upload "$tag" dist/VEENA.AI-* dist/SHA256SUMS dist/INSTALLATION.md dist/KNOWN_LIMITATIONS.md dist/*.cdx.json --clobber
+            gh release delete-asset "$tag" SHA256SUMS.txt -y 2>/dev/null || true   # renamed to SHA256SUMS
             gh release edit "$tag" --notes-file notes.md --draft
           else
             pre=""; case "$version" in *-*) pre="--prerelease" ;; esac   # release candidates are pre-releases
             gh release create "$tag" --draft $pre --target "$GITHUB_SHA" --title "VEENA.AI $version" --notes-file notes.md \
-              dist/VEENA.AI-Windows-Setup.exe dist/VEENA.AI-macOS-AppleSilicon.dmg dist/VEENA.AI-Linux-x86_64.AppImage dist/SHA256SUMS.txt
+              dist/VEENA.AI-Windows-Setup.exe dist/VEENA.AI-macOS-AppleSilicon.dmg dist/VEENA.AI-Linux-x86_64.AppImage dist/SHA256SUMS dist/INSTALLATION.md dist/KNOWN_LIMITATIONS.md
           fi
           echo "### Draft release $tag created. Review it on GitHub, then publish manually." >> "$GITHUB_STEP_SUMMARY"
 
