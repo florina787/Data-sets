@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Area, AreaChart, Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AgentCursor } from "@/components/art/AgentCursor";
 import { PageHeader } from "@/components/career";
+import { TransactionsCard } from "@/components/Transactions";
 import { Button, Card, Empty, ErrorNote, Input, Label, Pill } from "@/components/ui";
 import { api } from "@/lib/api";
 import { useUsage } from "@/lib/hooks";
@@ -138,10 +139,14 @@ export function Billing() {
               <td>{f.trial_remaining} of {f.trial_limit} remaining</td><td>{f.plan_limit ? `${f.plan_remaining} of ${f.plan_limit}` : "—"}</td>
             </tr>))}</tbody></table>
       </Card>
-      <Card className="mt-5"><p className="text-[13px] font-semibold">Payment history</p>
-        {!inv.data?.invoices.length ? <p className="muted mt-2 text-sm">No payments yet.</p> : (
-          <ul className="mt-2 divide-y divide-black/5 text-[13px]">{inv.data.invoices.map((i: any) => <li key={i.id} className="flex items-center gap-3 py-2"><span>{i.paid_at ? new Date(i.paid_at).toLocaleDateString() : "—"}</span><span>{money(i.amount_cents / 100, i.currency)}</span><Pill tone={i.status === "paid" ? "emerald" : "coral"}>{i.status}</Pill>{i.url && <a className="ml-auto text-violet" href={i.url} target="_blank" rel="noreferrer">Receipt</a>}</li>)}</ul>)}
-      </Card>
+      <div className="mt-5">
+        <TransactionsCard
+          txns={(inv.data?.invoices ?? []).map((i: any) => ({ ...i, refunded_cents: i.refunded_cents }))}
+          sub={s?.subscription ?? null}
+          mode={s?.stripe_mode === "not_configured" ? undefined : s?.stripe_mode}
+          title={s ? `${s.plan.name} plan` : "Billing"}
+        />
+      </div>
       {s && <div className="muted mt-6 space-y-1 text-center text-[11.5px]">{Object.values(s.terms).map((t: any) => <p key={t}>{t}</p>)}</div>}
     </div>
   );

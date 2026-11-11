@@ -63,7 +63,16 @@ def invoices(user: CurrentUser, db: DB) -> dict:
     rows = db.scalars(select(Invoice).where(Invoice.user_id == user.id).order_by(Invoice.created_at.desc()).limit(50))
     return {"invoices": [{"id": i.id, "status": i.status, "amount_cents": i.amount_cents, "refunded_cents": i.amount_refunded_cents,
                           "currency": i.currency, "plan": i.plan_id, "url": i.hosted_invoice_url,
-                          "paid_at": i.paid_at.isoformat() if i.paid_at else None} for i in rows]}
+                          "paid_at": _utc(i.paid_at), "created_at": _utc(i.created_at)} for i in rows]}
+
+
+def _utc(d):
+    """ISO-8601 with an explicit UTC offset (SQLite drops tzinfo; browsers would otherwise read local time)."""
+    if d is None:
+        return None
+    from datetime import timezone
+
+    return (d if d.tzinfo else d.replace(tzinfo=timezone.utc)).isoformat()
 
 
 webhook_router = APIRouter(tags=["billing"])

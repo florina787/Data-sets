@@ -46,3 +46,27 @@ test("model markdown renders bold and lists without raw asterisks or HTML inject
   expect(container.textContent).not.toContain("**");
   expect(container.querySelector("img")).toBeNull();
 });
+
+test("transactions card summarises real invoices, handles refunds/failures and shows an honest empty state", async () => {
+  const { summarise, alertsFor, TransactionsCard } = await import("./components/Transactions");
+  const now = new Date("2026-11-10T12:00:00Z").getTime();
+  const d = (days: number) => new Date(now - days * 864e5).toISOString();
+  const txns = [
+    { id: "a", status: "paid", amount_cents: 999, currency: "cad", paid_at: d(70) },
+    { id: "b", status: "paid", amount_cents: 999, currency: "cad", paid_at: d(40) },
+    { id: "c", status: "refunded", amount_cents: 1999, refunded_cents: 1999, currency: "cad", paid_at: d(10) },
+    { id: "e", status: "paid", amount_cents: 1999, currency: "cad", paid_at: d(5) },
+    { id: "f", status: "failed", amount_cents: 1999, currency: "cad", paid_at: d(2) },
+  ];
+  const all = summarise(txns, "ALL", now);
+  expect(all.total).toBe(999 + 999 + 0 + 1999);          // refunds and failures contribute nothing
+  expect(all.series.at(-1)!.value).toBeCloseTo(39.97);
+  const m = summarise(txns, "1M", now);
+  expect(m.total).toBe(1999);
+  expect(m.delta).toBe(1999 - 999);                        // vs. the previous 30 days
+  expect(m.pct).toBeCloseTo(1.001, 2);
+  expect(alertsFor(txns, { status: "past_due" }).map((a) => a.tone)).toContain("coral");
+  render(<TransactionsCard txns={[]} sub={null} />);
+  expect(screen.getByText("No transactions yet")).toBeInTheDocument();
+  expect(screen.getByText(/appear here once Stripe confirms/)).toBeInTheDocument();
+});
