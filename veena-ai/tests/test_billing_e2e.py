@@ -7,7 +7,6 @@ import json
 import shutil
 import socket
 import subprocess
-import time
 from pathlib import Path
 
 import httpx
@@ -24,7 +23,9 @@ def server():
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
         port = s.getsockname()[1]
-    p = subprocess.Popen(["node", "--no-warnings", str(ROOT / "cloud/billing/test/serve.mjs"), str(port)], stdout=subprocess.PIPE, text=True)
+    p = subprocess.Popen(
+        ["node", "--no-warnings", str(ROOT / "cloud/billing/test/serve.mjs"), str(port)], stdout=subprocess.PIPE, text=True
+    )
     assert p.stdout.readline().strip() == "ready"
     yield f"http://127.0.0.1:{port}"
     p.terminate()
@@ -40,7 +41,11 @@ def sign_in(client, server, email):
 
 def ask(client, text="Explain my project plan", mode="conversation"):
     sid = client.post("/api/sessions", json={"mode": mode}).json()["id"]
-    events = [json.loads(line) for line in client.post("/api/chat", json={"session_id": sid, "text": text, "mode": mode}).text.splitlines() if line.strip()]
+    events = [
+        json.loads(line)
+        for line in client.post("/api/chat", json={"session_id": sid, "text": text, "mode": mode}).text.splitlines()
+        if line.strip()
+    ]
     return events, sid
 
 
@@ -141,8 +146,22 @@ def test_meeting_session_block_charged_once_and_credits_used_after_trial(billed,
     for _ in range(3):  # three free meeting sessions
         ask(billed, mode="meeting")
     assert billed.get("/api/billing").json()["account"]["trial_remaining"]["meeting"] == 0
-    ev = {"id": "evt_e2e", "type": "checkout.session.completed", "data": {"object": {"id": "cs_e2e", "client_reference_id": acct["id"], "customer": "cus_e2e",
-          "payment_status": "paid", "payment_intent": "pi_e2e", "amount_total": 1900, "currency": "usd", "metadata": {"package": "credits_1"}}}}
+    ev = {
+        "id": "evt_e2e",
+        "type": "checkout.session.completed",
+        "data": {
+            "object": {
+                "id": "cs_e2e",
+                "client_reference_id": acct["id"],
+                "customer": "cus_e2e",
+                "payment_status": "paid",
+                "payment_intent": "pi_e2e",
+                "amount_total": 1900,
+                "currency": "usd",
+                "metadata": {"package": "credits_1"},
+            }
+        },
+    }
     assert httpx.post(server + "/__test/webhook", content=json.dumps(ev)).json()["result"] == "ok"
     sid = billed.post("/api/sessions", json={"mode": "meeting"}).json()["id"]
     for _ in range(3):  # three answers in ONE session within 30 minutes = one 30-minute block
