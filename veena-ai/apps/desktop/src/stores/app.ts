@@ -67,6 +67,8 @@ interface State {
   selectedCollections: string[];
   followups: string[];
   toasts: Toast[];
+  /** Set when a feature needs sign-in or a plan; opens the in-app pricing screen. */
+  paywall: { message: string } | null;
 
   init(): Promise<void>;
   setPage(p: Page): void;
@@ -117,6 +119,7 @@ export const useApp = create<State>((set, get) => ({
   selectedCollections: [],
   followups: [],
   toasts: [],
+  paywall: null,
 
   async init() {
     if (!hasBridge()) {
@@ -262,6 +265,7 @@ export const useApp = create<State>((set, get) => ({
             return null;
           case "error":
             patch({ error: ev.message });
+            if (ev.code === "payment_required") set({ paywall: { message: ev.message } });
             break;
         }
       }

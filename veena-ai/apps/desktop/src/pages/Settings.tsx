@@ -93,7 +93,7 @@ function PlanAndUsage() {
               </ul>
             )}
             <div className="flex gap-2">
-              <Button variant="primary" onClick={() => window.open("https://florina787.github.io/Data-sets/pricing.html", "_blank")}>
+              <Button variant="primary" onClick={() => useApp.setState({ paywall: { message: "Choose a plan or buy credits." } })}>
                 See plans
               </Button>
               <Button onClick={() => void act(() => api!.post("/api/billing/sign-out"))}>Sign out</Button>

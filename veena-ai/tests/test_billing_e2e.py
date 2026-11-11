@@ -7,6 +7,7 @@ import json
 import shutil
 import socket
 import subprocess
+import time
 from pathlib import Path
 
 import httpx
@@ -177,3 +178,54 @@ def test_meeting_session_block_charged_once_and_credits_used_after_trial(billed,
         out = billed.post("/api/chat", json={"session_id": sid, "text": "Summarise", "mode": "meeting"}).text
         assert '"done"' in out
     assert billed.get("/api/billing").json()["account"]["credit_minutes"] == 30
+
+
+def test_customer_flow_exhaust_refused_buy_in_app_unlocks_without_restart(billed, server):
+    """The monetized flow: 3 free answers, then refused; in-app checkout; Stripe confirms; same app works."""
+    sign_in(billed, server, "flow@example.com")
+    acct = [a for a in httpx.get(server + "/__test/accounts").json() if a["email"] == "flow@example.com"][0]
+    for _ in range(3):
+        events, _ = ask(billed)
+        assert any(e["type"] == "done" for e in events)
+    for _ in range(2):  # repeated attempts stay refused: no way around the server without an entitlement
+        events, _ = ask(billed)
+        assert events[0]["code"] == "payment_required" and not any(e["type"] == "token" for e in events)
+    r = billed.post("/api/billing/checkout", json={"package": "unlimited_monthly"})
+    assert r.status_code == 200 and r.json()["url"].startswith("https://checkout.stripe.com/")
+    assert billed.post("/api/billing/checkout", json={"package": "free_forever"}).status_code == 422
+    ev, _ = ask(billed)  # checkout opened but not paid: still refused
+    assert ev[0]["code"] == "payment_required"
+    end = int(time.time()) + 30 * 86400
+    for e in (
+        {
+            "id": "evt_f1",
+            "type": "checkout.session.completed",
+            "data": {
+                "object": {
+                    "id": "cs_f",
+                    "client_reference_id": acct["id"],
+                    "customer": "cus_f",
+                    "subscription": "sub_f",
+                    "payment_status": "paid",
+                    "metadata": {"package": "unlimited_monthly"},
+                }
+            },
+        },
+        {
+            "id": "evt_f2",
+            "type": "invoice.paid",
+            "data": {
+                "object": {
+                    "id": "in_f",
+                    "customer": "cus_f",
+                    "amount_paid": 7495,
+                    "currency": "usd",
+                    "lines": {"data": [{"period": {"end": end}}]},
+                }
+            },
+        },
+    ):
+        assert httpx.post(server + "/__test/webhook", content=json.dumps(e)).json()["result"] == "ok"
+    events, _ = ask(billed)  # same running app, no reinstall or restart
+    assert any(e["type"] == "done" for e in events)
+    assert billed.get("/api/billing").json()["account"]["unlimited"] is True

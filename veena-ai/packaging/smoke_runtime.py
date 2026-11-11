@@ -77,6 +77,7 @@ def main() -> int:
     ap.add_argument("exe")
     ap.add_argument("--model", default="qwen2.5:0.5b")
     ap.add_argument("--out", default="runtime-smoke.json")
+    ap.add_argument("--billing-url", default=None, help="local billing Worker (cloud/billing/test/serve.mjs) to test plan enforcement")
     args = ap.parse_args()
 
     results: dict = {"platform": platform.platform(), "machine": platform.machine(), "model": args.model, "steps": {}}
@@ -90,6 +91,8 @@ def main() -> int:
         # A fresh port, so the test cannot accidentally use some other Ollama.
         "OLLAMA_URL": f"http://127.0.0.1:{ollama_port}",
     }
+    if args.billing_url:  # the INSTALLED backend enforces plans against a billing Worker on this machine
+        env.update(VEENA_BILLING_URL=args.billing_url, VEENA_BILLING_ALLOW_LOCAL="1")
     # The backend's output goes to a file, never an unread pipe: Windows pipes hold
     # only a few KB, and download progress bars filled one and blocked the backend
     # (CI runs 42717356914 and 42723464530). The real app (Electron) drains both streams.
@@ -140,6 +143,18 @@ def main() -> int:
         assert hc["ok"], hc
         results["steps"]["first_answer_s"] = round(time.time() - t0, 1)
 
+        if args.billing_url:
+            sid = api.json("POST", "/api/sessions", {})["id"]
+            _, refused = chat(api, sid, "Hello")
+            assert refused.get("code") == "payment_required", f"answered without signing in: {refused}"
+            email = f"ci-{secrets.token_hex(4)}@example.com"
+            api.json("POST", "/api/billing/sign-in", {"email": email})
+            with urllib.request.urlopen(args.billing_url + "/__test/code", timeout=10) as r:  # noqa: S310 - local test server
+                code = json.load(r)["code"]
+            me = api.json("POST", "/api/billing/sign-in", {"email": email, "code": code})
+            assert me["account"]["trial_remaining"]["chat"] == 3, me
+            results["billing"] = {"signed_in": True, "trial_start": me["account"]["trial_remaining"]}
+
         sid = api.json("POST", "/api/sessions", {})["id"]
         answer, done = chat(api, sid, "What is 12 plus 30? Reply with only the number.")
         print("chat:", answer.strip()[:200])
@@ -176,6 +191,55 @@ def main() -> int:
         results["steps"]["speech_model_and_benchmark_s"] = round(time.time() - t0, 1)
         print("speech:", results["speech"])
         assert bench["asr"].get("ok"), f"speech model failed: {bench['asr']}"
+
+        if args.billing_url:
+            # Free answers 2 and 3 work; the 4th is refused; buying Unlimited unlocks the SAME running app.
+            for _ in range(2):
+                _, d = chat(api, api.json("POST", "/api/sessions", {})["id"], "Say OK.")
+                assert d.get("type") == "done", d
+            left = api.json("GET", "/api/billing")["account"]["trial_remaining"]["chat"]
+            assert left == 0, f"expected 0 free chat uses left, got {left}"
+            _, d = chat(api, api.json("POST", "/api/sessions", {})["id"], "Say OK.")
+            assert d.get("code") == "payment_required", f"4th answer was not refused: {d}"
+            with urllib.request.urlopen(args.billing_url + "/__test/accounts", timeout=10) as r:  # noqa: S310
+                acct = [a for a in json.load(r) if a["email"] == email][0]["id"]
+            end = int(time.time()) + 30 * 86400
+            for ev in (
+                {
+                    "id": "evt_ci1",
+                    "type": "checkout.session.completed",
+                    "data": {
+                        "object": {
+                            "id": "cs_ci",
+                            "client_reference_id": acct,
+                            "customer": "cus_ci",
+                            "subscription": "sub_ci",
+                            "payment_status": "paid",
+                            "metadata": {"package": "unlimited_monthly"},
+                        }
+                    },
+                },
+                {
+                    "id": "evt_ci2",
+                    "type": "invoice.paid",
+                    "data": {
+                        "object": {
+                            "id": "in_ci",
+                            "customer": "cus_ci",
+                            "amount_paid": 7495,
+                            "currency": "usd",
+                            "lines": {"data": [{"period": {"end": end}}]},
+                        }
+                    },
+                },
+            ):
+                req = urllib.request.Request(args.billing_url + "/__test/webhook", data=json.dumps(ev).encode(), method="POST")  # noqa: S310
+                with urllib.request.urlopen(req, timeout=10) as r:  # noqa: S310
+                    assert json.load(r)["result"] == "ok"
+            _, d = chat(api, api.json("POST", "/api/sessions", {})["id"], "Say OK.")
+            assert d.get("type") == "done", f"Unlimited did not unlock the running app: {d}"
+            results["billing"].update(refused_after_trial=True, unlocked_after_payment=True)
+            print("billing: 3 free answers, 4th refused, Unlimited unlocked without restart")
 
         stopped = api.json("POST", "/api/runtime/stop")
         assert stopped["stopped"], "VEENA did not stop the runtime it started"

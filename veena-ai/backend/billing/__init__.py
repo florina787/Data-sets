@@ -36,7 +36,12 @@ OFFLINE_GRACE = 3
 
 def billing_url() -> str | None:
     u = os.environ.get("VEENA_BILLING_URL", "").strip().rstrip("/")
-    return u if u.startswith("https://") else None
+    if u.startswith("https://"):
+        return u
+    # Test-only: CI points an INSTALLED build at a billing Worker on the same machine.
+    if os.environ.get("VEENA_BILLING_ALLOW_LOCAL") == "1" and u.startswith("http://127.0.0.1:"):
+        return u
+    return None
 
 
 @dataclass
@@ -113,6 +118,14 @@ class Billing:
             self.state["token"] = r.json()["token"]
             self._save()
         return self.status()
+
+    def checkout(self, package: str) -> dict:
+        """Stripe-hosted checkout URL for a package; the entitlement changes only when Stripe confirms."""
+        with self._client() as c:
+            r = c.post("/v1/checkout", json={"package": package})
+        if r.status_code != 200:
+            raise ValueError(r.json().get("error", "could not start checkout"))
+        return {"url": r.json()["url"]}
 
     def sign_out(self) -> dict:
         if self.state["token"]:

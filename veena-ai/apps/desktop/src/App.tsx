@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CatMark, Wordmark } from "./components/CatMark";
 import { Sidebar, SourcePicker, Toasts } from "./components/Shell";
+import { Paywall } from "./components/Paywall";
 import { UpdateBanner } from "./components/UpdateBanner";
 import { Button } from "./components/ui";
 import { About } from "./pages/About";
@@ -110,6 +111,7 @@ export default function App() {
       <SourcePicker open={picker} onClose={() => setPicker(false)} />
       <Toasts />
       <UpdateBanner />
+      <Paywall />
     </div>
   );
 }

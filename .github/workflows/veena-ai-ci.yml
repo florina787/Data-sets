@@ -132,7 +132,13 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Billing server baked into the installers (monetized builds). Set the repository variable
+          # VEENA_BILLING_URL to the deployed Worker; until then builds point at an unreachable
+          # placeholder, so installed apps fail closed (sign-in required, no unlimited use).
+          VEENA_BILLING_URL: ${{ vars.VEENA_BILLING_URL || 'https://veena-billing.invalid' }}
+          VEENA_INSIGHTS_URL: ${{ vars.VEENA_INSIGHTS_URL }}
         run: |
+          node scripts/write-build-config.mjs
           # Each OS uses only its own certificate (electron-builder falls back to CSC_LINK on Windows).
           if [ "$RUNNER_OS" != "macOS" ]; then unset CSC_LINK CSC_KEY_PASSWORD; fi
           if [ "$RUNNER_OS" != "Windows" ]; then unset WIN_CSC_LINK WIN_CSC_KEY_PASSWORD; fi
@@ -212,7 +218,11 @@ jobs:
         working-directory: veena-ai
         timeout-minutes: 45
         run: |
-          python packaging/smoke_runtime.py "$INSTALLED_BACKEND" --model qwen2.5:0.5b --out "runtime-smoke-${RUNNER_OS}.json"
+          # Real billing Worker (test server, Stripe simulator) on this machine: proves the INSTALLED
+          # app gives 3 free answers, refuses the 4th, and unlocks after a confirmed purchase.
+          node --no-warnings cloud/billing/test/serve.mjs 8787 > billing-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8787/v1/prices >/dev/null && break; sleep 1; done
+          python packaging/smoke_runtime.py "$INSTALLED_BACKEND" --model qwen2.5:0.5b --out "runtime-smoke-${RUNNER_OS}.json" --billing-url http://127.0.0.1:8787
           python -c "import json,sys; d=json.load(open(sys.argv[1])); print('### First run:', 'PASS' if d['passed'] else 'FAIL', json.dumps(d.get('steps')))" "runtime-smoke-${RUNNER_OS}.json" >> "$GITHUB_STEP_SUMMARY"
       - name: Uninstall (Windows)
         if: runner.os == 'Windows'
@@ -335,12 +345,14 @@ jobs:
           for f in $files; do test -s "$f"; done
           sha256sum $files > SHA256SUMS.txt
           cd ..
-          { cat veena-ai/packaging/RELEASE_NOTES.md; echo; echo "Built from commit \`${GITHUB_SHA::7}\` by [this CI run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; echo; echo '```'; cat dist/SHA256SUMS.txt; echo '```'; } > notes.md
+          notes_src=veena-ai/packaging/RELEASE_NOTES.md; case "$version" in *-*) notes_src=veena-ai/packaging/RELEASE_NOTES_MONETIZED_RC.md ;; esac
+          { cat "$notes_src"; echo; echo "Built from commit \`${GITHUB_SHA::7}\` by [this CI run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; echo; echo '```'; cat dist/SHA256SUMS.txt; echo '```'; } > notes.md
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" dist/VEENA.AI-* dist/SHA256SUMS.txt dist/*.cdx.json --clobber
             gh release edit "$tag" --notes-file notes.md --draft
           else
-            gh release create "$tag" --draft --target "$GITHUB_SHA" --title "VEENA.AI $version" --notes-file notes.md \
+            pre=""; case "$version" in *-*) pre="--prerelease" ;; esac   # release candidates are pre-releases
+            gh release create "$tag" --draft $pre --target "$GITHUB_SHA" --title "VEENA.AI $version" --notes-file notes.md \
               dist/VEENA.AI-Windows-Setup.exe dist/VEENA.AI-macOS-AppleSilicon.dmg dist/VEENA.AI-Linux-x86_64.AppImage dist/SHA256SUMS.txt
           fi
           echo "### Draft release $tag created. Review it on GitHub, then publish manually." >> "$GITHUB_STEP_SUMMARY"

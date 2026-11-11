@@ -241,3 +241,17 @@ async def billing_sign_in(body: SignInReq, st: AppState = Depends(get_state)):
 @router.post("/billing/sign-out")
 async def billing_sign_out(st: AppState = Depends(get_state)):
     return st.billing.sign_out()
+
+
+class CheckoutReq(BaseModel):
+    package: str = Field(pattern="^(credits_(1|3|8|15)|unlimited_(monthly|annual))$")
+
+
+@router.post("/billing/checkout")
+async def billing_checkout(body: CheckoutReq, st: AppState = Depends(get_state)):
+    if not st.billing.enabled or not st.billing.state["token"]:
+        raise HTTPException(409, "sign in first")
+    try:
+        return await asyncio.to_thread(st.billing.checkout, body.package)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e

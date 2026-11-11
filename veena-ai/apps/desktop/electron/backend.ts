@@ -1,8 +1,5 @@
 // Launches and supervises the local Python backend.
-// Set to the deployed VEENA Insights Worker URL (https://...) once the owner approves deployment.
-export const INSIGHTS_URL = "";
-// VEENA Billing Worker URL (cloud/billing). Empty = plans disabled: every feature works without limits.
-export const BILLING_URL = "";
+import { BILLING_URL, INSIGHTS_URL } from "./build-config";
 
 import { ChildProcess, spawn } from "node:child_process";
 import crypto from "node:crypto";
