@@ -425,6 +425,19 @@ export function Settings() {
             <p className="px-5 pb-5 text-xs text-caramel">Data folder: {status?.data_dir}</p>
           </Card>
 
+          <Card>
+            <CardHeader title="Share feedback" subtitle="Free public beta: tell us what works, what doesn't and what to build next. No account needed." />
+            <div className="flex flex-wrap gap-2 px-5 pb-5">
+              <Button variant="primary" onClick={() => window.open("https://florina787.github.io/Data-sets/feedback.html", "_blank")}>
+                Share feedback
+              </Button>
+              <Button onClick={() => window.open("https://florina787.github.io/Data-sets/feedback.html?type=bug", "_blank")}>Report a bug</Button>
+              <p className="w-full text-xs text-caramel">
+                Opens the feedback form in your browser. Nothing from VEENA is attached. Or write to florinaregius@yahoo.com.
+              </p>
+            </div>
+          </Card>
+
           <PlanAndUsage />
           <UsageStatistics />
 

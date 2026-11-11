@@ -295,3 +295,9 @@ dialog.signin input { width: 100%; font: inherit; border: 1px solid var(--line);
 
 /* hidden always wins (used by the free/paid wording switch) */
 [hidden] { display: none !important; }
+
+/* feedback form (public beta) */
+.fb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.fb-stars span { min-width: 44px; text-align: center; }
+.fb-select { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.fb-check { display: flex; gap: 8px; align-items: center; margin-top: 10px; font-size: .92rem; color: var(--muted); }

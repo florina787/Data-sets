@@ -238,3 +238,9 @@ async def telemetry_consent(body: TelemetryReq, st: AppState = Depends(get_state
         out = st.telemetry.opt_out()
     asyncio.get_running_loop().create_task(st.telemetry.flush())  # background; never delays the reply
     return out
+
+
+@router.post("/telemetry/send-now")
+async def telemetry_send_now(st: AppState = Depends(get_state)):
+    """Sends anything queued immediately (only if the user opted in). Shown in Settings and used by tests."""
+    return {"result": await st.telemetry.flush(), **st.telemetry.status()}

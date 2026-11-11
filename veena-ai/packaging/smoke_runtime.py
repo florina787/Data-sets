@@ -77,6 +77,7 @@ def main() -> int:
     ap.add_argument("exe")
     ap.add_argument("--model", default="qwen2.5:0.5b")
     ap.add_argument("--out", default="runtime-smoke.json")
+    ap.add_argument("--insights-url", default=None, help="local Insights Worker (cloud/insights/test/serve.mjs) to test opt-in statistics")
     ap.add_argument("--billing-url", default=None, help="local billing Worker (cloud/billing/test/serve.mjs) to test plan enforcement")
     args = ap.parse_args()
 
@@ -91,6 +92,8 @@ def main() -> int:
         # A fresh port, so the test cannot accidentally use some other Ollama.
         "OLLAMA_URL": f"http://127.0.0.1:{ollama_port}",
     }
+    if args.insights_url:  # opt-in statistics from the INSTALLED backend to a local Insights Worker
+        env.update(VEENA_INSIGHTS_URL=args.insights_url, VEENA_INSIGHTS_ALLOW_LOCAL="1")
     if args.billing_url:  # the INSTALLED backend enforces plans against a billing Worker on this machine
         env.update(VEENA_BILLING_URL=args.billing_url, VEENA_BILLING_ALLOW_LOCAL="1")
     # The backend's output goes to a file, never an unread pipe: Windows pipes hold
@@ -143,6 +146,14 @@ def main() -> int:
         assert hc["ok"], hc
         results["steps"]["first_answer_s"] = round(time.time() - t0, 1)
 
+        if not args.billing_url:
+            # Free beta: billing is off and no account is needed; the chat below must work without sign-in.
+            assert api.json("GET", "/api/billing") == {"enabled": False}, "billing must be disabled in the free beta"
+            results["billing_disabled"] = True
+        if args.insights_url:
+            tel = api.json("GET", "/api/telemetry")
+            assert tel["available"] and not tel["enabled"] and tel["queued"] == [], f"statistics must be off by default: {tel}"
+            api.json("POST", "/api/telemetry", {"enabled": True})
         if args.billing_url:
             sid = api.json("POST", "/api/sessions", {})["id"]
             _, refused = chat(api, sid, "Hello")
@@ -240,6 +251,28 @@ def main() -> int:
             assert d.get("type") == "done", f"Unlimited did not unlock the running app: {d}"
             results["billing"].update(refused_after_trial=True, unlocked_after_payment=True)
             print("billing: 3 free answers, 4th refused, Unlimited unlocked without restart")
+
+        if args.insights_url:
+            sent = api.json("POST", "/api/telemetry/send-now")
+            with urllib.request.urlopen(args.insights_url + "/__test/summary", timeout=10) as r:  # noqa: S310 - local test server
+                s = json.load(r)
+            feats = {f["feature"]: f["installs"] for f in s["features"]}
+            assert s["installs"]["first_launches"] == 1 and s["installs"]["first_ai_success"] == 1 and s["installs"]["active_1d"] == 1, s[
+                "installs"
+            ]
+            assert feats.get("chat") == 1 and feats.get("documents") == 1, feats
+            api.json("POST", "/api/telemetry", {"enabled": False})  # withdraw: the server deletes this installation's rows
+            api.json("POST", "/api/telemetry/send-now")
+            with urllib.request.urlopen(args.insights_url + "/__test/summary", timeout=10) as r:  # noqa: S310
+                after = json.load(r)
+            assert after["installs"]["first_launches"] == 0, after["installs"]
+            results["statistics"] = {
+                "sent": sent["result"],
+                "dashboard_saw": s["installs"],
+                "features": feats,
+                "deleted_on_withdrawal": True,
+            }
+            print("statistics: opt-in -> dashboard counted 1 install, chat + documents; withdrawal deleted it")
 
         stopped = api.json("POST", "/api/runtime/stop")
         assert stopped["stopped"], "VEENA did not stop the runtime it started"

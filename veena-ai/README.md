@@ -3,9 +3,11 @@
 </p>
 
 <h1 align="center">Meet <i>VEENA.</i></h1>
+<p align="center"><b>VEENA.AI — Free Public Beta</b></p>
 <p align="center"><b>Your AI. Your computer. Your control.</b><br/>
 A private AI companion for conversations, meetings, interview practice, documents and your screen.<br/>
-It runs on your own computer, with open models. No account, no subscription, no API key.</p>
+It runs on your own computer, with open models. Explore VEENA.AI free during our public beta. Help shape what comes next.<br/>
+<a href="https://florina787.github.io/Data-sets/feedback.html"><b>Share feedback</b></a> · <a href="https://florina787.github.io/Data-sets/feedback.html?type=bug">Report a bug</a> · Have feedback? Write to <a href="mailto:florinaregius@yahoo.com">florinaregius@yahoo.com</a></p>
 
 <p align="center">
   <a href="https://github.com/florina787/Data-sets/releases"><img alt="Download: public beta coming soon" src="https://img.shields.io/badge/Download-Public%20beta%20coming%20soon-17110F?style=for-the-badge&labelColor=34251E" height="38" /></a>
@@ -21,7 +23,7 @@ It runs on your own computer, with open models. No account, no subscription, no 
 <table>
 <tr>
 <td width="33%" valign="top"><b>Private by design</b><br/>Your conversations, documents, meetings and screens stay on your computer. Nothing is uploaded.</td>
-<td width="33%" valign="top"><b>Free to use</b><br/>No subscription or account. Open models run on your own hardware.</td>
+<td width="33%" valign="top"><b>Free during the beta</b><br/>No account or credit card during the public beta. Open models run on your own hardware.</td>
 <td width="33%" valign="top"><b>Built to be checked</b><br/>Answers cite their sources, and names or figures the model invented are flagged.</td>
 </tr>
 </table>
@@ -225,7 +227,7 @@ Full walkthrough: [customer installation guide](docs/CUSTOMER_INSTALLATION_GUIDE
 
 ### What it costs
 
-No money is required. You do pay in resources:
+No money is required during the public beta. You do pay in resources:
 
 * **Downloads:** the AI runtime (about 1.6 GB on Windows/Linux, 0.2 GB on macOS, unless you already have Ollama) and about 3–11 GB of models depending on profile (one time).
 * **Disk:** the same, plus about 1.5 GB for the app (it bundles CPU PyTorch for embeddings).
@@ -239,8 +241,8 @@ No money is required. You do pay in resources:
 
 Your perspective matters. Every note is read.
 
-* **Share feedback:** the [feedback page](site/feedback.html) on the VEENA website. It's a short form; email is
-  optional. *It opens once the form is set up and the website is deployed.*
+* **Share feedback / report a bug:** [feedback form](https://florina787.github.io/Data-sets/feedback.html) (no account
+  needed; email optional), in the app under **Settings → Share feedback**, or write to **florinaregius@yahoo.com**.
 * **Join the conversation:** [GitHub Discussions](https://github.com/florina787/Data-sets/discussions):
   General Discussion, Feature Requests, Product Feedback, Support & Issues.
 * **Report a bug:** [GitHub Issues](https://github.com/florina787/Data-sets/issues).

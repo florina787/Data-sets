@@ -79,39 +79,68 @@ for (const vp of VIEWPORTS) {
   }
 }
 
-// Feedback page, as configured now: a pending form is disabled, and no community link appears unverified.
+// Feedback page, as configured now: without a server the form is disabled and says so (no fake "sent").
 {
   const page = await browser.newPage();
   await page.goto(`${base}/feedback.html`);
   const cfg = await page.evaluate(() => window.VEENA_CONFIG);
   const disabled = await page.$eval("#fb-fields", (f) => f.disabled);
   const pending = await page.isVisible("#fb-pending");
-  if (!cfg.feedback?.formUrl && !(disabled && pending)) fail("feedback form is active without a configured Google Form");
+  if (!cfg.insightsUrl && !(disabled && pending)) fail("feedback form is active without a configured server");
   if (!cfg.discussionsEnabled && (await page.$$("[data-community]")).length) fail("community link shown while Discussions is not enabled");
-  console.log(`feedback page as configured: ${disabled ? "pending (form not set up)" : "active"}`);
+  console.log(`feedback page as configured: ${disabled ? "not connected (shows the email address)" : "active"}`);
   await page.close();
 }
 
-// Feedback page with an example configuration: the pre-filled Google Forms link carries the answers.
+// Feedback delivery end to end: the form posts to the REAL Insights Worker code (SQLite), and the
+// dashboard summary then shows exactly that submission. Phone and desktop sizes.
 {
-  const page = await browser.newPage();
-  await page.route("**/config.js", (r) => r.fulfill({ contentType: "text/javascript", body:
-    'window.VEENA_CONFIG={feedback:{formUrl:"https://docs.google.com/forms/d/e/EXAMPLE_FORM_ID_FOR_TESTS_ONLY/viewform",' +
-    'entries:{experience:"entry.1",type:"entry.2",message:"entry.3",email:"entry.4",page:null}},discussionsEnabled:false,cloudflareToken:null};' }));
-  await page.route("https://docs.google.com/**", (r) => r.fulfill({ body: "stub" }));
-  await page.goto(`${base}/feedback.html?utm_campaign=test`);
-  await page.click("#fb-submit");
-  if (!(await page.isVisible("#fb-error"))) fail("feedback: empty form was not stopped");
-  await page.check("input[value=Good]");
-  await page.check("input[value=\"Feature request\"]");
-  await page.fill("#fb-message", "Please add <b>dark mode</b> & more.");
-  const [popup] = await Promise.all([page.waitForEvent("popup"), page.click("#fb-submit")]);
-  const u = new URL(popup.url());
-  const ok = u.origin === "https://docs.google.com" && u.searchParams.get("usp") === "pp_url" && u.searchParams.get("entry.1") === "Good" &&
-    u.searchParams.get("entry.2") === "Feature request" && u.searchParams.get("entry.3") === "Please add <b>dark mode</b> & more." && !u.searchParams.has("entry.4");
-  if (!ok) fail(`feedback: wrong pre-filled link ${popup.url()}`); else console.log("feedback pre-filled link OK");
-  if (!(await page.isVisible("text=Thank you."))) fail("feedback: no confirmation shown");
-  await page.close();
+  const { DatabaseSync } = await import("node:sqlite");
+  const insightsDir = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../cloud/insights");
+  const html = await readFile(path.join(insightsDir, "src/dashboard.html"), "utf8");
+  const bundle = (await readFile(path.join(insightsDir, "src/worker.js"), "utf8")).replace('import DASHBOARD_HTML from "./dashboard.html";', `const DASHBOARD_HTML = ${JSON.stringify(html)};`);
+  const { writeFile, mkdtemp } = await import("node:fs/promises");
+  const tmp = await mkdtemp(path.join((await import("node:os")).tmpdir(), "veena-insights-"));
+  await writeFile(path.join(tmp, "worker.mjs"), bundle);
+  const W = await import("file://" + path.join(tmp, "worker.mjs"));
+  for (const vp of [{ width: 390, height: 844 }, { width: 1440, height: 900 }]) {
+    const db = new DatabaseSync(":memory:");
+    db.exec(await readFile(path.join(insightsDir, "schema.sql"), "utf8"));
+    const norm = (q) => q.replace(/\?(\d+)/g, "?");
+    const expand = (q, a) => { const o = [...q.matchAll(/\?(\d+)/g)].map((m) => Number(m[1]) - 1); return o.length ? o.map((i) => a[i]) : a; };
+    const prep = (q) => { const st = { args: [], bind(...a) { return { ...st, args: a }; },
+      async all() { return { results: db.prepare(norm(q)).all(...expand(q, this.args)) }; },
+      async first() { return db.prepare(norm(q)).get(...expand(q, this.args)) ?? null; },
+      async run() { const r = db.prepare(norm(q)).run(...expand(q, this.args)); return { meta: { changes: Number(r.changes) } }; } }; return st; };
+    const env = { DB: { prepare: prep, async batch(l) { for (const x of l) await x.run(); } }, ALLOWED_ORIGINS: base, DASHBOARD_TOKEN: "t".repeat(40), RATE_SALT: "s" };
+    const page = await browser.newPage({ viewport: vp });
+    await page.route("**/config.js", (r) => r.fulfill({ contentType: "text/javascript", body: 'window.VEENA_CONFIG={insightsUrl:"https://insights.test",discussionsEnabled:false,plansLive:false};' }));
+    await page.route("https://insights.test/**", async (route) => {
+      const q = route.request();
+      const res = await W.default.fetch(new Request(q.url(), { method: q.method(), headers: { ...q.headers(), "cf-connecting-ip": "192.0.2.1" }, body: q.method() === "POST" ? q.postData() : undefined }), env);
+      await route.fulfill({ status: res.status, headers: Object.fromEntries(res.headers), body: await res.text() });
+    });
+    await page.goto(`${base}/feedback.html`);
+    await page.click("#fb-submit");
+    if (!(await page.isVisible("#fb-error"))) fail("feedback: empty form was not stopped");
+    await page.check("input[name=rating][value='4']");
+    await page.selectOption("#fb-feature", "documents");
+    await page.fill("#fb-worked", "Citations are <b>great</b> & fast.");
+    await page.fill("#fb-next", "Import a whole folder");
+    await page.fill("#fb-email", "tester@example.com");
+    await page.check("#fb-contact");
+    await page.waitForTimeout(3100);
+    await page.click("#fb-submit");
+    await page.waitForSelector("text=Thank you.", { timeout: 5000 }).catch(() => fail(`feedback @${vp.width}: no confirmation`));
+    const sum = await W.summary(env, { days: 7, test: false });
+    const row = db.prepare("SELECT * FROM feedback").get();
+    if (!(sum.feedback.total === 1 && sum.feedback.avg_rating === 4 && row && row.feature === "documents" && row.worked === "Citations are <b>great</b> & fast." && row.contact_ok === 1))
+      fail(`feedback @${vp.width}: not delivered correctly ${JSON.stringify(row)}`);
+    else console.log(`feedback delivered @${vp.width}px: stored and counted in the dashboard summary`);
+    await page.goto(`${base}/feedback.html?type=bug`);
+    if (!(await page.isVisible("text=Report a")) || (await page.isVisible("#fb-rating-group"))) fail("bug report mode not shown");
+    await page.close();
+  }
 }
 
 // Wording must match the downloadable app: while plansLive is false, no paid-plan claims are visible.

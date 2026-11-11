@@ -45,7 +45,12 @@ FLUSH_EVERY_S = 600
 def endpoint() -> str | None:
     """The VEENA Insights server. None (statistics unavailable) until the owner deploys one."""
     url = os.environ.get("VEENA_INSIGHTS_URL", "").strip().rstrip("/")
-    return url if url.startswith("https://") else None
+    if url.startswith("https://"):
+        return url
+    # Test-only: CI points an INSTALLED build at an Insights Worker on the same machine.
+    if os.environ.get("VEENA_INSIGHTS_ALLOW_LOCAL") == "1" and url.startswith("http://127.0.0.1:"):
+        return url
+    return None
 
 
 def os_name() -> str:

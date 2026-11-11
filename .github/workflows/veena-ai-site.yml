@@ -34,6 +34,9 @@ jobs:
         env:
           REF: ${{ github.ref_name }}
         run: veena-ai/site/build.sh "$GITHUB_WORKSPACE/_site"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"   # node:sqlite runs the real Insights Worker in the feedback test
       - name: Browser checks (phone, tablet, desktop; accessibility; downloads; feedback form)
         run: |
           mkdir -p /tmp/sitecheck /tmp/screens && cd /tmp/sitecheck

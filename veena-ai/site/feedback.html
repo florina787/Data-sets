@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Share feedback · VEENA.AI</title>
+<title>Share feedback · VEENA.AI Free Public Beta</title>
 <meta name="description" content="Tell us how VEENA works for you. A short, private form; email is optional." />
 <meta name="theme-color" content="#17110f" />
 <link rel="canonical" href="https://florina787.github.io/Data-sets/feedback.html" />
@@ -31,54 +31,71 @@
 
 <main id="main">
   <div class="wrap fb">
-    <p class="eyebrow">Feedback</p>
-    <h1>Your perspective <span class="serif">matters.</span></h1>
-    <p class="lede">Tell us what works and what doesn't. It takes a minute.</p>
+    <p class="eyebrow" id="fb-eyebrow">Free public beta · Feedback</p>
+    <h1 id="fb-title">Your perspective <span class="serif">matters.</span></h1>
+    <p class="lede" id="fb-lede">Tell us what works, what doesn't and what to build next. It takes two minutes, and you don't need an account.</p>
+    <p class="fine" style="margin-top:10px"><a href="?type=bug" id="fb-bug-link">Report a bug instead</a> · or write to <a href="mailto:florinaregius@yahoo.com">florinaregius@yahoo.com</a></p>
 
     <form id="fb-form" class="fb-form" novalidate>
       <fieldset id="fb-fields">
-        <div class="fb-group" role="radiogroup" aria-labelledby="fb-exp-label">
-          <p class="fb-label" id="fb-exp-label">How was your experience?</p>
-          <div class="fb-choices">
-            <label><input type="radio" name="experience" value="Excellent" required /><span>Excellent</span></label>
-            <label><input type="radio" name="experience" value="Good" /><span>Good</span></label>
-            <label><input type="radio" name="experience" value="Needs improvement" /><span>Needs improvement</span></label>
-          </div>
-        </div>
+        <input type="hidden" name="kind" id="fb-kind" value="feedback" />
+        <div class="fb-hp" aria-hidden="true"><label>Website <input type="text" name="website" id="fb-website" tabindex="-1" autocomplete="off" /></label></div>
 
-        <div class="fb-group" role="radiogroup" aria-labelledby="fb-type-label">
-          <p class="fb-label" id="fb-type-label">What is it about?</p>
-          <div class="fb-choices">
-            <label><input type="radio" name="type" value="General feedback" required /><span>General</span></label>
-            <label><input type="radio" name="type" value="Feature request" /><span>Feature request</span></label>
-            <label><input type="radio" name="type" value="Bug or installation issue" /><span>Bug or installation</span></label>
-            <label><input type="radio" name="type" value="Other" /><span>Other</span></label>
+        <div class="fb-group" role="radiogroup" aria-labelledby="fb-rate-label" id="fb-rating-group">
+          <p class="fb-label" id="fb-rate-label">Overall experience</p>
+          <div class="fb-choices fb-stars">
+            <label><input type="radio" name="rating" value="1" /><span>1</span></label>
+            <label><input type="radio" name="rating" value="2" /><span>2</span></label>
+            <label><input type="radio" name="rating" value="3" /><span>3</span></label>
+            <label><input type="radio" name="rating" value="4" /><span>4</span></label>
+            <label><input type="radio" name="rating" value="5" /><span>5</span></label>
           </div>
+          <p class="fine" style="margin-top:6px">1 = poor · 5 = excellent</p>
         </div>
 
         <div class="fb-group">
-          <label class="fb-label" for="fb-message">Your message</label>
-          <textarea id="fb-message" name="message" rows="6" maxlength="2000" required placeholder="What happened, what you expected, or what you'd love to see."></textarea>
-          <p class="fine" id="fb-count" aria-live="polite">0 / 2000</p>
+          <label class="fb-label" for="fb-feature">Feature you used</label>
+          <select id="fb-feature" name="feature" class="fb-select">
+            <option value="chat">Ask anything (chat)</option>
+            <option value="documents">Documents with sources</option>
+            <option value="screen">Screen understanding</option>
+            <option value="meeting">Meeting notes</option>
+            <option value="interview">Interview practice</option>
+            <option value="agents">Agents page</option>
+            <option value="setup">Installation and setup</option>
+            <option value="other">Something else</option>
+          </select>
+        </div>
+
+        <div class="fb-group" id="fb-worked-group">
+          <label class="fb-label" for="fb-worked">What worked well?</label>
+          <textarea id="fb-worked" name="worked" rows="3" maxlength="1500"></textarea>
+        </div>
+        <div class="fb-group">
+          <label class="fb-label" for="fb-didnt" id="fb-didnt-label">What didn't work?</label>
+          <textarea id="fb-didnt" name="didnt" rows="3" maxlength="1500"></textarea>
+        </div>
+        <div class="fb-group" id="fb-next-group">
+          <label class="fb-label" for="fb-next">What should we build next?</label>
+          <textarea id="fb-next" name="next" rows="3" maxlength="1500"></textarea>
         </div>
 
         <div class="fb-group">
-          <label class="fb-label" for="fb-email">Email <span class="fine">(optional, only if you'd like a reply)</span></label>
-          <input id="fb-email" name="email" type="email" autocomplete="email" maxlength="200" />
+          <label class="fb-label" for="fb-email">Email <span class="fine">(optional)</span></label>
+          <input id="fb-email" name="email" type="email" autocomplete="email" maxlength="254" />
+          <label class="fb-check"><input type="checkbox" id="fb-contact" /> You may contact me about this feedback</label>
         </div>
 
         <p class="fb-privacy fine">
-          Your feedback goes to a Google Form owned by VEENA's developer and is used only to improve VEENA.
-          Leave out passwords, private documents and other personal information.
-          Email is optional. See the <a href="privacy.html#feedback">privacy notice</a>.
+          We receive only what you type here, plus your rating and chosen feature. VEENA never sends your questions, documents, screens or recordings.
+          Please leave out passwords and private information. Your email is optional and used only to reply. See the <a href="privacy.html#feedback">privacy notice</a>.
         </p>
 
         <p class="fb-error" id="fb-error" role="alert" hidden></p>
-        <button class="pill dark" type="submit" id="fb-submit">Continue to send</button>
-        <p class="fine" id="fb-how">You will review and send it on Google Forms, in a new tab.</p>
+        <button class="pill dark" type="submit" id="fb-submit">Send feedback</button>
       </fieldset>
       <p class="fb-pending" id="fb-pending" hidden>
-        The feedback form is being set up and is not accepting responses yet. Thank you for your patience.
+        The feedback form isn't connected yet. Please write to <a href="mailto:florinaregius@yahoo.com">florinaregius@yahoo.com</a> in the meantime.
       </p>
     </form>
 
@@ -89,7 +106,7 @@
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Florina Regius · VEENA.AI · GPL-3.0</span>
+    <span>© 2026 Florina Regius · VEENA.AI · GPL-3.0 · Have feedback? Write to <a href="mailto:florinaregius@yahoo.com">florinaregius@yahoo.com</a></span>
     <nav aria-label="Footer">
       <a href="./">Home</a>
       <a href="features.html">Features</a>

@@ -67,46 +67,47 @@
     } catch (e) { return "none"; }
   })();
 
-  // Feedback form: hands the answers to the owner's Google Form as a pre-filled link
-  // (a documented Google Forms feature). The visitor reviews and sends it there.
+  // Feedback form: posts to VEENA Insights (/v1/feedback) when it is configured. No account, no
+  // cookies; only what the person types. Until a server is configured it says so and offers email.
   var form = document.getElementById("fb-form");
-  if (form) setupFeedback(form, cfg.feedback || {});
+  if (form) setupFeedback(form);
 
-  function setupFeedback(form, fb) {
-    var fields = document.getElementById("fb-fields");
-    var msg = document.getElementById("fb-message");
-    var count = document.getElementById("fb-count");
-    var err = document.getElementById("fb-error");
-    var e = fb.entries || {};
-    var validUrl = typeof fb.formUrl === "string" && /^https:\/\/docs\.google\.com\/forms\/d\/e\/[A-Za-z0-9_-]{20,}\/viewform$/.test(fb.formUrl);
-    var validIds = ["experience", "type", "message"].every(function (k) { return /^entry\.\d+$/.test(e[k] || ""); });
-    msg.addEventListener("input", function () { count.textContent = msg.value.length + " / 2000"; });
-    if (!validUrl || !validIds) {
-      fields.disabled = true;
-      document.getElementById("fb-pending").hidden = false;
-      return;
+  function setupFeedback(form) {
+    var url = typeof cfg.insightsUrl === "string" && /^https:\/\//.test(cfg.insightsUrl) ? cfg.insightsUrl.replace(/\/$/, "") : null;
+    var started = Date.now();
+    var bug = /(^|[?&])type=bug(&|$)/.test(location.search);
+    var $ = function (id) { return document.getElementById(id); };
+    if (bug) {
+      $("fb-kind").value = "bug"; $("fb-rating-group").hidden = true; $("fb-worked-group").hidden = true; $("fb-next-group").hidden = true;
+      $("fb-eyebrow").textContent = "Free public beta · Report a bug"; $("fb-title").innerHTML = 'Report a <span class="serif">bug.</span>';
+      $("fb-lede").textContent = "Tell us what happened and what you expected. Include your operating system and VEENA version if you can.";
+      $("fb-didnt-label").textContent = "What went wrong?"; $("fb-bug-link").textContent = "Share general feedback instead"; $("fb-bug-link").href = "feedback.html";
+      $("fb-feature").value = "setup";
     }
+    if (!url) { $("fb-fields").disabled = true; $("fb-pending").hidden = false; return; }
     form.addEventListener("submit", function (ev) {
       ev.preventDefault();
-      var exp = form.querySelector("input[name=experience]:checked");
-      var type = form.querySelector("input[name=type]:checked");
-      var text = msg.value.trim();
-      var email = document.getElementById("fb-email").value.trim();
-      var problem = !exp ? "Choose how your experience was." : !type ? "Choose what your feedback is about." : !text ? "Write a short message." :
-        email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? "Check the email address, or leave it empty." : "";
+      var err = $("fb-error"); err.hidden = true;
+      var rating = form.querySelector("input[name=rating]:checked");
+      var body = { kind: $("fb-kind").value, feature: $("fb-feature").value, worked: $("fb-worked").value, didnt: $("fb-didnt").value, next: $("fb-next").value,
+        email: $("fb-email").value.trim(), contact_ok: $("fb-contact").checked, website: $("fb-website").value, elapsed_ms: Date.now() - started };
+      if (body.kind === "feedback") body.rating = rating ? Number(rating.value) : 0;
+      if (!body.email) delete body.email;
+      var problem = body.kind === "feedback" && !body.rating ? "Choose a rating from 1 to 5." :
+        !(body.worked.trim() || body.didnt.trim() || body.next.trim()) ? "Write at least one answer." :
+        body.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email) ? "Check the email address, or leave it empty." : "";
       if (problem) { err.textContent = problem; err.hidden = false; return; }
-      err.hidden = true;
-      var p = new URLSearchParams({ usp: "pp_url" });
-      p.set(e.experience, exp.value);
-      p.set(e.type, type.value);
-      p.set(e.message, text.slice(0, 2000));
-      if (email && /^entry\.\d+$/.test(e.email || "")) p.set(e.email, email);
-      if (/^entry\.\d+$/.test(e.page || "")) p.set(e.page, "website" + (campaign !== "none" ? " · " + campaign : ""));
-      var w = window.open(fb.formUrl + "?" + p.toString(), "_blank", "noopener");
-      form.innerHTML = '<div class="fb-done"><h2>Thank you.</h2><p class="fine">' +
-        (w === null ? "Your browser blocked the new tab. " : "") +
-        'Your answers are waiting in Google Forms. Press <b>Submit</b> there to send them.</p>' +
-        '<p><a class="pill ghost" href="' + fb.formUrl + "?" + p.toString().replace(/"/g, "&quot;") + '" target="_blank" rel="noopener">Open the form again</a></p></div>';
+      $("fb-submit").disabled = true; $("fb-submit").textContent = "Sending…";
+      fetch(url + "/v1/feedback", { method: "POST", mode: "cors", credentials: "omit", referrerPolicy: "no-referrer", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || "HTTP " + r.status); }); })
+        .then(function () {
+          form.innerHTML = '<div class="fb-done" role="status"><h2>Thank you.</h2><p class="fine">Your ' + (body.kind === "bug" ? "bug report" : "feedback") +
+            ' reached us. It helps decide what VEENA does next.</p></div>';
+        })
+        .catch(function (e) {
+          err.textContent = "Could not send just now (" + e.message + "). You can also write to florinaregius@yahoo.com.";
+          err.hidden = false; $("fb-submit").disabled = false; $("fb-submit").textContent = "Send feedback";
+        });
     });
   }
 

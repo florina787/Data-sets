@@ -1,6 +1,8 @@
-## VEENA.AI 0.1.0 · Beta
+## VEENA.AI 0.1.0 — Free Public Beta
 
-**Your AI. Your computer. Your control.** A private, open-source AI companion for conversations, meetings, interview practice, documents and your screen. It runs on your own computer, with no subscription, account or API key.
+**Your AI. Your computer. Your control.** A private, open-source AI companion for conversations, meetings, interview practice, documents and your screen. It runs on your own computer.
+
+Explore VEENA.AI free during our public beta. Help shape what comes next. This beta needs no account, no credit card and no API key; every feature is unlocked.
 
 ### Download
 
@@ -39,6 +41,17 @@ Confirm a download is intact by comparing it with `SHA256SUMS.txt` below.
 
 Before this release, CI installed each installer on fresh Windows, macOS (Apple Silicon) and Linux machines with no AI runtime. On each one it launched the installed app, downloaded and verified the runtime, got a real model answer, a cited document answer and speech-to-text, then uninstalled. Full results: `veena-ai/reports/CLEAN_INSTALL_TEST_RESULTS.md`. Known limitations are listed in `veena-ai/reports/RELEASE_READINESS.md`.
 
-Please report problems on GitHub Issues.
+### Known limitations
+
+* Small local models can be wrong; VEENA shows its sources and flags unbacked claims so you can check.
+* Speed depends on your computer: on a 4-core computer without a GPU, a full-screen analysis can take several minutes.
+* Installers are not code-signed yet (see above). Intel Macs, Windows on ARM and ARM Linux are not built yet.
+* System-audio capture works on Windows only; elsewhere use the microphone.
+
+### Feedback
+
+**Share feedback** or **report a bug** (no account needed): https://florina787.github.io/Data-sets/feedback.html · Have feedback? Write to florinaregius@yahoo.com. You can also use GitHub Issues and Discussions.
+
+Anonymous usage statistics are **off** unless you turn them on in Settings, and never include your questions, documents, screens or recordings.
 
 © 2026 Florina Regius · Released under the GNU General Public License v3.0
