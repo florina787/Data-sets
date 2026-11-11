@@ -1,0 +1,27 @@
+# Career_flo AI on one small VPS (recommended production path): the SAME container image as the HF Docker Space
+# (FastAPI + React + llama.cpp/Qwen3 on :7860) behind Caddy (automatic HTTPS). Database/auth = Supabase.
+#
+#   python3 ../../scripts/hf_deploy.py --stage-only --out ../../.hf-staging   # build context
+#   cp ../hf-space/space.env.example .env && edit .env                          # real values, never committed
+#   DOMAIN=app.example.com docker compose up -d --build
+services:
+  app:
+    build: ../../.hf-staging
+    env_file: .env
+    environment:
+      LLAMA_THREADS: ${LLAMA_THREADS:-2}
+    restart: unless-stopped
+    expose: ["7860"]
+    # No public port: only Caddy reaches the app; llama.cpp listens on 127.0.0.1 inside the container.
+  caddy:
+    image: caddy:2.11.9-alpine
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [app]
+    restart: unless-stopped
+volumes:
+  caddy_data: {}

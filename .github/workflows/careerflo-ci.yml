@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
         with: { python-version: "3.12" }
-      - run: uv sync --frozen
+      - run: uv sync --frozen --group deploy
       - name: Tests (SQLite) incl. Stripe spec validation against stripe-mock
         env: { STRIPE_MOCK_URL: "http://localhost:12111" }
         run: uv run pytest -rs
@@ -81,7 +81,7 @@ jobs:
       - name: gitleaks
         run: |
           docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.0 \
-            detect --source /repo --no-banner --redact --log-opts="-- careerflo" --exit-code 1
+            detect --source /repo --no-banner --redact --verbose --log-opts="-- careerflo" --exit-code 1
 
   # 4. Browser end-to-end journeys against the single-origin server (scripted Qwen stand-in, synthetic jobs).
   e2e:

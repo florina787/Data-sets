@@ -101,3 +101,19 @@ def test_rollback_dry_run_and_apply(monkeypatch, capsys):
     assert snap[2]["revision"].startswith("bbb222")
     assert any(c[0] == "upload_folder" and "Rollback to bbb222" in c[2]["commit_message"] for c in FakeApi.calls)
     assert rollback.main(["--space", "o/s", "--to", "zzz"]) == 2
+
+
+def test_static_frontend_target_has_public_env_only(tmp_path, monkeypatch):
+    monkeypatch.setenv("VITE_API_URL", "https://api.example.com")
+    monkeypatch.setenv("VITE_SUPABASE_URL", "https://ref.supabase.co")
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_never_in_frontend_xxxxxxxxxx")
+    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    out = tmp_path / "w"
+    assert deploy.main(["--target", "static-frontend", "--space", "o/web", "--out", str(out), "--apply"]) == 0
+    files = {p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file()}
+    assert "package.json" in files and "README.md" in files and not any(f.startswith("backend") for f in files)
+    env = (out / ".env.production").read_text()
+    assert "VITE_API_URL=https://api.example.com" in env and "sk_test" not in env
+    assert "sdk: static" in (out / "README.md").read_text() and "app_file: dist/index.html" in (out / "README.md").read_text()
+    assert FakeApi.calls[0][2]["space_sdk"] == "static" and FakeApi.calls[0][2]["private"] is True
+    assert not any(c[0] == "add_space_secret" for c in FakeApi.calls)

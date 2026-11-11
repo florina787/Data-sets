@@ -49,6 +49,7 @@ class FakeStripe:
         self.subscriptions = _NS("subscriptions")
         self.checkout = type("C", (), {"sessions": _NS("checkout.sessions")})()
         self.billing_portal = type("B", (), {"sessions": _NS("billing_portal.sessions")})()
+        self.v1 = self  # stripe-python v16+: resources live under client.v1
 
 
 @pytest.fixture

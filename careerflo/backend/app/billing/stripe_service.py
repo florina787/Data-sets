@@ -54,7 +54,7 @@ def get_or_create_customer(db: Session, user: User) -> str:
     row = db.get(StripeCustomer, user.id)
     if row:
         return row.stripe_customer_id
-    cust = _client().customers.create(params={"email": user.email, "metadata": {"careerflo_user_id": str(user.id)}})
+    cust = _client().v1.customers.create(params={"email": user.email, "metadata": {"careerflo_user_id": str(user.id)}})
     db.add(StripeCustomer(user_id=user.id, stripe_customer_id=cust.id, livemode=bool(cust.livemode)))
     db.commit()
     return cust.id
@@ -67,7 +67,7 @@ def create_checkout(db: Session, user: User, plan_id: str) -> str:
     if active:
         raise HTTPException(409, "You already have a subscription. Use 'Change plan' to switch.")
     s = get_settings()
-    session = _client().checkout.sessions.create(params={
+    session = _client().v1.checkout.sessions.create(params={
         "mode": "subscription", "customer": get_or_create_customer(db, user),
         "line_items": [{"price": plan_price(plan_id), "quantity": 1}],
         "client_reference_id": str(user.id),
@@ -87,7 +87,7 @@ def portal_url(db: Session, user: User) -> str:
     row = db.get(StripeCustomer, user.id)
     if not row:
         raise HTTPException(404, "No billing account yet.")
-    sess = _client().billing_portal.sessions.create(params={"customer": row.stripe_customer_id,
+    sess = _client().v1.billing_portal.sessions.create(params={"customer": row.stripe_customer_id,
                                                              "return_url": f"{get_settings().public_app_url}/billing"})
     return sess.url
 
@@ -102,9 +102,9 @@ def _user_sub(db: Session, user: User) -> Subscription:
 def change_plan(db: Session, user: User, plan_id: str) -> dict[str, Any]:
     sub = _user_sub(db, user)
     c = _client()
-    remote = c.subscriptions.retrieve(sub.stripe_subscription_id)
+    remote = c.v1.subscriptions.retrieve(sub.stripe_subscription_id)
     item = remote["items"]["data"][0]
-    c.subscriptions.update(sub.stripe_subscription_id, params={
+    c.v1.subscriptions.update(sub.stripe_subscription_id, params={
         "items": [{"id": item["id"], "price": plan_price(plan_id)}], "proration_behavior": "create_prorations",
         "metadata": {"careerflo_user_id": str(user.id), "plan": plan_id}})
     db.add(BillingAuditLog(user_id=user.id, action="subscription.change_requested", detail={"to": plan_id}))
@@ -114,7 +114,7 @@ def change_plan(db: Session, user: User, plan_id: str) -> dict[str, Any]:
 
 def set_cancel(db: Session, user: User, cancel: bool) -> dict[str, Any]:
     sub = _user_sub(db, user)
-    _client().subscriptions.update(sub.stripe_subscription_id, params={"cancel_at_period_end": cancel})
+    _client().v1.subscriptions.update(sub.stripe_subscription_id, params={"cancel_at_period_end": cancel})
     db.add(BillingAuditLog(user_id=user.id, action="subscription.cancel_requested" if cancel else "subscription.resume_requested"))
     db.commit()
     return {"cancel_at_period_end": cancel, "access_until": sub.current_period_end}
@@ -146,7 +146,7 @@ def _user_for_customer(db: Session, customer_id: str | None, meta: dict | None =
 
 def _fetch_subscription(sub_id: str) -> dict[str, Any] | None:
     try:
-        return _client().subscriptions.retrieve(sub_id).to_dict()
+        return _client().v1.subscriptions.retrieve(sub_id).to_dict()
     except Exception:  # noqa: BLE001 - offline / tests: fall back to the event payload
         return None
 
