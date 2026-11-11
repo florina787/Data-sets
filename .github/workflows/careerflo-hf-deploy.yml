@@ -1,0 +1,49 @@
+name: Career_flo AI → Hugging Face Space (manual, approval required)
+
+# Never runs automatically. Requires:
+#  * repository environment "huggingface-production" with REQUIRED REVIEWERS (Settings → Environments)
+#  * environment secret HF_TOKEN: fine-grained token with WRITE access to the target Space only
+#  * the target Space's runtime secrets/variables set in the Space settings (see careerflo/deploy/hf-space/space.env.example)
+on:
+  workflow_dispatch:
+    inputs:
+      space:
+        description: "Space id (OWNER/NAME)"
+        required: true
+      git_ref:
+        description: "Git tag or commit to deploy (default: the selected branch head)"
+        required: false
+      dry_run:
+        description: "Dry run only (stage + checks, no upload)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: careerflo-hf-deploy-${{ inputs.space }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: huggingface-production
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.12" }
+      - name: Tests must pass before any deploy
+        working-directory: careerflo/backend
+        run: uv sync --frozen && uv run pytest -q
+      - name: Deploy
+        working-directory: careerflo/backend
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          STRIPE_ALLOW_LIVE: "false"
+        run: |
+          ARGS="--space ${{ inputs.space }} --out ../.hf-staging"
+          if [ -n "${{ inputs.git_ref }}" ]; then ARGS="$ARGS --git-ref ${{ inputs.git_ref }}"; fi
+          if [ "${{ inputs.dry_run }}" != "true" ]; then ARGS="$ARGS --apply"; fi
+          uv run python ../scripts/hf_deploy.py $ARGS

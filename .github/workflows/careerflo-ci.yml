@@ -2,15 +2,21 @@ name: Career_flo AI CI
 
 on:
   pull_request:
-    paths: ["careerflo/**", ".github/workflows/careerflo-ci.yml"]
+    paths: ["careerflo/**", ".github/workflows/careerflo-*.yml"]
   push:
-    branches: [master]
-    paths: ["careerflo/**", ".github/workflows/careerflo-ci.yml"]
+    branches: [master, "claude/**"]
+    paths: ["careerflo/**", ".github/workflows/careerflo-*.yml"]
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: careerflo-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  # 1. Backend: SQLite + PostgreSQL (with migrations) + Stripe API-spec validation via the official stripe-mock.
   backend:
     runs-on: ubuntu-latest
     services:
@@ -19,6 +25,9 @@ jobs:
         env: { POSTGRES_PASSWORD: postgres, POSTGRES_DB: careerflo_test }
         ports: ["5432:5432"]
         options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+      stripe-mock:
+        image: stripe/stripe-mock:v0.206.0
+        ports: ["12111:12111"]
     defaults:
       run:
         working-directory: careerflo/backend
@@ -27,20 +36,24 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with: { python-version: "3.12" }
       - run: uv sync --frozen
-      # Deterministic tests: scripted Qwen stand-in, synthetic jobs, no network keys.
-      - name: Tests (SQLite)
-        run: uv run pytest
+      - name: Tests (SQLite) incl. Stripe spec validation against stripe-mock
+        env: { STRIPE_MOCK_URL: "http://localhost:12111" }
+        run: uv run pytest -rs
       - name: Migrations + tests (PostgreSQL)
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/careerflo_test
           TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/careerflo_test
+          STRIPE_MOCK_URL: "http://localhost:12111"
         run: |
           uv run alembic upgrade head
-          uv run pytest
-      - name: Dependency audit
-        run: uvx pip-audit --strict -r <(uv export --frozen --no-dev --no-hashes) || echo "::warning::pip-audit reported issues"
+          uv run pytest -rs
+      - name: Configuration requirements (deploy dry run, secret scan of the staged Space)
+        run: uv run python ../scripts/hf_deploy.py --out ../.hf-staging
+      - name: Dependency audit (Python)
         shell: bash
+        run: uvx pip-audit --strict -r <(uv export --frozen --no-dev --no-hashes) || echo "::warning::pip-audit reported issues"
 
+  # 2. Frontend: types, unit tests, production build, dependency audit.
   frontend:
     runs-on: ubuntu-latest
     defaults:
@@ -58,3 +71,85 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm audit --audit-level=high --omit=dev || echo "::warning::npm audit reported issues"
+
+  # 3. Secret scan of the whole careerflo/ tree (history of this checkout).
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: gitleaks
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.30.0 \
+            detect --source /repo --no-banner --redact --log-opts="-- careerflo" --exit-code 1
+
+  # 4. Browser end-to-end journeys against the single-origin server (scripted Qwen stand-in, synthetic jobs).
+  e2e:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: careerflo/frontend/package-lock.json
+      - name: Build frontend
+        working-directory: careerflo/frontend
+        run: npm ci && npm run build && npx playwright install --with-deps chromium
+      - name: Start Career_flo (API + frontend on one origin)
+        working-directory: careerflo/backend
+        env:
+          DATABASE_URL: sqlite:////tmp/e2e.db
+          LLM_PROVIDER: scripted
+          LLM_MODEL: qwen3-1.7b
+          FRONTEND_DIST: ${{ github.workspace }}/careerflo/frontend/dist
+          ENABLE_SYNTHETIC_JOBS: "true"
+          AUTH_MODE: local
+        run: |
+          uv sync --frozen
+          nohup uv run uvicorn app.main:app --port 7860 > /tmp/api.log 2>&1 &
+          for i in $(seq 1 60); do curl -fsS localhost:7860/api/health && break; sleep 1; done
+      - name: Playwright journeys
+        working-directory: careerflo/frontend
+        env: { E2E_BASE_URL: "http://localhost:7860" }
+        run: npx playwright test
+      - name: Concurrency smoke test (5 users, 1 streamed chat)
+        working-directory: careerflo
+        run: backend/.venv/bin/python scripts/load_test.py --base http://localhost:7860 --users 5 --chats 1
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: |
+            careerflo/frontend/test-results/
+            /tmp/api.log
+
+  # 5. Build the actual Hugging Face Space image (no push) and keep a versioned artifact of what would be deployed.
+  space-image:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend, secrets]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage the Space (stdlib only; also runs the secret scan)
+        run: python3 careerflo/scripts/hf_deploy.py --stage-only --out careerflo/.hf-staging
+      - name: Build image
+        run: docker build -t careerflo-space:${{ github.sha }} careerflo/.hf-staging
+      - name: Container smoke test (API + bundled Qwen, SQLite, no external services)
+        run: |
+          docker run -d --name cf -p 7860:7860 -e DATABASE_URL=sqlite:////tmp/cf.db -e AUTH_MODE=local \
+            -e LOCAL_JWT_SECRET=ci-only-secret-ci-only-secret-0123456 -e ENABLE_SYNTHETIC_JOBS=true careerflo-space:${{ github.sha }}
+          for i in $(seq 1 180); do curl -fsS localhost:7860/api/health && break; sleep 2; done
+          for i in $(seq 1 120); do curl -fsS localhost:7860/api/health/ready | grep -q '"status":"ok"' && break; sleep 2; done
+          curl -fsS localhost:7860/api/health/ready
+          curl -fsS localhost:7860/ | grep -q '<div id="root">'
+          docker logs cf | tail -20
+      - name: Archive staged Space + manifest
+        run: tar czf careerflo-space-${{ github.sha }}.tgz -C careerflo/.hf-staging .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: careerflo-space-${{ github.sha }}
+          path: careerflo-space-${{ github.sha }}.tgz
+          retention-days: 30

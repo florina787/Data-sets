@@ -1,0 +1,35 @@
+name: Career_flo AI → roll back Hugging Face Space (manual, approval required)
+
+on:
+  workflow_dispatch:
+    inputs:
+      space:
+        description: "Space id (OWNER/NAME)"
+        required: true
+      to:
+        description: "Space commit sha to restore (leave empty to list recent deployments)"
+        required: false
+      apply:
+        description: "Apply the rollback (otherwise dry run)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: huggingface-production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { python-version: "3.12" }
+      - working-directory: careerflo/backend
+        env: { HF_TOKEN: "${{ secrets.HF_TOKEN }}" }
+        run: |
+          uv sync --frozen --only-group deploy --no-install-project
+          ARGS="--space ${{ inputs.space }}"
+          if [ -n "${{ inputs.to }}" ]; then ARGS="$ARGS --to ${{ inputs.to }}"; else ARGS="$ARGS --list"; fi
+          if [ "${{ inputs.apply }}" = "true" ]; then ARGS="$ARGS --apply"; fi
+          uv run --no-project --with huggingface_hub python ../scripts/hf_rollback.py $ARGS
