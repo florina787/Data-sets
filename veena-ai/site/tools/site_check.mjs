@@ -151,7 +151,7 @@ for (const vp of VIEWPORTS) {
   const body = await page.evaluate(() => document.body.innerText);
   if (!live && /three uses|Try free|See pricing/.test(body)) fail("index: paid-plan wording visible while plansLive is false");
   if (!live && await page.isVisible('nav[aria-label="Main"] a[href="pricing.html"]')) fail("index: Pricing link visible while plansLive is false");
-  if (!live && !/Free\. No account\. No subscription\./.test(body)) fail("index: free wording missing while plansLive is false");
+  if (!live && !/Free during the public beta\. No account\. No credit card\./.test(body)) fail("index: free wording missing while plansLive is false");
   console.log(`wording matches release (plansLive=${live})`);
   await page.close();
 }
