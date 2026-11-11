@@ -8,7 +8,7 @@ ref="${REF:-main}"
 rm -rf "$out" && mkdir -p "$out/images"
 # Nothing switched on unverified (feedback form, community link, analytics), and no secrets.
 python3 "$here/tools/check_config.py" "$here/config.js"
-cp "$here"/index.html "$here"/features.html "$here"/feedback.html "$here"/privacy.html \
+cp "$here"/index.html "$here"/features.html "$here"/feedback.html "$here"/privacy.html "$here"/pricing.html "$here"/pricing.js \
    "$here"/site.css "$here"/site.js "$here"/config.js "$out/"
 cp -R "$here/fonts" "$out/fonts"
 cp "$here"/../apps/desktop/assets/icon-64.png "$out/images/"

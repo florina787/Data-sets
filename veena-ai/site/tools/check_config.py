@@ -52,6 +52,10 @@ def main() -> int:
     if ins is not None and not re.fullmatch(r"https://[A-Za-z0-9.-]+(/[A-Za-z0-9._-]*)*", str(ins)):
         problems.append("insightsUrl must be the https:// URL of the deployed VEENA Insights Worker")
 
+    bill = cfg.get("billingUrl")
+    if bill is not None and not re.fullmatch(r"https://[A-Za-z0-9.-]+(/[A-Za-z0-9._-]*)*", str(bill)):
+        problems.append("billingUrl must be the https:// URL of the deployed VEENA Billing Worker")
+
     token = cfg.get("cloudflareToken")
     if token is not None and not re.fullmatch(r"[a-f0-9]{32}", str(token)):
         problems.append("cloudflareToken must be the 32-character site token from Cloudflare Web Analytics")

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pricing · VEENA.AI</title>
+<meta name="description" content="Start free with three uses of every VEENA feature. Then choose Unlimited or pay-as-you-go credits. Prices in USD." />
+<meta name="theme-color" content="#17110f" />
+<link rel="canonical" href="https://florina787.github.io/Data-sets/pricing.html" />
+<link rel="icon" type="image/png" href="images/icon-64.png" />
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="site.css" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="ambient" aria-hidden="true"><div class="wash"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="./" aria-label="VEENA.AI home"><img src="images/icon-64.png" alt="" width="28" height="28" /><span><b>VEENA</b><i>.AI</i></span></a>
+    <nav aria-label="Main">
+      <a href="features.html">Features</a>
+      <a href="pricing.html" aria-current="page">Pricing</a>
+      <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>
+      <a class="pill dark" href="./#download">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <p class="testmode" id="testmode" hidden>Test mode: payments use Stripe's test environment. No real card is charged.</p>
+  <section class="hero" style="padding-bottom:20px" aria-labelledby="p-title">
+    <div class="wrap center">
+      <p class="eyebrow">Pricing</p>
+      <h1 id="p-title" style="font-size:clamp(2.6rem,6.5vw,5rem)">Simple, <span class="serif">transparent</span> pricing.</h1>
+      <p class="lede" style="margin:18px auto 0">Try every feature free. Then go Unlimited, or pay only for the meeting and interview time you use.</p>
+    </div>
+  </section>
+
+  <section class="pricing" aria-label="Plans">
+    <div class="wrap">
+      <div class="trial reveal">
+        <div>
+          <p class="eyebrow" style="margin:0">Free trial · $0</p>
+          <h2>Three free uses of <span class="serif">every</span> feature.</h2>
+          <p>No credit card. A use counts only when it succeeds; failed or cancelled tasks are free.</p>
+        </div>
+        <ul class="trial-list">
+          <li><b>3</b> Ask anything answers</li>
+          <li><b>3</b> Document answers with sources</li>
+          <li><b>3</b> Screen analyses</li>
+          <li><b>3</b> Meeting sessions</li>
+          <li><b>3</b> Interview practice sessions</li>
+        </ul>
+      </div>
+
+      <div class="tabs reveal" role="tablist" aria-label="Plan type">
+        <button role="tab" id="t-unl" aria-controls="p-unl" aria-selected="true">Unlimited <span class="rec">Recommended</span></button>
+        <button role="tab" id="t-cr" aria-controls="p-cr" aria-selected="false" tabindex="-1">Credits</button>
+        <button role="tab" id="t-cu" aria-controls="p-cu" aria-selected="false" tabindex="-1">Custom</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-unl" aria-labelledby="t-unl">
+        <div class="seg2" role="radiogroup" aria-label="Billing period">
+          <button role="radio" aria-checked="true" data-plan="unlimited_monthly">Monthly</button>
+          <button role="radio" aria-checked="false" data-plan="unlimited_annual">Annual <span class="save">Save 67%</span></button>
+        </div>
+        <div class="price"><span id="u-price">$74.95</span><small id="u-per">USD / month</small></div>
+        <p class="per" id="u-note">Billed monthly. Cancel anytime.</p>
+        <ul class="ticks">
+          <li>Unlimited use of every verified feature: Ask anything, Documents, Screen, Meetings, Interview practice</li>
+          <li>Still private: AI runs on your computer; your content never goes to our servers</li>
+          <li>Manage, change or cancel anytime in the Stripe customer portal</li>
+          <li>No usage quota. We only step in for automated abuse that affects the service, and we will contact you first</li>
+        </ul>
+        <button class="pill dark buy" data-buy="unlimited">Get Unlimited — $74.95/month</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-cr" aria-labelledby="t-cr" hidden>
+        <p class="per" style="margin-top:0">Pay as you go. Credits pay for <b>meeting</b> and <b>interview</b> session time: 1 credit = 60 minutes, used in 30-minute blocks (0.5 credit), charged only after a session completes.</p>
+        <div class="packs" role="radiogroup" aria-label="Credit packages">
+          <button role="radio" aria-checked="false" data-plan="credits_1"><b>1 Credit</b><span>60 minutes</span><em>$19.00</em><small>$19.00 / credit</small></button>
+          <button role="radio" aria-checked="true" data-plan="credits_3"><b>3 Credits</b><span>180 minutes</span><em>$29.50</em><small>$9.83 / credit</small></button>
+          <button role="radio" aria-checked="false" data-plan="credits_8"><b>8 Credits</b><span>480 minutes</span><em>$59.00</em><small>$7.38 / credit</small></button>
+          <button role="radio" aria-checked="false" data-plan="credits_15"><b>15 Credits</b><span>900 minutes</span><em>$88.50</em><small>$5.90 / credit · Best value</small></button>
+        </div>
+        <ul class="ticks">
+          <li>One-time payment. Credits don't expire</li>
+          <li>Ask anything, Documents and Screen: use your free uses, then Unlimited. Per-answer credit pricing for these is not offered yet</li>
+        </ul>
+        <button class="pill dark buy" data-buy="credits">Buy 3 Credits — $29.50</button>
+      </div>
+
+      <div class="panel" role="tabpanel" id="p-cu" aria-labelledby="t-cu" hidden>
+        <h3 style="margin-top:0">Choose only the features you need</h3>
+        <p class="per">Feature-specific packages are coming soon. Tell us which features you'd pay for and we'll let you know when Custom opens.</p>
+        <a class="pill ghost" href="feedback.html">Contact us about Custom</a>
+      </div>
+
+      <p class="terms">Prices in US dollars. Sales tax or VAT may be added at checkout depending on where you live. Subscriptions renew automatically until cancelled; cancelling stops the next renewal and keeps access to the end of the paid period. Payments are processed by Stripe; VEENA never sees or stores your card. Questions about a charge or a refund: <a href="feedback.html">contact us</a>.</p>
+      <div class="status" id="buy-status" role="status" aria-live="polite" hidden></div>
+
+      <h2 class="h2 center" style="margin-top:72px">Compare <span class="serif">plans</span></h2>
+      <div class="compare-wrap" tabindex="0" role="region" aria-label="Plan comparison (scrolls sideways on small screens)">
+        <table class="compare">
+          <thead><tr><th scope="col">Feature</th><th scope="col">Free trial</th><th scope="col">Credits</th><th scope="col">Unlimited</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Ask anything</th><td>3 answers</td><td>Free uses only</td><td>Unlimited</td></tr>
+            <tr><th scope="row">Documents with sources</th><td>3 answers</td><td>Free uses only</td><td>Unlimited</td></tr>
+            <tr><th scope="row">Screen analysis</th><td>3 analyses</td><td>Free uses only</td><td>Unlimited</td></tr>
+            <tr><th scope="row">Meeting sessions</th><td>3 sessions</td><td>30-minute blocks</td><td>Unlimited</td></tr>
+            <tr><th scope="row">Interview practice</th><td>3 sessions</td><td>30-minute blocks</td><td>Unlimited</td></tr>
+            <tr><th scope="row">Runs on your computer</th><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><th scope="row">Price</th><td>$0</td><td>From $19.00</td><td>$74.95/month or $299.95/year</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog class="signin" id="signin" aria-labelledby="si-title">
+  <form method="dialog" id="si-form">
+    <h2 id="si-title">Sign in to buy</h2>
+    <p class="per">We'll email you a 6-digit code. Use the same email in the VEENA app.</p>
+    <label class="fb-label" for="si-email">Email</label>
+    <input id="si-email" type="email" autocomplete="email" required />
+    <div id="si-code-row" hidden><label class="fb-label" for="si-code">Code</label><input id="si-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" /></div>
+    <p class="fb-error" id="si-err" role="alert" hidden></p>
+    <div class="si-actions"><button class="pill ghost" value="cancel" formnovalidate>Cancel</button><button class="pill dark" id="si-go" value="default">Send code</button></div>
+  </form>
+</dialog>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Florina Regius · VEENA.AI · GPL-3.0</span>
+    <nav aria-label="Footer">
+      <a href="./">Home</a>
+      <a href="features.html">Features</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="feedback.html">Feedback</a>
+      <a data-community hidden href="#">Community</a>
+    </nav>
+  </div>
+</footer>
+<script src="config.js"></script>
+<script src="site.js" defer></script>
+<script src="pricing.js" defer></script>
+</body>
+</html>

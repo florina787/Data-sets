@@ -23,4 +23,9 @@ window.VEENA_CONFIG = {
   // VEENA Insights (cloud/insights): cookieless page-view and download-click COUNTERS, no identifier.
   // Leave null until the owner deploys the Worker; then set to its https:// URL.
   insightsUrl: null,
+
+  // VEENA Billing Worker (cloud/billing). null = payments not open: buttons explain that politely.
+  billingUrl: null,
+  // Shows the "Test mode" banner while Stripe is in test mode.
+  billingTestMode: true,
 };

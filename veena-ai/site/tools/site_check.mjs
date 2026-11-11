@@ -28,7 +28,7 @@ const server = createServer(async (req, res) => {
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const base = `http://127.0.0.1:${server.address().port}`;
 
-const PAGES = ["index.html", "features.html", "feedback.html", "privacy.html"];
+const PAGES = ["index.html", "features.html", "feedback.html", "privacy.html", "pricing.html"];
 const VIEWPORTS = [{ name: "mobile", width: 390, height: 844 }, { name: "tablet", width: 820, height: 1180 }, { name: "desktop", width: 1440, height: 900 }];
 const failures = [];
 const fail = (m) => { failures.push(m); console.log("FAIL", m); };
@@ -111,6 +111,28 @@ for (const vp of VIEWPORTS) {
     u.searchParams.get("entry.2") === "Feature request" && u.searchParams.get("entry.3") === "Please add <b>dark mode</b> & more." && !u.searchParams.has("entry.4");
   if (!ok) fail(`feedback: wrong pre-filled link ${popup.url()}`); else console.log("feedback pre-filled link OK");
   if (!(await page.isVisible("text=Thank you."))) fail("feedback: no confirmation shown");
+  await page.close();
+}
+
+// Pricing: keyboard tabs, plan selection updates the total, buttons never pretend to charge.
+{
+  const page = await browser.newPage();
+  await page.goto(`${base}/pricing.html`);
+  const btn = () => page.textContent('[data-buy="unlimited"]');
+  if ((await btn()) !== "Get Unlimited — $74.95/month") fail("pricing: default monthly button wrong: " + (await btn()));
+  await page.click('[data-plan="unlimited_annual"]');
+  if ((await btn()) !== "Get Unlimited — $299.95/year") fail("pricing: annual selection did not update the total");
+  await page.focus("#t-unl"); await page.keyboard.press("ArrowRight");
+  if (!(await page.isVisible("#p-cr")) || (await page.isVisible("#p-unl"))) fail("pricing: arrow key did not switch to Credits");
+  await page.keyboard.press("End");
+  if (!(await page.isVisible("#p-cu"))) fail("pricing: End key did not switch to Custom");
+  await page.click("#t-cr"); await page.click('[data-plan="credits_15"]');
+  if ((await page.textContent('[data-buy="credits"]')) !== "Buy 15 Credits — $88.50") fail("pricing: credit pack total wrong");
+  await page.click('[data-buy="credits"]');
+  if (!/not open yet/.test(await page.textContent("#buy-status"))) fail("pricing: with no billing server the button must say payments are not open");
+  await page.goto(`${base}/pricing.html?checkout=success`);
+  if (/confirmed/i.test(await page.textContent("body"))) fail("pricing: success URL alone must not show a confirmed payment");
+  console.log("pricing interactions OK");
   await page.close();
 }
 
