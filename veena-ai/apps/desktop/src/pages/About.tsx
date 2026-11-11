@@ -55,8 +55,9 @@ export function About() {
               <li>Screen text: Tesseract OCR {status?.tesseract ? "" : "(not installed)"}</li>
             </ul>
             <p>
-              No telemetry is sent anywhere. VEENA uses the internet only to download the AI runtime and models when you ask it to, and, if allowed in Setup, to check GitHub once a day for a newer
-              version number.
+              No usage statistics are sent unless you turn on "Share anonymous usage statistics" in Settings (off by default; never your content). VEENA otherwise uses
+              the internet only to download the AI runtime and models when you ask it to, and, if allowed in Setup, to check GitHub once a day for a newer version
+              number.
             </p>
           </Card>
           <UpdateCheck />

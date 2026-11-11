@@ -48,6 +48,9 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "speak_interviewer": False,
     "setup_step": 0,  # resumes the setup wizard where the user left it
     "check_updates": True,  # once a day, asks GitHub for the latest version number only
+    # Anonymous usage statistics: OFF until the user explicitly opts in (backend/telemetry).
+    "share_usage_stats": False,
+    "telemetry_id": None,  # random UUID created at opt-in, removed at opt-out
 }
 
 

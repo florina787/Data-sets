@@ -180,7 +180,7 @@ class Telemetry:
                 return "offline"  # keep the queue; try again later
             if r.status_code < 500:  # sent, or rejected for good (4xx): either way do not resend
                 with self._lock:
-                    self._state["queue"] = self._state["queue"][len(batch):]
+                    self._state["queue"] = self._state["queue"][len(batch) :]
                     self._save()
             return f"http {r.status_code}"
 

@@ -149,6 +149,8 @@ class Engine:
             try:
                 installed = await self.catalog.installed()
             except LLMUnavailable as e:
+                if getattr(self, "telemetry", None):
+                    self.telemetry.error("model_error")
                 yield {"type": "error", "code": "llm_unavailable", "message": str(e)}
                 return
             prof = settings.get("profile") or "balanced"
@@ -211,6 +213,16 @@ class Engine:
             finally:
                 await stream.aclose()
             gen_step = {"node": "generate", "ms": round((time.perf_counter() - t_gen) * 1000, 2)}
+            if getattr(self, "telemetry", None) and answer_parts and not stats.cancelled:
+                # Only WHICH feature produced an answer is recorded (if opted in) - never its content.
+                feature = (
+                    "screen"
+                    if req.image_b64
+                    else "documents"
+                    if req.collection_ids
+                    else {"interview": "interview", "meeting": "meeting"}.get(req.mode, "chat")
+                )
+                self.telemetry.ai_success(feature)
             answer = "".join(answer_parts)
             t_gov = time.perf_counter()
             gov = governance.review(

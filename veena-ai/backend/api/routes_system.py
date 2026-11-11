@@ -195,6 +195,8 @@ async def get_settings(st: AppState = Depends(get_state)):
 
 @router.patch("/settings")
 async def patch_settings(patch: dict[str, Any], st: AppState = Depends(get_state)):
+    if {"share_usage_stats", "telemetry_id"} & set(patch):
+        raise HTTPException(400, "use /api/telemetry to change anonymous statistics consent")
     try:
         out = st.store.update_settings(patch)
     except KeyError as e:
@@ -214,3 +216,25 @@ async def metrics(days: int = 30, st: AppState = Depends(get_state)):
         "practice": st.coach.all_scores(),
         "embedding_cache_hits": st.kb.embedder.cache_hits,
     }
+
+
+class TelemetryReq(BaseModel):
+    enabled: bool
+
+
+@router.get("/telemetry")
+async def telemetry_status(st: AppState = Depends(get_state)):
+    """Consent state and exactly what is queued to be sent (nothing unless opted in)."""
+    return st.telemetry.status()
+
+
+@router.post("/telemetry")
+async def telemetry_consent(body: TelemetryReq, st: AppState = Depends(get_state)):
+    if body.enabled:
+        if not st.telemetry.available:
+            raise HTTPException(409, "anonymous statistics are not available in this build")
+        out = st.telemetry.opt_in()
+    else:
+        out = st.telemetry.opt_out()
+    asyncio.get_running_loop().create_task(st.telemetry.flush())  # background; never delays the reply
+    return out

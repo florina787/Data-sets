@@ -21,6 +21,66 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
   );
 }
 
+interface TelemetryStatus {
+  available: boolean;
+  enabled: boolean;
+  server: string | null;
+  queued: { event: string; feature?: string; error_code?: string; day: string }[];
+}
+
+/** Opt-in anonymous usage statistics. Off by default; withdrawing deletes the data on the server too. */
+function UsageStatistics() {
+  const { api, toast } = useApp();
+  const [st, setSt] = useState<TelemetryStatus | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (api) void api.get<TelemetryStatus>("/api/telemetry").then(setSt).catch(() => setSt(null));
+  }, [api]);
+  if (!st) return null;
+  const change = async (enabled: boolean) => {
+    setBusy(true);
+    try {
+      setSt(await api!.post<TelemetryStatus>("/api/telemetry", { enabled }));
+      toast("success", enabled ? "Thank you. Anonymous statistics are on." : "Statistics are off. Your installation's data is being deleted from the server.");
+    } catch (e) {
+      toast("error", (e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <Card>
+      <CardHeader title="Anonymous usage statistics" subtitle="Optional. Off unless you turn it on. VEENA works exactly the same either way." />
+      <div className="mt-3">
+        <Row
+          label="Share anonymous usage statistics"
+          hint={st.available ? `Helps decide what to improve. Sent to ${st.server}.` : "Not available in this version: nothing can be sent."}
+        >
+          <Switch checked={st.enabled} disabled={!st.available || busy} onChange={(v) => void change(v)} label="" />
+        </Row>
+      </div>
+      <div className="px-5 pb-5 text-xs leading-relaxed text-caramel">
+        <p>
+          <b className="text-bark">Sent, only if on:</b> a random installation id (deleted when you turn this off), your operating system, VEENA's version, the
+          date, and which of these happened: first launch, first AI answer, opened today, which feature you used (chat, documents, screen, meeting, interview,
+          agents), and short error codes.
+        </p>
+        <p className="mt-2">
+          <b className="text-bark">Never sent:</b> your questions or answers, screenshots, documents, file names, audio, transcripts, resumes, or error messages.
+          Turning this off stops collection immediately and asks the server to delete this installation's data.
+        </p>
+        {st.enabled && (
+          <button type="button" className="mt-2 underline" onClick={() => setShow(!show)}>
+            {show ? "Hide" : "Show"} exactly what is waiting to be sent ({st.queued.length})
+          </button>
+        )}
+        {show && <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-ivory p-3 text-[11px] text-bark">{JSON.stringify(st.queued, null, 2)}</pre>}
+      </div>
+    </Card>
+  );
+}
+
 function Diagnostics() {
   const { api, backend } = useApp();
   const [m, setM] = useState<{ live: Record<string, { count: number; p50?: number; p95?: number }>; resources: Record<string, unknown> } | null>(null);
@@ -287,6 +347,8 @@ export function Settings() {
             </div>
             <p className="px-5 pb-5 text-xs text-caramel">Data folder: {status?.data_dir}</p>
           </Card>
+
+          <UsageStatistics />
 
           {hw && (
             <Card>

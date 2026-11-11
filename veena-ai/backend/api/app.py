@@ -24,6 +24,7 @@ from ..rag.service import KnowledgeBase
 from ..runtime.ollama_runtime import OllamaRuntime
 from ..security.auth import TokenAuthMiddleware
 from ..security.redact import install_log_redaction
+from ..telemetry import Telemetry
 from . import routes_agents, routes_chat, routes_knowledge, routes_practice, routes_system, ws_audio
 from .state import AppState
 
@@ -67,6 +68,8 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
         detector=QuestionDetector(llm=llm),
         runtime=OllamaRuntime(settings.data_dir, settings.ollama_url),
     )
+    state.telemetry = Telemetry(store, settings.data_dir)
+    state.engine.telemetry = state.telemetry
     if transcriber_factory is not None:
         state.transcriber_factory = transcriber_factory
 
@@ -77,6 +80,8 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
         if purged:
             log.info("retention: removed %d expired sessions", purged)
         task = asyncio.create_task(_retention_loop(store))
+        # Anonymous statistics: does nothing unless the user opted in and a server is configured.
+        stats_task = asyncio.create_task(state.telemetry.loop()) if state.telemetry.available else None
         # Start the local AI runtime if one is installed but not running.
         # Only real deployments manage a process; tests inject their own LLM.
         manage_runtime = settings.manage_runtime and isinstance(llm, OllamaClient)
@@ -84,6 +89,8 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
             asyncio.create_task(_autostart_runtime(state))
         yield
         task.cancel()
+        if stats_task:
+            stats_task.cancel()
         if manage_runtime and state.runtime:
             state.runtime.stop()
         await llm.aclose()

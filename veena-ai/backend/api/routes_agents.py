@@ -15,6 +15,8 @@ router = APIRouter(prefix="/api/agents")
 
 @router.get("/scorecard")
 async def get_scorecard(days: int = Query(30, ge=1, le=365), st: AppState = Depends(get_state)):
+    if st.telemetry:
+        st.telemetry.track("feature", feature="agents")
     return await asyncio.to_thread(scorecard, st.store, days)
 
 
