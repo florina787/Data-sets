@@ -15,7 +15,16 @@ import pytest
 from backend.billing import Billing
 
 ROOT = Path(__file__).resolve().parents[1]
-pytestmark = pytest.mark.skipif(shutil.which("node") is None, reason="node is needed to run the billing Worker")
+
+
+def _node_has_sqlite() -> bool:
+    if shutil.which("node") is None:
+        return False
+    r = subprocess.run(["node", "--no-warnings", "-e", "require('node:sqlite')"], capture_output=True)
+    return r.returncode == 0
+
+
+pytestmark = pytest.mark.skipif(not _node_has_sqlite(), reason="Node 22.5+ (node:sqlite) is needed to run the billing Worker locally")
 
 
 @pytest.fixture(scope="module")
