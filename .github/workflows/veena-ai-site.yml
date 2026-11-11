@@ -42,7 +42,10 @@ jobs:
           mkdir -p /tmp/sitecheck /tmp/screens && cd /tmp/sitecheck
           npm init -y >/dev/null
           npm install --no-save playwright@1.63.0 axe-core@4.11.0
-          npx playwright install --with-deps chromium
+          # Ubuntu mirrors are sometimes unreachable from runners: retry, then fall back to the browser alone
+          # (the runner image already has the libraries Chromium needs; only extra fonts may be missing).
+          for i in 1 2; do npx playwright install --with-deps chromium && break; sleep 30; done || true
+          npx playwright install chromium
           node "$GITHUB_WORKSPACE/veena-ai/site/tools/site_check.mjs" "$GITHUB_WORKSPACE/_site" /tmp/screens
       - name: Release download totals (GitHub's own per-file counts)
         run: python3 veena-ai/site/tools/release_downloads.py
