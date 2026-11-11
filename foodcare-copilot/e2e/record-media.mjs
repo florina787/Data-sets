@@ -12,7 +12,11 @@ import { fileURLToPath } from "url";
 
 const [base = "http://127.0.0.1:9710", out = "/tmp/frames"] = process.argv.slice(2);
 const here = path.dirname(fileURLToPath(import.meta.url));
-const browser = await chromium.launch(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : {});
+// SwiftShader gives headless Chromium a software WebGL device, so the 3D globe can be recorded.
+const browser = await chromium.launch({
+  ...(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : {}),
+  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
+});
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1 });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let seq = {};
@@ -108,7 +112,54 @@ for (let y = 0; y < height - 800; y += 160) {
 }
 await hold("agents", 8);
 
-// 7. still image: token usage panel on System Observability
+// 7. globe: idle rotation, fly to a country, drill into a site, then labelled simulated movement
+async function geoFrames(name, n, ms = 110) {
+  const m = page.getByTestId("supply-map").first();
+  const b = await m.boundingBox();
+  const clip = { x: b.x, y: b.y, width: b.width, height: Math.min(720, b.height) };
+  fs.mkdirSync(path.join(out, name), { recursive: true });
+  for (let i = 0; i < n; i++) {
+    seq[name] = (seq[name] ?? 0) + 1;
+    await page.screenshot({ path: path.join(out, name, `${String(seq[name]).padStart(3, "0")}.png`), clip });
+    await sleep(ms);
+  }
+}
+await go("Executive Command");
+const gmap = page.getByTestId("supply-map").first();
+await gmap.evaluate((el) => el.scrollIntoView({ block: "start" }));
+await page.mouse.move(2, 2);
+await sleep(3500);
+await geoFrames("globe", 30, 120);
+await gmap.locator("summary").click();
+await gmap.getByRole("button", { name: "Select Peru" }).click();
+await gmap.evaluate((el) => el.scrollIntoView({ block: "start" }));
+await geoFrames("globe", 22, 90);
+await gmap.getByRole("button", { name: /^Select Synthetic .* Peru/ }).first().click();
+await gmap.evaluate((el) => el.scrollIntoView({ block: "start" }));
+await geoFrames("globe", 22, 90);
+await gmap.getByLabel("Simulated movement").check();
+await geoFrames("globe", 26, 120);
+await gmap.getByLabel("Simulated movement").uncheck();
+
+// 8. map2d: the lightweight 2D map, overlays and a red quality incident
+await gmap.getByRole("button", { name: "2D map" }).click();
+await gmap.getByRole("button", { name: "Global network" }).click();
+await gmap.evaluate((el) => el.scrollIntoView({ block: "start" }));
+await sleep(900);
+await geoFrames("map2d", 6, 150);
+for (const o of ["exposure", "performance", "risk"]) {
+  await gmap.getByLabel("Overlay").selectOption(o);
+  await sleep(300);
+  await geoFrames("map2d", 5, 150);
+}
+await gmap.getByRole("tab", { name: "Quality incidents" }).click();
+await gmap.getByRole("list", { name: "Quality incidents in scope" }).getByRole("button").first().click();
+await gmap.evaluate((el) => el.scrollIntoView({ block: "start" }));
+await geoFrames("map2d", 14, 110);
+await gmap.getByRole("button", { name: "Clear selection" }).click();
+await gmap.getByRole("button", { name: "3D globe" }).click();
+
+// 9. still image: token usage panel on System Observability
 await go("System Observability");
 const panel = main().getByTestId("token-usage");
 await panel.waitFor();

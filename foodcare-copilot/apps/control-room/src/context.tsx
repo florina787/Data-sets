@@ -1,9 +1,31 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { onAuthChange, storedUser, User } from "./api";
 import { usePoll } from "./hooks";
 
+/** Shared geographic selection: survives page navigation and reloads (mirrored to ?geo=). */
+export type GeoSel = { country?: string; node?: string; incident?: string };
+
+export function geoToParam(g: GeoSel): string {
+  return [g.country && `c:${g.country}`, g.node && `n:${g.node}`, g.incident && `i:${g.incident}`].filter(Boolean).join("|");
+}
+
+export function geoFromParam(v: string | null): GeoSel {
+  const out: GeoSel = {};
+  for (const part of (v ?? "").split("|")) {
+    const [k, val] = [part.slice(0, 2), part.slice(2)];
+    if (!val || !/^[\w-]{1,24}$/.test(val)) continue;
+    if (k === "c:") out.country = val;
+    if (k === "n:") out.node = val;
+    if (k === "i:") out.incident = val;
+  }
+  return out;
+}
+
 type Ctx = {
   user: User | null;
+  geo: GeoSel;
+  setGeo: (g: GeoSel) => void;
   runId: string | null;
   setRunId: (id: string | null) => void;
   runs: any[];
@@ -23,6 +45,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => onAuthChange(setUser), []);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [geo, setGeo] = useState<GeoSel>(() => geoFromParam(new URLSearchParams(location.search).get("geo")));
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const want = geoToParam(geo);
+    if ((params.get("geo") ?? "") === want) return;
+    if (want) params.set("geo", want);
+    else params.delete("geo");
+    const search = params.toString();
+    navigate({ pathname: location.pathname, search: search ? `?${search}` : "", hash: location.hash }, { replace: true });
+  }, [geo, location.pathname, location.search]);
+
   // Each completed guided-demo step can change releases, faults and runs: refresh them.
   const progress = `${demo.data?.status}:${(demo.data?.steps ?? []).filter((x: any) => x.status === "done").length}`;
   useEffect(() => {
@@ -37,6 +72,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider
       value={{
         user,
+        geo,
+        setGeo,
         runId,
         setRunId: setChosen,
         runs: list,

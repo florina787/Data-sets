@@ -4,6 +4,7 @@ import { api, login, logout, post, waitForJob } from "../api";
 import { can, useApp } from "../context";
 import { useAction } from "../hooks";
 import { CopilotDrawer, openCopilot } from "../screens/Copilot";
+import GeoChip from "./geo/GeoChip";
 import { FriesCarton } from "./Illustrations";
 import { Short, Status } from "./ui";
 
@@ -239,6 +240,7 @@ export function Layout({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <GeoChip />
             <SystemPills />
             <Notifications />
             <button className="btn-primary" onClick={() => openCopilot()}><span aria-hidden>✦</span> Ask Copilot</button>

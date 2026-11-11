@@ -4,6 +4,7 @@ import { Card, Empty, Notice } from "../components/ui";
 import { usePoll } from "../hooks";
 import { StockShelf } from "../components/StockShelf";
 import { AskButton } from "./Copilot";
+import SupplyMap from "../components/geo/SupplyMap";
 
 export default function Inventory() {
   const [warehouse, setWarehouse] = useState("");
@@ -50,6 +51,7 @@ export default function Inventory() {
           </div>
         </>
       )}
+      <SupplyMap title="Supply chain network, forecast & risk" defaultTab="forecast" defaultOverlay="exposure" />
     </div>
   );
 }

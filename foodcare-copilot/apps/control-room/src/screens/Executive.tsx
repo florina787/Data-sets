@@ -5,6 +5,7 @@ import { usePoll } from "../hooks";
 import { AskButton } from "./Copilot";
 import { CinematicHero } from "../components/Illustrations";
 import { PotatoDataSources } from "../components/DataSources";
+import SupplyMap from "../components/geo/SupplyMap";
 
 export const money = (cents: number) => `$${Math.round(cents / 100).toLocaleString()}`;
 export const pct = (v: number | null | undefined) => (v == null ? "n/a" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`);
@@ -98,6 +99,7 @@ export default function Executive() {
           )}
         </Card>
       </div>
+      <SupplyMap title="Global supply chain intelligence" defaultTab="financial" defaultOverlay="revenue" />
       <PotatoDataSources />
     </div>
   );

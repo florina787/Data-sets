@@ -1,0 +1,28 @@
+{
+  "name": "Illustrative multinational food enterprise",
+  "provenance": "synthetic",
+  "disclaimer": "Demonstration scenario. The country footprint, revenue, sites, routes and incidents are generated from this file with a fixed seed. They are not verified business facts.",
+  "countries": 161,
+  "annual_revenue": 2400000000,
+  "currency": "USD",
+  "seed": 2026,
+  "home_country": "124",
+  "home_revenue_share": 0.12,
+  "network": {
+    "farm": 22,
+    "supplier": 14,
+    "factory": 9,
+    "distribution_centre": 12,
+    "market": 30
+  },
+  "incidents_per_site_year": 1.6,
+  "history_days": 365,
+  "disruption_days_median": 3.0,
+  "exclude_territories": [
+    "W. Sahara",
+    "Fr. S. Antarctic Lands",
+    "Falkland Is.",
+    "N. Cyprus",
+    "Somaliland"
+  ]
+}

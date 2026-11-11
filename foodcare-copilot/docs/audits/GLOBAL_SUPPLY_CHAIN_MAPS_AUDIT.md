@@ -1,6 +1,6 @@
 # Audit: geography, maps and supply-chain visualisation (before "Global Supply Chain Intelligence Maps")
 
-Date: 2026-11-10 · Scope: `foodcare-copilot/` (backend, control-room UI, fixtures, docs) · Status: **audit only, nothing implemented**
+Date: 2026-11-10 · Scope: `foodcare-copilot/` (backend, control-room UI, fixtures, docs) · Status: audit delivered first; **implemented 2026-11-11** after approval (synthetic global network, per-country synthetic split, tabs on existing pages, tenancy deferred). See README section 20
 
 ## 1. What exists today
 

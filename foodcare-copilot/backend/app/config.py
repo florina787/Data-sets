@@ -35,6 +35,7 @@ class Settings:
     llm_queue_wait_s: float = float(os.environ.get("FOODCARE_LLM_QUEUE_WAIT_S", "20"))
     llm_cache_entries: int = int(os.environ.get("FOODCARE_LLM_CACHE_ENTRIES", "64"))
     llm_stream_usage: bool = os.environ.get("FOODCARE_LLM_STREAM_USAGE", "1") not in ("0", "false", "no")
+    geo_scenario_path: str = os.environ.get("FOODCARE_GEO_SCENARIO", str(FIXTURES / "geo" / "scenario.json"))
     metrics_enabled: bool = os.environ.get("FOODCARE_METRICS_ENABLED", "1") not in ("0", "false", "no")
     memory_backend: str = os.environ.get("FOODCARE_MEMORY_BACKEND", "sqlite")
     memory_retention_days: int = int(os.environ.get("FOODCARE_MEMORY_RETENTION_DAYS", "180"))

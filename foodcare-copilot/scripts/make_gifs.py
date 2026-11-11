@@ -14,7 +14,8 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 WIDTH = 960
-DURATION_MS = {"executive": 150, "orbit": 250, "tour": 160, "inspection": 140, "copilot": 110, "agents": 150}
+DURATION_MS = {"executive": 150, "orbit": 250, "globe": 110, "map2d": 150, "tour": 160, "inspection": 140,
+               "copilot": 110, "agents": 150}
 HOLD_LAST_MS = 1800
 
 

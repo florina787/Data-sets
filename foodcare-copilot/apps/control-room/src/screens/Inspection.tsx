@@ -84,6 +84,8 @@ function Scanner({ file, onCapture }: { file: File | null; onCapture: (f: File) 
 function NewInspection({ onDone }: { onDone: (b: Batch) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [form, setForm] = useState({ title: "", supplier: "", lot_code: "", mm_per_px: "" });
+  const [networkSuppliers, setNetworkSuppliers] = useState<string[]>([]);
+  useEffect(() => { api<{ suppliers: string[] }>("/api/geo/suppliers").then((r) => setNetworkSuppliers(r.suppliers)).catch(() => undefined); }, []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const run = async (e: FormEvent) => {
@@ -117,7 +119,9 @@ function NewInspection({ onDone }: { onDone: (b: Batch) => void }) {
           <input type="file" accept="image/jpeg,image/png,image/webp" className="mt-1 block w-full text-sm" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
         </label>
         {field("title", "Batch title")}
-        <div className="grid grid-cols-2 gap-2">{field("supplier", "Supplier")}{field("lot_code", "Lot code")}</div>
+        <div className="grid grid-cols-2 gap-2">{field("supplier", "Supplier", { list: "network-suppliers" })}{field("lot_code", "Lot code")}</div>
+        <datalist id="network-suppliers">{networkSuppliers.map((n) => <option key={n} value={n} />)}</datalist>
+        <p className="text-[11px] text-navy-600">Pick a supplier from the (synthetic) global network to place this batch on the supply-chain map; a batch with 20% or more Not Good potatoes then shows as a red operational incident there.</p>
         {field("mm_per_px", "Scale: millimetres per pixel (optional; enables size in mm)", { inputMode: "decimal", placeholder: "e.g. 0.25" })}
         {error && <Notice kind="error">{error}</Notice>}
         <div className="flex flex-wrap gap-2">

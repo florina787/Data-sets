@@ -43,6 +43,9 @@ INTENTS: dict[str, tuple[str, ...]] = {
     "overview": ("summary", "overview", "how are we doing", "briefing", "focus on", "priorities", "what should i",
                  "status of the business", "headlines", "today"),
     "help": ("what can you do", "help", "how do i use", "examples"),
+    "origin_trace": ("origintrace", "trace", "traceability", "origin", "upstream", "supply chain", "supply network",
+                     "geographic", "country", "countries", "global", "globe", "map", "farm", "factory",
+                     "exposure", "financial exposure", "risk forecast"),
     "inspection": ("potato", "potatoes", "defect", "defective", "defects", "rejected", "reject", "inspection",
                    "inspected", "graded", "grading", "batch", "greening", "rot", "bruise", "not good", "moderate",
                    "processing spec", "meets spec", "meet spec", "quality grade", "specification", "specifications"),
@@ -66,12 +69,15 @@ class Parsed:
     batch_id: str | None = None
     username: str | None = None  # set by the engine, not parsed
     conversation_id: str | None = None
+    geo_node: str | None = None
+    country: str | None = None
 
     def entities(self) -> dict:
         return {k: v for k, v in {"skus": self.skus, "provinces": self.provinces, "warehouses": self.warehouses,
                                   "channels": self.channels, "weeks": self.weeks, "run_id": self.run_id,
                                   "incident_id": self.incident_id, "release_id": self.release_id,
-                                  "potato_no": self.potato_no, "batch_id": self.batch_id}.items() if v}
+                                  "potato_no": self.potato_no, "batch_id": self.batch_id,
+                                  "geo_node": self.geo_node, "country": self.country}.items() if v}
 
 
 def _has(text: str, keyword: str) -> bool:
@@ -124,5 +130,13 @@ def parse(question: str) -> Parsed:
         potato_no = int(m.group(1))
     if (potato_no or batch_id) and "inspection" not in ranked[:2]:
         ranked = ["inspection"] + [r for r in ranked if r != "inspection"][:1]
+    geo_node = (m.group(0).upper() if (m := re.search(r"\bgeo-(?:far|sup|fac|dis|mar|inc)-\d{2,4}\b", text)) else None)
+    country = None
+    if geo_node or scores["origin_trace"]:
+        from app import geo
+
+        country = geo.find_country(question)
+    if geo_node and "origin_trace" not in ranked[:1]:
+        ranked = ["origin_trace"] + [r for r in ranked if r != "origin_trace"][:1]
     return Parsed(question, ranked[:2], scores, skus, provinces, warehouses, channels, max(1, min(weeks, 8)),
-                  run_id, incident_id, release_id, potato_no, batch_id)
+                  run_id, incident_id, release_id, potato_no, batch_id, geo_node=geo_node, country=country)

@@ -17,11 +17,15 @@
 **Ask questions about sales, stock, compliance and potato quality, and get answers with receipts.**<br>
 Runs on a laptop. Deploys to Kubernetes. Uses *your* local model, never a cloud AI.
 
-[See it move](#-see-it-in-motion) · [Run it locally](#4-run-it-on-your-own-computer-step-by-step) · [Deploy to Kubernetes](#18-run-it-on-kubernetes-enterprise-integration) · [Token usage & metrics](#19-system-metrics-and-token-usage) · [Honesty rules](#13-honesty-rules-this-project-follows)
+[See it move](#-see-it-in-motion) · [Run it locally](#4-run-it-on-your-own-computer-step-by-step) · [🌍 Global supply maps](#20-global-supply-chain-intelligence-maps) · [Deploy to Kubernetes](#18-run-it-on-kubernetes-enterprise-integration) · [Token usage & metrics](#19-system-metrics-and-token-usage) · [Honesty rules](#13-honesty-rules-this-project-follows)
 
 </div>
 
 > **Read this first.** This is a **portfolio prototype**, not a product, and **everything in it is made up on purpose**. The company (*Food Beverage Food Care*), its products, sales, warehouses and customers are all synthetic. Payments are fake ("mock"), and no real money, email or delivery is involved. A banner on every screen repeats this. A demo that pretends to be real data misleads people, so this one says plainly that it is not.
+
+![The 3D supply-chain globe: idle rotation, flying to a country, drilling into a site, then clearly labelled simulated movement](docs/media/globe.gif)
+
+<sub>🎥 Full-quality video for presentations: <a href="docs/media/executive-presentation.mp4">executive-presentation.mp4</a> (31 s) · <a href="docs/media/globe.mp4">globe.mp4</a> · <a href="docs/media/map2d.mp4">map2d.mp4</a>. Every network figure on the globe is <b>synthetic and labelled so</b>.</sub>
 
 ![Executive Command: scrolling from the hero to the potato data sources](docs/media/executive.gif)
 
@@ -68,10 +72,13 @@ Every animation below is **a real recording of the running app**: a script (`e2e
 
 | | Feature | Where |
 |---|---|---|
+| 🌍 | **Global Supply Chain Intelligence maps**: 3D globe + 2D map, 161-country configurable scenario, red risk markers, drill-down to incident, 30/90/180-day risk bands, OriginTrace | [section 20](#20-global-supply-chain-intelligence-maps) |
 | ☸️ | **Kubernetes-ready**: Dockerfile, Kustomize base, GKE and AKS overlays, Flux GitOps example, NetworkPolicy, non-root and read-only filesystem | [section 18](#18-run-it-on-kubernetes-enterprise-integration) |
 | 📈 | **Prometheus `/metrics`** and a ready-made **Grafana dashboard** | [section 19](#19-system-metrics-and-token-usage) |
 | 🔢 | **Token usage** per call, per purpose and per user, **as reported by your model server** (never estimated) | [section 19](#19-system-metrics-and-token-usage) |
-| 🏭 | A research note on fitting into a large food manufacturer's platform, with sources and confidence labels | [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md) |
+| 🏭 | A research note on fitting into a large food manufacturer's platform, with sources and confidence labels | [docs/audits/GLOBAL_SUPPLY_CHAIN_MAPS_AUDIT.md](docs/audits/GLOBAL_SUPPLY_CHAIN_MAPS_AUDIT.md) | The audit done before building the maps: what existed, what was missing, and the decisions taken |
+| [docs/MEDIUM_GLOBAL_SUPPLY_CHAIN_MAPS.md](docs/MEDIUM_GLOBAL_SUPPLY_CHAIN_MAPS.md) | A long-form article about building the maps (ready for Medium) |
+| [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md) |
 
 ---
 
@@ -96,6 +103,7 @@ Every animation below is **a real recording of the running app**: a script (`e2e
 17. [More documentation](#17-more-documentation)
 18. [Run it on Kubernetes (enterprise integration)](#18-run-it-on-kubernetes-enterprise-integration)
 19. [System metrics and token usage](#19-system-metrics-and-token-usage)
+20. [Global Supply Chain Intelligence maps](#20-global-supply-chain-intelligence-maps)
 
 ---
 
@@ -346,7 +354,7 @@ The server checks permissions on **every action**, not just in the screen. A rej
 
 ```bash
 scripts/reset_demo.sh     # back to a clean demo (your saved conversations and inspections are kept)
-scripts/test.sh           # code checks, 111 backend tests, interface build
+scripts/test.sh           # code checks, 118 backend tests, interface build
 npm run e2e               # 7 browser tests that click through the app
 .venv/bin/python scripts/eval_vision.py --synthetic 20   # measure the potato detector on drawn test images
 ```
@@ -712,8 +720,8 @@ pie showData
 
 | Test suite | Count | Result |
 |---|---|---|
-| Backend (Python) | 111 | all pass |
-| Browser, clicking through the real app | 7 | all pass |
+| Backend (Python) | 118 | all pass |
+| Browser, clicking through the real app | 9 | all pass |
 | Of which use a **mock** model server instead of real Qwen | 17 | pass (no real Qwen run in the cloud) |
 | Of which check the Kubernetes files against the app | 6 | pass |
 
@@ -812,10 +820,13 @@ foodcare-copilot/
 │   ├── resources.py            Measured CPU / RAM (psutil)
 │   ├── observability.py        Prometheus /metrics + token-usage report
 │   └── main.py                 All web API endpoints
-├── backend/tests/              111 automated tests
+├── backend/tests/              118 automated tests
 ├── e2e/                        Browser tests (Playwright), a synthetic test image, record-media.mjs (README GIFs)
 ├── fixtures/vision/            Default potato grading thresholds
 ├── fixtures/enterprise/        The fictional company's products, regions, warehouses
+├── apps/control-room/src/components/geo/   SupplyMap (shared), Globe3D (Three.js), Map2D (d3-geo), GeoChip
+├── backend/app/geo.py          Synthetic global network, risk simulation, OriginTrace data
+├── fixtures/geo/               scenario.json (161 countries, revenue…) + countries.json (Natural Earth)
 ├── deploy/k8s/                 Kubernetes: base, overlays/gke, overlays/aks, ServiceMonitor, Grafana dashboard
 ├── deploy/flux/                Flux GitOps example
 ├── Dockerfile                  Container image (non-root; optional lean build without PyTorch)
@@ -839,6 +850,8 @@ foodcare-copilot/
 | [docs/AGENTS_AND_TOOLS.md](docs/AGENTS_AND_TOOLS.md) | What each agent and tool is allowed to do |
 | [docs/SECURITY_AND_SANDBOX.md](docs/SECURITY_AND_SANDBOX.md) | How commands are restricted and secrets kept out |
 | [docs/TEST_RESULTS.md](docs/TEST_RESULTS.md) | Exact test commands and results |
+| [docs/audits/GLOBAL_SUPPLY_CHAIN_MAPS_AUDIT.md](docs/audits/GLOBAL_SUPPLY_CHAIN_MAPS_AUDIT.md) | The audit done before building the maps: what existed, what was missing, and the decisions taken |
+| [docs/MEDIUM_GLOBAL_SUPPLY_CHAIN_MAPS.md](docs/MEDIUM_GLOBAL_SUPPLY_CHAIN_MAPS.md) | A long-form article about building the maps (ready for Medium) |
 | [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md) | Research note: how a large food manufacturer's platform looks from public sources, and how this app plugs into it |
 | [docs/PRODUCTION_GAPS.md](docs/PRODUCTION_GAPS.md) | What a real deployment would still need |
 | [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | Feature-by-feature status |
@@ -948,6 +961,176 @@ See it in three places: the **System Observability** page ([section 3.9](#39-sys
 | `FOODCARE_LLM_STREAM_USAGE` | `1` | Ask the model server for token counts (set `0` for an old server that rejects the field) |
 | `FOODCARE_METRICS_ENABLED` | `1` | Serve `/metrics` |
 | `FOODCARE_BIND_HOST` | `127.0.0.1` | The address the server listens on. A laptop stays private; containers set `0.0.0.0` |
+
+---
+
+## 20. Global Supply Chain Intelligence maps
+
+> **One-line summary:** a spinning 3D globe (and a light 2D map) that shows where a food company's farms, suppliers, factories, warehouses and markets are, how they connect, where quality problems happened, how much money depends on each place, and what the next 30, 90 and 180 days *might* bring, with **every number labelled by where it came from**.
+
+![The 3D globe](docs/media/globe.gif)
+
+![The 2D map: overlays and a quality incident](docs/media/map2d.gif)
+
+🎥 Videos: [executive-presentation.mp4](docs/media/executive-presentation.mp4) (31 s, for slides) · [globe.mp4](docs/media/globe.mp4) · [map2d.mp4](docs/media/map2d.mp4). All were recorded in a real browser by `e2e/record-media.mjs`, and nothing was drawn by hand.
+
+### 20.1 Read this first: what is real and what is not
+
+The brief asked for "an illustrative multinational food enterprise serving 161 countries with billion-dollar revenue". **That company does not exist in this app's data.** Before writing any code, an [audit](docs/audits/GLOBAL_SUPPLY_CHAIN_MAPS_AUDIT.md) checked the repository and found no coordinates, no farms, no factories, no routes and no tracking events. So the global network is a **configurable synthetic scenario**, and the app says so everywhere:
+
+| Label (badge colour) | Meaning | Where you will see it now |
+|---|---|---|
+| **Verified** (green) | Confirmed enterprise data | **Nowhere: the count is 0**, and the legend shows that zero on purpose |
+| **Operational record** (cyan) | Something that really happened *in this app*, such as your own potato inspection | Your inspection batches placed on the map (see 20.8) |
+| **Modelled** (blue) | A calculation about the future, with uncertainty | The 30/90/180-day risk bands |
+| **Synthetic** (gold) | Invented for the demo from a fixed recipe | Countries, revenue, sites, routes, historical incidents |
+
+*Why so strict?* A beautiful globe is persuasive. If it showed invented revenue per country without a label, someone could put that number in a board deck. The gold banner above the map reads: *"Demonstration scenario… They are not verified business facts."*
+
+### 20.2 Words you will meet
+
+| Word | Plain meaning |
+|---|---|
+| **Node / site** | One place on the map: a farm, supplier, factory, distribution centre or market |
+| **Arc / route** | The curved line between two sites, meaning "this one supplies that one" |
+| **Tier** | The step in the chain: farm → supplier → factory → distribution centre → market |
+| **Overlay** | Which number colours the countries: revenue, exposure, supplier quality, or incidents |
+| **Exposure** | How much yearly revenue would be hurt if this place stopped working |
+| **Drill-down** | Clicking deeper: world → country → site → individual incident |
+| **Monte Carlo** | Running the future 400 times with dice, then looking at the spread of results |
+| **Percentile band (P10–P90)** | "In 8 out of 10 simulated futures, the result landed inside this range" |
+| **Tracking event** | A real scan saying "this truck or container is here now". **There are none**, so moving dots are only shown when you switch on *Simulated movement*, which carries a SIMULATED badge |
+
+### 20.3 Where the map appears (one component, not three dashboards)
+
+The same `SupplyMap` component is reused, each time opening on the most useful tab:
+
+| Page | Title on the page | Opens on | Colours countries by |
+|---|---|---|---|
+| **Executive Command** | Global supply chain intelligence | Financial impact | Regional revenue |
+| **Inventory** (the supply-chain page) | Supply chain network, forecast & risk | Forecast & risk | Financial exposure |
+| **Quality Intelligence** | Geographic quality incidents | Quality incidents | Operational risk |
+| **Ask Copilot / Agent Intelligence** | (no map) OriginTrace answers, recorded as agent runs | — | — |
+
+*Why not a new "Supply Chain" or "Financial Impact" page?* The audit found that Inventory already *is* the supply-chain page, and that revenue already lives on Executive Command. New pages would have duplicated them, so Financial Impact and Forecast & Risk became **tabs** of the shared map.
+
+### 20.4 How to use it, click by click
+
+1. Open **Executive Command** and scroll to *Global supply chain intelligence*. The globe slowly turns. Drag it to rotate and scroll to zoom. The rotation stops as soon as you touch it.
+2. **Hover** over a dot to see the site's tier, country, revenue dependent on it, on-time %, quality pass %, and the words "SYNTHETIC site (approximate location)".
+3. **Click a country** (or use *Table view → Select*). The camera flies there in about 1.4 seconds. The breadcrumb reads `Global network › Peru`, and the four KPI cards switch to that country.
+4. **Click a site.** Its whole chain lights up in gold, from the farms upstream to the markets downstream, and everything else fades.
+5. **Click a red dot** (a quality incident). The breadcrumb grows to `… › GEO-INC-0041`, and a red box shows what happened, when, how severe it was, and the lot number.
+6. Use the tabs under the map:
+   * **Financial impact:** the top countries by revenue, and the revenue that depends on each tier, with the formula written underneath.
+   * **Forecast & risk:** three bars for 30, 90 and 180 days. The shaded part is the uncertainty range and the gold line is the median.
+   * **Quality incidents:** a list of incidents (click one to fly to it) and a small chart of incidents per month (recurrence).
+   * **OriginTrace:** every path from the selected site back to a farm.
+7. Press **Investigate with OriginTrace**. The copilot answers in writing, with citations.
+8. Now open **Inventory** or **Quality Intelligence**. Your selection is still there: the gold chip in the header shows `Peru › GEO-MAR-04`, and the address bar holds `?geo=c:604|n:GEO-MAR-04`. Reload or share the link and it is kept. Press ✕ on the chip to clear it everywhere.
+
+### 20.5 How the synthetic network is built (the recipe)
+
+Everything comes from `fixtures/geo/scenario.json` and a fixed random seed, so it is the same on every computer and every run. `backend/app/geo.py` does this:
+
+1. **Countries.** It takes the 173 countries in Natural Earth's public-domain world map, removes three disputed or non-sovereign territories (W. Sahara, Fr. S. Antarctic Lands, Falkland Is.), keeps the home country (Canada, id 124), and draws the other 160 at random with the seed. That makes **161**.
+2. **Revenue per country.** The home country gets a fixed share (12%). The other countries share the remainder in proportions drawn from a *log-normal* distribution, which gives a few big markets and many small ones, as in real life. The amounts are rounded and then corrected so they add up to **exactly** the configured USD 2,400,000,000. A test checks this to the dollar.
+3. **Sites.**
+   * 30 markets go into the 30 biggest-revenue countries.
+   * 12 distribution centres, 9 factories, 14 suppliers and 22 farms are spread across the larger countries.
+   * Each site is placed **near its country's centre**, with a little random wobble. That is why the tooltip says "approximate location": no real address is ever implied.
+4. **Links.** Every farm supplies its nearest supplier, and every supplier its nearest factory. Each factory feeds its 2 nearest distribution centres, and each centre feeds its 2 nearest markets. Any site left without a supplier is linked to the closest one. The transport mode (road / rail / sea) and lead time follow from the distance.
+5. **Money that depends on each site.** A market carries its country's revenue, split if the country has several markets. Walking *upstream*, each site carries the revenue of everything it feeds, split evenly between that site's suppliers. Only countries that have a market site are traced this way (USD 1.50B of USD 2.40B), and the UI says so.
+6. **A year of incidents.** For each non-market site, the number of incidents in the last 365 days is drawn from a Poisson distribution (about 1.6 a year on average, varying by site). Each gets a date, a type (bruising, greening, soft rot, temperature excursion…), a severity and a lot number such as `SYN-LOT-22389`.
+
+### 20.6 How the 30/90/180-day risk simulation works
+
+There is no crystal ball here. It is a stated model, and the method text is shown on the screen:
+
+1. **How often does each site have problems?** If a site had 3 incidents last year, we don't know its true rate exactly. It might really be 2 or 5. So each run *draws* a plausible rate (a Gamma distribution centred on the history).
+2. **How many problems in the next N days?** Each run rolls a Poisson count for 30, 90 or 180 days.
+3. **How bad is each one?** Each run draws a disruption length (a log-normal distribution with a median of 3 days). The loss is the disrupted days × the site's dependent revenue ÷ 365.
+4. **Repeat 400 times**, sort the results, and report the 10th, 50th and 90th percentiles.
+
+**Worked example (whole network, default scenario):** in the next 30 days the median run has **7 incidents** (in 8 of 10 runs, between 4 and 11) and **USD 7.6M** of revenue exposed (USD 2.6M–14.8M). At 180 days it is 44 incidents (35–54) and USD 46.9M (USD 34.1M–65.6M). The exposure band is USD 12.2M wide at 30 days and USD 31.5M wide at 180 days. A test checks that the bands never shrink with the horizon, because more time means more uncertainty. *A wider band means "we are less sure", not "more danger".*
+
+### 20.7 OriginTrace
+
+There was no "OriginTrace AI" in the repository, so it was built **on top of the existing copilot**, not as a separate agent. Questions such as *"OriginTrace: trace GEO-SUP-04 back to the farm"* or *"What is the supply chain exposure in Peru?"* go to a new `origin_trace` intent. It answers from the network with:
+
+* the upstream paths;
+* the downstream reach;
+* the revenue dependent on the site;
+* the incident recurrence;
+* the modelled 30/90/180-day risk with ranges;
+* `[S1]` / `[S2]` citations to the synthetic scenario and to the simulation.
+
+Each answer is saved as an agent run, so it shows up on **Agent Intelligence**. Existing questions (sales, stock and so on) are routed exactly as before, and a test proves it.
+
+### 20.8 Putting your real inspections on the map
+
+On **Potato Inspection**, the *Supplier* box now suggests the network's supplier names. If you inspect a batch with one of those names and 20% or more of its potatoes are graded Not Good, the batch appears on the map as a red **operational record** at that supplier. **Only you** see it: another user, or someone signed out, sees no trace of your batch, and a test checks both cases. (Full multi-company "tenant" isolation is a planned later phase; see 20.12.)
+
+### 20.9 Speed, motion and accessibility (measured)
+
+| Fact | Value | How it was measured |
+|---|---|---|
+| First render of the globe | ~440–510 ms | `data-render-ms` in a headless browser with *software* WebGL; a real GPU is faster |
+| Extra download for the 3D globe | 128 kB gzip | Loaded **only** when a map with 3D view is on screen (Vite code-splitting) |
+| World borders | 38 kB gzip | Natural Earth 1:110m, also loaded on demand. No map tiles, no API key, no paid service |
+| Network data | 87 sites, 106 routes, 108 synthetic incidents | `/api/geo/network`, cached once per signed-in user |
+| Off-screen cost | ~0 | The render loop pauses when the globe is scrolled away or the tab is hidden |
+
+* **Reduced motion.** If your computer asks for less motion, the app starts on the 2D map, does not rotate, and makes camera moves instant. No pulsing rings appear. A test checks this.
+* **No WebGL, or a phone.** The 2D map is the default under 768 px wide. If WebGL fails, the app falls back to 2D on its own. A test checks that a 390 px phone screen never scrolls sideways.
+* **Keyboard and screen readers.** *Table view* lists every country and site with a **Select** button. The map has a text description, and every chart has a text alternative.
+
+### 20.10 Why these choices, and why not the alternatives
+
+| Choice | Why | Why not the alternative |
+|---|---|---|
+| **Three.js** for the globe | Full control of glow, atmosphere and arcs; MIT licence; works offline | **deck.gl** GlobeView is still marked experimental and is heavier. **MapLibre** needs map *tiles*: hosted tiles usually need an account or a paid plan, which the brief ruled out |
+| **d3-geo** SVG for 2D | Tiny, crisp at any size, accessible, works without a GPU | A second WebGL map would double the cost and still fail on the same machines |
+| **One `SupplyMap` component** | Fix a bug once and every page gets the fix | Separate maps per page drift apart |
+| **Selection in the URL** | Survives reloads, the back button and shared links | Memory-only state is lost on reload |
+| **Synthetic per-country split** (your choice) | Shows the full experience at 161-country scale | Real per-country figures do not exist here; inventing them without labels would be fabrication |
+| **Static arcs by default** | There are 0 tracking events, so nothing is really moving | Always-on flowing dots would imply live shipments that don't exist |
+
+### 20.11 Change the scenario
+
+Edit `fixtures/geo/scenario.json`, or point `FOODCARE_GEO_SCENARIO` at your own copy:
+
+| Key | Default | Meaning |
+|---|---|---|
+| `countries` | `161` | Countries in the footprint (1–170) |
+| `annual_revenue`, `currency` | `2400000000`, `USD` | Total revenue that is split across countries |
+| `home_country`, `home_revenue_share` | `124` (Canada), `0.12` | The home market and its fixed share |
+| `network` | 22 farms, 14 suppliers, 9 factories, 12 DCs, 30 markets | How many sites of each tier |
+| `incidents_per_site_year`, `history_days` | `1.6`, `365` | How many synthetic incidents to generate |
+| `disruption_days_median` | `3.0` | The typical length of a disruption in the simulation |
+| `seed` | `2026` | Change it to get a different but equally reproducible world |
+
+### 20.12 Tested, and not yet done
+
+* **Backend (7 tests, `test_geo.py`):**
+  * the scenario can be configured, and revenue adds up to the dollar;
+  * every item carries a provenance label and **0 are marked verified**;
+  * the country filter keeps only that country and its direct links;
+  * every trace reaches a farm;
+  * the risk bands are ordered, reproducible and widen with the horizon;
+  * inspections show only for their owner;
+  * OriginTrace answers with citations, and old intents are unchanged.
+* **Browser (2 tests, `e2e/geo.spec.ts`):**
+  * the drill-down from country to site, and the forecast and trace tabs;
+  * the selection survives moving to another page and a reload;
+  * OriginTrace works from the map;
+  * Quality Intelligence opens on incidents, and clearing the selection removes it from the URL;
+  * the render budget is met;
+  * reduced motion starts on 2D, and a phone width never scrolls sideways.
+* **Not done yet:**
+  * multi-tenant isolation, which needs a `tenant_id` on every table and is a separate phase you approved for later;
+  * real coordinates or routes (none exist);
+  * live shipment tracking (no source is connected).
 
 ---
 

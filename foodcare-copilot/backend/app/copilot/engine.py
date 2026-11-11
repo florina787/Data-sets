@@ -431,9 +431,77 @@ def h_help(p: Parsed, c: Ctx) -> list[str]:
             "Try: " + "; ".join(f"“{e}”" for e in EXAMPLES[:6])]
 
 
+def h_origin_trace(p: Parsed, c: Ctx) -> list[str]:
+    """OriginTrace: trace a site or incident upstream, with recurrence, exposure and modelled risk."""
+    from app import geo
+
+    node = p.geo_node
+    if node and node.startswith("GEO-INC-"):
+        inc = c.call("geo_incident", geo.incident, incident_id=node, username=p.username)
+        if not inc:
+            return [f"I can't find incident {node} in the synthetic network."]
+        node = inc["node_id"]
+    data = c.call("geo_origin_trace", geo.summary_for_copilot, username=p.username, country=p.country, node=node)
+    sc = data["scenario"]
+    cite_sc = c.cite(q.src("data", "Synthetic global supply-chain scenario (not verified business data)",
+                           f"geo_scenario:{sc['path']}", f"seed {sc['seed']}, {sc['countries']} countries"))
+    cur = sc["currency"]
+
+    def amt(v: float) -> str:
+        return f"{cur} {v / 1e6:,.1f}M" if v >= 1e6 else f"{cur} {v:,.0f}"
+    out: list[str] = []
+    if data["kind"] == "node":
+        d = data["detail"]
+        n = d["node"]
+        paths = d["upstream_paths"]
+        chain = " ← ".join(f"{x['name']} ({x['tier'].replace('_', ' ')})" for x in paths[0]) if paths else ""
+        out.append(f"**OriginTrace for {n['name']}** ({n['id']}, {n['country_name']}) {cite_sc}: {len(paths)} "
+                   f"upstream path(s) back to a farm. First path: {chain}. It feeds {len(d['downstream'])} "
+                   f"downstream site(s) and {amt(d['financial']['revenue_dependent'])} of annual scenario revenue "
+                   "depends on it.")
+        if d["incidents"]:
+            recent = d["incidents"][:3]
+            out.append(f"**Recurrence:** {len(d['incidents'])} incident(s) in the last 365 days, over "
+                       f"{len(d['recurrence'])} month(s). Most recent: " + "; ".join(
+                           f"{i['date']} {i['kind']} ({i['severity']}, lot {i['batch']}, {i['provenance']})"
+                           for i in recent) + ".")
+        else:
+            out.append("**Recurrence:** no incidents recorded for this site in the last 365 days.")
+        risk = d["risk"]
+    else:
+        rows = data["countries"]
+        if not rows:
+            return [f"That country is not in the scenario's {sc['countries']}-country footprint {cite_sc}."]
+        top = rows[:5]
+        if data["kind"] == "country":
+            r = rows[0]
+            out.append(f"**{r['name']}** {cite_sc}: {amt(r['revenue'])} of scenario revenue "
+                       f"({r['revenue_share_pct']}%), {r['sites']} synthetic site(s), {r['incidents_365d']} "
+                       "incident(s) in the last 365 days.")
+        else:
+            out.append(f"**Global network** {cite_sc}: {sc['countries']} countries, {amt(sc['annual_revenue'])} "
+                       "annual revenue in the scenario. Largest exposures: " + "; ".join(
+                           f"{r['name']} {amt(r['revenue'])} ({r['incidents_365d']} incidents)" for r in top) + ".")
+        if data["operational"]:
+            cite_rec = c.cite(q.src("record", "Your inspection batches linked to network suppliers",
+                                    "inspection_batches:supplier", f"{len(data['operational'])} located"))
+            out.append(f"{len(data['operational'])} of your own inspection batch(es) are placed on the map "
+                       f"through their supplier {cite_rec}.")
+        risk = data["risk"]["horizons"]
+    cite_m = c.cite(q.src("data", "Modelled 30/90/180-day risk simulation (Monte Carlo, synthetic inputs)",
+                          "geo_risk_simulation", "10th-90th percentile bands"))
+    out.append("**Modelled risk (scenario, not a forecast of real events)** " + cite_m + ": " + "; ".join(
+        f"{h['days']} days: {h['incidents']['p50']} incidents (range {h['incidents']['p10']}–{h['incidents']['p90']}),"
+        f" exposure {amt(h['exposure']['p50'])} (range {amt(h['exposure']['p10'])}–{amt(h['exposure']['p90'])})"
+        for h in risk) + ". The bands widen with the horizon because uncertainty grows.")
+    out.append("Everything above comes from a synthetic demonstration scenario. There are no verified sites, "
+               "routes or shipment tracking events.")
+    return out
+
+
 HANDLERS = {"sales": h_sales, "campaign": h_campaign, "inventory": h_inventory, "compliance": h_compliance,
             "delivery": h_delivery, "incident": h_incident, "policy": h_policy, "overview": h_overview,
-            "help": h_help, "inspection": h_inspection}
+            "help": h_help, "inspection": h_inspection, "origin_trace": h_origin_trace}
 
 
 FOLLOW_UP = re.compile(r"^\s*(and|what about|how about|same for|and for|what of|now for)\b", re.IGNORECASE)

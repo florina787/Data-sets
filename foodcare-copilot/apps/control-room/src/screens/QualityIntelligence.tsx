@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, Empty, Notice } from "../components/ui";
 import { usePoll } from "../hooks";
 import { AskButton } from "./Copilot";
+import SupplyMap from "../components/geo/SupplyMap";
 
 // Quality Intelligence: one dashboard over the user's own inspection records (no invented figures).
 
@@ -174,6 +175,7 @@ export default function QualityIntelligence() {
           )}
         </>
       )}
+      <SupplyMap title="Geographic quality incidents" defaultTab="quality" defaultOverlay="risk" />
     </div>
   );
 }

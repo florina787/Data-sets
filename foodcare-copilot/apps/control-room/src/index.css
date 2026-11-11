@@ -106,6 +106,12 @@
   100.000% { transform: translate(104.0px, -0.0px) scale(0.860); opacity: 0.81; z-index: 1; }
 }
 
+/* Geographic risk markers: a ring that grows and fades (status, not fake activity). */
+.geo-risk-pulse, .geo-node-pulse { transform-box: fill-box; transform-origin: center; }
+.geo-risk-pulse { animation: geo-pulse 1.8s ease-out infinite; }
+.geo-node-pulse { animation: geo-pulse 2.4s ease-out infinite; }
+@keyframes geo-pulse { 0% { transform: scale(0.6); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

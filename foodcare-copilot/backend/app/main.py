@@ -79,6 +79,16 @@ def current_user(authorization: str | None = Header(default=None)) -> User:
     return auth.user_for_token(token)
 
 
+def optional_user(authorization: str | None = Header(default=None)) -> User | None:
+    """The signed-in user, or None (for read-only synthetic views that also work signed out)."""
+    if not authorization:
+        return None
+    try:
+        return current_user(authorization)
+    except Exception:  # noqa: BLE001 - an expired token just means "signed out" here
+        return None
+
+
 # --- request bodies --------------------------------------------------------------------
 
 class LoginBody(BaseModel):
@@ -667,6 +677,44 @@ def agents_activity(limit: int = Query(default=60, ge=1, le=300), user: User = D
     from app import graphs
 
     return graphs.activity(limit)
+
+
+# --- global supply-chain maps (synthetic scenario; see app/geo.py) ----------------------
+
+@app.get("/api/geo/network")
+def geo_network(country: str | None = Query(default=None, max_length=8), tier: str | None = Query(default=None),
+                user: User | None = Depends(optional_user)) -> dict:
+    """Synthetic global network with provenance on every item; your own located inspections if signed in."""
+    from app import geo
+
+    if tier and tier not in geo.TIERS:
+        raise PlatformError(f"tier must be one of {', '.join(geo.TIERS)}")
+    return geo.network(user.username if user else None, country, tier)
+
+
+@app.get("/api/geo/node/{node_id}")
+def geo_node(node_id: str, user: User | None = Depends(optional_user)) -> dict:
+    from app import geo
+
+    try:
+        return geo.node_detail(node_id, user.username if user else None)
+    except KeyError:
+        raise NotFound("Unknown site") from None
+
+
+@app.get("/api/geo/risk")
+def geo_risk(country: str | None = Query(default=None, max_length=8), node: str | None = None) -> dict:
+    from app import geo
+
+    return geo.simulate(country, node)
+
+
+@app.get("/api/geo/suppliers")
+def geo_suppliers() -> dict:
+    """Network supplier names: an inspection batch with one of these as supplier appears on the map."""
+    from app import geo
+
+    return {"suppliers": geo.supplier_names()}
 
 
 @app.get("/api/data-sources")
