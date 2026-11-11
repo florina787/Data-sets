@@ -332,6 +332,12 @@ The first start installs the pinned packages and builds the interface (a few min
 
 If a port is busy because an older copy is still running: `lsof -t -i :8700 -i :8801 | xargs kill`.
 
+**Seeing the old light-green "FoodCare Enterprise Copilot" page, or a red "Failed to fetch" box?**
+
+* *Old page:* your copy is out of date. Run `git checkout claude/new-session-pahp8j && git pull`, then start again. The current app is the navy "Flo & Jerry" one.
+* *"Failed to fetch":* the web page loaded, but the server behind it (port 8700) is not running. It crashed or never started. Look at the terminal where you ran `scripts/start.sh` for the first error.
+* *Windows / a very new Python (for example 3.15):* some pinned packages have no ready-made install files for brand-new Python versions, so installing them asks for Microsoft C++ build tools. The repository includes a `.python-version` file (3.13), so `uv` downloads and uses Python 3.13 automatically. If an old `.venv` folder was created with another version, delete `.venv` and run `scripts/setup.sh` again. On Windows, run the scripts from **Git Bash** or WSL.
+
 ### 4.3 Or let GitHub Copilot in VS Code run it
 
 Open the `foodcare-copilot` folder in VS Code, switch Copilot Chat to **Agent** mode and paste the prompt from [docs/RUN_WITH_GITHUB_COPILOT.md](docs/RUN_WITH_GITHUB_COPILOT.md). Copilot automatically reads `.github/copilot-instructions.md`, which tells it the commands and the rules: no model downloads, no second model server, no pushing. You can also use **Terminal → Run Task…** and choose a "Flo & Jerry" task.
