@@ -1,12 +1,23 @@
 {
   // Flo & Jerry tasks. Run them from Terminal > Run Task..., or ask GitHub Copilot
   // (Agent mode) to run them. Open the foodcare-copilot folder as the workspace.
+  // On Windows every task runs in Git Bash (the scripts are bash scripts; PowerShell cannot run them).
   "version": "2.0.0",
+  "windows": {
+    "options": { "shell": { "executable": "C:\\Program Files\\Git\\bin\\bash.exe", "args": ["-c"] } }
+  },
   "tasks": [
     {
       "label": "Flo & Jerry: check prerequisites",
       "type": "shell",
       "command": "git --version && python3 --version && uv --version && node --version && npm --version",
+      "windows": { "command": "git --version && uv --version && uv python find 3.13; node --version && npm --version" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flo & Jerry: clean reinstall",
+      "type": "shell",
+      "command": "rm -rf .venv && scripts/setup.sh",
       "problemMatcher": []
     },
     {
@@ -34,6 +45,7 @@
       "label": "Flo & Jerry: stop",
       "type": "shell",
       "command": "lsof -t -i :8700 -i :8801 | xargs kill 2>/dev/null; echo stopped",
+      "windows": { "command": "netstat -ano | grep -E ':(8700|8801) .*LISTENING' | awk '{print $NF}' | sort -u | xargs -r -I{} taskkill //F //PID {}; echo stopped" },
       "problemMatcher": []
     },
     {
