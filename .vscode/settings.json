@@ -1,0 +1,9 @@
+{
+  // Windows: use Git Bash as the terminal, so GitHub Copilot (Agent mode) and the tasks run the
+  // bash scripts directly. Wrapping bash inside PowerShell breaks quoting.
+  "terminal.integrated.profiles.windows": {
+    "Git Bash": { "path": "C:\\Program Files\\Git\\bin\\bash.exe", "args": ["--login", "-i"] }
+  },
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "chat.tools.terminal.terminalProfile.windows": { "path": "C:\\Program Files\\Git\\bin\\bash.exe" }
+}

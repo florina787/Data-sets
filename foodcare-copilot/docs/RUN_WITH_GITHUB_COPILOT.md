@@ -5,6 +5,10 @@ Copilot automatically reads `.github/copilot-instructions.md`, so it already kno
 (no model downloads, no second model server, no pushing).
 
 ## 1. Open the project
+
+> **Windows:** open the `foodcare-copilot` folder itself (File → Open Folder), not its parent. Its `.vscode/settings.json`
+> makes **Git Bash** the default terminal, so Copilot types commands straight into bash. After opening, run
+> **Developer: Reload Window** once, then check that a new terminal (Ctrl+Shift+`) says `MINGW64`, not `PS C:\>`.
 1. In VS Code: **File → Open Folder…** and choose the `foodcare-copilot` folder
    (inside your `Data-sets` clone, on branch `claude/new-session-pahp8j`).
 2. Open Copilot Chat (the chat icon, or `Ctrl+Alt+I` / `⌃⌘I` on Mac) and switch the mode picker to **Agent**.
@@ -15,7 +19,8 @@ Copilot automatically reads `.github/copilot-instructions.md`, so it already kno
 ```text
 Run the Flo & Jerry app in this workspace by following .github/copilot-instructions.md exactly.
 1. Update the code: git fetch origin, git checkout claude/new-session-pahp8j, git pull. Show me the latest commit.
-2. If I am on Windows, use Git Bash (C:\Program Files\Git\bin\bash.exe) for every command, never PowerShell or cmd.
+2. On Windows, run every command directly in the Git Bash terminal (this workspace makes it the default).
+   One simple command per call. Never wrap bash inside PowerShell (no "& bash.exe -lc '...'").
 3. Check git, uv and node (20+). Python must be 3.13 (pinned in .python-version; let uv provide it).
    Do NOT use Python 3.14 or 3.15 and do not install C++ build tools.
 4. If a .venv folder exists and its Python is not 3.13, delete .venv. Then run scripts/setup.sh

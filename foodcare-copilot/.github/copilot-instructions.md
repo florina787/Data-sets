@@ -49,3 +49,9 @@ This folder (`foodcare-copilot/`) is a FastAPI + React portfolio prototype with 
 - Deployment: `Dockerfile`, `deploy/k8s/`, `deploy/flux/`; research note in `docs/MCCAIN_INTEGRATION.md`.
 - Frontend: `apps/control-room/src/` (screens in `screens/`, theme in `tailwind.config.js` and `index.css`).
 - Docs: `README.md` (layman guide) and `docs/`.
+
+**Terminal rule (Windows):** the workspace sets Git Bash as the default terminal (`.vscode/settings.json`).
+Run ONE simple command per terminal call, directly in that Git Bash terminal. NEVER wrap bash inside PowerShell
+(no `& 'C:\Program Files\Git\bin\bash.exe' -lc '...'`): PowerShell strips the inner quotes and bash fails with
+"unexpected end of file". Avoid multi-line `if ... fi` one-liners; use plain commands such as `ls`, `cat FILE`, `cd DIR`.
+If the terminal is still PowerShell, stop and ask the user to reload VS Code (Developer: Reload Window).
