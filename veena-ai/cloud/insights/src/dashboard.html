@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>VEENA Insights</title>
+<style>
+:root { --bg: #120d0b; --panel: #1d1512; --line: rgba(215,192,161,.14); --ivory: #f7f3ec; --muted: #b9a99a; --gold: #d7c0a1; --accent: #c9a27a; --deep: #8a5a36; }
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(1200px 600px at 80% -10%, #2a1d17, var(--bg)); color: var(--ivory); font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; min-height: 100vh; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 28px 24px 60px; }
+header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+h1 { font-size: 26px; letter-spacing: -.02em; margin: 0; font-weight: 650; }
+h1 em { font-family: Georgia, serif; color: var(--accent); font-weight: 400; }
+.sub { color: var(--muted); font-size: 13px; }
+.controls { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+select, button, input { font: inherit; color: var(--ivory); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; }
+button { cursor: pointer; }
+button.gold { background: var(--gold); color: #17110f; border-color: var(--gold); font-weight: 650; }
+.test { display: none; background: #7a3b1d; color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); }
+.card { background: linear-gradient(180deg, rgba(255,255,255,.025), transparent), var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+.kpi { grid-column: span 2; }
+.kpi .v { font-size: 30px; font-weight: 650; letter-spacing: -.02em; margin-top: 4px; }
+.kpi .l { color: var(--muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.kpi .d { color: var(--muted); font-size: 11.5px; margin-top: 6px; line-height: 1.35; }
+.kpi.web .l::before { content: "WEBSITE · "; color: var(--accent); }
+.kpi.gh .l::before { content: "GITHUB · "; color: var(--accent); }
+.kpi.app .l::before { content: "APP · "; color: var(--accent); }
+.span4 { grid-column: span 4; } .span6 { grid-column: span 6; } .span8 { grid-column: span 8; } .span12 { grid-column: span 12; }
+h2 { font-size: 15px; margin: 0 0 4px; font-weight: 600; } .card .hint { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+.funnel .row { display: grid; grid-template-columns: 170px 1fr 70px; gap: 12px; align-items: center; margin: 9px 0; font-size: 13.5px; }
+.bar { height: 22px; border-radius: 6px; background: linear-gradient(90deg, var(--deep), var(--accent)); min-width: 2px; }
+.funnel .note { grid-column: 2 / 4; color: var(--muted); font-size: 11.5px; margin-top: -6px; }
+.funnel .sep { border-top: 1px dashed var(--line); margin: 14px 0 6px; color: var(--muted); font-size: 11.5px; padding-top: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; } td, th { padding: 7px 6px; border-bottom: 1px solid var(--line); text-align: left; } th { color: var(--muted); font-weight: 500; }
+td.r, th.r { text-align: right; }
+.heat td.c { text-align: center; border-radius: 6px; }
+svg text { fill: var(--muted); font-size: 11px; }
+#login { max-width: 420px; margin: 18vh auto; text-align: center; }
+#login input { width: 100%; border-radius: 12px; margin: 18px 0 12px; }
+.err { color: #f0a58a; font-size: 13px; min-height: 18px; }
+footer { color: var(--muted); font-size: 12px; margin-top: 26px; line-height: 1.6; }
+@media (max-width: 1000px) { .kpi { grid-column: span 4; } .span4, .span6, .span8 { grid-column: span 12; } }
+@media (max-width: 560px) { .kpi { grid-column: span 6; } .funnel .row { grid-template-columns: 110px 1fr 50px; } }
+</style>
+</head>
+<body>
+<div id="login" class="card">
+  <h1>VEENA <em>Insights</em></h1>
+  <p class="sub">Private dashboard. Enter the dashboard token.</p>
+  <input id="token" type="password" autocomplete="off" placeholder="Dashboard token" aria-label="Dashboard token" />
+  <div class="err" id="loginErr" role="alert"></div>
+  <button class="gold" id="go">Open dashboard</button>
+  <p class="sub" style="margin-top:16px">The token stays in this browser tab only (session storage) and is cleared when you close it.</p>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <header>
+    <div><h1>VEENA <em>Insights</em></h1><div class="sub" id="gen"></div></div>
+    <span class="test" id="testBadge">SYNTHETIC TEST DATA</span>
+    <div class="controls">
+      <select id="days" aria-label="Period"><option value="7">7 days</option><option value="30">30 days</option><option value="90" selected>90 days</option><option value="365">365 days</option></select>
+      <select id="test" aria-label="Data set"><option value="0">Real data</option><option value="1">Test data</option></select>
+      <button id="out">Sign out</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card kpi web"><div class="l">Page views</div><div class="v" id="k-pv"></div><div class="d">Page loads, not people</div></div>
+    <div class="card kpi web"><div class="l">Download clicks</div><div class="v" id="k-dc"></div><div class="d">Clicks on download buttons</div></div>
+    <div class="card kpi gh"><div class="l">Downloads</div><div class="v" id="k-gh"></div><div class="d">All time; includes repeats</div></div>
+    <div class="card kpi app"><div class="l">First launches</div><div class="v" id="k-fl"></div><div class="d">Opted-in installs only</div></div>
+    <div class="card kpi app"><div class="l">Weekly active</div><div class="v" id="k-wau"></div><div class="d">Opted-in installs, 7 days</div></div>
+    <div class="card kpi app"><div class="l">Monthly active</div><div class="v" id="k-mau"></div><div class="d">Opted-in installs, 30 days</div></div>
+
+    <div class="card span8 funnel"><h2>Conversion funnel</h2><div class="hint">Three different sources. Each step is counted separately, so steps are not the same people moving down.</div><div id="funnel"></div></div>
+    <div class="card span4"><h2>Platforms</h2><div class="hint">First launches of opted-in installs</div><div id="platforms"></div></div>
+
+    <div class="card span6"><h2>Feature adoption</h2><div class="hint">Share of installs active in the last 30 days that used each feature</div><div id="features"></div></div>
+    <div class="card span6"><h2>Weekly active installations</h2><div class="hint">Opted-in installs that opened VEENA, per week (Monday start)</div><div id="wau"></div></div>
+
+    <div class="card span8"><h2>Retention by first-launch week</h2><div class="hint">Share of each week's new opted-in installs active again 1–4 weeks later</div><div id="retention"></div></div>
+    <div class="card span4"><h2>Errors</h2><div class="hint">Last 30 days, by code (no messages are collected)</div><div id="errors"></div></div>
+
+    <div class="card span6"><h2>Website traffic</h2><div class="hint">Daily page views and download clicks</div><div id="web"></div></div>
+    <div class="card span6"><h2>Referrers and campaigns</h2><div class="hint">Referring sites (host only) and utm_campaign labels</div><div id="refs"></div></div>
+  </div>
+  <footer id="defs"></footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => (n ?? 0).toLocaleString("en");
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+let token = sessionStorage.getItem("veena-insights-token") || "";
+
+async function load() {
+  const r = await fetch(`/api/summary?days=${$("days").value}&test=${$("test").value}`, { headers: { authorization: "Bearer " + token } });
+  if (r.status === 401) { sessionStorage.removeItem("veena-insights-token"); token = ""; show(false, "That token was not accepted."); return; }
+  if (!r.ok) { show(false, "Could not load data (" + r.status + ")."); return; }
+  render(await r.json()); show(true);
+}
+function show(app, err = "") { $("app").hidden = !app; $("login").hidden = app; $("loginErr").textContent = err; }
+$("go").onclick = () => { token = $("token").value.trim(); sessionStorage.setItem("veena-insights-token", token); load(); };
+$("token").onkeydown = (e) => { if (e.key === "Enter") $("go").click(); };
+$("out").onclick = () => { sessionStorage.removeItem("veena-insights-token"); token = ""; show(false); };
+$("days").onchange = load; $("test").onchange = load;
+
+function bars(rows, label, value, suffix = "") {
+  const max = Math.max(1, ...rows.map(value));
+  return rows.map((r) => `<div class="funnel"><div class="row"><span>${esc(label(r))}</span><div class="bar" style="width:${(100 * value(r) / max).toFixed(1)}%"></div><b class="r">${fmt(value(r))}${suffix}</b></div></div>`).join("") || `<p class="sub">No data yet.</p>`;
+}
+function line(series, keys, colors) {
+  const W = 560, H = 170, P = 26, n = series.length;
+  if (!n) return `<p class="sub">No data yet.</p>`;
+  const max = Math.max(1, ...series.flatMap((s) => keys.map((k) => s[k])));
+  const x = (i) => P + (W - 2 * P) * (n === 1 ? 0.5 : i / (n - 1)), y = (v) => H - P - (H - 2 * P) * v / max;
+  const paths = keys.map((k, j) => `<path d="${series.map((s, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(s[k]).toFixed(1)).join(" ")}" fill="none" stroke="${colors[j]}" stroke-width="2.4" stroke-linejoin="round"/>` +
+    series.map((s, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(s[k]).toFixed(1)}" r="2.6" fill="${colors[j]}"/>`).join("")).join("");
+  const lbl = series.map((s, i) => (i === 0 || i === n - 1 || i === Math.floor(n / 2)) ? `<text x="${x(i)}" y="${H - 6}" text-anchor="middle">${esc((s.week || s.day).slice(5))}</text>` : "").join("");
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="trend chart"><text x="4" y="14">${fmt(max)}</text><line x1="${P}" x2="${W - P}" y1="${H - P}" y2="${H - P}" stroke="rgba(215,192,161,.2)"/>${paths}${lbl}</svg>`;
+}
+
+function render(d) {
+  $("testBadge").style.display = d.test_data ? "inline-block" : "none";
+  $("gen").textContent = `Last ${d.window_days} days · generated ${new Date(d.generated_at).toLocaleString()}`;
+  $("k-pv").textContent = fmt(d.web.page_views); $("k-dc").textContent = fmt(d.web.download_clicks); $("k-gh").textContent = fmt(d.downloads.total);
+  $("k-fl").textContent = fmt(d.installs.first_launches); $("k-wau").textContent = fmt(d.installs.active_7d); $("k-mau").textContent = fmt(d.installs.active_30d);
+  const max = Math.max(1, ...d.funnel.map((f) => f.n));
+  $("funnel").innerHTML = d.funnel.map((f, i) => (i === 2 ? `<div class="sep">GitHub</div>` : i === 3 ? `<div class="sep">Desktop app · only installations that opted in</div>` : i === 0 ? `<div class="sep" style="border:0;margin-top:0">Website</div>` : "") +
+    `<div class="row"><span>${esc(f.step)}</span><div class="bar" style="width:${(100 * f.n / max).toFixed(1)}%"></div><b class="r">${fmt(f.n)}</b></div><div class="row"><span></span><span class="note">${esc(f.note)}</span></div>`).join("");
+  $("platforms").innerHTML = bars(d.installs.by_os, (r) => ({ windows: "Windows", macos: "macOS", linux: "Linux" })[r.os] || r.os, (r) => r.n) +
+    `<p class="sub" style="margin-top:14px">Download clicks by platform: ${d.web.clicks_by_os.map((r) => esc(r.os) + " " + fmt(r.n)).join(" · ") || "none"}</p>` +
+    `<p class="sub">Versions (30 days): ${d.installs.versions.map((r) => esc(r.app_version) + " " + fmt(r.n)).join(" · ") || "none"}</p>`;
+  $("features").innerHTML = bars(d.features, (r) => ({ chat: "Ask anything", documents: "Documents", screen: "Screen", meeting: "Meetings", interview: "Interview practice", agents: "Evidence (Agents)" })[r.feature], (r) => r.pct, "%");
+  $("wau").innerHTML = line(d.weekly_active, ["installs"], ["#d7c0a1"]);
+  const heat = (v) => v === null ? `<td class="c" style="color:#6b5a4e">—</td>` : `<td class="c" style="background:rgba(201,162,122,${(0.12 + 0.8 * v / 100).toFixed(2)});color:${v > 55 ? "#17110f" : "#f7f3ec"}">${v}%</td>`;
+  $("retention").innerHTML = d.retention.length ? `<table class="heat"><tr><th>Week of</th><th class="r">New installs</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th></tr>` +
+    d.retention.map((c) => `<tr><td>${esc(c.week)}</td><td class="r">${fmt(c.size)}</td>${c.weeks.map(heat).join("")}</tr>`).join("") + `</table>` : `<p class="sub">No data yet.</p>`;
+  $("errors").innerHTML = d.errors.length ? `<table><tr><th>Code</th><th class="r">Events</th><th class="r">Installs</th></tr>` + d.errors.map((e) => `<tr><td>${esc(e.error_code)}</td><td class="r">${fmt(e.n)}</td><td class="r">${fmt(e.installs)}</td></tr>`).join("") + `</table>` : `<p class="sub">No errors reported.</p>`;
+  $("web").innerHTML = line(d.web.daily, ["pv", "dl"], ["#d7c0a1", "#8a5a36"]) + `<p class="sub">— page views &nbsp; <span style="color:#c9a27a">—</span> download clicks</p>`;
+  $("refs").innerHTML = `<table><tr><th>Referrer</th><th class="r">Views</th></tr>${d.web.referrers.map((r) => `<tr><td>${esc(r.referrer)}</td><td class="r">${fmt(r.n)}</td></tr>`).join("") || `<tr><td colspan="2" class="sub">None</td></tr>`}</table>` +
+    `<table style="margin-top:14px"><tr><th>Campaign</th><th class="r">Events</th></tr>${d.web.campaigns.map((r) => `<tr><td>${esc(r.campaign)}</td><td class="r">${fmt(r.n)}</td></tr>`).join("") || `<tr><td colspan="2" class="sub">None</td></tr>`}</table>`;
+  $("defs").innerHTML = Object.entries(d.definitions).map(([k, v]) => `<b>${esc(k.replace(/_/g, " "))}</b>: ${esc(v)}`).join("<br>") +
+    `<br>Anonymous installation ids cannot identify people; numbers are counts of installations, page loads and files, not unique users.`;
+}
+if (token) load(); else show(false);
+</script>
+</body>
+</html>
