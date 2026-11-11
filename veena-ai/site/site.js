@@ -35,6 +35,10 @@
 
   var cfg = window.VEENA_CONFIG || {};
 
+  // Free vs paid-plan wording must match the app people can actually download.
+  var plans = cfg.plansLive === true;
+  document.querySelectorAll("[data-when]").forEach(function (el) { el.hidden = el.getAttribute("data-when") !== (plans ? "plans" : "free"); });
+
   // Community links appear only once the owner has enabled GitHub Discussions
   // (CI checks the repository's API before this can be switched on).
   var DISCUSSIONS = "https://github.com/florina787/Data-sets/discussions";

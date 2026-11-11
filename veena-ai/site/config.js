@@ -24,6 +24,10 @@ window.VEENA_CONFIG = {
   // Leave null until the owner deploys the Worker; then set to its https:// URL.
   insightsUrl: null,
 
+  // Paid plans switch. false = the released app is free: the site shows the free wording, hides the
+  // Pricing link and marks the pricing page as a preview. true ONLY when a release with plans ships.
+  plansLive: false,
+
   // VEENA Billing Worker (cloud/billing). null = payments not open: buttons explain that politely.
   billingUrl: null,
   // Shows the "Test mode" banner while Stripe is in test mode.

@@ -1,0 +1,29 @@
+# VEENA Billing — Cloudflare Worker + D1 (Workers Free plan). NOT DEPLOYED.
+# Copy to wrangler.toml and fill database_id after `wrangler d1 create veena-billing`.
+# Secrets are never written here; set them with `wrangler secret put <NAME>`:
+#   STRIPE_SECRET_KEY      sk_test_... (test mode; live keys are refused unless ALLOW_LIVE=yes)
+#   STRIPE_WEBHOOK_SECRET  whsec_...  (Stripe Dashboard > Developers > Webhooks > signing secret)
+#   CODE_PEPPER            at least 32 random characters (openssl rand -base64 36)
+#   RESEND_API_KEY         only when EMAIL_PROVIDER = "resend"
+name = "veena-billing"
+main = "src/worker.js"
+compatibility_date = "2026-01-01"
+workers_dev = true
+
+[vars]
+SITE_URL = "https://florina787.github.io/Data-sets"
+EMAIL_PROVIDER = ""                   # "resend" once approved and its domain is verified
+EMAIL_FROM = "VEENA <codes@REPLACE-WITH-VERIFIED-DOMAIN>"
+# ALLOW_LIVE = "yes"                  # never set this until the owner approves live payments
+
+[[d1_databases]]
+binding = "DB"
+database_name = "veena-billing"
+database_id = "REPLACE_AFTER_wrangler_d1_create"
+migrations_dir = "migrations"
+
+[triggers]
+crons = ["*/30 * * * *"]              # release abandoned reservations, purge expired sessions/codes (1 of 5 free crons)
+
+[observability]
+enabled = true                        # Workers Logs, to diagnose errors (no request bodies are logged by the Worker)

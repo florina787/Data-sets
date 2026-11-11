@@ -21,6 +21,7 @@ WEB_RETENTION_DAYS = "395"   # website counters
 binding = "DB"
 database_name = "veena-insights"
 database_id = "REPLACE_AFTER_wrangler_d1_create"
+migrations_dir = "migrations"
 
 [triggers]
 crons = ["17 3 * * *"]       # daily 03:17 UTC: retention purge + GitHub download snapshot (1 of 5 free cron triggers)

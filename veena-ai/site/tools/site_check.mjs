@@ -114,6 +114,19 @@ for (const vp of VIEWPORTS) {
   await page.close();
 }
 
+// Wording must match the downloadable app: while plansLive is false, no paid-plan claims are visible.
+{
+  const page = await browser.newPage();
+  await page.goto(`${base}/index.html`);
+  const live = await page.evaluate(() => window.VEENA_CONFIG.plansLive === true);
+  const body = await page.evaluate(() => document.body.innerText);
+  if (!live && /three uses|Try free|See pricing/.test(body)) fail("index: paid-plan wording visible while plansLive is false");
+  if (!live && await page.isVisible('nav[aria-label="Main"] a[href="pricing.html"]')) fail("index: Pricing link visible while plansLive is false");
+  if (!live && !/Free\. No account\. No subscription\./.test(body)) fail("index: free wording missing while plansLive is false");
+  console.log(`wording matches release (plansLive=${live})`);
+  await page.close();
+}
+
 // Pricing: keyboard tabs, plan selection updates the total, buttons never pretend to charge.
 {
   const page = await browser.newPage();

@@ -292,3 +292,6 @@ dialog.signin::backdrop { background: rgba(23,17,15,.55); }
 dialog.signin input { width: 100%; font: inherit; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; }
 .si-actions { display: flex; justify-content: flex-end; gap: 8px; }
 @media (max-width: 760px) { .trial { grid-template-columns: 1fr; } .packs { grid-template-columns: 1fr; } .tabs [role="tab"] { padding: 9px 14px; } }
+
+/* hidden always wins (used by the free/paid wording switch) */
+[hidden] { display: none !important; }

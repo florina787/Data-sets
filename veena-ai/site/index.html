@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>VEENA.AI · Your AI. Your computer. Your control.</title>
-<meta name="description" content="Meet VEENA: a private, open-source AI companion for conversations, meetings, interviews, documents and your screen. Try every feature free on Windows, macOS and Linux." />
+<meta name="description" content="Meet VEENA: a private, open-source AI companion for conversations, meetings, interviews, documents and your screen. Free for Windows, macOS and Linux." />
 <meta name="theme-color" content="#17110f" />
 <link rel="canonical" href="https://florina787.github.io/Data-sets/" />
 <meta property="og:type" content="website" />
@@ -30,7 +30,7 @@
     <a class="brand" href="./" aria-label="VEENA.AI home"><img src="images/icon-64.png" alt="" width="28" height="28" /><span><b>VEENA</b><i>.AI</i></span></a>
     <nav aria-label="Main">
       <a href="features.html">Features</a>
-      <a href="pricing.html">Pricing</a>
+      <a href="pricing.html" data-when="plans" hidden>Pricing</a>
       <a href="#how">How It Works</a>
       <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>
       <a class="pill dark" href="#download">Download</a>
@@ -41,12 +41,12 @@
 <main id="main">
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
-      <p class="eyebrow">Private · Open source · Try free</p>
+      <p class="eyebrow"><span data-when="free">Private · Open source · Free</span><span data-when="plans" hidden>Private · Open source · Try free</span></p>
       <h1 id="hero-title">Meet <span class="serif">VEENA.</span></h1>
       <p class="sub">Your AI. Your computer. Your control.</p>
       <p class="lede">A private, open-source AI companion for conversations, meetings, interviews, documents and your screen.</p>
       <div class="actions">
-        <a class="pill dark" href="#download" data-dl-primary>Download VEENA — Try free</a>
+        <a class="pill dark" href="#download" data-dl-primary><span data-when="free">Download VEENA — Free</span><span data-when="plans" hidden>Download VEENA — Try free</span></a>
         <a class="pill ghost" href="features.html">Watch VEENA in action</a>
       </div>
       <p class="fine">Available for Windows, macOS and Linux.</p>
@@ -130,7 +130,7 @@
   <section id="download" class="dark" aria-labelledby="download-title">
     <div class="wrap">
       <h2 class="h2 center reveal" id="download-title">Download <span class="serif">VEENA</span></h2>
-      <p class="intro center reveal">Start free: three uses of every feature, no card needed. <a href="pricing.html">See pricing</a>.</p>
+      <p class="intro center reveal"><span data-when="free">Free. No account. No subscription.</span><span data-when="plans" hidden>Start free: three uses of every feature, no card needed. <a href="pricing.html">See pricing</a>.</span></p>
       <div class="dl-main reveal" aria-live="polite">
         <div class="os" id="dl-os">Your computer</div>
         <h3 id="dl-title">Checking the latest release…</h3>

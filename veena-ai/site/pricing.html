@@ -6,6 +6,7 @@
 <title>Pricing · VEENA.AI</title>
 <meta name="description" content="Start free with three uses of every VEENA feature. Then choose Unlimited or pay-as-you-go credits. Prices in USD." />
 <meta name="theme-color" content="#17110f" />
+<meta name="robots" content="noindex" />
 <link rel="canonical" href="https://florina787.github.io/Data-sets/pricing.html" />
 <link rel="icon" type="image/png" href="images/icon-64.png" />
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -20,7 +21,7 @@
     <a class="brand" href="./" aria-label="VEENA.AI home"><img src="images/icon-64.png" alt="" width="28" height="28" /><span><b>VEENA</b><i>.AI</i></span></a>
     <nav aria-label="Main">
       <a href="features.html">Features</a>
-      <a href="pricing.html" aria-current="page">Pricing</a>
+      <a href="pricing.html" aria-current="page" data-when="plans" hidden>Pricing</a>
       <a href="https://github.com/florina787/Data-sets/tree/__REF__/veena-ai">GitHub</a>
       <a class="pill dark" href="./#download">Download</a>
     </nav>
@@ -28,6 +29,7 @@
 </header>
 
 <main id="main">
+  <p class="testmode" data-when="free">Preview: paid plans are not available yet. The current VEENA release is free with no limits.</p>
   <p class="testmode" id="testmode" hidden>Test mode: payments use Stripe's test environment. No real card is charged.</p>
   <section class="hero" style="padding-bottom:20px" aria-labelledby="p-title">
     <div class="wrap center">
