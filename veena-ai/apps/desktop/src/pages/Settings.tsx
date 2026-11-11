@@ -28,6 +28,83 @@ interface TelemetryStatus {
   queued: { event: string; feature?: string; error_code?: string; day: string }[];
 }
 
+interface BillingStatus {
+  enabled: boolean;
+  signed_in?: boolean;
+  offline?: boolean;
+  account?: { unlimited: boolean; plan: string | null; credit_minutes: number; trial_remaining: Record<string, number>; trial_uses: number } | null;
+}
+const FEATURE_NAMES: Record<string, string> = { chat: "Ask anything", documents: "Documents", screen: "Screen", meeting: "Meetings", interview: "Interview practice" };
+
+/** Plan, credits and free uses. Hidden entirely while plans are disabled in this build. */
+function PlanAndUsage() {
+  const { api, toast } = useApp();
+  const [b, setB] = useState<BillingStatus | null>(null);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [sent, setSent] = useState(false);
+  const load = async () => api && setB(await api.get<BillingStatus>("/api/billing"));
+  useEffect(() => {
+    void load().catch(() => setB(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [api]);
+  if (!b?.enabled) return null;
+  const a = b.account;
+  const act = async (fn: () => Promise<unknown>) => {
+    try {
+      await fn();
+      await load();
+    } catch (e) {
+      toast("error", (e as Error).message);
+    }
+  };
+  return (
+    <Card>
+      <CardHeader title="Plan & free uses" subtitle="Your content never leaves this computer; only which feature was used is counted." />
+      <div className="px-5 pb-5">
+        {!b.signed_in ? (
+          <div className="mt-3 grid gap-2">
+            <p className="text-sm text-bark">Sign in with your email to start your free uses (3 of each feature, no card).</p>
+            <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Email" />
+            {sent && <Input inputMode="numeric" placeholder="6-digit code" value={code} onChange={(e) => setCode(e.target.value)} aria-label="Code" />}
+            <Button
+              variant="primary"
+              onClick={() => void act(async () => (sent ? api!.post("/api/billing/sign-in", { email, code }) : api!.post("/api/billing/sign-in", { email }).then(() => setSent(true))))}
+            >
+              {sent ? "Sign in" : "Email me a code"}
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-3 grid gap-3">
+            {b.offline && <p className="text-xs text-caramel">Offline: showing the last known balance.</p>}
+            <p className="text-sm font-medium text-bark">
+              {a?.unlimited ? `VEENA Unlimited (${a.plan})` : `${a?.credit_minutes ?? 0} credit minutes`}
+            </p>
+            {!a?.unlimited && a && (
+              <ul className="grid gap-1 text-sm text-bark">
+                {Object.entries(a.trial_remaining).map(([f, n]) => (
+                  <li key={f} className="flex justify-between border-t border-cream py-1.5 first:border-t-0">
+                    <span>{FEATURE_NAMES[f] ?? f}</span>
+                    <span className={n === 0 ? "text-caramel" : ""}>
+                      {n} of {a.trial_uses} free uses remaining
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="flex gap-2">
+              <Button variant="primary" onClick={() => window.open("https://florina787.github.io/Data-sets/pricing.html", "_blank")}>
+                See plans
+              </Button>
+              <Button onClick={() => void act(() => api!.post("/api/billing/sign-out"))}>Sign out</Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 /** Opt-in anonymous usage statistics. Off by default; withdrawing deletes the data on the server too. */
 function UsageStatistics() {
   const { api, toast } = useApp();
@@ -348,6 +425,7 @@ export function Settings() {
             <p className="px-5 pb-5 text-xs text-caramel">Data folder: {status?.data_dir}</p>
           </Card>
 
+          <PlanAndUsage />
           <UsageStatistics />
 
           {hw && (

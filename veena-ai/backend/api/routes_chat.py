@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import uuid
 
@@ -11,6 +12,7 @@ from pydantic import BaseModel, Field
 
 from ..agents.graph import UnifiedRequest
 from ..agents.meeting import summarize, to_markdown
+from ..billing import feature_for
 from ..llm.ollama import LLMUnavailable
 from ..llm.select import resolve_text_model
 from ..security.prompt_guard import SECURITY_PREAMBLE, wrap_untrusted
@@ -96,9 +98,22 @@ async def add_transcript(session_id: str, body: TranscriptLine, st: AppState = D
 async def chat(req: UnifiedRequest, st: AppState = Depends(get_state)):
     request_id = uuid.uuid4().hex
 
+    feature = feature_for(req.mode, bool(req.image_b64), bool(req.collection_ids))
+    decision = await asyncio.to_thread(st.billing.authorize, feature, req.session_id)
+
     async def gen():
-        async for ev in st.engine.run(req, request_id):
-            yield json.dumps(ev) + "\n"
+        if not decision.allowed:
+            yield json.dumps({"type": "error", "code": "payment_required", "message": decision.message}) + "\n"
+            return
+        ok = False
+        try:
+            async for ev in st.engine.run(req, request_id):
+                if ev.get("type") == "done" and not ev.get("cancelled"):
+                    ok = True
+                yield json.dumps(ev) + "\n"
+        finally:
+            # Charged only after a completed answer; failures and cancellations are released.
+            await asyncio.to_thread(st.billing.finish, decision, ok)
 
     return StreamingResponse(gen(), media_type="application/x-ndjson", headers={"x-request-id": request_id})
 
@@ -198,3 +213,31 @@ async def meeting_summary(session_id: str, st: AppState = Depends(get_state)):
         session_id, "assistant", md, answer_style="meeting_summary", model=model, meta={"agent": "meeting", "notes_json": notes}
     )
     return {"notes": notes, "markdown": md, "model": model}
+
+
+class SignInReq(BaseModel):
+    email: str = Field(min_length=3, max_length=254)
+    code: str | None = Field(default=None, max_length=12)
+
+
+@router.get("/billing")
+async def billing_status(st: AppState = Depends(get_state)):
+    await asyncio.to_thread(st.billing.replay)
+    return await asyncio.to_thread(st.billing.status)
+
+
+@router.post("/billing/sign-in")
+async def billing_sign_in(body: SignInReq, st: AppState = Depends(get_state)):
+    if not st.billing.enabled:
+        raise HTTPException(409, "plans are not enabled in this version")
+    try:
+        if body.code:
+            return await asyncio.to_thread(st.billing.verify, body.email, body.code)
+        return await asyncio.to_thread(st.billing.start_sign_in, body.email)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+
+
+@router.post("/billing/sign-out")
+async def billing_sign_out(st: AppState = Depends(get_state)):
+    return st.billing.sign_out()

@@ -32,6 +32,7 @@ class AppState:
     detector: QuestionDetector
     runtime: OllamaRuntime | None = None
     telemetry: object | None = None
+    billing: object | None = None
     transcriber_factory: type = WhisperTranscriber
     _asr: dict[tuple[str, str | None], WhisperTranscriber] = field(default_factory=dict)
     _asr_lock: threading.Lock = field(default_factory=threading.Lock)

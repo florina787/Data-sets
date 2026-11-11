@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
@@ -78,10 +80,17 @@ async def evaluate(turn_id: int, body: AnswerReq, st: AppState = Depends(get_sta
     if not turn:
         raise HTTPException(404, "turn not found")
     iv = st.coach.get(turn.interview_id)
+    decision = await asyncio.to_thread(st.billing.authorize, "interview", iv.chat_session_id)
+    if not decision.allowed:
+        raise HTTPException(402, decision.message)
     try:
         fb = await st.coach.evaluate(turn_id, body.answer, model, _resume(st, iv))
-    except ValueError as e:
-        raise HTTPException(502, f"model returned an unusable evaluation: {e}") from e
+    except Exception as e:
+        await asyncio.to_thread(st.billing.finish, decision, False)
+        if isinstance(e, ValueError):
+            raise HTTPException(502, f"model returned an unusable evaluation: {e}") from e
+        raise
+    await asyncio.to_thread(st.billing.finish, decision, True)
     st.metrics.record("interview.score", fb["score"], unit="score", meta={"model": model, "category": turn.category})
     st.store.add_message(
         iv.chat_session_id, "user", body.answer, intent="practice_answer", meta={"turn_id": turn_id, "question": turn.question}

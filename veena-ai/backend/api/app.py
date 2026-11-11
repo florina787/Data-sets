@@ -14,6 +14,7 @@ from ..agents.engine import Engine, ModelCatalog
 from ..agents.interview import InterviewCoach
 from ..agents.question_detection import QuestionDetector
 from ..analytics.metrics import Metrics
+from ..billing import Billing
 from ..config import Settings
 from ..llm.ollama import OllamaClient
 from ..memory.db import make_engine
@@ -70,6 +71,7 @@ def create_app(settings: Settings | None = None, *, llm=None, embedder=None, tra
     )
     state.telemetry = Telemetry(store, settings.data_dir)
     state.engine.telemetry = state.telemetry
+    state.billing = Billing(settings.data_dir)
     if transcriber_factory is not None:
         state.transcriber_factory = transcriber_factory
 

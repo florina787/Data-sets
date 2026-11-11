@@ -1,6 +1,8 @@
 // Launches and supervises the local Python backend.
 // Set to the deployed VEENA Insights Worker URL (https://...) once the owner approves deployment.
 export const INSIGHTS_URL = "";
+// VEENA Billing Worker URL (cloud/billing). Empty = plans disabled: every feature works without limits.
+export const BILLING_URL = "";
 
 import { ChildProcess, spawn } from "node:child_process";
 import crypto from "node:crypto";
@@ -88,6 +90,7 @@ export class BackendSupervisor {
       ANONYMIZED_TELEMETRY: "False",
       // VEENA's own opt-in statistics server (cloud/insights). Empty = statistics unavailable.
       VEENA_INSIGHTS_URL: INSIGHTS_URL,
+      VEENA_BILLING_URL: BILLING_URL,
     };
     this.log = [];
     this.proc = spawn(cmd, args, { cwd, env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
