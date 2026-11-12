@@ -266,6 +266,15 @@ jobs:
         working-directory: veena-ai/apps/desktop
         run: |
           if [ "$RUNNER_OS" = "Linux" ]; then xvfb-run -a node scripts/smoke-packaged.mjs "$INSTALLED_EXE"; else node scripts/smoke-packaged.mjs "$INSTALLED_EXE"; fi
+      - name: Screen capture in the installed app (real sources, real frames, released on stop)
+        working-directory: veena-ai/apps/desktop
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            xvfb-run -a -s "-screen 0 1600x900x24" node scripts/smoke-capture.mjs "$INSTALLED_EXE" --out "../capture-${RUNNER_OS}.json"
+          else
+            node scripts/smoke-capture.mjs "$INSTALLED_EXE" --out "../capture-${RUNNER_OS}.json"
+          fi
+          python -c "import json,sys; d=json.load(open(sys.argv[1])); c=d['steps'].get('capture') or {}; print('### Screen capture:', d['status'].upper(), '|', len(d['steps'].get('sources',[])), 'source(s) |', c.get('width'), 'px wide, contrast', c.get('contrast'), '|', d.get('note') or d.get('error') or '')" "../capture-${RUNNER_OS}.json" >> "$GITHUB_STEP_SUMMARY"
       - name: First run on a machine without Ollama (real runtime download, real model answer)
         working-directory: veena-ai
         timeout-minutes: 45
@@ -319,6 +328,7 @@ jobs:
           name: first-run-evidence-${{ runner.os }}
           path: |
             veena-ai/runtime-smoke-*.json
+            veena-ai/capture-*.json
             veena-ai/apps/desktop/signature.txt
           retention-days: 30
           if-no-files-found: ignore

@@ -81,6 +81,7 @@ export type Settings = {
   answer_style: string;
   retention_days: number;
   redact_screens: boolean;
+  hide_from_screen_share: boolean;
   pause_on_sensitive: boolean;
   question_escalation: boolean;
   auto_answer_questions: boolean;

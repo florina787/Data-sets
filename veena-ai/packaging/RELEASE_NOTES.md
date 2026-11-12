@@ -1,4 +1,4 @@
-## VEENA.AI 0.1.0 — Free Public Beta
+## VEENA.AI 0.1.1 — Free Public Beta
 
 **Your AI. Your computer. Your control.** A private, open-source AI companion for conversations, meetings, interview practice, documents and your screen. It runs on your own computer.
 
@@ -25,6 +25,13 @@ Your system will warn you once. Only continue for a file downloaded from this pa
 * **Linux:** make the AppImage executable (`chmod +x`), then run it.
 
 Confirm a download is intact by comparing it with `SHA256SUMS` (also listed below). Installation steps: `INSTALLATION.md`; limitations: `KNOWN_LIMITATIONS.md`.
+
+### Fixed in 0.1.1
+
+* **Short questions get real answers.** Typing just a term such as `langchain`, `MCP` or `RAG` now gets an explanation instead of "please clarify". Close typos of well-known technical terms are recognised and announced (`langraph` → "Assuming you mean LangGraph"); unknown words are never silently "corrected".
+* **Knowledge answers questions about your documents.** Resume-style questions ("most recent role", "how many years of experience") no longer come back empty: retrieval now bridges question and document wording, offers weaker matches (labelled), and years of experience are calculated from the document's own dates instead of guessed. The Knowledge page explains why a search found nothing and can re-index a collection.
+* **Screen sharing shows real sources.** Displays are named with their resolution; minimized, hidden or protected windows are no longer shown as blank tiles; macOS explains a missing Screen Recording permission with a button to fix it; sharing is only reported as started once real frames arrive, and stopping releases the capture completely.
+* **Hide VEENA from screen sharing** (Settings → Privacy, Windows and macOS): Teams, Zoom and recorders see a blank area instead of VEENA. Off by default.
 
 ### What's in this release
 

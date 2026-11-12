@@ -318,15 +318,17 @@ export function SourcePicker({ open, onClose }: { open: boolean; onClose: () => 
   const [audio, setAudio] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const [access, setAccess] = useState<string | null>(null);
+  const [showUnavailable, setShowUnavailable] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+
   useEffect(() => {
     if (!open) return;
     setSources(null);
     setChosen(null);
     void (async () => {
-      const access = await window.veena?.mediaAccess("screen");
-      if (access === "denied" || access === "restricted") {
-        toast("error", "Screen recording permission is off for VEENA in System Settings → Privacy & Security.");
-      }
+      const a = (await window.veena?.mediaAccess("screen")) ?? null;
+      setAccess(a);
       try {
         setSources((await window.veena?.listScreenSources()) ?? []);
       } catch (e) {
@@ -334,7 +336,11 @@ export function SourcePicker({ open, onClose }: { open: boolean; onClose: () => 
         setSources([]);
       }
     })();
-  }, [open, toast]);
+  }, [open, toast, refresh]);
+
+  // Only sources that can produce frames are offered; the rest are listed with the reason.
+  const shareable = sources?.filter((s) => s.kind === "screen" || s.previewable !== false) ?? null;
+  const unavailable = sources?.filter((s) => s.kind === "window" && s.previewable === false) ?? [];
 
   const confirm = async () => {
     const src = sources?.find((s) => s.id === chosen);
@@ -365,9 +371,20 @@ export function SourcePicker({ open, onClose }: { open: boolean; onClose: () => 
               </Button>
             </div>
             <div className="grid min-h-48 grid-cols-2 gap-3 overflow-y-auto p-5 md:grid-cols-3">
+              {(access === "denied" || access === "restricted" || access === "not-determined") && (
+                <div className="col-span-full flex items-center gap-3 rounded-xl border border-cream bg-warm p-3 text-sm text-bark">
+                  <span>macOS has not allowed VEENA to record the screen, so previews and sharing are blank. Allow VEENA under Screen Recording, then reopen VEENA.</span>
+                  <Button size="sm" variant="subtle" className="ml-auto shrink-0" onClick={() => void window.veena?.openScreenPrivacySettings?.()}>
+                    Open settings
+                  </Button>
+                </div>
+              )}
+              {appInfo?.sessionType === "wayland" && (
+                <p className="col-span-full text-xs text-caramel">Wayland: your desktop's own sharing dialog may ask you to confirm the screen or window.</p>
+              )}
               {sources === null && <p className="col-span-full text-sm text-caramel">Looking for screens and windows…</p>}
-              {sources?.length === 0 && <p className="col-span-full text-sm text-caramel">No shareable sources found. Check the operating system's screen-recording permission.</p>}
-              {sources?.map((s) => (
+              {sources?.length === 0 && <p className="col-span-full text-sm text-caramel">No screens or windows were found. Check the operating system's screen-recording permission, then refresh.</p>}
+              {shareable?.map((s) => (
                 <button
                   key={s.id}
                   type="button"
@@ -379,13 +396,32 @@ export function SourcePicker({ open, onClose }: { open: boolean; onClose: () => 
                   className={cn("overflow-hidden rounded-xl border-2 text-left transition-colors", chosen === s.id ? "border-caramel" : "border-cream hover:border-sand")}
                   aria-pressed={chosen === s.id}
                 >
-                  <div className="aspect-video bg-ivory">{s.thumbnail && <img src={s.thumbnail} alt="" className="h-full w-full object-contain" />}</div>
+                  <div className="flex aspect-video items-center justify-center bg-ivory">
+                    {s.thumbnail ? <img src={s.thumbnail} alt="" className="h-full w-full object-contain" /> : <span className="px-3 text-center text-xs text-caramel">{s.note ?? "No preview available"}</span>}
+                  </div>
                   <div className="flex items-center gap-1.5 px-2.5 py-2 text-xs text-bark">
                     {s.kind === "screen" ? <Monitor size={12} /> : <PanelRightOpen size={12} />}
                     <span className="truncate">{s.name}</span>
                   </div>
                 </button>
               ))}
+              {unavailable.length > 0 && (
+                <div className="col-span-full text-xs text-caramel">
+                  <button type="button" className="underline" onClick={() => setShowUnavailable((v) => !v)} aria-expanded={showUnavailable}>
+                    {unavailable.length} window(s) can't be shared right now
+                  </button>{" "}
+                  (minimized, on another desktop, or protected from capture). Restore a window, then refresh.
+                  {showUnavailable && (
+                    <ul className="mt-2 list-disc space-y-0.5 pl-5">
+                      {unavailable.map((s) => (
+                        <li key={s.id} className="truncate">
+                          {s.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-4 border-t border-cream px-5 py-4">
               <div className="max-w-sm flex-1">
@@ -397,7 +433,10 @@ export function SourcePicker({ open, onClose }: { open: boolean; onClose: () => 
                   description={appInfo?.systemAudioSupported ? "Transcribes what plays through your speakers." : "System audio capture is available on Windows only."}
                 />
               </div>
-              <Button variant="ghost" onClick={onClose} className="ml-auto">
+              <Button variant="ghost" onClick={() => setRefresh((n) => n + 1)} className="ml-auto" aria-label="Refresh the list of screens and windows">
+                Refresh
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
                 Cancel
               </Button>
               <Button variant="primary" onClick={() => void confirm()} disabled={!chosen || busy}>

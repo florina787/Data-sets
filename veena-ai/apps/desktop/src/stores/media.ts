@@ -230,6 +230,13 @@ export const useScreen = create<ScreenStore>((set, get) => ({
     video.muted = true;
     video.srcObject = stream;
     await video.play().catch(() => undefined);
+    // Verify the source really produces frames before calling it "shared".
+    for (let i = 0; i < 50 && !video.videoWidth; i++) await new Promise((r) => setTimeout(r, 100));
+    if (!video.videoWidth) {
+      stopShare(stream);
+      video.srcObject = null;
+      throw new Error("the selected source produced no video frames (it may be minimized, closed or protected). Pick another source or restore the window.");
+    }
     stream.getVideoTracks()[0]?.addEventListener("ended", () => get().stop("Screen sharing ended (stopped by the system or permission revoked)."));
     set({ stream, video, sourceName, sharing: true, withAudio, region: null, pausedReason: null, lastHash: null });
     const app = useApp.getState();
@@ -244,6 +251,11 @@ export const useScreen = create<ScreenStore>((set, get) => ({
     if (timer) window.clearInterval(timer);
     if (useAudio.getState().captures.system) void useAudio.getState().stop("system");
     stopShare(stream);
+    const v = get().video;
+    if (v) {
+      v.pause();
+      v.srcObject = null; // release the capture stream completely
+    }
     const wasSharing = get().sharing;
     set({ stream: null, video: null, sharing: false, continuous: false, timer: null, sourceName: null, region: null, lastHash: null });
     if (wasSharing && reason) useApp.getState().toast("warning", reason);

@@ -40,6 +40,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "answer_style": "quick",
     "retention_days": 30,  # 0 keeps history until deleted by the user
     "redact_screens": True,
+    "hide_from_screen_share": False,  # window content protection (Windows/macOS); off: users may record VEENA on purpose
     "pause_on_sensitive": True,
     "question_escalation": True,
     "auto_answer_questions": True,

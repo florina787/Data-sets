@@ -9,10 +9,12 @@ import {
   globalShortcut,
   ipcMain,
   IpcMainInvokeEvent,
+  screen,
   session,
   shell,
   systemPreferences,
 } from "electron";
+import { describeSources } from "./sources";
 import { checkForUpdates } from "./updates";
 import { BackendInfo, BackendSupervisor } from "./backend";
 
@@ -132,6 +134,7 @@ function registerIpc() {
     arch: process.arch,
     electron: process.versions.electron,
     systemAudioSupported: process.platform === "win32",
+    sessionType: process.env.XDG_SESSION_TYPE ?? null,
     userData: app.getPath("userData"),
   }));
 
@@ -149,7 +152,8 @@ function registerIpc() {
   handle("screen:list-sources", async () => {
     // Screens and windows are listed separately: on some Linux/X11 setups window
     // enumeration times out, and a combined query can then come back empty.
-    const opts = { thumbnailSize: { width: 360, height: 220 }, fetchWindowIcons: false };
+    const scale = Math.min(2, screen.getPrimaryDisplay().scaleFactor || 1);
+    const opts = { thumbnailSize: { width: Math.round(360 * scale), height: Math.round(220 * scale) }, fetchWindowIcons: false };
     const list = async (types: ("screen" | "window")[]) => {
       for (let attempt = 0; attempt < 3; attempt++) {
         const found = await desktopCapturer.getSources({ ...opts, types }).catch(() => []);
@@ -159,15 +163,39 @@ function registerIpc() {
       return [];
     };
     const [screens, windows] = await Promise.all([list(["screen"]), list(["window"])]);
-    const sources = [...screens, ...windows];
-    const ownTitle = win?.getTitle();
-    listedSources = new Map(sources.filter((s) => s.name !== ownTitle).map((s) => [s.id, s]));
-    return [...listedSources.values()].map((s) => ({
-      id: s.id,
-      name: s.name,
-      kind: s.id.startsWith("screen:") ? "screen" : "window",
-      thumbnail: s.thumbnail.isEmpty() ? null : s.thumbnail.toDataURL(),
+    const raw = [...screens, ...windows];
+    const displays = screen.getAllDisplays().map((d) => ({
+      id: d.id,
+      width: d.size.width,
+      height: d.size.height,
+      scaleFactor: d.scaleFactor,
+      primary: d.id === screen.getPrimaryDisplay().id,
     }));
+    const described = describeSources(
+      raw.map((s) => ({ id: s.id, name: s.name, display_id: s.display_id, thumbnailEmpty: s.thumbnail.isEmpty(), bitmap: s.thumbnail.isEmpty() ? null : s.thumbnail.toBitmap() })),
+      displays,
+      [win?.getTitle() ?? "", "VEENA.AI"],
+      process.platform,
+    );
+    const byId = new Map(raw.map((s) => [s.id, s]));
+    // Only sources that can actually be captured may be selected (screens always; windows with a preview).
+    listedSources = new Map(described.filter((d) => d.kind === "screen" || d.previewable).map((d) => [d.id, byId.get(d.id)!]));
+    return described.map((d) => ({ ...d, thumbnail: d.previewable ? byId.get(d.id)!.thumbnail.toDataURL() : null }));
+  });
+
+  handle("window:capture-protection", (_e, on) => {
+    // Windows 10 2004+: display affinity excludes the window from captures; macOS: window sharing type none
+    // (apps capturing with ScreenCaptureKit on macOS 15+ may still see it). Linux: not supported.
+    const supported = process.platform === "win32" || process.platform === "darwin";
+    if (win && !win.isDestroyed() && supported) win.setContentProtection(on === true);
+    return { applied: supported && on === true, supported };
+  });
+
+  handle("system:open-screen-privacy", () => {
+    // Fixed system URLs only; nothing from the renderer is opened.
+    if (process.platform === "darwin") return shell.openExternal("x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture");
+    if (process.platform === "win32") return shell.openExternal("ms-settings:privacy-graphicscaptureprogrammatic");
+    return undefined;
   });
 
   handle("screen:select-source", (_e, id, audio) => {

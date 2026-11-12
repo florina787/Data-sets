@@ -17,6 +17,8 @@ const api = {
   mediaAccess: (kind: "microphone" | "screen") => ipcRenderer.invoke("media:access", kind),
   listScreenSources: () => ipcRenderer.invoke("screen:list-sources"),
   selectScreenSource: (id: string, audio: boolean) => ipcRenderer.invoke("screen:select-source", id, audio),
+  openScreenPrivacySettings: () => ipcRenderer.invoke("system:open-screen-privacy"),
+  setCaptureProtection: (on: boolean) => ipcRenderer.invoke("window:capture-protection", on === true),
   saveFile: (name: string, content: string) => ipcRenderer.invoke("file:save", name, content),
   openExternal: (url: string) => ipcRenderer.invoke("shell:open-external", url),
   checkForUpdates: () => ipcRenderer.invoke("app:check-updates"),

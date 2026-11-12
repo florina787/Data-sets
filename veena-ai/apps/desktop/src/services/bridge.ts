@@ -16,6 +16,7 @@ export interface AppInfo {
   electron: string;
   systemAudioSupported: boolean;
   userData: string;
+  sessionType?: string | null;
 }
 
 export interface ScreenSource {
@@ -23,6 +24,9 @@ export interface ScreenSource {
   name: string;
   kind: "screen" | "window";
   thumbnail: string | null;
+  /** false: the source produced no preview (minimized, other desktop, protected, or no permission). */
+  previewable?: boolean;
+  note?: string | null;
 }
 
 export interface VeenaBridge {
@@ -33,6 +37,8 @@ export interface VeenaBridge {
   mediaAccess(kind: "microphone" | "screen"): Promise<string>;
   listScreenSources(): Promise<ScreenSource[]>;
   selectScreenSource(id: string, audio: boolean): Promise<boolean>;
+  openScreenPrivacySettings?(): Promise<void>;
+  setCaptureProtection?(on: boolean): Promise<{ applied: boolean; supported: boolean }>;
   saveFile(name: string, content: string): Promise<{ saved: boolean; path?: string }>;
   openExternal(url: string): Promise<void>;
   checkForUpdates(): Promise<{ current: string; latest: string | null; newer: boolean; url: string | null; notes: string | null; error?: string }>;

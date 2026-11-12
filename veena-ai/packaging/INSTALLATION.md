@@ -1,4 +1,4 @@
-# Installing VEENA.AI 0.1.0 — Free Public Beta
+# Installing VEENA.AI 0.1.1 — Free Public Beta
 
 Download only from the official release page: https://github.com/florina787/Data-sets/releases
 

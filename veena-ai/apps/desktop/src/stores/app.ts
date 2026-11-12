@@ -155,13 +155,18 @@ export const useApp = create<State>((set, get) => ({
 
   async loadSettings() {
     const api = get().api;
-    if (api) set({ settings: await api.get<Settings>("/api/settings") });
+    if (api) {
+      const settings = await api.get<Settings>("/api/settings");
+      set({ settings });
+      void window.veena?.setCaptureProtection?.(settings.hide_from_screen_share === true);
+    }
   },
 
   async updateSettings(patch) {
     const api = get().api;
     if (!api) return;
     set({ settings: await api.patch<Settings>("/api/settings", patch) });
+    if ("hide_from_screen_share" in patch) void window.veena?.setCaptureProtection?.(patch.hide_from_screen_share === true);
   },
 
   async loadSessions(query) {

@@ -234,7 +234,7 @@ function Diagnostics() {
 }
 
 export function Settings() {
-  const { settings, updateSettings, status, refreshStatus, setPage, api, toast, loadSessions } = useApp();
+  const { settings, updateSettings, status, refreshStatus, setPage, api, toast, loadSessions, appInfo } = useApp();
   const audio = useAudio();
   const hw = useHardware();
   const { progress, pull } = usePull();
@@ -403,6 +403,16 @@ export function Settings() {
               </Row>
               <Row label="Redact secrets on screen" hint="Masks passwords, keys and tokens before analysis">
                 <Switch checked={settings.redact_screens} onChange={(v) => set({ redact_screens: v })} label="" />
+              </Row>
+              <Row
+                label="Hide VEENA from screen sharing"
+                hint={
+                  appInfo?.platform === "linux"
+                    ? "Not supported on Linux: share a single window or a different monitor instead."
+                    : "Teams, Zoom and recorders see a blank area instead of VEENA (Windows 10 2004+, macOS). Some macOS 15 capture tools may still show it: share one window to be sure."
+                }
+              >
+                <Switch checked={settings.hide_from_screen_share} onChange={(v) => set({ hide_from_screen_share: v })} label="" disabled={appInfo?.platform === "linux"} />
               </Row>
               <Row label="Pause continuous analysis on sensitive content">
                 <Switch checked={settings.pause_on_sensitive} onChange={(v) => set({ pause_on_sensitive: v })} label="" />
