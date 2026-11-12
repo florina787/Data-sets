@@ -195,6 +195,10 @@ async def get_settings(st: AppState = Depends(get_state)):
 
 @router.patch("/settings")
 async def patch_settings(patch: dict[str, Any], st: AppState = Depends(get_state)):
+    if "retrieval_min_score" in patch:
+        v = patch["retrieval_min_score"]
+        if v is not None and (not isinstance(v, (int, float)) or isinstance(v, bool) or not 0.0 <= v <= 0.9):
+            raise HTTPException(400, "retrieval_min_score must be null (automatic) or a number between 0 and 0.9")
     if {"share_usage_stats", "telemetry_id"} & set(patch):
         raise HTTPException(400, "use /api/telemetry to change anonymous statistics consent")
     try:

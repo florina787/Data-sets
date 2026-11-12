@@ -44,6 +44,7 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "question_escalation": True,
     "auto_answer_questions": True,
     "context_turns": 8,
+    "retrieval_min_score": None,  # None = the floor calibrated for the installed embedding model
     "continuous_interval_s": 5,
     "speak_interviewer": False,
     "setup_step": 0,  # resumes the setup wizard where the user left it

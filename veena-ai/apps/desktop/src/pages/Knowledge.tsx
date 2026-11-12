@@ -1,9 +1,9 @@
-import { FileText, FolderPlus, Search, Trash2, Upload } from "lucide-react";
+import { FileText, FolderPlus, RefreshCw, Search, Trash2, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { CatMark } from "../components/CatMark";
 import { TopBar } from "../components/Shell";
 import { Badge, Button, Card, CardHeader, Input, Select } from "../components/ui";
-import type { Citation } from "../services/api";
+import type { Citation, RetrievalDiagnostics } from "../services/api";
 import { useApp } from "../stores/app";
 
 const KINDS: [string, string][] = [
@@ -24,6 +24,8 @@ export function Knowledge() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<(Citation & { snippet: string })[] | null>(null);
   const [searchMs, setSearchMs] = useState<number | null>(null);
+  const [diag, setDiag] = useState<RetrievalDiagnostics | null>(null);
+  const [includeWeak, setIncludeWeak] = useState(true);
   const fileInput = useRef<HTMLInputElement>(null);
   const target = useRef<string | null>(null);
 
@@ -51,12 +53,31 @@ export function Knowledge() {
 
   const search = async () => {
     if (!api || !query.trim()) return;
-    const r = await api.post<{ results: (Citation & { snippet: string })[]; retrieval_ms: number }>("/api/knowledge/search", {
-      query,
-      collection_ids: selectedCollections,
-    });
-    setResults(r.results);
-    setSearchMs(r.retrieval_ms);
+    try {
+      const r = await api.post<{ results: (Citation & { snippet: string })[]; retrieval_ms: number; diagnostics: RetrievalDiagnostics }>("/api/knowledge/search", {
+        query,
+        collection_ids: selectedCollections,
+        include_weak: includeWeak,
+      });
+      setResults(r.results);
+      setSearchMs(r.retrieval_ms);
+      setDiag(r.diagnostics);
+    } catch (e) {
+      // A failed search is an error, not "no results".
+      setResults(null);
+      setDiag(null);
+      toast("error", `Search failed: ${(e as Error).message}`);
+    }
+  };
+
+  const reindex = async (id: string, label: string) => {
+    if (!api) return;
+    try {
+      const r = await api.post<{ passages: number; indexed: number; empty_passages: number }>(`/api/knowledge/collections/${id}/reindex`, {});
+      toast("success", `Re-indexed ${label}: ${r.indexed} of ${r.passages} passages${r.empty_passages ? `, ${r.empty_passages} empty skipped` : ""}.`);
+    } catch (e) {
+      toast("error", `Re-index failed: ${(e as Error).message}`);
+    }
   };
 
   return (
@@ -117,6 +138,9 @@ export function Knowledge() {
                           <input type="checkbox" checked={selectedCollections.includes(c.id)} onChange={() => toggleCollection(c.id)} className="accent-[#99613E]" />
                           Use in answers
                         </label>
+                        <Button size="icon" variant="ghost" aria-label={`Re-index collection ${c.name}`} title="Re-index (rebuild search vectors)" onClick={() => void reindex(c.id, c.name)}>
+                          <RefreshCw size={15} />
+                        </Button>
                         <Button
                           size="icon"
                           variant="ghost"
@@ -178,15 +202,24 @@ export function Knowledge() {
                 <Search size={15} /> Search
               </Button>
             </div>
+            <label className="flex items-center gap-2 px-5 pb-3 text-xs text-mocha">
+              <input type="checkbox" checked={includeWeak} onChange={(e) => setIncludeWeak(e.target.checked)} /> Also show weaker matches (labelled), as
+              conversations use them
+            </label>
             {results && (
               <div className="space-y-2 px-5 pb-5">
                 <p className="text-xs text-caramel">
-                  {results.length} result(s) in {searchMs?.toFixed(0)} ms. Passages below the relevance floor are not shown.
+                  {diag ? `${diag.strong} relevant` : `${results.length} result(s)`}
+                  {diag && diag.weak ? ` and ${diag.weak} weaker match(es)` : ""} in {searchMs?.toFixed(0)} ms
+                  {diag ? ` · ${diag.candidates} of ${diag.indexed_passages} indexed passages compared · relevance floor ${diag.floor}` : ""}
+                  {diag && diag.best_vector !== null ? ` · best semantic ${diag.best_vector.toFixed(2)}, best keyword ${diag.best_lexical?.toFixed(2)}` : ""}
                 </p>
+                {diag?.reason && results.length === 0 && <p className="text-sm text-bark">No passage matched: {diag.reason}.</p>}
                 {results.map((r) => (
                   <div key={r.chunk_id} className="rounded-xl border border-cream bg-warm p-3">
                     <div className="mb-1 flex items-center gap-2 text-xs text-mocha">
                       <Badge>[{r.n}]</Badge> {r.filename}
+                      {r.weak ? <Badge>weaker match</Badge> : null}
                       {r.page ? `, p.${r.page}` : ""}
                       <span className="ml-auto">
                         score {r.score.toFixed(3)} (vector {r.vector_score.toFixed(3)}, keyword {r.lexical_score.toFixed(2)})

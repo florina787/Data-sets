@@ -23,6 +23,8 @@ class SearchReq(BaseModel):
     query: str = Field(min_length=1, max_length=4000)
     collection_ids: list[str] = Field(default_factory=list)
     k: int = Field(default=5, ge=1, le=20)
+    min_score: float | None = Field(default=None, ge=0.0, le=0.9)
+    include_weak: bool = False
 
 
 @router.get("/collections")
@@ -70,5 +72,15 @@ async def delete_document(document_id: str, st: AppState = Depends(get_state)):
 @router.post("/search")
 async def search(body: SearchReq, st: AppState = Depends(get_state)):
     with st.metrics.timer("rag.retrieval_ms") as t:
-        hits = await asyncio.to_thread(st.kb.search, body.query, body.collection_ids or None, body.k)
-    return {"results": [h.citation() for h in hits], "retrieval_ms": t.get("ms")}
+        floor = body.min_score if body.min_score is not None else st.store.get_settings().get("retrieval_min_score")
+        hits, diag = await asyncio.to_thread(
+            st.kb.search_with_diagnostics, body.query, body.collection_ids or None, body.k, floor, body.include_weak
+        )
+    return {"results": [h.citation() for h in hits], "retrieval_ms": t.get("ms"), "diagnostics": diag}
+
+
+@router.post("/collections/{collection_id}/reindex")
+async def reindex(collection_id: str, st: AppState = Depends(get_state)):
+    if not st.kb.get_collection(collection_id):
+        raise HTTPException(404, "collection not found")
+    return await asyncio.to_thread(st.kb.reindex, collection_id)

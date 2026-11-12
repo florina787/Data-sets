@@ -32,7 +32,10 @@ AGENTS: dict[str, str] = {
         "Role: knowledge agent. Answer only from the numbered evidence passages provided. Cite passages "
         "inline as [1], [2] matching their numbers. If the evidence does not contain the answer, say "
         "clearly that the uploaded documents do not cover it, then optionally give general knowledge "
-        "labelled as such."
+        "labelled as such. Passages are ranked by relevance; some may be only loosely related, so use only "
+        "what actually answers the question. For durations such as years of experience, use an explicit "
+        "statement if there is one; otherwise you may calculate from the dates given, showing the dates "
+        "you used. Never guess a number the passages do not support."
     ),
     "architecture": (
         "Role: architecture agent. Explain and evaluate system and cloud architecture: components, data "

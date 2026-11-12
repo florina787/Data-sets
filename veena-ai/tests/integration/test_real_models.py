@@ -172,9 +172,16 @@ def test_real_short_question_uses_fallback_language_when_detection_is_unsure(tmp
 
 
 SHORT_TERMS = {  # typed alone, one after another in the same session (as a user would)
-    "langchain": ["langchain"], "langraph": ["langgraph"], "MCP": ["model context protocol"], "RAG": ["retriev"],
-    "kubernetes": ["container"], "embeddings": ["vector"], "LoRA": ["low-rank", "low rank", "adapt"],
-    "docker": ["container"], "JWT": ["token"], "kafka": ["stream", "event", "messag"],
+    "langchain": ["langchain"],
+    "langraph": ["langgraph"],
+    "MCP": ["model context protocol"],
+    "RAG": ["retriev"],
+    "kubernetes": ["container"],
+    "embeddings": ["vector"],
+    "LoRA": ["low-rank", "low rank", "adapt"],
+    "docker": ["container"],
+    "JWT": ["token"],
+    "kafka": ["stream", "event", "messag"],
 }
 
 
@@ -193,3 +200,60 @@ def test_real_short_terms_get_explanations_not_clarification_requests(real_clien
         if CLARIFICATION.search(answer[:300]) or len(answer) < 120 or not any(k in low for k in keywords):
             bad.append((term, answer[:160]))
     assert not bad, bad
+
+
+RESUME_QA = [  # (question, words the answer must contain) — fictional resume in tests/fixtures/resumes.py
+    ("How many years of experience does this candidate have?", ["10"]),
+    ("What programming languages are listed?", ["python", "java", "typescript"]),
+    ("What are the candidate's AI skills?", ["lora", "embeddings"]),
+    ("Which companies has the candidate worked for?", ["northwind", "contoso", "fabrikam"]),
+    ("What is the candidate's most recent role?", ["lead ml engineer", "northwind"]),
+    ("What education is listed?", ["computer science", "leeds"]),
+]
+
+
+@pytest.mark.ollama
+@pytest.mark.embeddings
+@pytest.mark.slow
+@needs_text
+def test_real_resume_questions_are_answered_from_the_document(tmp_path):
+    """Real PDF -> real embeddings -> real local model. The resume states no total; the duration must be
+    computed from its dates (Sep 2016 - present), and a fact it lacks must be reported as missing."""
+    from tests.fixtures.resumes import resume_dates_only
+
+    app = create_app(Settings(token=TOKEN, data_dir=tmp_path / "data"))
+    with TestClient(app, headers={"Authorization": f"Bearer {TOKEN}"}) as c:
+        c.patch("/api/settings", json={"text_model": TEXT_MODEL, "profile": "balanced"})
+        cid = c.post("/api/knowledge/collections", json={"name": "resume", "kind": "resume"}).json()["id"]
+        assert (
+            c.post(
+                f"/api/knowledge/collections/{cid}/documents", files={"file": ("Resume.pdf", resume_dates_only(), "application/pdf")}
+            ).status_code
+            == 200
+        )
+        bad = []
+        for q, words in RESUME_QA + [("What is the candidate's salary expectation?", [])]:
+            sid = c.post("/api/sessions", json={}).json()["id"]
+            ev = ndjson(c.post("/api/chat", json={"session_id": sid, "text": q, "collection_ids": [cid]}))
+            ans = "".join(e["t"] for e in ev if e["type"] == "token").lower()
+            ok = (
+                all(w in ans for w in words)
+                if words
+                else any(
+                    p in ans
+                    for p in (
+                        "not provided",
+                        "not mention",
+                        "not include",
+                        "not specified",
+                        "does not",
+                        "no information",
+                        "not listed",
+                        "not stated",
+                        "not available",
+                    )
+                )
+            )
+            if not ok:
+                bad.append((q, ans[:200]))
+        assert not bad, bad

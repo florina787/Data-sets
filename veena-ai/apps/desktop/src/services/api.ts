@@ -12,6 +12,20 @@ export interface Citation {
   vector_score: number;
   lexical_score: number;
   snippet: string;
+  weak?: boolean;
+}
+
+export interface RetrievalDiagnostics {
+  floor: number;
+  candidates: number;
+  strong: number;
+  weak: number;
+  rejected: number;
+  best_vector: number | null;
+  best_lexical: number | null;
+  small_collection_mode: boolean;
+  indexed_passages: number;
+  reason: string | null;
 }
 
 export interface Message {

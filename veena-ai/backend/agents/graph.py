@@ -25,6 +25,7 @@ from pydantic import BaseModel, Field
 
 from ..llm.ollama import ModelInfo
 from ..llm.select import resolve_text_model, resolve_vision_model
+from ..rag import facts
 from ..rag.service import KnowledgeBase
 from ..screen.frames import decode_image, encode_png_b64, resize_max
 from ..security.prompt_guard import SECURITY_PREAMBLE, detect_injection, wrap_untrusted
@@ -193,7 +194,14 @@ def build_graph(deps: GraphDeps):
                 query += "\n" + state["ocr_text"][:400]
             if req.get("collection_ids"):
                 t0 = time.perf_counter()
-                hits = await asyncio.to_thread(deps.kb.search, query, req["collection_ids"], 5)
+                floor = deps.settings.get("retrieval_min_score")
+                hits, diag = await asyncio.to_thread(deps.kb.search_with_diagnostics, query, req["collection_ids"], 6, floor, True)
+                if hits and all(h.weak for h in hits):
+                    notes.append(
+                        "No passage closely matched this question; the answer uses the closest passages and says if they do not contain it."
+                    )
+                elif not hits and diag.get("reason"):
+                    notes.append("Knowledge search found nothing: " + diag["reason"] + ".")
                 timings["retrieval_ms"] = (time.perf_counter() - t0) * 1000
                 evidence = [h.citation() | {"text": h.text} for h in hits]
                 if any(detect_injection(e["text"]) for e in evidence):
@@ -232,6 +240,9 @@ def build_graph(deps: GraphDeps):
                 f"[{e['n']}] ({e['filename']}{', p.' + str(e['page']) if e.get('page') else ''})\n{e['text']}" for e in state["evidence"]
             )
             blocks.append(wrap_untrusted("documents", ev))
+            fact = facts.experience_note(req["text"], [e["text"] for e in state["evidence"]])
+            if fact:
+                blocks.append(fact)
         elif state.get("knowledge_requested"):
             blocks.append("No passages in the selected knowledge collections matched this question.")
         if state.get("resume_text"):
