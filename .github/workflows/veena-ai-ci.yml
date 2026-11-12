@@ -16,6 +16,10 @@ on:
         type: choice
         options: [beta, rc]
         default: beta
+      require_live_insights:
+        description: "Fail the build if the Insights endpoint's /health is not ok (off = record a warning; the app works offline either way)"
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -194,8 +198,12 @@ jobs:
           node scripts/check-installer-contents.mjs "${{ matrix.asar }}" ../../packaging/backend-dist/veena-backend "$VEENA_INSIGHTS_PROD"
           # Release builds (manual runs) must point at an endpoint that is actually up with a complete schema.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            curl -sS --retry 3 "$VEENA_INSIGHTS_PROD/health" | tee /tmp/health.json; echo
-            grep -q '"ok":true' /tmp/health.json || { echo "::error::Insights endpoint $VEENA_INSIGHTS_PROD is not healthy"; exit 1; }
+            curl -sS --retry 3 "$VEENA_INSIGHTS_PROD/health" > /tmp/health.json 2>&1 || true; cat /tmp/health.json; echo
+            if ! grep -q '"ok":true' /tmp/health.json; then
+              if [ "${{ inputs.require_live_insights }}" = "true" ]; then echo "::error::Insights endpoint $VEENA_INSIGHTS_PROD is not healthy"; exit 1; fi
+              echo "::warning::Insights endpoint $VEENA_INSIGHTS_PROD is not live yet. Feedback/statistics will start working once it is deployed; local AI features do not depend on it."
+              echo "### WARNING: Insights endpoint not live at build time (opt-in statistics queue and retry; app works offline)" >> "$GITHUB_STEP_SUMMARY"
+            fi
           fi
           echo "### Insights endpoint in this installer: $VEENA_INSIGHTS_PROD" >> "$GITHUB_STEP_SUMMARY"
       - name: Smoke-test packaged app (Linux)
