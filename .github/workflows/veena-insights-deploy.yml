@@ -115,24 +115,24 @@ jobs:
         run: |
           raw="$CLOUDFLARE_ACCOUNT_ID"
           id=$(printf '%s' "$raw" | tr -d '[:space:]"'"'")
-          echo "::add-mask::$id"
-          [ "$id" != "$raw" ] && echo "::warning::CLOUDFLARE_ACCOUNT_ID contained spaces, line breaks or quotes; using the trimmed value. Re-save the secret without them."
-          if ! printf '%s' "$id" | grep -qE '^[0-9a-f]{32}$'; then
-            echo "::error::CLOUDFLARE_ACCOUNT_ID is not a Cloudflare account ID (expected 32 lowercase hex characters; got ${#id} characters). Copy 'Account ID' from Workers & Pages > Overview (right column), not the Zone ID, token or email."
-            exit 1
-          fi
-          echo "CLOUDFLARE_ACCOUNT_ID=$id" >> "$GITHUB_ENV"
+          [ -n "$id" ] && echo "::add-mask::$id"
           v=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify)
           echo "Token status: $(echo "$v" | jq -r '.result.status // "invalid"')  $(echo "$v" | jq -c '.errors')"
           a=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts?per_page=50")
+          for x in $(echo "$a" | jq -r '.result[]?.id'); do echo "::add-mask::$x"; done
           n=$(echo "$a" | jq '.result | length // 0')
           echo "Accounts this token can access: $n ($(echo "$a" | jq -r '[.result[]?.name] | join(", ")'))"
-          if echo "$a" | jq -e --arg id "$id" '[.result[]?.id] | index($id)' >/dev/null; then
-            echo "The configured account ID is one of them."
+          if printf '%s' "$id" | grep -qE '^[0-9a-f]{32}$' && echo "$a" | jq -e --arg id "$id" '[.result[]?.id] | index($id)' >/dev/null; then
+            [ "$id" != "$raw" ] && echo "::warning::CLOUDFLARE_ACCOUNT_ID contained spaces, line breaks or quotes; trimmed. Re-save the secret without them."
+            echo "The configured account ID is valid and accessible."
+          elif [ "$n" = 1 ]; then
+            id=$(echo "$a" | jq -r '.result[0].id')
+            echo "::warning::CLOUDFLARE_ACCOUNT_ID is not this token's account ID (it has ${#raw} characters; an account ID has 32 hex characters). Using the only account this token can access. Please re-save the secret with the Account ID from Workers & Pages > Overview."
           else
-            echo "::error::The configured CLOUDFLARE_ACCOUNT_ID is not an account this token can access. Either the ID belongs to another account, or the token's 'Account Resources' does not include this account."
+            echo "::error::CLOUDFLARE_ACCOUNT_ID (${#raw} characters) is not a 32-hex account ID this token can access, and the token sees $n accounts. Re-save it with the Account ID from Workers & Pages > Overview (right column)."
             exit 1
           fi
+          echo "CLOUDFLARE_ACCOUNT_ID=$id" >> "$GITHUB_ENV"
 
       - name: Cloudflare token and resources reachable
         id: target
