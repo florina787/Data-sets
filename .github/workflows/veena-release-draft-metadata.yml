@@ -1,0 +1,47 @@
+name: VEENA release draft metadata
+
+# Sets the title and target commit of an existing DRAFT release (never a published one) to the commit
+# its installers were built from. Publishing stays a manual click on GitHub.
+on:
+  push:   # registers the workflow; the job below runs on manual dispatch only
+    paths: [".github/workflows/veena-release-draft-metadata.yml"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag"
+        type: string
+        default: veena-ai-v0.1.0
+      build_run_id:
+        description: "VEENA.AI CI run that built the attached installers"
+        type: string
+        required: true
+      title:
+        type: string
+        default: "VEENA.AI v0.1.0 — Free Public Beta"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  draft:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Point the draft at the build commit (drafts only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+          RUN: ${{ inputs.build_run_id }}
+          TITLE: ${{ inputs.title }}
+        run: |
+          set -euo pipefail
+          sha=$(gh api "repos/$REPO/actions/runs/$RUN" --jq 'select(.conclusion=="success") | .head_sha')
+          test -n "$sha" || { echo "::error::run $RUN did not succeed"; exit 1; }
+          rel=$(gh api "repos/$REPO/releases?per_page=50" --jq ".[] | select(.tag_name==\"$TAG\")")
+          test -n "$rel" || { echo "::error::no release $TAG"; exit 1; }
+          [ "$(echo "$rel" | jq -r .draft)" = true ] || { echo "::error::$TAG is published; it is never edited"; exit 1; }
+          id=$(echo "$rel" | jq -r .id)
+          gh api -X PATCH "repos/$REPO/releases/$id" -f target_commitish="$sha" -f name="$TITLE" -F draft=true \
+            --jq '"draft=\(.draft) title=\(.name) target=\(.target_commitish)"' | tee -a "$GITHUB_STEP_SUMMARY"

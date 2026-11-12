@@ -466,6 +466,7 @@ jobs:
           # The rc channel builds 0.2.0-rc.1: its files must never land in the free beta's draft.
           if [ "${{ inputs.release_channel }}" = "rc" ]; then version="0.2.0-rc.1"; fi
           tag="veena-ai-v$version"
+          title="VEENA.AI v$version"; case "$version" in *-*) ;; *) title="VEENA.AI v$version — Free Public Beta" ;; esac
           if gh release view "$tag" --json isDraft -q .isDraft 2>/dev/null | grep -q false; then
             echo "Release $tag is already published. Bump the version in package.json; published releases are never overwritten." >&2
             exit 1
@@ -481,10 +482,10 @@ jobs:
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" dist/VEENA.AI-* dist/SHA256SUMS dist/INSTALLATION.md dist/KNOWN_LIMITATIONS.md dist/*.cdx.json --clobber
             gh release delete-asset "$tag" SHA256SUMS.txt -y 2>/dev/null || true   # renamed to SHA256SUMS
-            gh release edit "$tag" --notes-file notes.md --draft
+            gh release edit "$tag" --notes-file notes.md --draft --target "$GITHUB_SHA" --title "$title"
           else
             pre=""; case "$version" in *-*) pre="--prerelease" ;; esac   # release candidates are pre-releases
-            gh release create "$tag" --draft $pre --target "$GITHUB_SHA" --title "VEENA.AI $version" --notes-file notes.md \
+            gh release create "$tag" --draft $pre --target "$GITHUB_SHA" --title "$title" --notes-file notes.md \
               dist/VEENA.AI-Windows-Setup.exe dist/VEENA.AI-macOS-AppleSilicon.dmg dist/VEENA.AI-Linux-x86_64.AppImage dist/SHA256SUMS dist/INSTALLATION.md dist/KNOWN_LIMITATIONS.md
           fi
           echo "### Draft release $tag created. Review it on GitHub, then publish manually." >> "$GITHUB_STEP_SUMMARY"
