@@ -169,3 +169,27 @@ def test_real_short_question_uses_fallback_language_when_detection_is_unsure(tmp
     # The regression was language detection (Japanese gibberish). Whisper "base" may spell the robotic
     # espeak voice's "hash map" as "Hashmab", so the wording check only requires the word to be heard.
     assert r.language == "en" and "hash" in r.text.lower(), r
+
+
+SHORT_TERMS = {  # typed alone, one after another in the same session (as a user would)
+    "langchain": ["langchain"], "langraph": ["langgraph"], "MCP": ["model context protocol"], "RAG": ["retriev"],
+    "kubernetes": ["container"], "embeddings": ["vector"], "LoRA": ["low-rank", "low rank", "adapt"],
+    "docker": ["container"], "JWT": ["token"], "kafka": ["stream", "event", "messag"],
+}
+
+
+@pytest.mark.ollama
+@pytest.mark.slow
+@needs_text
+def test_real_short_terms_get_explanations_not_clarification_requests(real_client):
+    from backend.agents.terms import CLARIFICATION
+
+    sid = real_client.post("/api/sessions", json={}).json()["id"]
+    bad = []
+    for term, keywords in SHORT_TERMS.items():
+        events = ndjson(real_client.post("/api/chat", json={"session_id": sid, "text": term}))
+        answer = "".join(e["t"] for e in events if e["type"] == "token")
+        low = answer.lower()
+        if CLARIFICATION.search(answer[:300]) or len(answer) < 120 or not any(k in low for k in keywords):
+            bad.append((term, answer[:160]))
+    assert not bad, bad

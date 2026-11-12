@@ -30,7 +30,7 @@ from ..screen.frames import decode_image, encode_png_b64, resize_max
 from ..security.prompt_guard import SECURITY_PREAMBLE, detect_injection, wrap_untrusted
 from ..vision.ocr import run_ocr
 from ..vision.redact import redact_image
-from . import prompts
+from . import prompts, terms
 
 Mode = Literal["conversation", "screen", "interview", "meeting"]
 
@@ -240,6 +240,15 @@ def build_graph(deps: GraphDeps):
             blocks.append(wrap_untrusted("job_description", req["job_description"][:6000]))
 
         question = req["text"]
+        history = terms.drop_clarification_turns(list(deps.history))
+        if state["agent"] in ("conversation", "code", "architecture") and not image and not state.get("knowledge_requested"):
+            meaning = terms.interpret(question)
+            if meaning:
+                question = meaning.question
+                if meaning.reference:
+                    blocks.append(f"Reference note (VEENA's offline glossary): {meaning.term} is {meaning.reference}")
+                if meaning.note:
+                    notes.append(meaning.note)
         if req.get("screen_action") and req["screen_action"] != "ask":
             default_q = SCREEN_ACTIONS[req["screen_action"]][2]
             question = default_q if question.strip() in ("", default_q) else f"{default_q}\nUser question: {question}"
@@ -249,7 +258,7 @@ def build_graph(deps: GraphDeps):
             user_msg["images"] = [image]
         return {
             "model": model,
-            "messages": [{"role": "system", "content": system}, *deps.history, user_msg],
+            "messages": [{"role": "system", "content": system}, *history, user_msg],
             "notes": notes,
             "image_b64": image,
         }
