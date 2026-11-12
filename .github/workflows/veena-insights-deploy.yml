@@ -111,6 +111,29 @@ jobs:
       - name: Unit tests (real Worker code on SQLite)
         run: node --test test/pipeline.test.mjs
 
+      - name: Diagnose Cloudflare credentials (shapes and matches only; values never printed)
+        run: |
+          raw="$CLOUDFLARE_ACCOUNT_ID"
+          id=$(printf '%s' "$raw" | tr -d '[:space:]"'"'")
+          echo "::add-mask::$id"
+          [ "$id" != "$raw" ] && echo "::warning::CLOUDFLARE_ACCOUNT_ID contained spaces, line breaks or quotes; using the trimmed value. Re-save the secret without them."
+          if ! printf '%s' "$id" | grep -qE '^[0-9a-f]{32}$'; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID is not a Cloudflare account ID (expected 32 lowercase hex characters; got ${#id} characters). Copy 'Account ID' from Workers & Pages > Overview (right column), not the Zone ID, token or email."
+            exit 1
+          fi
+          echo "CLOUDFLARE_ACCOUNT_ID=$id" >> "$GITHUB_ENV"
+          v=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify)
+          echo "Token status: $(echo "$v" | jq -r '.result.status // "invalid"')  $(echo "$v" | jq -c '.errors')"
+          a=$(curl -sS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts?per_page=50")
+          n=$(echo "$a" | jq '.result | length // 0')
+          echo "Accounts this token can access: $n ($(echo "$a" | jq -r '[.result[]?.name] | join(", ")'))"
+          if echo "$a" | jq -e --arg id "$id" '[.result[]?.id] | index($id)' >/dev/null; then
+            echo "The configured account ID is one of them."
+          else
+            echo "::error::The configured CLOUDFLARE_ACCOUNT_ID is not an account this token can access. Either the ID belongs to another account, or the token's 'Account Resources' does not include this account."
+            exit 1
+          fi
+
       - name: Cloudflare token and resources reachable
         id: target
         run: |
