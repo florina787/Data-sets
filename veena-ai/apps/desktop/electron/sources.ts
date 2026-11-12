@@ -53,7 +53,9 @@ export function describeSources(raw: RawSource[], displays: DisplayInfo[], ownTi
     const label = d
       ? `Display ${i + 1} · ${Math.round(d.width * d.scaleFactor)}×${Math.round(d.height * d.scaleFactor)}${d.primary ? " (primary)" : ""}`
       : s.name || `Screen ${i + 1}`;
-    const blank = s.thumbnailEmpty || isBlankBitmap(s.bitmap);
+    // A one-colour screen is still a real screen (plain desktop); only a missing thumbnail means no preview.
+    // A completely black screen on macOS is the classic sign of missing Screen Recording permission.
+    const blank = s.thumbnailEmpty || (platform === "darwin" && isBlankBitmap(s.bitmap));
     out.push({
       id: s.id,
       name: label,

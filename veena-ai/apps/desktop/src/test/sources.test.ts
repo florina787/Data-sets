@@ -48,6 +48,12 @@ describe("screen source picker", () => {
     expect(out[2].note).toMatch(/minimized, on another desktop, or protected/);
   });
 
+  it("keeps a plain one-colour desktop as a real, previewable screen outside macOS", () => {
+    const out = describeSources([src("screen:1:0", "Screen 1", black, "1")], displays.slice(0, 1), [], "linux");
+    expect(out[0].previewable).toBe(true);
+    expect(describeSources([src("screen:1:0", "Screen 1", null, "1")], displays.slice(0, 1), [], "linux")[0].previewable).toBe(false);
+  });
+
   it("explains blank screens on macOS as a permission problem", () => {
     const out = describeSources([src("screen:1:0", "Built-in Retina Display", black, "1")], displays.slice(0, 1), [], "darwin");
     expect(out[0].previewable).toBe(false);

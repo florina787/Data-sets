@@ -19,6 +19,9 @@ const app = await electron.launch({ executablePath: exe, args, env: { ...process
 try {
   const page = await app.firstWindow();
   await page.waitForFunction(() => !!window.veena, null, { timeout: 30000 });
+  // Let the window paint first, so the screen has real content to capture.
+  await page.waitForSelector("h1, h2", { timeout: 60000 }).catch(() => undefined);
+  await page.waitForTimeout(1500);
   const access = await page.evaluate(() => window.veena.mediaAccess("screen"));
   result.steps.permission = access;
   const sources = await page.evaluate(() => window.veena.listScreenSources());
