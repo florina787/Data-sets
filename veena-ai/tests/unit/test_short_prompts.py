@@ -160,3 +160,45 @@ def test_clarification_replies_are_dropped_from_working_memory():
 def test_long_answers_mentioning_clarify_are_kept():
     long = {"role": "assistant", "content": "To clarify your question about caching: " + "details " * 80}
     assert terms.drop_clarification_turns([{"role": "user", "content": "x"}, long]) == [{"role": "user", "content": "x"}, long]
+
+
+H = [
+    {"role": "user", "content": "langchain"},
+    {"role": "assistant", "content": "LangChain is a framework ..."},
+    {"role": "user", "content": "langraph"},
+    {"role": "assistant", "content": "Assuming you mean LangGraph: ..."},
+]
+
+
+@pytest.mark.parametrize(
+    "text", ["compare both", "Compare them", "compare", "what is the difference?", "differences between them", "which is better?"]
+)
+def test_pair_followups_name_the_two_earlier_topics(text):
+    m = terms.resolve_followup(text, H)
+    assert m is not None and m.question.startswith("Compare LangChain and LangGraph")
+    assert "LangChain is an open-source framework" in m.reference and "LangGraph is an open-source library" in m.reference
+
+
+@pytest.mark.parametrize("text", ["tell me more", "give me an example", "explain it simpler", "pros and cons?"])
+def test_single_followups_attach_the_latest_topic(text):
+    m = terms.resolve_followup(text, H)
+    assert m is not None and "about LangGraph" in m.question
+
+
+def test_followups_resolve_from_full_questions_too():
+    h = [
+        {"role": "user", "content": "What is Kafka?"},
+        {"role": "assistant", "content": "..."},
+        {"role": "user", "content": "explain redis"},
+    ]
+    assert terms.resolve_followup("compare both", h).question.startswith("Compare Apache Kafka and Redis")
+
+
+@pytest.mark.parametrize("text", ["compare python and rust", "tell me more about docker", "hello", "langchain"])
+def test_non_followups_or_explicit_requests_are_not_rewritten(text):
+    assert terms.resolve_followup(text, H) is None
+
+
+def test_followup_without_enough_history_is_left_alone():
+    assert terms.resolve_followup("compare both", H[:2]) is None
+    assert terms.resolve_followup("tell me more", []) is None

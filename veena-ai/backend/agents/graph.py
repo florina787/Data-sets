@@ -253,11 +253,11 @@ def build_graph(deps: GraphDeps):
         question = req["text"]
         history = terms.drop_clarification_turns(list(deps.history))
         if state["agent"] in ("conversation", "code", "architecture") and not image and not state.get("knowledge_requested"):
-            meaning = terms.interpret(question)
+            meaning = terms.resolve_followup(question, history) or terms.interpret(question)
             if meaning:
                 question = meaning.question
                 if meaning.reference:
-                    blocks.append(f"Reference note (VEENA's offline glossary): {meaning.term} is {meaning.reference}")
+                    blocks.append(f"Reference note (VEENA's offline glossary): {meaning.reference}")
                 if meaning.note:
                     notes.append(meaning.note)
         if req.get("screen_action") and req["screen_action"] != "ask":

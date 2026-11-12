@@ -401,7 +401,7 @@ def interpret(text: str) -> Interpretation | None:
         )
         return Interpretation(
             question=f"{lead}Explain {term}: what it is, what it is used for, its main components or ideas, and a typical use case.",
-            reference=GLOSSARY[term][1],
+            reference=f"{term} is {GLOSSARY[term][1]}",
             note=note,
             term=term,
         )
@@ -428,3 +428,64 @@ def drop_clarification_turns(history: list[dict[str, str]]) -> list[dict[str, st
             continue
         out.append(m)
     return out
+
+
+_PAIR_FOLLOWUP = re.compile(
+    r"^(?:(?:now |ok |okay |and )?(?:compare|contrast)(?: (?:both|them|these|those|the two|the 2))?|(?:what(?:'s| is| are)? the )?differences?(?: between (?:them|both|these|the two))?|which (?:one )?is better|(?:both|them) compared|vs\.?)\??$",
+    re.I,
+)
+_ONE_FOLLOWUP = re.compile(
+    r"^(?:tell me more|more(?: details)?|go deeper|explain (?:it|that|this)(?: (?:simpler|more simply|in detail|again|like i'?m (?:5|five)))?|(?:give|show)(?: me)? (?:an )?examples?|example|how does it work|why|use cases?|pros and cons|advantages|disadvantages)\??$",
+    re.I,
+)
+
+
+def _topic(user_text: str) -> str | None:
+    """The subject of an earlier user turn: a glossary term, or a short noun phrase as typed."""
+    t = user_text.strip().strip(".!?")
+    term, _ = lookup(t)
+    if term:
+        return term
+    if is_short_term(t):
+        return t
+    m = re.match(r"^(?:what is|what are|what's|explain|tell me about|describe)\s+(.{2,60})$", t, re.I)
+    if m:
+        inner = m.group(1).strip()
+        return lookup(inner)[0] or inner
+    return None
+
+
+def resolve_followup(text: str, history: list[dict[str, str]]) -> Interpretation | None:
+    """Rewrites 'compare both' / 'tell me more' into an explicit request naming the earlier topics."""
+    t = text.strip()
+    pair, one = bool(_PAIR_FOLLOWUP.match(t)), bool(_ONE_FOLLOWUP.match(t))
+    if not (pair or one):
+        return None
+    topics: list[str] = []
+    for m in reversed(history):
+        if m["role"] != "user":
+            continue
+        topic = _topic(m["content"])
+        if topic and topic not in topics:
+            topics.append(topic)
+        if len(topics) == 2:
+            break
+    if pair and len(topics) == 2:
+        b, a = topics  # most recent first in the list
+        refs = [f"{x} is {GLOSSARY[x][1]}" for x in (a, b) if x in GLOSSARY]
+        return Interpretation(
+            question=f"Compare {a} and {b} (the two topics just discussed): purpose, how they work, key differences, and when to use each. "
+            "End with a short recommendation.",
+            reference=" ".join(refs) or None,
+            note=f"Comparing {a} and {b}.",
+            term=None,
+        )
+    if one and topics:
+        a = topics[0]
+        return Interpretation(
+            question=f"{t} — about {a}, the topic just discussed.",
+            reference=f"{a} is {GLOSSARY[a][1]}" if a in GLOSSARY else None,
+            note=None,
+            term=a if a in GLOSSARY else None,
+        )
+    return None
