@@ -39,10 +39,11 @@ for (const vp of VIEWPORTS) {
     const page = await browser.newPage({ viewport: vp });
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
-    // Privacy: only this site and GitHub's release API may be contacted by default.
+    // Privacy: only this site, GitHub's release API and VEENA's own Insights service may be contacted.
     page.on("request", (r) => {
       const h = new URL(r.url()).host;
-      if (!r.url().startsWith("data:") && h !== new URL(base).host && h !== "api.github.com") fail(`${pageName}: unexpected third-party request to ${h}`);
+      const insightsHost = (() => { try { return new URL(process.env.SITE_INSIGHTS_URL || "https://veena-insights.florinaregius.workers.dev").host; } catch { return ""; } })();
+      if (!r.url().startsWith("data:") && h !== new URL(base).host && h !== "api.github.com" && h !== insightsHost) fail(`${pageName}: unexpected third-party request to ${h}`);
     });
     await page.goto(`${base}/${pageName}`, { waitUntil: "load" });
     await page.waitForTimeout(1500);

@@ -21,8 +21,8 @@ window.VEENA_CONFIG = {
   cloudflareToken: null,
 
   // VEENA Insights (cloud/insights): cookieless page-view and download-click COUNTERS, no identifier.
-  // Leave null until the owner deploys the Worker; then set to its https:// URL.
-  insightsUrl: null,
+  // Also receives the feedback form. Deployed and verified by the "VEENA Insights deploy" workflow.
+  insightsUrl: "https://veena-insights.florinaregius.workers.dev",
 
   // Paid plans switch. false = the released app is free: the site shows the free wording, hides the
   // Pricing link and marks the pricing page as a preview. true ONLY when a release with plans ships.
