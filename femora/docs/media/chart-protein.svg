@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="884" viewBox="0 0 1600 884">
+<rect width="1600" height="884" rx="32" fill="#fbf8f2"/>
+<text x="70" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="46" fill="#17140f">Protein-dense dishes from around the world</text>
+<text x="72" y="114" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#6b645a">Grams of protein per 100 kcal: helps protect muscle in midlife</text>
+<text x="410" y="179" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Grilled chicken salad</text>
+<text x="70" y="179" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">North America</text>
+<rect x="430" y="160" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="160" width="953.7" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="953.7" dur="1.2s" begin="0.00s" fill="freeze"/></rect>
+<text x="1395.7037037037035" y="179" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">9.2g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="0.90s" fill="freeze"/></text>
+<text x="410" y="225" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Greek yogurt with berries</text>
+<text x="70" y="225" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Europe</text>
+<rect x="430" y="206" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="206" width="931.9" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="931.9" dur="1.2s" begin="0.06s" fill="freeze"/></rect>
+<text x="1373.904761904762" y="225" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">9.0g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="0.96s" fill="freeze"/></text>
+<text x="410" y="271" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Edamame</text>
+<text x="70" y="271" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">East Asia</text>
+<rect x="430" y="252" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="252" width="926.5" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="926.5" dur="1.2s" begin="0.12s" fill="freeze"/></rect>
+<text x="1368.4550264550264" y="271" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">8.9g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.02s" fill="freeze"/></text>
+<text x="410" y="317" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Sardines on toast</text>
+<text x="70" y="317" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Europe</text>
+<rect x="430" y="298" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="298" width="784.4" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="784.4" dur="1.2s" begin="0.18s" fill="freeze"/></rect>
+<text x="1226.4316177649512" y="317" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">7.6g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.08s" fill="freeze"/></text>
+<text x="410" y="363" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Tempeh sambal</text>
+<text x="70" y="363" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Southeast Asia</text>
+<rect x="430" y="344" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="344" width="756.7" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="756.7" dur="1.2s" begin="0.24s" fill="freeze"/></rect>
+<text x="1198.6748066748069" y="363" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">7.3g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.14s" fill="freeze"/></text>
+<text x="410" y="409" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Tofu stir-fry</text>
+<text x="70" y="409" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">East Asia</text>
+<rect x="430" y="390" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="390" width="739.6" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="739.6" dur="1.2s" begin="0.30s" fill="freeze"/></rect>
+<text x="1181.6069538926681" y="409" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">7.1g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.20s" fill="freeze"/></text>
+<text x="410" y="455" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Soy milk (fortified)</text>
+<text x="70" y="455" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Universal</text>
+<rect x="430" y="436" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="436" width="724.8" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="724.8" dur="1.2s" begin="0.36s" fill="freeze"/></rect>
+<text x="1166.8148148148148" y="455" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">7.0g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.26s" fill="freeze"/></text>
+<text x="410" y="501" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Miso soup</text>
+<text x="70" y="501" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">East Asia</text>
+<rect x="430" y="482" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="482" width="690.3" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="690.3" dur="1.2s" begin="0.42s" fill="freeze"/></rect>
+<text x="1132.2998236331568" y="501" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.7g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.32s" fill="freeze"/></text>
+<text x="410" y="547" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Milk (fortified)</text>
+<text x="70" y="547" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Universal</text>
+<rect x="430" y="528" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="528" width="690.3" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="690.3" dur="1.2s" begin="0.48s" fill="freeze"/></rect>
+<text x="1132.2998236331568" y="547" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.7g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.38s" fill="freeze"/></text>
+<text x="410" y="593" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Chicken tacos (corn)</text>
+<text x="70" y="593" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Latin America</text>
+<rect x="430" y="574" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="574" width="654.0" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="654.0" dur="1.2s" begin="0.54s" fill="freeze"/></rect>
+<text x="1095.968253968254" y="593" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.3g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.44s" fill="freeze"/></text>
+<text x="410" y="639" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Pozole</text>
+<text x="70" y="639" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Latin America</text>
+<rect x="430" y="620" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="620" width="650.9" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="650.9" dur="1.2s" begin="0.60s" fill="freeze"/></rect>
+<text x="1092.854119425548" y="639" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.3g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.50s" fill="freeze"/></text>
+<text x="410" y="685" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Grilled salmon &amp; rice</text>
+<text x="70" y="685" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">East Asia</text>
+<rect x="430" y="666" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="666" width="637.2" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="637.2" dur="1.2s" begin="0.66s" fill="freeze"/></rect>
+<text x="1079.1998371998372" y="685" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.2g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.56s" fill="freeze"/></text>
+<text x="410" y="731" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Red lentil soup</text>
+<text x="70" y="731" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Middle East</text>
+<rect x="430" y="712" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="712" width="630.3" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="630.3" dur="1.2s" begin="0.72s" fill="freeze"/></rect>
+<text x="1072.2737520128826" y="731" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.1g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.62s" fill="freeze"/></text>
+<text x="410" y="777" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Dal (lentils)</text>
+<text x="70" y="777" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">South Asia</text>
+<rect x="430" y="758" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="758" width="621.3" height="26" rx="13" fill="#a8844c"><animate attributeName="width" from="0" to="621.3" dur="1.2s" begin="0.78s" fill="freeze"/></rect>
+<text x="1063.2698412698412" y="777" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">6.0g<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.68s" fill="freeze"/></text>
+<text x="70" y="850" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#9b9385">Computed from FEMORA Muse’s curated sample food table (approximate values per serving). Source: femora/web/src/modules/nutrition/foods.ts</text>
+</svg>

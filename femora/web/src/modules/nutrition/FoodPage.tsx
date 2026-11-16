@@ -78,7 +78,7 @@ export function FoodPage() {
             </form>
             {scan && <FoodScanner region={location?.region} onClose={() => setScan(false)} onAdd={(f) => add(f.id)} />}
             {nlNote && <p className="mt-2 text-sm text-muted" role="status">{nlNote}</p>}
-            <p className="mt-2 text-xs text-muted">Natural-language logging uses a deterministic text matcher in this demo. Scan takes a photo for your record and lets you pick the dish.</p>
+            <p className="mt-2 text-xs text-muted">Natural-language logging uses a transparent text matcher (no AI guessing). Scan takes a photo for your record and lets you pick the dish.</p>
           </Card>
 
           <Card title="Meals">
@@ -127,7 +127,7 @@ export function FoodPage() {
 
         <div className="space-y-5">
           <Card title="Today at a glance">
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2">
               <div><h4 className="mb-2 text-sm font-medium">Where your energy came from</h4><EnergyDonut n={t.values} /></div>
               <div><h4 className="mb-2 text-sm font-medium">Sugar percentage</h4><SugarGauge n={t.values} label="Added sugar, share of today's calories" /></div>
             </div>

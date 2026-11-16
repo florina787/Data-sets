@@ -1,3 +1,7 @@
+<p align="center"><a href="femora/README.md"><img src="femora/docs/media/banner.svg" alt="FEMORA Muse" width="100%"></a></p>
+
+> ✦ **Featured project: [FEMORA Muse](femora/README.md)**, a private, warm companion for women's health, menopause, nutrition and life.
+
 # Data-sets
 Different Data-set on various Important & Interesting topic
 These Datasets are classic and best to Implement to learn Machine Learning Algorithms.

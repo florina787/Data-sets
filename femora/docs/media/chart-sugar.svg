@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="884" viewBox="0 0 1600 884">
+<rect width="1600" height="884" rx="32" fill="#fbf8f2"/>
+<text x="70" y="78" font-family="Cormorant Garamond, Georgia, serif" font-size="46" fill="#17140f">Sugar percentage, the way Muse shows it</text>
+<text x="72" y="114" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#6b645a">Added sugar as a share of each dish’s calories, against the WHO limit (10%) and ideal (5%)</text>
+<line x1="558.75" y1="136" x2="558.75" y2="794" stroke="#17140f" stroke-dasharray="5 6" stroke-opacity=".45"/>
+<text x="564.75" y="130" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#6b645a">5% ideal</text>
+<line x1="687.5" y1="136" x2="687.5" y2="794" stroke="#17140f" stroke-dasharray="5 6" stroke-opacity=".45"/>
+<text x="693.5" y="130" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#6b645a">10% limit</text>
+<text x="410" y="179" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Masala chai with milk &amp; sugar</text>
+<text x="70" y="179" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">South Asia</text>
+<rect x="430" y="160" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="160" width="936.4" height="26" rx="13" fill="#b23a32"><animate attributeName="width" from="0" to="936.4" dur="1.2s" begin="0.00s" fill="freeze"/></rect>
+<text x="1378.3636363636363" y="179" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">36.4%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="0.90s" fill="freeze"/></text>
+<text x="410" y="225" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Chocolate cake</text>
+<text x="70" y="225" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Universal</text>
+<rect x="430" y="206" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="206" width="882.9" height="26" rx="13" fill="#b23a32"><animate attributeName="width" from="0" to="882.9" dur="1.2s" begin="0.06s" fill="freeze"/></rect>
+<text x="1324.8571428571427" y="225" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">34.3%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="0.96s" fill="freeze"/></text>
+<text x="410" y="271" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Soy milk (fortified)</text>
+<text x="70" y="271" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Universal</text>
+<rect x="430" y="252" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="252" width="412.0" height="26" rx="13" fill="#b23a32"><animate attributeName="width" from="0" to="412.0" dur="1.2s" begin="0.12s" fill="freeze"/></rect>
+<text x="854.0" y="271" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">16.0%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.02s" fill="freeze"/></text>
+<text x="410" y="317" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Greek yogurt with berries</text>
+<text x="70" y="317" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Europe</text>
+<rect x="430" y="298" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="298" width="206.0" height="26" rx="13" fill="#c08a2c"><animate attributeName="width" from="0" to="206.0" dur="1.2s" begin="0.18s" fill="freeze"/></rect>
+<text x="648.0" y="317" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">8.0%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.08s" fill="freeze"/></text>
+<text x="410" y="363" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Gado-gado</text>
+<text x="70" y="363" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Southeast Asia</text>
+<rect x="430" y="344" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="344" width="128.7" height="26" rx="13" fill="#c08a2c"><animate attributeName="width" from="0" to="128.7" dur="1.2s" begin="0.24s" fill="freeze"/></rect>
+<text x="570.75" y="363" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">5.0%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.14s" fill="freeze"/></text>
+<text x="410" y="409" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Tempeh sambal</text>
+<text x="70" y="409" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Southeast Asia</text>
+<rect x="430" y="390" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="390" width="118.8" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="118.8" dur="1.2s" begin="0.30s" fill="freeze"/></rect>
+<text x="560.8461538461538" y="409" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">4.6%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.20s" fill="freeze"/></text>
+<text x="410" y="455" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Tofu stir-fry</text>
+<text x="70" y="455" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">East Asia</text>
+<rect x="430" y="436" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="436" width="110.4" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="110.4" dur="1.2s" begin="0.36s" fill="freeze"/></rect>
+<text x="552.3571428571428" y="455" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">4.3%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.26s" fill="freeze"/></text>
+<text x="410" y="501" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Grilled chicken salad</text>
+<text x="70" y="501" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">North America</text>
+<rect x="430" y="482" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="482" width="81.3" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="81.3" dur="1.2s" begin="0.42s" fill="freeze"/></rect>
+<text x="523.3157894736842" y="501" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">3.2%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.32s" fill="freeze"/></text>
+<text x="410" y="547" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Shakshuka</text>
+<text x="70" y="547" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Middle East</text>
+<rect x="430" y="528" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="528" width="73.6" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="73.6" dur="1.2s" begin="0.48s" fill="freeze"/></rect>
+<text x="515.5714285714286" y="547" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">2.9%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.38s" fill="freeze"/></text>
+<text x="410" y="593" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Sambar</text>
+<text x="70" y="593" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">South Asia</text>
+<rect x="430" y="574" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="574" width="68.7" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="68.7" dur="1.2s" begin="0.54s" fill="freeze"/></rect>
+<text x="510.66666666666663" y="593" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">2.7%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.44s" fill="freeze"/></text>
+<text x="410" y="639" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Laksa</text>
+<text x="70" y="639" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">Southeast Asia</text>
+<rect x="430" y="620" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="620" width="68.7" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="68.7" dur="1.2s" begin="0.60s" fill="freeze"/></rect>
+<text x="510.66666666666663" y="639" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">2.7%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.50s" fill="freeze"/></text>
+<text x="410" y="685" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Scrambled eggs on toast</text>
+<text x="70" y="685" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">North America</text>
+<rect x="430" y="666" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="666" width="60.6" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="60.6" dur="1.2s" begin="0.66s" fill="freeze"/></rect>
+<text x="502.5882352941176" y="685" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">2.4%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.56s" fill="freeze"/></text>
+<text x="410" y="731" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Jollof rice</text>
+<text x="70" y="731" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">West Africa</text>
+<rect x="430" y="712" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="712" width="45.8" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="45.8" dur="1.2s" begin="0.72s" fill="freeze"/></rect>
+<text x="487.77777777777777" y="731" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">1.8%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.62s" fill="freeze"/></text>
+<text x="410" y="777" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#17140f">Grilled salmon &amp; rice</text>
+<text x="70" y="777" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#9b9385">East Asia</text>
+<rect x="430" y="758" width="1030" height="26" rx="13" fill="#efe9de"/>
+<rect x="430" y="758" width="39.6" height="26" rx="13" fill="#3d7a58"><animate attributeName="width" from="0" to="39.6" dur="1.2s" begin="0.78s" fill="freeze"/></rect>
+<text x="481.61538461538464" y="777" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#17140f">1.5%<animate attributeName="opacity" from="0" to="1" dur=".4s" begin="1.68s" fill="freeze"/></text>
+<text x="70" y="850" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#9b9385">Computed from FEMORA Muse’s curated sample food table (approximate values per serving). Source: femora/web/src/modules/nutrition/foods.ts</text>
+</svg>
