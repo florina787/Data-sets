@@ -14,4 +14,5 @@ if [ ! -d .venv ] || [ ! -d apps/control-room/dist ] || [ ! -d apps/storefront/d
 fi
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
 cd backend
-exec ../.venv/bin/python -m app
+. ../scripts/_venv.sh   # after setup, so a new .venv is found too
+exec "$PY" -m app
