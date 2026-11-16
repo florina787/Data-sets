@@ -9,9 +9,9 @@ export function Planned({ path }: { path: string }) {
     <div>
       <PageHeader title={n.label} status="planned" sub={n.summary} />
       <Card>
-        <p>This module is scheduled for <b>Milestone {n.milestone}</b> of the leadership-demo plan. It isn't built yet, and the demo doesn't pretend otherwise.</p>
-        <p className="mt-2 text-muted">You can ask FEMORA about this topic in the meantime. The copilot already handles cycle, sleep, mood and doctor-preparation conversations.</p>
-        <Link to="/app/copilot"><Button variant="primary" className="mt-4">Talk to FEMORA</Button></Link>
+        <p>This part of FEMORA Muse is being built (phase {n.milestone}). Nothing here is mocked up.</p>
+        <p className="mt-2 text-muted">Meanwhile you can talk to Muse about it. Muse already helps with cycles, sleep, mood and preparing for appointments.</p>
+        <Link to="/app/copilot"><Button variant="primary" className="mt-4">Talk to Muse</Button></Link>
       </Card>
     </div>
   );

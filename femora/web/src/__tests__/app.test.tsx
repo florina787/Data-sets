@@ -9,16 +9,18 @@ const seedLocation = () => localStorage.setItem("femora:v1:locations", JSON.stri
 const at = (path: string) => { seedLocation(); return render(<AppStateProvider><MemoryRouter initialEntries={[path]}><AppRoutes /></MemoryRouter></AppStateProvider>); };
 
 describe("app", () => {
-  it("shows the executive showcase with Try FEMORA and the creator credit", () => {
+  it("shows the Muse homepage with its main action and the creator credit", () => {
     at("/");
-    expect(screen.getAllByText(/Try FEMORA/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Meet your Muse/).length).toBeGreaterThan(0);
     expect(screen.getByText("florinaregius@yahoo.com")).toBeInTheDocument();
   });
 
   it("navigates every module without crashing", async () => {
     for (const p of ["/app", "/app/copilot", "/app/food", "/app/joy", "/app/settings", "/app/free-care", "/app/reminders", "/app/medscan", "/app/connections", "/app/journey", "/app/sisterhood", "/app/care", "/app/guardian", "/app/body"]) {
       const { unmount } = at(p);
-      expect(screen.getAllByText(/fictional/i).length).toBeGreaterThan(0);
+      expect(await screen.findByText("florinaregius@yahoo.com")).toBeInTheDocument();
+      await screen.findByRole("heading", { level: 1 }, { timeout: 3000 });
+      expect(screen.queryByText(/fictional|simulat/i)).toBeNull();
       unmount();
     }
   });
@@ -26,7 +28,7 @@ describe("app", () => {
   it("holds a multi-message conversation", async () => {
     const u = userEvent.setup();
     at("/app/copilot");
-    const box = screen.getByLabelText("Message FEMORA");
+    const box = await screen.findByLabelText("Message Muse", {}, { timeout: 3000 });
     await u.type(box, "I've been sleeping badly{Enter}");
     expect(await screen.findByText(/Poor sleep wears everything down/)).toBeInTheDocument();
     await u.type(box, "and I feel lonely{Enter}");
@@ -37,17 +39,25 @@ describe("app", () => {
   it("logs food in plain language and updates nutrients", async () => {
     const u = userEvent.setup();
     at("/app/food");
-    await u.type(screen.getByLabelText("Describe your meal"), "dal and curd for lunch{Enter}");
+    await u.type(await screen.findByLabelText("Describe your meal", {}, { timeout: 3000 }), "dal and curd for lunch{Enter}");
     expect(await screen.findByText(/Added Dal \(lentils\) ×1, Curd \/ dahi ×1 to Lunch/)).toBeInTheDocument();
     const lunch = screen.getByLabelText("Servings of Dal (lentils)");
     expect(lunch).toHaveValue(1);
-    expect(within(document.body).getByText(/kcal · 4 items$/)).toBeInTheDocument();
+    expect(within(document.body).getByText(/kcal · 2 items$/)).toBeInTheDocument();
   });
 
-  it("uses Bea and Nancy as the demo profiles", () => {
+  it("Bea is an example configuration with no assumed health details", async () => {
     at("/app/settings");
-    expect(screen.getByText("Bea, 37")).toBeInTheDocument();
-    expect(screen.getByText("Nancy, 56")).toBeInTheDocument();
+    expect(await screen.findByLabelText("Name", {}, { timeout: 3000 })).toHaveValue("Bea");
+    expect(screen.getByDisplayValue("37")).toBeInTheDocument();
+    expect((screen.getByLabelText(/Life stage/) as HTMLSelectElement).value).toBe("");
+  });
+
+  it("Discover shows verified sources and never invents events", async () => {
+    globalThis.fetch = (async () => new Response(JSON.stringify({ items: [] }))) as typeof fetch;
+    at("/app/free-care");
+    expect(await screen.findByText(/No verified events for Austin yet/, {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(screen.getByText("Cervical cancer screening recommendation")).toBeInTheDocument();
   });
 });
 

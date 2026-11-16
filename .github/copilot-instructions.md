@@ -5,21 +5,22 @@ Change only the project a task is about.
 
 ## FEMORA AI (`femora/`)
 
-Menopause-first women's health platform. The current milestone is a **static leadership demo** on GitHub Pages.
+FEMORA Muse: a women's health and life companion. Web app on GitHub Pages first, mobile later. Plan: `femora/docs/MUSE_PLAN.md`.
 
 ### Hard rules
-- Synthetic data only. Demo personas are **Bea** and **Nancy**; their health details are fictional and must be labelled so.
-- Label every capability honestly with `StatusBadge`: `demonstrated`, `simulated`, `planned`, or `validated` (nothing is validated yet).
-- Never put secrets or API keys in the frontend. Live AI calls must go through a server-side gateway.
-- Never fabricate citations. Every cited source lives in `src/modules/conversation/sources.ts` and must be real and retrievable.
-- Numbers (nutrients, cycle lengths, totals) come from deterministic code, never from a model.
-- Safety rules (`src/modules/conversation/safety.ts`) run before any provider. Don't bypass them.
-- No universal "menopause score" or health-risk score.
-- Never diagnose (depression, dementia, anxiety disorders) and never claim a food cures menopause.
+- **No invented data**: never fabricate events, discounts, appointments, free consultations, screening eligibility, lab values or citations. Listings need a verified source (`verifiedAt` + https URL) or must be user-added.
+- Bea and Nancy are example configurations only; never assign them diagnoses, stages, beliefs or health details.
+- Never put secrets or API keys in the frontend. Hosted AI goes through a server-side gateway; local AI via the user's own llama.cpp server.
+- Numbers, schedules, notification decisions, triage and safety come from deterministic code (`logic.ts`, `engine.ts`, `safety.ts`), never from a model.
+- No default screening intervals; only user/clinician/guideline-entered schedules. Never suggest changing medication.
+- Nothing is sent, shared or saved externally without the user's explicit action.
+- Label availability honestly with `StatusBadge` (`demonstrated` = available, `planned` = coming).
 - Keep the creator credit (`src/components/Credit.tsx`) in the footer.
 
 ### Architecture
-- `src/theme/tokens.css`: all colours, radii, shadows, fonts. Re-theme here only; components use token classes (`bg-surface`, `text-primary`, …).
+- `src/theme/tokens.css`: all colours, radii, shadows, fonts (luxury presets: onyx, emerald, midnight). Re-theme here only; components use token classes (`bg-surface`, `text-primary`, …).
+- `src/modules/notifications/engine.ts`: every notification goes through `app.notify()` → `decide()`.
+- `src/modules/muse/proactive.ts`: proactive suggestions from real records only.
 - `src/components/ui.tsx`: theme-agnostic primitives. `src/modules/navigation.ts`: the single navigation registry.
 - `src/modules/<domain>/`: one folder per domain (`conversation`, `nutrition`, …), each with pure logic (`engine.ts`) separate from UI (`*Page.tsx`).
 - `src/modules/conversation/types.ts` defines `ChatProvider`. To add a model, implement it and call `setProvider`; the UI is untouched.

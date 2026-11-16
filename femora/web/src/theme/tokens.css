@@ -3,46 +3,47 @@
 @import "tailwindcss";
 
 :root {
-  --f-bg: #f6f5f9;
-  --f-surface: #ffffff;
-  --f-surface-2: #eef0f6;
-  --f-ink: #1f2a44;
-  --f-muted: #646d86;
-  --f-line: #e2e5ee;
-  --f-primary: #3f63a8;      /* sky / trust */
-  --f-primary-ink: #ffffff;
-  --f-accent: #6c5fb3;       /* lavender */
-  --f-warm: #d9705f;         /* coral, used sparingly */
-  --f-good: #3f8a66;
-  --f-warn: #b7791f;
-  --f-danger: #c2413a;
-  --f-hero-from: #3f69ad;
-  --f-hero-to: #8b7fc4;
-  --f-radius-sm: 10px;
-  --f-radius: 18px;
-  --f-radius-lg: 28px;
-  --f-shadow: 0 6px 24px rgb(31 42 68 / 0.07);
+  /* Default: Onyx & Champagne */
+  --f-bg: #f7f4ee;            /* ivory paper */
+  --f-surface: #fffdf9;
+  --f-surface-2: #f0ebe2;
+  --f-ink: #17140f;           /* onyx */
+  --f-muted: #6b645a;
+  --f-line: #e4ddd0;
+  --f-primary: #17140f;       /* onyx buttons */
+  --f-primary-ink: #fbf6ec;
+  --f-accent: #a8844c;        /* champagne gold (AA on ivory for large text and icons) */
+  --f-warm: #b5654a;
+  --f-good: #3d7a58;
+  --f-warn: #9a6a12;
+  --f-danger: #b23a32;
+  --f-hero-from: #14110e;
+  --f-hero-to: #4a3c28;
+  --f-radius-sm: 12px;
+  --f-radius: 20px;
+  --f-radius-lg: 32px;
+  --f-shadow: 0 1px 2px rgb(23 20 15 / 0.04), 0 12px 32px rgb(23 20 15 / 0.06);
   --f-font-body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-font-display: "Fraunces", Georgia, serif;
-  --f-motion: 180ms;
+  --f-font-display: "Cormorant Garamond", "Fraunces", Georgia, serif;
+  --f-motion: 220ms;
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --f-bg: #121624;
-  --f-surface: #1b2133;
-  --f-surface-2: #242b40;
-  --f-ink: #e9ecf5;
-  --f-muted: #a3abc2;
-  --f-line: #2e3650;
-  --f-primary: #8fb0ec;
-  --f-primary-ink: #121624;
-  --f-accent: #a99bea;
-  --f-warm: #ef9a8b;
-  --f-good: #6cc59a;
+  --f-bg: #0f0d0b;
+  --f-surface: #1a1714;
+  --f-surface-2: #24201b;
+  --f-ink: #f3ece0;
+  --f-muted: #b2a896;
+  --f-line: #332d25;
+  --f-primary: #e3c48f;
+  --f-primary-ink: #17140f;
+  --f-accent: #d7b57a;
+  --f-warm: #e39a7f;
+  --f-good: #7cc79c;
   --f-warn: #e2b155;
   --f-danger: #f08a83;
-  --f-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  --f-shadow: 0 12px 32px rgb(0 0 0 / 0.45);
   color-scheme: dark;
 }
 
@@ -75,8 +76,12 @@ body { margin: 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 .hero-grad { background: linear-gradient(135deg, var(--f-hero-from), var(--f-hero-to)); }
 
-/* Theme presets inspired by the user's references. Swap via the theme picker; no component changes. */
-[data-preset="forest"] { --f-primary: #2f4a3a; --f-accent: #9bc53d; --f-warm: #e08a5c; --f-hero-from: #1f3328; --f-hero-to: #4c6b4f; --f-bg: #f4f5f0; --f-surface-2: #eaede4; }
-[data-preset="indigo"] { --f-primary: #2b2f9e; --f-accent: #6d6ff0; --f-warm: #e8885f; --f-hero-from: #262a8f; --f-hero-to: #4b4fd0; --f-bg: #f6f4ef; --f-surface-2: #ecebf6; }
-[data-theme="dark"][data-preset="forest"] { --f-primary: #b9dc6e; --f-primary-ink: #142019; --f-accent: #9bc53d; --f-bg: #111813; --f-surface: #19231c; --f-surface-2: #223026; --f-line: #2c3b30; }
-[data-theme="dark"][data-preset="indigo"] { --f-primary: #a5a8ff; --f-primary-ink: #14153a; --f-accent: #8e90ff; --f-bg: #12132a; --f-surface: #1b1c3a; --f-surface-2: #25274b; --f-line: #303259; }
+/* Luxury presets. Swap in Profile → theme picker; no component changes. */
+[data-preset="emerald"] { --f-bg: #f6f3ec; --f-surface: #fffdf8; --f-surface-2: #ebe9df; --f-line: #dcdccd; --f-ink: #10241c; --f-primary: #0f3b2c; --f-primary-ink: #f6f1e4; --f-accent: #9b7d43; --f-hero-from: #0b2a1f; --f-hero-to: #2f5a45; }
+[data-preset="midnight"] { --f-bg: #f5f5f3; --f-surface: #ffffff; --f-surface-2: #eceef2; --f-line: #dde0e7; --f-ink: #121a2e; --f-primary: #131d3b; --f-primary-ink: #f4f1ea; --f-accent: #8a7a5c; --f-hero-from: #0c1328; --f-hero-to: #2c3a63; }
+[data-theme="dark"][data-preset="emerald"] { --f-bg: #0b1511; --f-surface: #12201a; --f-surface-2: #1a2c24; --f-line: #26392f; --f-ink: #eef1e8; --f-primary: #d4bd85; --f-primary-ink: #0b1511; --f-accent: #c9ad70; }
+[data-theme="dark"][data-preset="midnight"] { --f-bg: #0b0f1c; --f-surface: #131a2c; --f-surface-2: #1c2438; --f-line: #283149; --f-ink: #eef0f6; --f-primary: #e6dcc6; --f-primary-ink: #0b0f1c; --f-accent: #cbb98f; }
+
+h1, h2, .font-display { letter-spacing: -0.01em; }
+@keyframes f-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.f-enter { animation: f-fade-up 420ms cubic-bezier(.2,.7,.2,1) both; }

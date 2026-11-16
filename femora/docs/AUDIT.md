@@ -1,5 +1,7 @@
 # FEMORA AI: Milestone 0 audit and plan
 
+> **Superseded** by [MUSE_PLAN.md](MUSE_PLAN.md). The leadership-demo scope (synthetic data, simulations) was retired at the creator's request; this file is kept for history.
+
 *Prepared 16 Nov 2026. Scope: the `florina787/Data-sets` repository, which is the only repository this build session can access.*
 
 ## 1. Existing architecture inventory

@@ -1,9 +1,8 @@
-# FEMORA AI
+# FEMORA Muse
 
-**Menopause intelligence, nutrition, wellbeing and global sisterhood.** This folder holds the leadership-demo prototype.
+**A personal companion for women's health, menopause, nutrition, wellbeing and community.**
 
-> All people and health data are **fictional**. AI responses are **simulated**. Not medical advice.
-> Demo personas are named Bea and Nancy; their health details are invented.
+Muse supports, and never replaces, clinicians. All data stays in your browser.
 
 ## Run it
 
@@ -11,26 +10,31 @@
 cd femora/web
 npm install
 npm run dev        # http://127.0.0.1:5174
-npm test           # 62 tests
+npm test           # 83 tests
 npm run build
 ```
 
-## What works today
+Optional local AI: run a llama.cpp server (`llama-server -m your-model.gguf --port 8080`), then in **Profile & privacy → Muse model**, test the connection and enable it.
 
-| Area | Status |
+## Available today
+
+| Area | What works |
 |---|---|
-| Executive showcase with honest status table and roadmap | Working |
-| Copilot: 8 modes, multi-message, history, search, rename, archive, export, delete, voice input (browser), consented memory, sources, safety rules | Simulated responses |
-| Food: 42 dishes from 10 regions, natural-language logging, editable portions, 14 nutrients, editable targets, evidence labels | Working (sample data) |
-| My Joy Map | Working |
-| Themes: Sky, Forest, Indigo × light/dark, all from `src/theme/tokens.css` | Working |
-| Cycles, body, sisterhood map, healthcare, Guardian | Planned (navigable placeholders) |
+| Talk to Muse | 8 modes, history, search, rename, archive, export, delete, voice input (browser), consented memory, sources, crisis and urgent-symptom rules, humour and stories, brief answers; offline library or your llama.cpp model |
+| Home | Proactive suggestions from your own records only |
+| Food & nutrition | 42 dishes from 10 regions, natural-language logging, photo-assisted logging, sugar % of calories, nutrient charts, editable targets |
+| Health planner | Medication & supplement reminders (taken/skipped/snoozed, refills, export), check-ups with saved questions; no invented intervals |
+| MedScan | Your lab values explained against your report's range; rule-based symptom check |
+| Discover | HTTP-verified official programmes, verified event feed (empty until partners connect), events you save, spiritual preferences, offers opt-in |
+| Notifications | Categories, quiet hours, limits, digest, snooze, dismiss, feedback, private medication text, browser alerts |
+| Connections | Contacts, WhatsApp, email, SMS, share sheet, calendar files; you always press send |
+| Design | Onyx & Champagne, Emerald & Ivory, Midnight & Pearl themes × light/dark, all from `web/src/theme/tokens.css` |
 
-See [docs/AUDIT.md](docs/AUDIT.md) for the architecture inventory, reuse map, plans and milestones.
+Coming next: menopause journey, health dashboard, Guardian, sisterhood map, onboarding tour. See [docs/MUSE_PLAN.md](docs/MUSE_PLAN.md).
 
 ## Deploy
 
-GitHub Pages deployment is manual: enable *Settings → Pages → Source: GitHub Actions*, then run **FEMORA deploy to GitHub Pages** from the Actions tab.
+Not deployed. With approval: enable *Settings → Pages → Source: GitHub Actions*, then run **FEMORA deploy to GitHub Pages**.
 
 ---
 Created by Florina Regius · florinaregius@yahoo.com

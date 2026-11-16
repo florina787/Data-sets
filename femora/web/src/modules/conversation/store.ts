@@ -33,8 +33,8 @@ export function useConversations(profileId: string) {
 }
 
 export function exportConversation(c: Conversation) {
-  const body = [`FEMORA AI conversation export (DEMO: fictional profile, simulated responses)`, `Title: ${c.title}`, `Exported: ${new Date().toISOString()}`, "",
-    ...c.messages.map((m) => `[${new Date(m.at).toLocaleString()}] ${m.role === "user" ? "You" : "FEMORA"}: ${m.text}`)].join("\n");
+  const body = [`FEMORA Muse conversation export`, `Title: ${c.title}`, `Exported: ${new Date().toISOString()}`, "",
+    ...c.messages.map((m) => `[${new Date(m.at).toLocaleString()}] ${m.role === "user" ? "You" : "Muse"}: ${m.text}`)].join("\n");
   const url = URL.createObjectURL(new Blob([body], { type: "text/plain" }));
   const a = document.createElement("a");
   a.href = url; a.download = `femora-${c.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.txt`; a.click();

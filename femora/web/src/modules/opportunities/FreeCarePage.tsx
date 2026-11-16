@@ -1,11 +1,15 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Bell, BellRing, CalendarPlus, ExternalLink, Gift, HeartPulse, MapPin, MessageCircleHeart, Microscope, Stethoscope, Users, BookOpen, Flower2, Sparkles, Tag } from "lucide-react";
-import { useApp } from "../../lib/app-state";
-import { Badge, Button, Card, Notice, PageHeader } from "../../components/ui";
-import { CATEGORIES, OFFICIAL, opportunitiesFor, toICS, type Category, type Opportunity } from "./data";
+import { useEffect, useState } from "react";
+import { BadgeCheck, CalendarPlus, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { useApp, type SpiritualPref } from "../../lib/app-state";
+import { usePersistent } from "../../lib/usePersistent";
+import { uid } from "../../lib/storage";
+import { Badge, Button, Card, Field, Notice, PageHeader, inputCls } from "../../components/ui";
+import { CATEGORIES, COMMERCIAL, filterFor, loadVerifiedFeed, resourcesFor, toICS, type Category, type Opportunity } from "./data";
 
-const ICON: Record<Category, typeof Gift> = { "Health check-ups": HeartPulse, "Sample collection": Microscope, Consultation: Stethoscope, Workshop: BookOpen, Community: Users, "Free goodies": Gift, Yoga: Flower2, "Spiritual & mindfulness": Sparkles, Deals: Tag };
+const SPIRITUAL: { id: SpiritualPref; label: string }[] = [
+  { id: "spiritual", label: "Spiritual" }, { id: "religious", label: "Religious" }, { id: "secular", label: "Secular" },
+  { id: "mindfulness", label: "Mindfulness" }, { id: "yoga", label: "Yoga" }, { id: "nature", label: "Nature" }, { id: "none", label: "No spiritual recommendations" },
+];
 
 function downloadICS(o: Opportunity) {
   const url = URL.createObjectURL(new Blob([toICS(o)], { type: "text/calendar" }));
@@ -14,80 +18,89 @@ function downloadICS(o: Opportunity) {
 
 export function FreeCarePage() {
   const app = useApp();
-  const nav = useNavigate();
-  const city = app.location?.city || app.profile.city || "your city";
-  const all = useMemo(() => opportunitiesFor(city), [city]);
+  const city = app.location?.city || app.profile.city;
+  const [feed, setFeed] = useState<Opportunity[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [mine, setMine] = usePersistent<Opportunity[]>(`saved-opps:${app.profile.id}`, () => []);
+  const [commercial, setCommercial] = usePersistent(`commercial:${app.profile.id}`, () => false);
   const [cat, setCat] = useState<Category | "All">("All");
-  const [online, setOnline] = useState<"all" | "online" | "in-person">("all");
-  const [saved, setSaved] = useState<string[]>([]);
-  const shown = all.filter((o) => (cat === "All" || o.category === cat) && (online === "all" || (online === "online") === o.online));
+  const [form, setForm] = useState({ title: "", organization: "", category: "Screening campaign" as Category, start: "", venue: "", url: "", cost: "free" as Opportunity["cost"] });
 
-  async function enableBrowserNotifications() {
-    if (typeof Notification === "undefined") { alert("This browser doesn't support notifications."); return; }
-    const p = await Notification.requestPermission();
-    app.notify(p === "granted" ? "Notifications on" : "Notifications stay in-app", p === "granted" ? "You'll get FEMORA alerts in this browser while the app is open." : "You can still see alerts under the bell icon.");
-  }
+  useEffect(() => { loadVerifiedFeed().then((f) => { setFeed(f); setLoaded(true); }); }, []);
 
-  function follow(c: Category) {
-    const on = !app.follows.includes(c);
-    app.toggleFollow(c);
-    if (on) {
-      const next = all.find((o) => o.category === c);
-      app.notify(`Following ${c}`, next ? `Next: ${next.title} · ${new Date(next.date).toLocaleDateString()} · ${next.where} (example)` : "We'll tell you when something new appears.", "/app/free-care");
-    }
-  }
+  const noSpiritual = app.spiritual.includes("none");
+  const visibleCats = CATEGORIES.filter((c) => (commercial || !COMMERCIAL.includes(c)) && !(noSpiritual && c === "Spiritual & mindfulness"));
+  const items = filterFor([...feed, ...mine], { city, category: cat, commercial }).filter((o) => visibleCats.includes(o.category));
+  const resources = resourcesFor(app.profile.country, city);
 
   return (
     <div>
-      <PageHeader title="Free care, events & deals" status="simulated"
-        sub={<>Free health check-ups, sample collection, consultations, yoga and spiritual zones, communities, goodies and deals for women near <b>{city}</b> and online. Follow what matters to you and get notified.</>}
-        actions={<Button variant="primary" onClick={enableBrowserNotifications}><BellRing size={16} /> Turn on notifications</Button>} />
+      <PageHeader title="Health opportunities & discovery" sub={<>Free screening campaigns, consultations, health education, yoga and spiritual zones, and community activities{city ? <> around <b>{city}</b></> : null}. Every listing is verified or added by you.</>} />
 
-      <Notice tone="warn">Events below are <b>examples</b> generated for {city} to show how FEMORA will work. Production will use verified listings from health services, NGOs and partners. Official programme links are real.</Notice>
+      <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+        <div className="space-y-5">
+          <Card title="Events & services">
+            <div className="flex flex-wrap gap-2">{(["All", ...visibleCats] as const).map((c) => <button key={c} aria-pressed={cat === c} onClick={() => setCat(c)} className={`rounded-full px-3 py-1.5 text-sm ${cat === c ? "bg-primary text-primary-ink" : "bg-surface-2"}`}>{c}</button>)}</div>
+            {!loaded ? <p className="mt-4 text-sm text-muted">Checking verified listings…</p> : items.length === 0 ? (
+              <div className="mt-4 rounded-f-sm bg-surface-2 p-4 text-sm">
+                <p><b>No verified events{city ? ` for ${city}` : ""} yet.</b> Muse won't invent events, free consultations or discounts. Verified listings will appear here as partner and public-health feeds are connected.</p>
+                <p className="mt-1 text-muted">Meanwhile, the official sources on the right are checked and current, and you can save events you find yourself below.</p>
+              </div>) : (
+              <ul className="mt-4 space-y-3">{items.map((o) => (
+                <li key={o.id} className="rounded-f-sm border border-line p-4">
+                  <div className="flex flex-wrap items-center gap-1">
+                    {o.provenance === "verified-feed" ? <Badge tone="good"><BadgeCheck size={12} /> Verified {o.verifiedAt}</Badge> : <Badge tone="accent">Added by you</Badge>}
+                    <Badge>{o.category}</Badge>{o.cost !== "unknown" && <Badge tone={o.cost === "free" ? "good" : "neutral"}>{o.cost}</Badge>}</div>
+                  <h3 className="mt-1 font-display text-lg">{o.title}</h3>
+                  <p className="text-sm text-muted">{o.organization} · {o.online ? "Online" : `${o.venue}${o.city ? `, ${o.city}` : ""}`} · {new Date(o.start).toLocaleString(undefined, { dateStyle: "medium", ...(o.start.length > 10 ? { timeStyle: "short" } : {}) })}</p>
+                  {o.eligibility && <p className="text-sm">Who: {o.eligibility}</p>}
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <a href={o.url} target="_blank" rel="noreferrer"><Button size="sm" variant="primary"><ExternalLink size={14} /> Official page</Button></a>
+                    <Button size="sm" onClick={() => downloadICS(o)}><CalendarPlus size={14} /> Add to calendar</Button>
+                    {o.provenance === "user-added" && <Button size="sm" variant="ghost" onClick={() => setMine((m) => m.filter((x) => x.id !== o.id))}><Trash2 size={14} /> Remove</Button>}
+                  </div>
+                </li>))}</ul>)}
+          </Card>
 
-      <Card className="mt-5" title="Follow categories">
-        <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((c) => { const I = ICON[c]; const on = app.follows.includes(c); return (
-            <button key={c} aria-pressed={on} onClick={() => follow(c)} className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm ${on ? "bg-primary text-primary-ink" : "bg-surface-2 hover:bg-line"}`}>
-              <I size={16} /> {c} {on ? <BellRing size={14} /> : <Bell size={14} className="opacity-60" />}</button>); })}
+          <Card title="Save an event you found">
+            <form className="grid gap-2 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); if (!form.title.trim() || !form.start) return;
+              const o: Opportunity = { id: uid(), organization: form.organization.trim() || "—", title: form.title.trim(), category: form.category, country: app.profile.country, city: city ?? "", venue: form.venue.trim(), online: !form.venue.trim(), start: form.start, eligibility: "", cost: form.cost, registration: "", url: form.url.trim(), provenance: "user-added" };
+              setMine((m) => [...m, o]);
+              app.notify({ key: `saved-${o.id}`, category: "community", priority: "low", title: `Saved: ${o.title}`, body: `${new Date(o.start).toLocaleDateString()}. You can add it to your calendar.`, link: "/app/free-care" });
+              setForm({ ...form, title: "", organization: "", start: "", venue: "", url: "" }); }}>
+              <Field label="Title"><input className={inputCls} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Free cervical screening day" /></Field>
+              <Field label="Organizer"><input className={inputCls} value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} /></Field>
+              <Field label="Category"><select className={inputCls} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value as Category })}>{CATEGORIES.map((c) => <option key={c}>{c}</option>)}</select></Field>
+              <Field label="Date & time"><input type="datetime-local" className={inputCls} value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} /></Field>
+              <Field label="Venue" hint="Leave empty for online"><input className={inputCls} value={form.venue} onChange={(e) => setForm({ ...form, venue: e.target.value })} /></Field>
+              <Field label="Link"><input type="url" className={inputCls} value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://" /></Field>
+              <Field label="Cost"><select className={inputCls} value={form.cost} onChange={(e) => setForm({ ...form, cost: e.target.value as Opportunity["cost"] })}>{["free", "subsidised", "paid", "discount", "unknown"].map((c) => <option key={c}>{c}</option>)}</select></Field>
+              <div className="flex items-end"><Button type="submit" variant="primary"><Plus size={16} /> Save</Button></div>
+            </form>
+          </Card>
         </div>
-      </Card>
 
-      <div className="mt-5 flex flex-wrap items-center gap-2">
-        {(["All", ...CATEGORIES] as const).map((c) => <button key={c} aria-pressed={cat === c} onClick={() => setCat(c)} className={`rounded-full px-3 py-1.5 text-sm ${cat === c ? "bg-ink text-surface" : "bg-surface hover:bg-surface-2"}`}>{c}</button>)}
-        <select aria-label="Online or in person" className="ml-auto rounded-full border border-line bg-surface px-3 py-1.5 text-sm" value={online} onChange={(e) => setOnline(e.target.value as typeof online)}>
-          <option value="all">Online & in person</option><option value="in-person">In person</option><option value="online">Online</option></select>
+        <div className="space-y-5">
+          <Card title="Official sources">
+            <ul className="space-y-3 text-sm">{resources.map((r) => (
+              <li key={r.url}><a className="font-medium text-primary underline" href={r.url} target="_blank" rel="noreferrer">{r.title}</a>
+                <div className="text-xs text-muted">{r.organization} · {r.kind}{r.city ? ` · ${r.city}` : ""} · <BadgeCheck size={11} className="inline" /> checked {r.verifiedAt}</div></li>))}</ul>
+            <p className="mt-3 text-xs text-muted">Screening is personal: eligibility depends on your age, country, history and your clinician's advice. Muse doesn't tell everyone to have the same test.</p>
+          </Card>
+          <Card title="Spiritual & wellness preferences">
+            <p className="text-sm text-muted">Muse never assumes your beliefs. Choose what, if anything, you'd like to see.</p>
+            <div className="mt-2 flex flex-wrap gap-2">{SPIRITUAL.map((s) => { const on = app.spiritual.includes(s.id); return (
+              <button key={s.id} aria-pressed={on} onClick={() => app.setSpiritual(s.id === "none" ? (on ? [] : ["none"]) : on ? app.spiritual.filter((x) => x !== s.id) : [...app.spiritual.filter((x) => x !== "none"), s.id])}
+                className={`rounded-full px-3 py-1.5 text-sm ${on ? "bg-accent text-white" : "bg-surface-2"}`}>{s.label}</button>); })}</div>
+            <p className="mt-2 text-xs text-muted">Spiritual practices complement, and never replace, medical care.</p>
+          </Card>
+          <Card title="Offers & discounts">
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={commercial} onChange={(e) => setCommercial(e.target.checked)} /> Show verified offers and discounts</label>
+            <p className="mt-1 text-xs text-muted">Off by default. Offers are never presented as health recommendations, and Muse never sends marketing without your consent.</p>
+          </Card>
+          <Notice tone="neutral">Interactive map view arrives with the Global Sisterhood milestone.</Notice>
+        </div>
       </div>
-
-      <ul className="mt-4 grid gap-4 md:grid-cols-2">
-        {shown.map((o) => { const I = ICON[o.category]; const isSaved = saved.includes(o.id); return (
-          <li key={o.id} className="flex flex-col rounded-f bg-surface p-5 shadow-f">
-            <div className="flex items-start gap-3">
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-f-sm bg-primary/12 text-primary"><I size={20} /></div>
-              <div className="flex-1">
-                <div className="flex flex-wrap items-center gap-1">{o.free ? <Badge tone="good">Free</Badge> : <Badge tone="warn">Discount</Badge>}<Badge tone="accent">{o.category}</Badge><Badge>Example</Badge></div>
-                <h3 className="mt-1 font-display text-lg leading-snug">{o.title}</h3>
-                <p className="text-sm text-muted"><MapPin size={13} className="inline" /> {o.host} · {o.where}</p>
-              </div>
-              <div className="text-right text-sm"><b>{new Date(o.date).toLocaleDateString(undefined, { day: "numeric", month: "short" })}</b><div className="text-xs text-muted">{o.time}</div></div>
-            </div>
-            <p className="mt-3 text-sm">{o.details}</p>
-            <p className="mt-1 text-xs text-muted">Who: {o.eligibility}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button size="sm" variant={isSaved ? "secondary" : "primary"} onClick={() => { setSaved((s) => isSaved ? s.filter((x) => x !== o.id) : [...s, o.id]); if (!isSaved) app.notify(`Reminder set: ${o.title}`, `${new Date(o.date).toLocaleDateString()} · ${o.time} · ${o.where} (example)`, "/app/free-care"); }}>
-                {isSaved ? <><BellRing size={14} /> Reminder on</> : <><Bell size={14} /> Notify me</>}</Button>
-              <Button size="sm" onClick={() => downloadICS(o)}><CalendarPlus size={14} /> Add to calendar</Button>
-              <Button size="sm" variant="ghost" onClick={() => nav("/app/copilot")}><MessageCircleHeart size={14} /> Ask FEMORA</Button>
-            </div>
-          </li>); })}
-      </ul>
-      {shown.length === 0 && <p className="mt-4 text-muted">Nothing in this filter yet.</p>}
-
-      <Card className="mt-6" title="Official programmes (real sources)">
-        <ul className="space-y-2 text-sm">{OFFICIAL.map((p) => (
-          <li key={p.url}><Badge tone="primary">{p.topic}</Badge> <a className="text-primary underline" href={p.url} target="_blank" rel="noreferrer">{p.title} <ExternalLink size={12} className="inline" /></a> <span className="text-muted">· {p.publisher}</span></li>))}</ul>
-        <p className="mt-2 text-xs text-muted">Screening eligibility differs by country. Check your national programme or ask your clinician.</p>
-      </Card>
     </div>
   );
 }

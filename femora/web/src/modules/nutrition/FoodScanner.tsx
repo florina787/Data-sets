@@ -1,8 +1,8 @@
-// Camera capture is REAL (getUserMedia, stays on this device). Dish recognition is SIMULATED in the static demo:
-// she confirms the dish from region-first suggestions. Production: server-side vision model with user consent.
+// Photo-assisted logging: the camera capture is real and stays on this device; she chooses the dish herself.
+// Automatic recognition needs a vision model behind a secure gateway and isn't connected.
 import { useEffect, useRef, useState } from "react";
 import { Camera, ImageUp, X } from "lucide-react";
-import { Button, StatusBadge } from "../../components/ui";
+import { Button } from "../../components/ui";
 import { FOODS, type Food } from "./foods";
 import { SugarGauge } from "./Charts";
 import { sugarPct } from "./engine";
@@ -40,7 +40,7 @@ export function FoodScanner({ region, onAdd, onClose }: { region?: string; onAdd
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-label="Scan food with camera">
       <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-f-lg bg-surface p-5 shadow-f">
-        <div className="mb-3 flex items-center gap-2"><Camera size={20} className="text-primary" /><h2 className="font-display text-xl">Scan your plate</h2><StatusBadge status="simulated" />
+        <div className="mb-3 flex items-center gap-2"><Camera size={20} className="text-primary" /><h2 className="font-display text-xl">Scan your plate</h2>
           <button className="ml-auto rounded-full p-1 hover:bg-surface-2" aria-label="Close scanner" onClick={onClose}><X /></button></div>
 
         <div className="overflow-hidden rounded-f bg-black">
@@ -57,7 +57,7 @@ export function FoodScanner({ region, onAdd, onClose }: { region?: string; onAdd
 
         {state === "captured" && (
           <div className="mt-4">
-            <p className="text-sm"><b>Which dish is this?</b> <span className="text-muted">Automatic recognition is simulated in this demo, so please confirm. Dishes from {region ?? "your region"} are listed first.</span></p>
+            <p className="text-sm"><b>Which dish is this?</b> <span className="text-muted">Choose the dish in your photo. Dishes from {region ?? "your region"} are listed first. (Automatic recognition isn't available yet.)</span></p>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {candidates.map((f) => { const sp = sugarPct(f.n); return (
                 <button key={f.id} onClick={() => setPick(f)} aria-pressed={pick?.id === f.id} className={`rounded-f-sm border p-2 text-left text-sm ${pick?.id === f.id ? "border-primary ring-2 ring-primary/30" : "border-line hover:bg-surface-2"}`}>

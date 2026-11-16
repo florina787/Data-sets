@@ -7,10 +7,10 @@ import { Badge, Button, Card, Field, Notice, PageHeader, StatusBadge, inputCls }
 import { contactPickerSupported, emailUrl, nativeShare, pickContacts, smsUrl, whatsappUrl, type Contact } from "./share";
 
 const TEMPLATES = (name: string) => [
-  { id: "checkin", label: "I'm OK check-in", text: `Hi, it's ${name}. Just checking in: I'm OK. 💜 (sent from FEMORA)` },
+  { id: "checkin", label: "I'm OK check-in", text: `Hi, it's ${name}. Just checking in: I'm OK. 💜 ` },
   { id: "support", label: "Ask for support", text: `Hi, it's ${name}. I'm going through some menopause changes and having a tough day. Could we talk or go for a walk this week?` },
   { id: "appt", label: "Share appointment", text: `Hi, it's ${name}. I have a health check-up coming up. Would you be able to come with me?` },
-  { id: "invite", label: "Invite to FEMORA circle", text: `Hi! I've joined a women's wellbeing circle through FEMORA. Want to come along to the next walk?` },
+  { id: "invite", label: "Invite a friend", text: `Hi! Would you like to come for a walk with me this week?` },
 ];
 
 export function ConnectionsPage() {
@@ -28,7 +28,7 @@ export function ConnectionsPage() {
 
   return (
     <div>
-      <PageHeader title="Connections" status="demonstrated" sub="Bring FEMORA into the apps you already use: contacts, WhatsApp, email, text and calendar. You stay in control; nothing is sent unless you press send." />
+      <PageHeader title="Connections" status="demonstrated" sub="Bring Muse into the apps you already use: contacts, WhatsApp, email, text and calendar. You stay in control; nothing is sent unless you press send." />
 
       <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
         <Card title={<span className="flex items-center gap-2"><ContactIcon size={18} className="text-primary" /> Trusted people</span>}
@@ -40,7 +40,7 @@ export function ConnectionsPage() {
                 {c.phone && <a className="rounded-full bg-surface-2 p-2" aria-label={`WhatsApp ${c.name}`} href={whatsappUrl(msg, c.phone)} target="_blank" rel="noreferrer"><MessageCircle size={16} /></a>}
                 {c.phone && <a className="rounded-full bg-surface-2 p-2" aria-label={`Text ${c.name}`} href={smsUrl(c.phone, msg)}><Smartphone size={16} /></a>}
                 {c.phone && <a className="rounded-full bg-surface-2 p-2" aria-label={`Call ${c.name}`} href={`tel:${c.phone}`}><Phone size={16} /></a>}
-                {c.email && <a className="rounded-full bg-surface-2 p-2" aria-label={`Email ${c.name}`} href={emailUrl(c.email, "From FEMORA", msg)}><Mail size={16} /></a>}
+                {c.email && <a className="rounded-full bg-surface-2 p-2" aria-label={`Email ${c.name}`} href={emailUrl(c.email, "A note from me", msg)}><Mail size={16} /></a>}
                 <button aria-label={`Remove ${c.name}`} className="p-2 text-muted hover:text-danger" onClick={() => setContacts((cs) => cs.filter((x) => x.id !== c.id))}><Trash2 size={15} /></button>
               </li>))}</ul>)}
           <form className="mt-4 grid grid-cols-2 gap-2 border-t border-line pt-4" onSubmit={(e) => { e.preventDefault(); if (!form.name.trim()) return; setContacts((c) => [...c, { id: uid(), ...form, name: form.name.trim() }]); setForm({ name: "", phone: "", email: "", role: "Trusted contact" }); }}>
@@ -50,7 +50,7 @@ export function ConnectionsPage() {
             <Field label="Email"><input type="email" className={inputCls} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
             <div className="col-span-2"><Button type="submit" variant="primary"><UserPlus size={16} /> Add person</Button></div>
           </form>
-          <p className="mt-2 text-xs text-muted">Contacts are stored only in this browser. Please use fictional details in the public demo.</p>
+          <p className="mt-2 text-xs text-muted">Contacts you add are stored only in this browser and never uploaded.</p>
         </Card>
 
         <div className="space-y-5">
@@ -59,7 +59,7 @@ export function ConnectionsPage() {
             <label className="mt-3 block"><span className="sr-only">Message text</span><textarea rows={4} className={inputCls} value={msg} onChange={(e) => setMsg(e.target.value)} /></label>
             <div className="mt-3 flex flex-wrap gap-2">
               <a href={whatsappUrl(msg)} target="_blank" rel="noreferrer"><Button variant="primary"><MessageCircle size={16} /> WhatsApp</Button></a>
-              <a href={emailUrl(undefined, "From FEMORA", msg)}><Button><Mail size={16} /> Email</Button></a>
+              <a href={emailUrl(undefined, "A note from me", msg)}><Button><Mail size={16} /> Email</Button></a>
               <a href={smsUrl(undefined, msg)}><Button><Smartphone size={16} /> Text</Button></a>
               <Button onClick={async () => { if (!(await nativeShare("FEMORA", msg))) { await navigator.clipboard?.writeText(msg); alert("Copied to clipboard."); } }}><Share2 size={16} /> Share…</Button>
             </div>

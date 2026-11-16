@@ -1,93 +1,78 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { Download, FlaskConical, Plus, Stethoscope, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Camera, FileText, ImageUp, ScanLine, Stethoscope, Download } from "lucide-react";
 import { useApp } from "../../lib/app-state";
-import { Badge, Button, Card, Notice, PageHeader, StatusBadge } from "../../components/ui";
-import { HomeTest } from "./HomeTest";
-import { COMMON, RED_FLAGS, SAMPLE_REPORTS, explain, flagOf, questionsFor, triage } from "./logic";
-
-function ReportCapture({ onDone }: { onDone: () => void }) {
-  const v = useRef<HTMLVideoElement>(null);
-  const s = useRef<MediaStream | null>(null);
-  const [mode, setMode] = useState<"idle" | "camera" | "denied">("idle");
-  useEffect(() => () => s.current?.getTracks().forEach((t) => t.stop()), []);
-  const start = async () => {
-    try { s.current = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }); setMode("camera"); setTimeout(() => { if (v.current) v.current.srcObject = s.current; }); }
-    catch { setMode("denied"); }
-  };
-  const capture = () => { s.current?.getTracks().forEach((t) => t.stop()); onDone(); };
-  return (
-    <div className="space-y-3">
-      {mode === "camera" ? <><video ref={v} autoPlay playsInline muted className="aspect-video w-full rounded-f bg-black object-cover" aria-label="Camera preview" /><Button variant="primary" onClick={capture}><ScanLine size={16} /> Capture report</Button></> :
-        <div className="flex flex-wrap gap-2">
-          <Button variant="primary" onClick={start}><Camera size={16} /> Scan with camera</Button>
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-surface-2 px-4 py-2.5 text-[15px] font-medium"><ImageUp size={16} /> Upload photo or PDF<input type="file" accept="image/*,application/pdf" className="sr-only" onChange={(e) => e.target.files?.length && onDone()} /></label>
-          <Button variant="ghost" onClick={onDone}><FileText size={16} /> Use sample report</Button>
-        </div>}
-      {mode === "denied" && <p className="text-sm text-muted">Camera unavailable. Upload a photo instead, or use the sample report.</p>}
-      <p className="text-xs text-muted">Files stay in this browser. In this demo, reading the report is simulated: the fictional sample report for this profile is shown.</p>
-    </div>
-  );
-}
+import { usePersistent } from "../../lib/usePersistent";
+import { Badge, Button, Card, Field, Notice, PageHeader, inputCls } from "../../components/ui";
+import { COMMON, COMMON_TESTS, RED_FLAGS, explain, flagOf, questionsFor, triage, type LabResult } from "./logic";
 
 export function MedScanPage() {
   const { profile } = useApp();
-  const [scanned, setScanned] = useState(false);
+  const [results, setResults] = usePersistent<(LabResult & { date: string })[]>(`labs:${profile.id}`, () => []);
+  const [f, setF] = useState({ test: COMMON_TESTS[0].test, value: "", unit: COMMON_TESTS[0].unit, low: "", high: "", date: "" });
   const [red, setRed] = useState<string[]>([]);
   const [sym, setSym] = useState<string[]>([]);
   const [weeks, setWeeks] = useState(1);
   const [impact, setImpact] = useState<0 | 1 | 2 | 3>(1);
   const [result, setResult] = useState<ReturnType<typeof triage> | null>(null);
-  const report = SAMPLE_REPORTS[profile.id] ?? SAMPLE_REPORTS.bea;
-  const qs = questionsFor(report.results);
+  const qs = questionsFor(results);
   const toggle = (arr: string[], set: (x: string[]) => void, v: string) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
 
   function downloadSummary() {
-    const body = [`FEMORA MedScan summary (DEMO, fictional data) for ${profile.name}`, `Report: ${report.lab}, ${report.date}`, "",
-      ...report.results.map((r) => `- ${r.test}: ${r.value} ${r.unit} (${flagOf(r)}). ${explain(r)}`), "", "Questions for my clinician:", ...qs.map((q) => `- ${q}`),
-      ...(result ? ["", `Symptom check: ${result.level}. ${result.text}`, `Symptoms: ${sym.join(", ") || "none"}; duration ${weeks} weeks; impact ${impact}/3`] : []),
-      "", "Educational summary, not a diagnosis."].join("\n");
+    const body = [`Lab results summary for ${profile.name}, prepared ${new Date().toLocaleDateString()} (entered by the user)`, "",
+      ...results.map((r) => `- ${r.test} (${r.date || "date not set"}): ${r.value} ${r.unit}, ${flagOf(r)}. ${explain(r)}`), "", "Questions for my clinician:", ...qs.map((q) => `- ${q}`),
+      ...(result ? ["", `Symptom check: ${result.level}. ${result.text}`] : []), "", "Educational summary, not a diagnosis."].join("\n");
     const url = URL.createObjectURL(new Blob([body], { type: "text/plain" }));
-    const a = document.createElement("a"); a.href = url; a.download = "femora-medscan-summary.txt"; a.click(); URL.revokeObjectURL(url);
+    const a = document.createElement("a"); a.href = url; a.download = "lab-summary.txt"; a.click(); URL.revokeObjectURL(url);
   }
 
   return (
     <div>
-      <PageHeader title="MedScan" status="simulated" sub="Understand your lab results and symptoms now, without waiting for an appointment, then walk into your next visit prepared." />
-      <Notice tone="warn">MedScan explains and prepares; it does not diagnose or replace a clinician. Sample results are fictional. In an emergency, call your local emergency number.</Notice>
+      <PageHeader title="MedScan" sub="Understand your lab results and symptoms right away, and walk into your next appointment prepared." />
+      <Notice tone="warn">MedScan explains; it doesn't diagnose or replace a clinician. Results are compared only with the reference range printed on your own report. In an emergency, call your local emergency number.</Notice>
 
-      <div className="mt-5"><HomeTest onResults={() => setScanned(true)} /></div>
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.2fr_1fr]">
-        <Card title={<span className="flex items-center gap-2"><ScanLine size={18} className="text-primary" /> Scan a lab report</span>} actions={scanned ? <StatusBadge status="simulated" /> : undefined}>
-          {!scanned ? <ReportCapture onDone={() => setScanned(true)} /> : (
-            <div>
-              <p className="text-sm text-muted">{report.lab} · {new Date(report.date).toLocaleDateString()} · ranges are taken from the report and vary between labs</p>
-              <ul className="mt-3 space-y-3">{report.results.map((r) => { const f = flagOf(r); return (
-                <li key={r.test} className="rounded-f-sm bg-surface-2 p-3">
-                  <div className="flex items-center gap-2"><b>{r.test}</b><Badge tone={f === "normal" ? "good" : "warn"}>{f}</Badge><span className="ml-auto font-display text-xl">{r.value} <span className="text-sm text-muted">{r.unit}</span></span></div>
-                  <p className="text-sm text-muted">{r.what}</p><p className="mt-1 text-sm">{explain(r)}</p>
-                </li>); })}</ul>
-              {qs.length > 0 && <div className="mt-4"><h4 className="font-medium">Questions to ask your clinician</h4><ul className="mt-1 list-disc pl-5 text-sm">{qs.map((q) => <li key={q}>{q}</li>)}</ul></div>}
-              <div className="mt-4 flex flex-wrap gap-2"><Button variant="primary" onClick={downloadSummary}><Download size={16} /> Download summary</Button><Button onClick={() => setScanned(false)}>Scan another</Button></div>
-            </div>)}
+        <Card title={<span className="flex items-center gap-2"><FlaskConical size={18} className="text-primary" /> My lab results</span>} actions={results.length ? <Button size="sm" onClick={downloadSummary}><Download size={14} /> Summary</Button> : undefined}>
+          {results.length === 0 ? <p className="text-sm text-muted">Enter a result from your report to see a plain-language explanation.</p> : (
+            <ul className="space-y-3">{results.map((r, i) => { const fl = flagOf(r); return (
+              <li key={i} className="rounded-f-sm bg-surface-2 p-3">
+                <div className="flex items-center gap-2"><b>{r.test}</b><Badge tone={fl === "normal" ? "good" : "warn"}>{fl}</Badge><span className="ml-auto font-display text-xl">{r.value} <span className="text-sm text-muted">{r.unit}</span></span>
+                  <button aria-label={`Delete ${r.test}`} className="text-muted hover:text-danger" onClick={() => setResults((rs) => rs.filter((_, j) => j !== i))}><Trash2 size={15} /></button></div>
+                {r.what && <p className="text-sm text-muted">{r.what}</p>}<p className="mt-1 text-sm">{explain(r)}</p>
+              </li>); })}</ul>)}
+          {qs.length > 0 && <div className="mt-4"><h4 className="font-medium">Questions to ask your clinician</h4><ul className="mt-1 list-disc pl-5 text-sm">{qs.map((q) => <li key={q}>{q}</li>)}</ul></div>}
+          <form className="mt-4 grid grid-cols-2 gap-2 border-t border-line pt-4 sm:grid-cols-3" onSubmit={(e) => { e.preventDefault(); const v = Number(f.value); if (!f.test || Number.isNaN(v) || f.value === "") return;
+            const meta = COMMON_TESTS.find((t) => t.test === f.test);
+            setResults((rs) => [...rs, { test: f.test, value: v, unit: f.unit, low: f.low === "" ? undefined : Number(f.low), high: f.high === "" ? undefined : Number(f.high), what: meta?.what ?? "", date: f.date }]);
+            setF({ ...f, value: "", low: "", high: "" }); }}>
+            <Field label="Test"><input list="tests" className={inputCls} value={f.test} onChange={(e) => { const m = COMMON_TESTS.find((t) => t.test === e.target.value); setF({ ...f, test: e.target.value, unit: m?.unit ?? f.unit }); }} />
+              <datalist id="tests">{COMMON_TESTS.map((t) => <option key={t.test} value={t.test} />)}</datalist></Field>
+            <Field label="Your value"><input type="number" step="any" className={inputCls} value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} required /></Field>
+            <Field label="Unit"><input className={inputCls} value={f.unit} onChange={(e) => setF({ ...f, unit: e.target.value })} /></Field>
+            <Field label="Range low (from report)"><input type="number" step="any" className={inputCls} value={f.low} onChange={(e) => setF({ ...f, low: e.target.value })} /></Field>
+            <Field label="Range high (from report)"><input type="number" step="any" className={inputCls} value={f.high} onChange={(e) => setF({ ...f, high: e.target.value })} /></Field>
+            <Field label="Test date"><input type="date" className={inputCls} value={f.date} onChange={(e) => setF({ ...f, date: e.target.value })} /></Field>
+            <div className="col-span-full"><Button type="submit" variant="primary"><Plus size={16} /> Add result</Button></div>
+          </form>
+          <p className="mt-2 text-xs text-muted">Photo/PDF reading (OCR) needs a secure processing service and is planned; it isn't available yet.</p>
         </Card>
 
         <Card title={<span className="flex items-center gap-2"><Stethoscope size={18} className="text-primary" /> Quick symptom check</span>}>
           <fieldset><legend className="text-sm font-medium text-danger">Any of these right now?</legend>
-            <div className="mt-1 grid gap-1">{RED_FLAGS.map((f) => <label key={f} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={red.includes(f)} onChange={() => toggle(red, setRed, f)} />{f}</label>)}</div></fieldset>
+            <div className="mt-1 grid gap-1">{RED_FLAGS.map((x) => <label key={x} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={red.includes(x)} onChange={() => toggle(red, setRed, x)} />{x}</label>)}</div></fieldset>
           <fieldset className="mt-4"><legend className="text-sm font-medium">What are you experiencing?</legend>
             <div className="mt-1 flex flex-wrap gap-2">{COMMON.map((s) => <button type="button" key={s} aria-pressed={sym.includes(s)} onClick={() => toggle(sym, setSym, s)} className={`rounded-full px-3 py-1 text-sm ${sym.includes(s) ? "bg-primary text-primary-ink" : "bg-surface-2"}`}>{s}</button>)}</div></fieldset>
           <label className="mt-4 block text-sm">For how many weeks? <b>{weeks}</b><input type="range" min={0} max={26} value={weeks} onChange={(e) => setWeeks(Number(e.target.value))} className="w-full" /></label>
           <fieldset className="mt-2"><legend className="text-sm">How much does it affect your daily life?</legend>
-            <div className="mt-1 flex gap-2">{["Not at all", "A little", "A lot", "Severely"].map((l, i) => <button type="button" key={l} aria-pressed={impact === i} onClick={() => setImpact(i as 0 | 1 | 2 | 3)} className={`rounded-full px-3 py-1 text-sm ${impact === i ? "bg-primary text-primary-ink" : "bg-surface-2"}`}>{l}</button>)}</div></fieldset>
+            <div className="mt-1 flex flex-wrap gap-2">{["Not at all", "A little", "A lot", "Severely"].map((l, i) => <button type="button" key={l} aria-pressed={impact === i} onClick={() => setImpact(i as 0 | 1 | 2 | 3)} className={`rounded-full px-3 py-1 text-sm ${impact === i ? "bg-primary text-primary-ink" : "bg-surface-2"}`}>{l}</button>)}</div></fieldset>
           <Button variant="primary" className="mt-4" onClick={() => setResult(triage(red, sym, weeks, impact))}>Check now</Button>
           {result && (
             <div className={`mt-4 rounded-f-sm p-3 ${result.level === "emergency" ? "bg-danger/12" : result.level === "appointment" ? "bg-warn/15" : "bg-good/12"}`} role="status">
               <Badge tone={result.level === "emergency" ? "danger" : result.level === "appointment" ? "warn" : "good"}>{result.level === "emergency" ? "Urgent" : result.level === "appointment" ? "See a clinician soon" : "Self-care & track"}</Badge>
               <p className="mt-1 text-sm">{result.text}</p>
-              {result.level === "appointment" && <p className="mt-1 text-sm"><Link className="text-primary underline" to="/app/free-care">Find a free consultation near you</Link></p>}
+              {result.level === "appointment" && <p className="mt-1 text-sm"><Link className="text-primary underline" to="/app/reminders">Add an appointment and save your questions</Link></p>}
             </div>)}
-          <p className="mt-3 text-xs text-muted">Rule-based triage for demonstration; it needs clinical review before real-world use.</p>
+          <p className="mt-3 text-xs text-muted">Rule-based guidance pending clinical review. It never uses an AI model for urgency decisions.</p>
         </Card>
       </div>
     </div>

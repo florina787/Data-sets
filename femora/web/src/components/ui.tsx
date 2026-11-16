@@ -39,9 +39,9 @@ export function Badge({ children, tone = "neutral", title }: { children: ReactNo
 export type Status = "demonstrated" | "simulated" | "planned" | "validated";
 export function StatusBadge({ status }: { status: Status }) {
   const map: Record<Status, [string, Tone, string]> = {
-    demonstrated: ["Working demo", "good", "Runs in this prototype on synthetic data"],
-    simulated: ["Simulation", "warn", "Scripted behaviour; no live service is connected"],
-    planned: ["Planned", "neutral", "On the roadmap, not built yet"],
+    demonstrated: ["Available", "good", "Works today in this app"],
+    simulated: ["Preview", "warn", "Partially available; see notes on the page"],
+    planned: ["Coming", "neutral", "On the roadmap, not built yet"],
     validated: ["Clinically validated", "primary", "Passed clinical evaluation"],
   };
   const [label, tone, title] = map[status];
@@ -75,9 +75,9 @@ export function Field({ label, children, hint }: { label: string; children: Reac
 
 export function PageHeader({ title, sub, actions, status }: { title: string; sub?: ReactNode; actions?: ReactNode; status?: Status }) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <header className="f-enter mb-6 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <div className="flex items-center gap-2"><h1 className="font-display text-3xl">{title}</h1>{status && <StatusBadge status={status} />}</div>
+        <div className="flex items-center gap-2"><h1 className="font-display text-4xl">{title}</h1>{status && <StatusBadge status={status} />}</div>
         {sub && <p className="mt-1 max-w-2xl text-muted">{sub}</p>}
       </div>
       {actions}
@@ -89,7 +89,7 @@ export function Logo({ size = 30 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
       <defs>
-        <linearGradient id="femora-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#7fa6dd" /><stop offset=".6" stopColor="#6c5fb3" /><stop offset="1" stopColor="#1f2a44" /></linearGradient>
+        <linearGradient id="femora-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f0dcb0" /><stop offset=".6" stopColor="#b8935a" /><stop offset="1" stopColor="#3a2e1f" /></linearGradient>
         <clipPath id="femora-c"><circle cx="50" cy="50" r="44" /></clipPath>
       </defs>
       <circle cx="50" cy="50" r="44" fill="var(--f-surface-2)" />

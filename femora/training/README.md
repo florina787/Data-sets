@@ -9,7 +9,7 @@
 5. Never diagnose, dismiss or moralise. Cite sources for health facts and suggest a clinician when it would help.
 6. Encourage real human connection. The AI never replaces it.
 
-**All dialogues are synthetic** and written for this project; no real user data. Food numbers match the demo persona's fictional log.
+**All dialogues are synthetic** and written for this project; no real user data. Food numbers in the examples are illustrative.
 
 Uses:
 - Few-shot examples in the live model's prompt (`web/src/modules/conversation/persona.ts` holds the system prompt).

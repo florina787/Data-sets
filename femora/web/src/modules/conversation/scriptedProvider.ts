@@ -1,5 +1,5 @@
-// SIMULATED provider for the static GitHub Pages demo. Deterministic intent rules + templated, reviewed text.
-// It is labelled "Simulation" everywhere in the UI. A live provider (see liveProvider.ts) implements the same interface.
+// Offline Muse: deterministic intent rules + a reviewed response library. Works without any model or network.
+// Shown as "Offline" in the UI. A live provider (see liveProvider.ts) implements the same interface.
 import type { ChatProvider, Reply, ReplyContext } from "./types";
 import { companionize, encourager, precise } from "./persona";
 
@@ -148,7 +148,7 @@ const RULES: Rule[] = [
   { test: /\bprotein\b/, reply: (c) => ({
     text: `Over the last ${c.food.weekDays} days you logged **${r1(c.food.weekProtein)} g of protein**, about **${r1(c.food.weekProtein / Math.max(c.food.weekDays, 1))} g a day**, against your goal of ${c.food.proteinTarget} g.\n` +
       "These totals come straight from your food log (estimates, not lab measurements). Protein helps maintain muscle, which naturally declines with age." +
-      (c.profile.diet.toLowerCase().includes("veg") ? "\nVegetarian sources that fit your log: dal, curd, paneer, tofu, chickpeas." : ""),
+      ((c.profile.diet ?? "").toLowerCase().includes("veg") ? "\nVegetarian sources that fit your log: dal, curd, paneer, tofu, chickpeas." : ""),
     followUps: ["Suggest meals from my cuisine", "How is my calcium?", "Open my food log"],
     actions: [{ kind: "open", label: "Open food log", payload: "/app/food" }],
   }) },
@@ -159,11 +159,11 @@ const RULES: Rule[] = [
     actions: [{ kind: "open", label: "Open food log", payload: "/app/food" }],
   }) },
   { test: /\b(alcohol|wine|drink)/, reply: (c) => ({
-    text: `You logged alcohol on **${c.food.weekAlcoholDays} of the last ${c.food.weekDays} days**. I don't have sleep logs linked yet, so I can't compare the two honestly. Once sleep tracking is on, I'll show both side by side, as a pattern rather than proof of cause.`,
+    text: `You logged alcohol on **${c.food.weekAlcoholDays} of the last ${c.food.weekDays} days**. Sleep tracking isn't recorded yet, so I can't compare the two honestly. Once sleep tracking is on, I'll show both side by side, as a pattern rather than proof of cause.`,
     followUps: ["How much protein did I eat this week?", "Help me sleep better"],
   }) },
   { test: /\b(eat|food|meal|recipe|cook|hungry|diet|suggest)/, reply: (c) => ({
-    text: `Here are a few ideas from ${c.profile.cuisine.join(" and ")} cooking that bring protein, fiber and calcium together:\n` +
+    text: `Here are a few ideas${c.profile.cuisine.length ? ` from ${c.profile.cuisine.join(" and ")} cooking` : ""} that bring protein, fiber and calcium together:\n` +
       (c.profile.cuisine.includes("South Asia") ? "- Dal with roti and a bowl of curd\n- Palak paneer with brown rice\n- Sprouted moong salad with lemon" :
        c.profile.cuisine.includes("East Asia") ? "- Tofu stir-fry with greens\n- Salmon with rice and miso soup\n- Edamame as a snack" :
        c.profile.cuisine.includes("Latin America") ? "- Black beans and rice with salsa\n- Chicken tacos on corn tortillas with cheese\n- Pozole with lots of vegetables" :
@@ -218,8 +218,8 @@ const FALLBACK: Record<string, string> = {
 };
 
 export const scriptedProvider: ChatProvider = {
-  id: "scripted-demo",
-  label: "Demo responses (simulation)",
+  id: "muse-offline",
+  label: "Muse offline (rule-based responses)",
   live: false,
   async respond(ctx) {
     const t = ctx.text.toLowerCase();

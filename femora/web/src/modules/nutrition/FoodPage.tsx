@@ -59,7 +59,7 @@ export function FoodPage() {
 
   return (
     <div>
-      <PageHeader title="Food & nutrition" status="demonstrated"
+      <PageHeader title="Food & nutrition"
         sub={<>{location ? <>Eating in <b>{location.city}</b> ({location.region}). </> : null}Log meals from any cuisine in the world. Numbers are deterministic estimates from a curated sample database. Edit portions any time.</>}
         actions={<div className="flex items-center gap-2" aria-label="Choose day">
           <Button size="sm" aria-label="Previous day" onClick={() => setDate((d) => addDays(d, -1))}><ChevronLeft size={16} /></Button>
@@ -78,7 +78,7 @@ export function FoodPage() {
             </form>
             {scan && <FoodScanner region={location?.region} onClose={() => setScan(false)} onAdd={(f) => add(f.id)} />}
             {nlNote && <p className="mt-2 text-sm text-muted" role="status">{nlNote}</p>}
-            <p className="mt-2 text-xs text-muted">Natural-language logging uses a deterministic text matcher in this demo. The camera scanner captures a real photo; dish recognition is simulated.</p>
+            <p className="mt-2 text-xs text-muted">Natural-language logging uses a deterministic text matcher in this demo. Scan takes a photo for your record and lets you pick the dish.</p>
           </Card>
 
           <Card title="Meals">

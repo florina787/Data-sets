@@ -35,7 +35,7 @@ export interface ReplyContext {
   mode: Mode;
   brief?: boolean;            // "precise" answers requested
   history: Message[];
-  profile: { name: string; stage: string; cuisine: string[]; diet: string; livesAlone: boolean };
+  profile: { name: string; stage?: string; cuisine: string[]; diet?: string; livesAlone?: boolean };
   memory: string[];
   food: { weekProtein: number; weekDays: number; weekAlcoholDays: number; weekCaffeineAvg: number; todayCalcium: number; calciumTarget: number; proteinTarget: number };
 }

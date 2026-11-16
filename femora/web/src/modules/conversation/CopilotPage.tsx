@@ -4,8 +4,8 @@ import { Archive, Download, Mic, Pencil, Plus, Search, Send, Trash2, ArchiveRest
 import { useApp } from "../../lib/app-state";
 import { uid } from "../../lib/storage";
 import { Markdown } from "../../lib/markdown";
-import { Badge, Button, Notice, StatusBadge, inputCls } from "../../components/ui";
-import { STAGE_LABEL } from "../../data/demo/profiles";
+import { Badge, Button, Notice, inputCls } from "../../components/ui";
+import { STAGE_LABEL } from "../../data/examples/profiles";
 import { foodFacts } from "../nutrition/summary";
 import { MODES, type Action, type Message, type Mode } from "./types";
 import { reply, currentProvider } from "./router";
@@ -47,14 +47,10 @@ export function CopilotPage() {
     setTyping("");
     const r = await reply({
       text: t, mode, brief, history: [...conv.messages, userMsg],
-      profile: { name: app.profile.name, stage: STAGE_LABEL[app.profile.stage], cuisine: app.profile.cuisine, diet: app.profile.diet, livesAlone: app.profile.livesAlone },
+      profile: { name: app.profile.name, stage: app.profile.stage ? STAGE_LABEL[app.profile.stage] : undefined, cuisine: app.profile.cuisine, diet: app.profile.diet, livesAlone: app.profile.livesAlone },
       memory: app.memoryEnabled ? app.memory.map((m) => m.text) : [],
       food: foodFacts(app.profile.id),
     });
-    // Simulated streaming: reveal word by word (instant under reduced motion / tests).
-    const words = r.text.split(/(\s+)/);
-    const fast = typeof window.matchMedia !== "function" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fast) for (let i = 0; i < words.length; i += 3) { setTyping(words.slice(0, i + 3).join("")); await new Promise((res) => setTimeout(res, 18)); }
     setTyping(null);
     addMessage(conv.id, { id: uid(), role: "assistant", text: r.text, mode, at: Date.now(), sources: r.sources, actions: r.actions, followUps: r.followUps, memory: r.memory, safety: r.safety, provider: r.provider });
   }
@@ -109,11 +105,11 @@ export function CopilotPage() {
       </aside>
 
       {/* Chat */}
-      <section className="flex min-h-0 flex-col overflow-hidden rounded-f bg-surface shadow-f" aria-label="FEMORA copilot">
+      <section className="flex min-h-0 flex-col overflow-hidden rounded-f bg-surface shadow-f" aria-label="Muse conversation">
         <header className="flex flex-wrap items-center gap-2 border-b border-line px-5 py-3">
-          <h1 className="font-display text-xl">FEMORA</h1>
-          <StatusBadge status={currentProvider().live ? "demonstrated" : "simulated"} />
-          <span className="text-xs text-muted">Talking as {app.profile.name} (fictional) · {currentProvider().label}</span>
+          <h1 className="font-display text-xl">Muse</h1>
+          <Badge tone={currentProvider().live ? "good" : "neutral"}>{currentProvider().live ? "Model connected" : "Offline mode"}</Badge>
+          <span className="text-xs text-muted">{currentProvider().label}</span>
           <label className="ml-auto flex items-center gap-2 text-sm"><input type="checkbox" checked={brief} onChange={(e) => setBrief(e.target.checked)} /> Brief answers</label>
           <div className="flex lg:hidden"><Button size="sm" onClick={() => { const c = newConversation(mode); upsert(c); setActiveId(c.id); }}><Plus size={14} /> New</Button></div>
         </header>
@@ -153,7 +149,7 @@ export function CopilotPage() {
               </div>
             </div>
           ))}
-          {typing !== null && <div className="flex justify-start"><div className="max-w-[85%] rounded-f bg-surface-2 px-4 py-3">{typing ? <Markdown text={typing} /> : <span className="text-muted">FEMORA is thinking…</span>}</div></div>}
+          {typing !== null && <div className="flex justify-start"><div className="max-w-[85%] rounded-f bg-surface-2 px-4 py-3">{typing ? <Markdown text={typing} /> : <span className="inline-flex items-center gap-2 text-muted"><span className="h-2 w-2 animate-pulse rounded-full bg-accent" /> Muse is thinking…</span>}</div></div>}
           {active && !typing && (() => { const last = active.messages[active.messages.length - 1]; return last?.role === "assistant" && last.followUps?.length ? (
             <div className="flex flex-wrap gap-2">{last.followUps.map((f) => <button key={f} onClick={() => send(f)} className="rounded-full border border-line px-3 py-1.5 text-sm hover:bg-surface-2">{f}</button>)}</div>) : null; })()}
         </div>
@@ -166,14 +162,14 @@ export function CopilotPage() {
 
         <form className="border-t border-line p-4" onSubmit={(e) => { e.preventDefault(); send(draft); }}>
           <div className="flex items-end gap-2">
-            <label className="flex-1"><span className="sr-only">Message FEMORA</span>
+            <label className="flex-1"><span className="sr-only">Message Muse</span>
               <textarea rows={2} className={inputCls + " resize-none"} placeholder="Write as much as you like…" value={draft}
                 onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(draft); } }} />
             </label>
             <Button aria-label="Voice input" onClick={voice} className={listening ? "!bg-warm text-white" : ""}><Mic size={18} /></Button>
             <Button type="submit" variant="primary" aria-label="Send" disabled={!draft.trim() || typing !== null}><Send size={18} /></Button>
           </div>
-          <p className="mt-2 text-xs text-muted">Enter to send · Shift+Enter for a new line. FEMORA is an AI companion, not a clinician. Responses in this demo are scripted simulations and cite {SOURCES.length} reference sources. In an emergency, call your local emergency number.</p>
+          <p className="mt-2 text-xs text-muted">Enter to send · Shift+Enter for a new line. Muse is an AI companion, not a clinician. {currentProvider().live ? "Replies come from your connected model; numbers and safety rules come from Muse’s own tools." : `Offline mode uses Muse’s reviewed response library and cites ${SOURCES.length} reference sources.`} In an emergency, call your local emergency number.</p>
         </form>
       </section>
       {app.memoryEnabled && <span className="sr-only">Memory is on</span>}
