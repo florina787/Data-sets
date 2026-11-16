@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-import shutil
-
 from app import auth
 from app.auth import User
 from app.config import get_settings
 from app.db import init_db, kv_set, row
 from app.enterprise import data as enterprise_data
 from app.errors import Conflict
+from app.fsutil import remove_tree
 from app.graph import flows, jobs
 from app.memory import maintenance as memory_maintenance
 from app.records import activity, audit
@@ -27,7 +26,7 @@ def reset_demo(actor: str = "system") -> dict:
         for child in settings.var_dir.iterdir():
             if child == settings.memory_dir:
                 continue  # conversation memory and execution history survive a demo reset
-            shutil.rmtree(child) if child.is_dir() else child.unlink()
+            remove_tree(child) if child.is_dir() else child.unlink()
     settings.var_dir.mkdir(parents=True, exist_ok=True)
     init_db()
     auth.seed_accounts()

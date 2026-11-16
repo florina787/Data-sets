@@ -18,6 +18,7 @@ from pathlib import Path
 
 from app.config import FIXTURES, get_settings
 from app.errors import ToolRejected
+from app.fsutil import remove_tree
 from app.tools import runner
 
 GIT_IDENTITY = ["-c", "user.name=FoodCare Enterprise Copilot", "-c", "user.email=agents@foodcare-copilot.invalid",
@@ -57,7 +58,7 @@ def init_repository() -> str:
     path = repo()
     (settings.var_dir / "sandbox-home").mkdir(parents=True, exist_ok=True)
     if path.exists():
-        shutil.rmtree(path)
+        remove_tree(path)
     shutil.copytree(FIXTURES / "storefront" / "stages" / "v1.0-baseline", path,
                     ignore=shutil.ignore_patterns("__pycache__", ".ruff_cache", "*.pyc"))
     _git(["init", "-q", "-b", "main"], path)

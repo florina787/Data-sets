@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import ast
 import json
-import shutil
 import sys
 from pathlib import Path
 
 from app.config import FIXTURES, get_settings
 from app.db import new_id, now_iso, session
+from app.fsutil import remove_tree
 from app.records import evidence
 from app.tools import runner, workspace
 
@@ -90,5 +90,5 @@ def run_static_checks(run_id: str | None, revision: str) -> list[dict]:
         "tool": "forbidden-call-scan", "status": scan_status, "findings": scan,
         "exit_code": 0 if not scan else 1,
     })
-    shutil.rmtree(work, ignore_errors=True)
+    remove_tree(work, ignore_errors=True)
     return results

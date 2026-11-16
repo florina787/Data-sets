@@ -55,3 +55,29 @@ def test_greeting_gets_a_friendly_help_answer(platform):
     assert engine.ask("how are you?", user("val.viewer"))["answer"].startswith("Hi! I'm Jerry, FoodCare's read-only "
                                                                            "copilot. I'm running well")
     assert engine.ask("thanks!", user("val.viewer"))["answer"].startswith("You're welcome!")
+
+
+def test_remove_tree_deletes_read_only_files_like_git_objects(tmp_path):
+    import stat
+
+    from app import fsutil
+
+    obj = tmp_path / "repo" / ".git" / "objects" / "02" / "f9910e"
+    obj.parent.mkdir(parents=True)
+    obj.write_bytes(b"blob")
+    obj.chmod(stat.S_IREAD)  # git writes objects read-only; Windows then refuses to delete them
+    calls = []
+
+    def windows_like_unlink(path, *a, **kw):
+        if not os.access(path, os.W_OK) or not (os.stat(path).st_mode & stat.S_IWRITE):
+            calls.append(path)
+            raise PermissionError(5, "Access is denied", str(path))
+        return real_unlink(path, *a, **kw)
+
+    real_unlink = os.unlink
+    os.unlink = windows_like_unlink
+    try:
+        fsutil.remove_tree(tmp_path / "repo")
+    finally:
+        os.unlink = real_unlink
+    assert calls and not (tmp_path / "repo").exists()
