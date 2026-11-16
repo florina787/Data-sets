@@ -22,7 +22,8 @@ from pathlib import Path
 from app.config import get_settings
 from app.errors import ToolRejected
 
-SAFE_ENV_KEYS = ("PATH", "LANG", "LC_ALL", "TZ", "SYSTEMROOT")
+# SYSTEMROOT, TEMP/TMP, PATHEXT and COMSPEC are needed by Windows processes; none holds credentials.
+SAFE_ENV_KEYS = ("PATH", "LANG", "LC_ALL", "TZ", "SYSTEMROOT", "TEMP", "TMP", "PATHEXT", "COMSPEC")
 
 
 @dataclass

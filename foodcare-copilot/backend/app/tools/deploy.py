@@ -30,15 +30,45 @@ def _pid_file() -> Path:
 
 
 def _alive(pid: int) -> bool:
+    """True while ``pid`` is our storefront process. Works on Windows, macOS and Linux.
+
+    (On Windows, ``os.kill(pid, 0)`` is not a harmless probe: it sends a console control
+    event, so psutil is used instead.)
+    """
+    import psutil
+
     try:
-        os.kill(pid, 0)
-    except (ProcessLookupError, PermissionError):
+        proc = psutil.Process(pid)
+        if proc.status() == psutil.STATUS_ZOMBIE:
+            return False
+        try:
+            return "storefront.main" in " ".join(proc.cmdline())
+        except (psutil.AccessDenied, psutil.ZombieProcess):
+            return True
+    except (psutil.NoSuchProcess, psutil.AccessDenied):
         return False
-    cmdline = Path(f"/proc/{pid}/cmdline")
-    if cmdline.exists():
-        text = cmdline.read_bytes().decode(errors="replace")
-        return "storefront.main" in text and "zombie" not in Path(f"/proc/{pid}/status").read_text()
-    return True
+
+
+def _signal_tree(pid: int, force: bool) -> None:
+    """Stop the storefront and anything it started (POSIX: its process group)."""
+    if os.name == "posix":
+        try:
+            os.killpg(pid, signal.SIGKILL if force else signal.SIGTERM)
+        except (ProcessLookupError, PermissionError):
+            pass
+        return
+    import psutil
+
+    try:
+        parent = psutil.Process(pid)
+        procs = parent.children(recursive=True) + [parent]
+    except psutil.NoSuchProcess:
+        return
+    for p in procs:
+        try:
+            p.kill() if force else p.terminate()
+        except psutil.NoSuchProcess:
+            pass
 
 
 def current_process() -> dict | None:
@@ -67,19 +97,17 @@ def stop_current(lifecycle: list[dict] | None = None) -> dict | None:
     if info is None:
         return None
     pid = info["pid"]
-    try:
-        os.killpg(pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
+    _signal_tree(pid, force=False)
     deadline = time.time() + 8
     while time.time() < deadline and _alive(pid):
         time.sleep(0.1)
     if _alive(pid):
-        os.killpg(pid, signal.SIGKILL)
-    try:
-        os.waitpid(pid, os.WNOHANG)
-    except ChildProcessError:
-        pass
+        _signal_tree(pid, force=True)
+    if os.name == "posix":
+        try:
+            os.waitpid(pid, os.WNOHANG)
+        except ChildProcessError:
+            pass
     _pid_file().unlink(missing_ok=True)
     if lifecycle is not None:
         lifecycle.append({"ts": now_iso(), "event": "stopped", "pid": pid,
@@ -122,7 +150,8 @@ def _start(release_id: str, revision: str, deployment_id: str) -> tuple[int, Pat
             "--host", "127.0.0.1", "--port", str(settings.storefront_port), "--log-level", "warning"]
     with open(log_path, "ab") as log:
         proc = subprocess.Popen(argv, cwd=release_dir, env=env, stdout=log, stderr=subprocess.STDOUT,
-                                stdin=subprocess.DEVNULL, start_new_session=True)
+                                stdin=subprocess.DEVNULL, start_new_session=os.name == "posix",
+                                creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
     return proc.pid, log_path
 
 
@@ -163,10 +192,7 @@ def deploy(release_id: str, revision: str, actor: str, action: str) -> dict:
             lifecycle.append({"ts": now_iso(), "event": "health_check_passed", "revision": revision})
         else:
             lifecycle.append({"ts": now_iso(), "event": "health_check_failed", "detail": health_info})
-            try:
-                os.killpg(pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
+            _signal_tree(pid, force=True)
     with session() as conn:
         conn.execute(
             "UPDATE deployments SET pid = ?, status = ?, finished_at = ?, health_json = ?, log_path = ?,"

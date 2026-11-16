@@ -25,6 +25,9 @@ WAREHOUSES = {"toronto": "DC-TOR", "montreal": "DC-MTL", "montréal": "DC-MTL", 
 CHANNELS = {"retail": "retail", "grocery": "retail", "marketplace": "marketplace", "web store": "web",
             "online store": "web", "webstore": "web", "website": "web", "e-commerce": "web"}
 
+GREETING = re.compile(r"^\s*(hi|hello|hey|hiya|good (morning|afternoon|evening)|thanks|thank you|yo)\b[\s!.,?]*"
+                      r"(jerry|copilot|there)?[\s!.,?]*$", re.IGNORECASE)
+
 INTENTS: dict[str, tuple[str, ...]] = {
     "sales": ("sales", "sell", "revenue", "selling", "sold", "units", "trend", "top product", "best seller",
               "bestseller", "best-selling", "turnover", "growth"),
@@ -117,6 +120,8 @@ def parse(question: str) -> Parsed:
         ranked = ["inventory"]
     elif not ranked and (skus or provinces or channels) and _has(text, "low"):
         ranked = ["inventory"]
+    if not ranked and GREETING.match(question):
+        ranked = ["help"]
     if "help" in ranked and len(ranked) > 1:
         ranked.remove("help")
     if len(ranked) > 1 and scores[ranked[1]] < scores[ranked[0]]:

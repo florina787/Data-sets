@@ -129,6 +129,16 @@ export function Conversation({ pending, onConsumed, compact = false, resume, onS
   useEffect(() => { api("/api/copilot/examples").then((d) => setExamples(d.examples)).catch(() => undefined); }, []);
   useEffect(() => { end.current?.scrollIntoView({ block: "end" }); }, [turns]);
 
+  // A conversation belongs to one account: switching accounts starts a fresh one.
+  const lastUser = useRef(user?.username);
+  useEffect(() => {
+    if (lastUser.current !== user?.username) {
+      lastUser.current = user?.username;
+      setConversation(null);
+      setTurns([]);
+    }
+  }, [user?.username]);
+
   // Resume a saved conversation (or start a new one when id is null).
   useEffect(() => {
     if (!resume) return;
@@ -152,7 +162,14 @@ export function Conversation({ pending, onConsumed, compact = false, resume, onS
     const rid = `REQ-${Math.random().toString(36).slice(2, 12)}`;
     setRequestId(mode === "live" ? rid : null);
     try {
-      const a: Answer = await post("/api/copilot/ask", { question, conversation_id: conversation, mode, request_id: rid });
+      let a: Answer;
+      try {
+        a = await post("/api/copilot/ask", { question, conversation_id: conversation, mode, request_id: rid });
+      } catch (e) {
+        // The saved conversation was deleted, reset or belongs to another account: start a new one.
+        if (!conversation || !/conversation not found/i.test((e as Error).message)) throw e;
+        a = await post("/api/copilot/ask", { question, conversation_id: null, mode, request_id: rid });
+      }
       setConversation(a.conversation_id);
       onSaved?.(a.conversation_id);
       setTurns((t) => t.map((x, i) => (i === t.length - 1 ? { ...x, answer: a } : x)));

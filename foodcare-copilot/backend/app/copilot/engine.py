@@ -23,6 +23,7 @@ from pydantic import BaseModel, Field
 from app import graphs
 from app.auth import User
 from app.config import get_settings
+from app.copilot import router
 from app.copilot.router import Parsed, parse
 from app.db import kv_get, new_id, now_iso, row, rows
 from app.enterprise import queries as q
@@ -424,8 +425,11 @@ def h_inspection(p: Parsed, c: Ctx) -> list[str]:
 
 
 def h_help(p: Parsed, c: Ctx) -> list[str]:
-    return ["I answer read-only questions about FoodCare's **sales and promotions**, **inventory**, **product "
-            "compliance**, **software delivery** (runs, tests, releases), **incidents** and **company policies**. I "
+    hello = "Hi! I'm Jerry, FoodCare's read-only copilot. " if router.GREETING.match(p.question) else ""
+    return [hello + "I answer read-only questions about FoodCare's **sales and promotions**, **inventory**, "
+            "**product compliance**, **potato inspections**, the **global supply chain** (OriginTrace: trace a site "
+            "or incident back to the farm), **software delivery** (runs, tests, releases), **incidents** and "
+            "**company policies**. I "
             "cite the data or document behind every figure. I can't take actions: approvals, deployments and fault "
             "controls stay in the workflow screens, under role permissions.",
             "Try: " + "; ".join(f"“{e}”" for e in EXAMPLES[:6])]
@@ -639,8 +643,8 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
     answered = bool(paragraphs)
     if not answered:
         paragraphs = ["I can't answer that from FoodCare's data in this demo. I only answer questions about sales "
-                      "and promotions, inventory, product compliance, software delivery, incidents and company "
-                      "policies, and I won't guess.",
+                      "and promotions, inventory, product compliance, potato inspections, the global supply chain "
+                      "(OriginTrace), software delivery, incidents and company policies, and I won't guess.",
                       "Try: " + "; ".join(f"“{e}”" for e in EXAMPLES[:5])]
     answer_mode, provenance, notice, usage = "demo", "deterministic", None, None
     live_answers = int(previous.get("live_answers", 0))
