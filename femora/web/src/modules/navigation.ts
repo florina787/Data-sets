@@ -12,7 +12,7 @@ export const NAV: NavItem[] = [
   { path: "/app/reminders", label: "Health planner", icon: BellRing, status: "demonstrated", summary: "Medication, supplements, check-ups and appointment questions" },
   { path: "/app/free-care", label: "Discover", icon: Gift, status: "demonstrated", summary: "Verified health campaigns, official programmes, yoga and spiritual zones, events you save" },
   { path: "/app/joy", label: "My Joy Map", icon: Smile, status: "demonstrated", milestone: 2, summary: "Record what brings you happiness and confidence" },
-  { path: "/app/journey", label: "Menopause journey", icon: CalendarHeart, status: "planned", milestone: 3, summary: "Menstrual and ovulation tracking, STRAW+10 stage education, symptom severity and impact" },
+  { path: "/app/journey", label: "Menopause journey", icon: CalendarHeart, status: "demonstrated", milestone: 3, summary: "Cycle calendar, symptoms, ovulation observations, stage education with uncertainty, doctor-ready summary" },
   { path: "/app/body", label: "Body, movement & mind", icon: Activity, status: "planned", milestone: 5, summary: "Walking, sleep, hip and joint pain, hair, skin, nails, brain fog and mood" },
   { path: "/app/sisterhood", label: "Global sisterhood", icon: Globe2, status: "planned", milestone: 6, summary: "Interactive MapLibre world map of support organisations, events and circles" },
   { path: "/app/care", label: "Healthcare", icon: Stethoscope, status: "planned", milestone: 7, summary: "Clinician discovery, appointments, questions and downloadable summaries" },

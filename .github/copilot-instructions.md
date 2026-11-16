@@ -21,6 +21,8 @@ FEMORA Muse: a women's health and life companion. Web app on GitHub Pages first,
 - `src/theme/tokens.css`: all colours, radii, shadows, fonts (luxury presets: onyx, emerald, midnight). Re-theme here only; components use token classes (`bg-surface`, `text-primary`, …).
 - `src/modules/notifications/engine.ts`: every notification goes through `app.notify()` → `decide()`.
 - `src/modules/muse/proactive.ts`: proactive suggestions from real records only.
+- `src/modules/journey/logic.ts`: cycle maths and STRAW+10 educational hints (never a diagnosis or final-period prediction). Symptoms share `app.symptoms` with the copilot's log actions.
+- New modules give the copilot facts via `ReplyContext` (deterministic), never raw guesses.
 - `src/components/ui.tsx`: theme-agnostic primitives. `src/modules/navigation.ts`: the single navigation registry.
 - `src/modules/<domain>/`: one folder per domain (`conversation`, `nutrition`, …), each with pure logic (`engine.ts`) separate from UI (`*Page.tsx`).
 - `src/modules/conversation/types.ts` defines `ChatProvider`. To add a model, implement it and call `setProvider`; the UI is untouched.

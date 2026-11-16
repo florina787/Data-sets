@@ -6,7 +6,7 @@ import { uid } from "./storage";
 
 export type ThemeMode = "light" | "dark";
 export type Preset = "onyx" | "emerald" | "midnight";
-export interface Symptom { id: string; profileId: string; name: string; severity: 1 | 2 | 3; at: number; source: "copilot" | "form" }
+export interface Symptom { id: string; profileId: string; name: string; severity: 1 | 2 | 3; at: number; source: "copilot" | "form"; impact?: 0 | 1 | 2 | 3; durationMin?: number; note?: string }
 export interface MemoryItem { id: string; profileId: string; text: string; at: number }
 export interface Location { region: string; city: string }
 export interface Notice { id: string; key: string; category: NotifCategory; title: string; body: string; at: number; read: boolean; link?: string; digest: boolean; feedback?: "useful" | "not-relevant" }
@@ -18,7 +18,7 @@ interface AppState {
   theme: ThemeMode; setTheme: (t: ThemeMode) => void; preset: Preset; setPreset: (p: Preset) => void;
   memoryEnabled: boolean; setMemoryEnabled: (b: boolean) => void;
   memory: MemoryItem[]; addMemory: (text: string) => void; removeMemory: (id: string) => void;
-  symptoms: Symptom[]; logSymptom: (name: string, severity?: 1 | 2 | 3, source?: Symptom["source"]) => void;
+  symptoms: Symptom[]; logSymptom: (name: string, severity?: 1 | 2 | 3, source?: Symptom["source"], extra?: Partial<Pick<Symptom, "impact" | "durationMin" | "note" | "at">>) => void; removeSymptom: (id: string) => void;
   location: Location | null; setLocation: (l: Location) => void;
   updateProfile: (patch: Partial<Profile>) => void;
   notices: Notice[]; notify: (n: NotifInput) => void; markAllRead: () => void; dismiss: (id: string) => void;
@@ -63,7 +63,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     addMemory: (text) => setMemory((m) => [...m, { id: uid(), profileId: profile.id, text, at: Date.now() }]),
     removeMemory: (id) => setMemory((m) => m.filter((x) => x.id !== id)),
     symptoms: mine(symptomsAll),
-    logSymptom: (name, severity = 2, source = "form") => setSymptoms((s) => [...s, { id: uid(), profileId: profile.id, name, severity, at: Date.now(), source }]),
+    logSymptom: (name, severity = 2, source = "form", extra = {}) => setSymptoms((s) => [...s, { id: uid(), profileId: profile.id, name, severity, at: Date.now(), source, ...extra }]),
+    removeSymptom: (id) => setSymptoms((s) => s.filter((x) => x.id !== id)),
     location: locations[profile.id] ?? null,
     setLocation: (l) => setLocations((m) => ({ ...m, [profile.id]: l })),
     updateProfile: (patch) => setEdits((e) => ({ ...e, [profile.id]: { ...e[profile.id], ...patch } })),

@@ -16,7 +16,8 @@
 | Food | ✅ | Unchanged module; starts empty; photo-assisted logging (she picks the dish). |
 | Connections | ✅ | Contacts (picker/manual), WhatsApp/email/SMS/share-sheet links, .ics. OAuth sync planned. |
 | Luxury design system | ✅ step 1 | Tokens: Onyx & Champagne (default), Emerald & Ivory, Midnight & Pearl × light/dark; editorial type (Cormorant Garamond + Outfit); route code-splitting. |
-| Journey, body dashboard, sisterhood map, Guardian, onboarding tour, cinematic media | ⏳ | Next milestones. |
+| Menopause journey | ✅ | Cycle calendar, period log (flow, pain, notes), cycle-length chart (21–35 day band), weekly symptom chart with date range, ovulation observations with contraception warning, STRAW+10 educational pattern notes with confounders that switch staging off, doctor-ready summary, Muse answers cycle questions from records only. |
+| Body dashboard, Guardian, sisterhood map, onboarding tour, cinematic media, Lighthouse | ⏳ | Next milestones, in that order. |
 
 ## 1. Architecture
 UI (`pages`, `*Page.tsx`) → domain logic (`modules/*/logic.ts`, `engine.ts`; pure, tested) → storage adapter (`lib/storage.ts`, versioned) → AI gateway (`modules/conversation/router.ts` + `ChatProvider`). Safety, scheduling, eligibility and numbers are deterministic; the LLM only writes conversation.
@@ -58,7 +59,7 @@ Expo/React Native app reusing `modules/*/logic.ts` (pure TS). Platform adapters 
 Consent-first memory; no hidden contact upload; nothing sent without her tap; private notification text; export and delete all data; rule-based crisis and urgent-symptom handling; no diagnoses, dose changes or invented intervals. Before production: clinical review of triage and copy, security testing, privacy/regulatory assessment, encrypted storage, audit logs.
 
 ## Next milestones
-1. Menopause journey (cycle calendar, symptoms, STRAW+10 education, doctor-ready report).
+1. ~~Menopause journey~~ ✅
 2. Health dashboard with reusable date-range charts.
 3. Guardian (trusted contacts, check-ins; SOS only once delivery is verified).
 4. Sisterhood map.

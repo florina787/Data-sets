@@ -4,7 +4,7 @@
 
 <br>
 
-![Tests](https://img.shields.io/badge/tests-83%20passing-3d7a58?style=for-the-badge)
+![Tests](https://img.shields.io/badge/tests-94%20passing-3d7a58?style=for-the-badge)
 ![React](https://img.shields.io/badge/React%2019-17140f?style=for-the-badge&logo=react&logoColor=e7cf9f)
 ![TypeScript](https://img.shields.io/badge/TypeScript-17140f?style=for-the-badge&logo=typescript&logoColor=e7cf9f)
 ![Vite](https://img.shields.io/badge/Vite-17140f?style=for-the-badge&logo=vite&logoColor=e7cf9f)
@@ -304,7 +304,8 @@ pie showData title 83 automated tests
 | Food & nutrition (global diary, sugar %, charts, photo-assisted logging) | ✅ Available |
 | Health planner, notification engine, MedScan, Discover, Connections | ✅ Available |
 | Luxury themes, responsive layout, route code-splitting | ✅ Available |
-| Menopause journey · body dashboard · Guardian · sisterhood map · onboarding tour | 🔜 In development |
+| Menopause journey (cycle calendar, symptoms, stage education, doctor summary) | ✅ Available |
+| Body dashboard · Guardian · sisterhood map · onboarding tour | 🔜 In development |
 | Accounts, encrypted sync, Gmail/Outlook, push notifications, mobile app, wearables | 🗺️ Roadmap (needs a server or the mobile app) |
 | Clinical validation | ⏳ Not yet; Muse is not a medical device |
 
@@ -329,7 +330,7 @@ npm run dev        # http://127.0.0.1:5174
 ```
 
 ```bash
-npm test           # 83 tests
+npm test           # 94 tests
 npm run build      # production build
 ```
 

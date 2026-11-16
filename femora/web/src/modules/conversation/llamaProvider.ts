@@ -22,6 +22,8 @@ export function contextBlock(c: ReplyContext): string {
   return [`User's first name: ${p.name}.`, p.stage ? `Self-reported stage: ${p.stage}.` : "Menopause stage: not recorded; do not assume.",
     c.memory.length ? `Approved memories: ${c.memory.join("; ")}.` : "No approved memories.",
     c.food.weekDays ? `Food log, last ${c.food.weekDays} logged days: protein ${Math.round(c.food.weekProtein)} g total; alcohol on ${c.food.weekAlcoholDays} days.` : "No food logged recently.",
+    c.journey?.lastPeriod ? `Last recorded period start: ${c.journey.lastPeriod} (${c.journey.daysSinceLast} days ago); average cycle ${c.journey.avgCycle ?? "unknown"} days.` : "No cycles recorded.",
+    c.journey?.topSymptoms14d.length ? `Symptoms logged in 14 days: ${c.journey.topSymptoms14d.map(([n, k]) => `${n} ×${k}`).join(", ")}.` : "",
     `Conversation mode: ${c.mode}.`, c.brief ? "Answer precisely and briefly." : ""].filter(Boolean).join(" ");
 }
 

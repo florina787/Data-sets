@@ -7,6 +7,8 @@ import { Markdown } from "../../lib/markdown";
 import { Badge, Button, Notice, inputCls } from "../../components/ui";
 import { STAGE_LABEL } from "../../data/examples/profiles";
 import { foodFacts } from "../nutrition/summary";
+import { journeyFacts, type Period } from "../journey/logic";
+import { load } from "../../lib/storage";
 import { MODES, type Action, type Message, type Mode } from "./types";
 import { reply, currentProvider } from "./router";
 import { exportConversation, newConversation, searchConversations, useConversations } from "./store";
@@ -50,6 +52,7 @@ export function CopilotPage() {
       profile: { name: app.profile.name, stage: app.profile.stage ? STAGE_LABEL[app.profile.stage] : undefined, cuisine: app.profile.cuisine, diet: app.profile.diet, livesAlone: app.profile.livesAlone },
       memory: app.memoryEnabled ? app.memory.map((m) => m.text) : [],
       food: foodFacts(app.profile.id),
+      journey: journeyFacts(load<Period[]>(`periods:${app.profile.id}`, []), app.symptoms),
     });
     setTyping(null);
     addMessage(conv.id, { id: uid(), role: "assistant", text: r.text, mode, at: Date.now(), sources: r.sources, actions: r.actions, followUps: r.followUps, memory: r.memory, safety: r.safety, provider: r.provider });

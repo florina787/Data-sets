@@ -19,6 +19,17 @@ const STORIES = [
 ];
 
 const RULES: Rule[] = [
+  // ---- journey facts (deterministic, from her own records)
+  { test: /\b(last period|my cycles?|cycle length|how long (are|is) my cycles?|my symptoms (this|last) (week|fortnight))\b/, reply: (c) => {
+    const j = c.journey;
+    if (!j || (!j.lastPeriod && !j.topSymptoms14d.length)) return { text: "I don't have any cycles or symptoms recorded yet, so I won't guess. If you log your period start dates and symptoms in your Menopause Journey, I can tell you about your patterns.", actions: [{ kind: "open", label: "Open Menopause Journey", payload: "/app/journey" }] };
+    const parts: string[] = [];
+    if (j.lastPeriod) parts.push(`Your last recorded period started on **${new Date(j.lastPeriod + "T12:00").toLocaleDateString()}**, ${j.daysSinceLast} days ago.`);
+    if (j.avgCycle) parts.push(`Across ${j.cyclesLogged} recorded cycle${j.cyclesLogged > 1 ? "s" : ""}, your average is **${j.avgCycle} days**.`);
+    if (j.topSymptoms14d.length) parts.push(`In the last two weeks you logged ${j.topSymptoms14d.map(([n, k]) => `${n.toLowerCase()} (${k})`).join(", ")}.`);
+    parts.push("These come straight from your records. Patterns can suggest changes, but only a clinician can assess your stage.");
+    return { text: parts.join("\n"), actions: [{ kind: "open", label: "See my journey", payload: "/app/journey" }] };
+  } },
   // ---- one companion, from safety to health: route into every feature
   { test: /\b(remind|reminder|medication|medicine|pills?|tablets?|dose|hrt)\b/, reply: () => ({
     text: "I can help you stay on track with that. In Reminders you can add each medicine or supplement with its dose and times, and I'll nudge you when a dose is due. You can mark it as taken in one tap.\nI'll also remind you about health check-ups like cervical screening, mammograms or bone density scans.",
