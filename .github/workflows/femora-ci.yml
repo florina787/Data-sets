@@ -1,0 +1,35 @@
+name: FEMORA CI
+
+on:
+  pull_request:
+    paths: ["femora/**", ".github/workflows/femora-*.yml"]
+  push:
+    branches: [master]
+    paths: ["femora/**", ".github/workflows/femora-*.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: femora/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: femora/web/package-lock.json
+      - run: npm ci
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+        env:
+          FEMORA_BASE: /${{ github.event.repository.name }}/
+      # Guard: no secrets or API keys may reach the static bundle.
+      - name: Scan bundle for secrets
+        run: "! grep -RIEn '(AIza[0-9A-Za-z_-]{30,}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|xox[bp]-)' dist"

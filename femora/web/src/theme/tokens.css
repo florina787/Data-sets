@@ -1,0 +1,82 @@
+/* FEMORA design tokens. Re-theme the whole app by editing ONLY this file (or adding a [data-theme] block).
+   Components never use raw hex values; they use these variables through Tailwind's theme mapping below. */
+@import "tailwindcss";
+
+:root {
+  --f-bg: #f6f5f9;
+  --f-surface: #ffffff;
+  --f-surface-2: #eef0f6;
+  --f-ink: #1f2a44;
+  --f-muted: #646d86;
+  --f-line: #e2e5ee;
+  --f-primary: #3f63a8;      /* sky / trust */
+  --f-primary-ink: #ffffff;
+  --f-accent: #6c5fb3;       /* lavender */
+  --f-warm: #d9705f;         /* coral, used sparingly */
+  --f-good: #3f8a66;
+  --f-warn: #b7791f;
+  --f-danger: #c2413a;
+  --f-hero-from: #3f69ad;
+  --f-hero-to: #8b7fc4;
+  --f-radius-sm: 10px;
+  --f-radius: 18px;
+  --f-radius-lg: 28px;
+  --f-shadow: 0 6px 24px rgb(31 42 68 / 0.07);
+  --f-font-body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-font-display: "Fraunces", Georgia, serif;
+  --f-motion: 180ms;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --f-bg: #121624;
+  --f-surface: #1b2133;
+  --f-surface-2: #242b40;
+  --f-ink: #e9ecf5;
+  --f-muted: #a3abc2;
+  --f-line: #2e3650;
+  --f-primary: #8fb0ec;
+  --f-primary-ink: #121624;
+  --f-accent: #a99bea;
+  --f-warm: #ef9a8b;
+  --f-good: #6cc59a;
+  --f-warn: #e2b155;
+  --f-danger: #f08a83;
+  --f-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--f-bg);
+  --color-surface: var(--f-surface);
+  --color-surface-2: var(--f-surface-2);
+  --color-ink: var(--f-ink);
+  --color-muted: var(--f-muted);
+  --color-line: var(--f-line);
+  --color-primary: var(--f-primary);
+  --color-primary-ink: var(--f-primary-ink);
+  --color-accent: var(--f-accent);
+  --color-warm: var(--f-warm);
+  --color-good: var(--f-good);
+  --color-warn: var(--f-warn);
+  --color-danger: var(--f-danger);
+  --radius-f-sm: var(--f-radius-sm);
+  --radius-f: var(--f-radius);
+  --radius-f-lg: var(--f-radius-lg);
+  --shadow-f: var(--f-shadow);
+  --font-body: var(--f-font-body);
+  --font-display: var(--f-font-display);
+}
+
+html, body { background: var(--f-bg); color: var(--f-ink); font-family: var(--f-font-body); }
+body { margin: 0; }
+* { transition-duration: var(--f-motion); }
+:focus-visible { outline: 3px solid var(--f-accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+.hero-grad { background: linear-gradient(135deg, var(--f-hero-from), var(--f-hero-to)); }
+
+/* Theme presets inspired by the user's references. Swap via the theme picker; no component changes. */
+[data-preset="forest"] { --f-primary: #2f4a3a; --f-accent: #9bc53d; --f-warm: #e08a5c; --f-hero-from: #1f3328; --f-hero-to: #4c6b4f; --f-bg: #f4f5f0; --f-surface-2: #eaede4; }
+[data-preset="indigo"] { --f-primary: #2b2f9e; --f-accent: #6d6ff0; --f-warm: #e8885f; --f-hero-from: #262a8f; --f-hero-to: #4b4fd0; --f-bg: #f6f4ef; --f-surface-2: #ecebf6; }
+[data-theme="dark"][data-preset="forest"] { --f-primary: #b9dc6e; --f-primary-ink: #142019; --f-accent: #9bc53d; --f-bg: #111813; --f-surface: #19231c; --f-surface-2: #223026; --f-line: #2c3b30; }
+[data-theme="dark"][data-preset="indigo"] { --f-primary: #a5a8ff; --f-primary-ink: #14153a; --f-accent: #8e90ff; --f-bg: #12132a; --f-surface: #1b1c3a; --f-surface-2: #25274b; --f-line: #303259; }
