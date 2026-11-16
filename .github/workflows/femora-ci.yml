@@ -30,6 +30,10 @@ jobs:
       - run: npm run build
         env:
           FEMORA_BASE: /${{ github.event.repository.name }}/
+      # Agent evaluation (promptfoo, deterministic assertions, no API keys)
+      - name: Muse agent evals
+        working-directory: femora/evals
+        run: npx -y promptfoo@latest eval -c promptfooconfig.yaml --no-cache --no-progress-bar
       # Guard: no secrets or API keys may reach the static bundle.
       - name: Scan bundle for secrets
         run: "! grep -RIEn '(AIza[0-9A-Za-z_-]{30,}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}|xox[bp]-)' dist"

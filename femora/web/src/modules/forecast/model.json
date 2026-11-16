@@ -1,0 +1,401 @@
+{
+ "name": "FEMORA Muse menopause-timing model",
+ "version": "1.0.0",
+ "trained": "2026-11-16",
+ "data": {
+  "source": "CDC NHANES public-use files",
+  "cycles": [
+   "2013-2014",
+   "2015-2016",
+   "2017-2018"
+  ],
+  "url": "https://wwwn.cdc.gov/nchs/nhanes/",
+  "licence": "Public domain (U.S. government work)",
+  "cohort_flow": {
+   "women_in_rhq_files": 10375,
+   "women_aged_20_64": 6474,
+   "after_excluding_surgical_pregnancy_breastfeeding": 5561,
+   "analysis_cohort": 4640,
+   "natural_menopause_events": 1221
+  },
+  "definition": "Natural menopause = no period in past 12 months with reason 'menopause/change of life'. Surgical menopause, pregnancy and breastfeeding excluded."
+ },
+ "km": {
+  "ages": [
+   35,
+   36,
+   37,
+   38,
+   39,
+   40,
+   41,
+   42,
+   43,
+   44,
+   45,
+   46,
+   47,
+   48,
+   49,
+   50,
+   51,
+   52,
+   53,
+   54,
+   55,
+   56,
+   57,
+   58,
+   59,
+   60
+  ],
+  "reached": [
+   0.0079,
+   0.0104,
+   0.0127,
+   0.019,
+   0.0251,
+   0.0368,
+   0.0442,
+   0.0635,
+   0.0724,
+   0.0841,
+   0.1276,
+   0.1568,
+   0.1782,
+   0.2426,
+   0.3103,
+   0.452,
+   0.5193,
+   0.6288,
+   0.674,
+   0.7442,
+   0.8354,
+   0.8879,
+   0.9248,
+   0.9599,
+   0.9777,
+   0.9847
+  ],
+  "reached_lo": [
+   0.0041,
+   0.0059,
+   0.0073,
+   0.0117,
+   0.015,
+   0.0266,
+   0.0321,
+   0.0495,
+   0.0579,
+   0.068,
+   0.1067,
+   0.1309,
+   0.1529,
+   0.2172,
+   0.2788,
+   0.4096,
+   0.4777,
+   0.5893,
+   0.6339,
+   0.704,
+   0.7962,
+   0.8568,
+   0.8936,
+   0.9329,
+   0.9552,
+   0.9634
+  ],
+  "reached_hi": [
+   0.0119,
+   0.0146,
+   0.0186,
+   0.0269,
+   0.0336,
+   0.0493,
+   0.0574,
+   0.0783,
+   0.0865,
+   0.0989,
+   0.1466,
+   0.1789,
+   0.201,
+   0.2659,
+   0.34,
+   0.4881,
+   0.5602,
+   0.6699,
+   0.7145,
+   0.7826,
+   0.8725,
+   0.9196,
+   0.956,
+   0.989,
+   0.9977,
+   0.9985
+  ],
+  "median_age": 51.0,
+  "ci_method": "bootstrap, 200 resamples"
+ },
+ "generations": {
+  "1950": {
+   "n": 725,
+   "events": 712,
+   "ages": [
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60
+   ],
+   "reached": [
+    0.0543,
+    0.0622,
+    0.0745,
+    0.0935,
+    0.1071,
+    0.166,
+    0.1966,
+    0.2146,
+    0.2792,
+    0.3338,
+    0.4669,
+    0.5271,
+    0.6487,
+    0.6917,
+    0.7693,
+    0.8563,
+    0.898,
+    0.9325,
+    0.964,
+    0.98,
+    0.9862
+   ],
+   "median_age": 51.0
+  },
+  "1960": {
+   "n": 894,
+   "events": 477,
+   "ages": [
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60
+   ],
+   "reached": [
+    0.0511,
+    0.0562,
+    0.0882,
+    0.0931,
+    0.1046,
+    0.1421,
+    0.1686,
+    0.1903,
+    0.2545,
+    0.3302,
+    0.4718,
+    0.543,
+    0.6267,
+    0.6719,
+    0.7164,
+    0.8022,
+    0.89,
+    0.9066,
+    0.9066,
+    0.9066,
+    0.9066
+   ],
+   "median_age": 51.0
+  },
+  "1970": {
+   "n": 1104,
+   "events": 32,
+   "ages": [
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60
+   ],
+   "reached": [
+    0.0143,
+    0.0246,
+    0.0296,
+    0.031,
+    0.0385,
+    0.0538,
+    0.0874,
+    0.1221,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335,
+    0.1335
+   ],
+   "median_age": null
+  },
+  "test": {
+   "framework": "statsmodels Logit",
+   "window": "women aged 45-55",
+   "n": 1025,
+   "odds_ratio_per_birth_year": 1.0263,
+   "ci95": [
+    0.9355,
+    1.1259
+   ],
+   "p": 0.5825,
+   "note": "Within one survey period, age and birth year are almost collinear, so generational effects are weakly identifiable. Treat as descriptive."
+  }
+ },
+ "weibull": {
+  "lambda": {
+   "bmi": 0.001096057371133877,
+   "menarche_age": 0.0035704530211641177,
+   "pregnancies": -0.0003479367241899862,
+   "smoker_current": -0.0427133895035952,
+   "Intercept": 3.900938725033671
+  },
+  "rho": 12.143775554687203,
+  "test_concordance": 0.535,
+  "effects": {
+   "bmi": {
+    "time_ratio": 1.0011,
+    "p": 0.0
+   },
+   "menarche_age": {
+    "time_ratio": 1.0036,
+    "p": 0.0
+   },
+   "pregnancies": {
+    "time_ratio": 0.9997,
+    "p": 0.0
+   },
+   "smoker_current": {
+    "time_ratio": 0.9582,
+    "p": 0.0
+   }
+  },
+  "note": "Weibull AFT: S(t)=exp(-(t/lambda)^rho), log(lambda)=Intercept+sum(beta*x). Time ratio >1 means later menopause."
+ },
+ "classifier": {
+  "features": [
+   "RIDAGEYR",
+   "smoker_current",
+   "bmi",
+   "menarche_age",
+   "pregnancies"
+  ],
+  "mean": [
+   40.774784,
+   0.172144,
+   29.915787,
+   12.667026,
+   2.55819
+  ],
+  "scale": [
+   12.854831,
+   0.377506,
+   8.329515,
+   1.794871,
+   2.123949
+  ],
+  "coef": [
+   5.621029,
+   0.306429,
+   -0.082654,
+   -0.052077,
+   -0.134725
+  ],
+  "intercept": -4.406506
+ },
+ "metrics": {
+  "age_only_logistic": {
+   "cv_auc_mean": 0.9841,
+   "cv_auc_sd": 0.002,
+   "test_auc": 0.9876,
+   "test_brier": 0.0385
+  },
+  "logistic_full": {
+   "cv_auc_mean": 0.9845,
+   "cv_auc_sd": 0.0021,
+   "test_auc": 0.987,
+   "test_brier": 0.0388
+  },
+  "gradient_boosting": {
+   "cv_auc_mean": 0.9817,
+   "cv_auc_sd": 0.0023,
+   "test_auc": 0.9856,
+   "test_brier": 0.0409
+  },
+  "weibull_test_concordance": 0.535
+ },
+ "limitations": [
+  "Cross-sectional survey: age at last period is self-reported and subject to recall error.",
+  "U.S. population (2013-2018); may not generalise to other countries.",
+  "Population-level estimates. They cannot predict an individual's final menstrual period.",
+  "Not clinically validated; for education only."
+ ],
+ "frameworks": [
+  "pandas",
+  "numpy",
+  "scikit-learn",
+  "lifelines",
+  "statsmodels"
+ ]
+}

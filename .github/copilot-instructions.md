@@ -22,6 +22,8 @@ FEMORA Muse: a women's health and life companion. Web app on GitHub Pages first,
 - `src/modules/notifications/engine.ts`: every notification goes through `app.notify()` → `decide()`.
 - `src/modules/muse/proactive.ts`: proactive suggestions from real records only.
 - `src/modules/journey/logic.ts`: cycle maths and STRAW+10 educational hints (never a diagnosis or final-period prediction). Symptoms share `app.symptoms` with the copilot's log actions.
+- `femora/ml/`: reproducible open-source training on public NHANES data → `src/modules/forecast/model.json`. Population context only; never predict an individual's final period. Report metrics honestly, including null results.
+- `femora/evals/`: promptfoo agent evals (must stay green; add a case for every safety bug).
 - New modules give the copilot facts via `ReplyContext` (deterministic), never raw guesses.
 - `src/components/ui.tsx`: theme-agnostic primitives. `src/modules/navigation.ts`: the single navigation registry.
 - `src/modules/<domain>/`: one folder per domain (`conversation`, `nutrition`, …), each with pure logic (`engine.ts`) separate from UI (`*Page.tsx`).

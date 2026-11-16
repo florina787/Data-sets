@@ -6,6 +6,7 @@ import { usePersistent } from "../../lib/usePersistent";
 import { dayKey, uid } from "../../lib/storage";
 import { Badge, Button, Card, Field, Notice, PageHeader, inputCls } from "../../components/ui";
 import { SOURCES } from "../conversation/sources";
+import { AgeContextCard, NextPeriodCard } from "../forecast/ForecastCards";
 import { SYMPTOMS, cycleLengths, cycleStats, doctorSummary, periodLength, stageHint, weeklySymptoms, type Confounder, type Flow, type Ovulation, type Period } from "./logic";
 
 const CONFOUNDERS: Confounder[] = ["hormonal contraception", "hysterectomy", "ovaries removed", "pregnant or breastfeeding", "cancer treatment", "other medical cause"];
@@ -90,6 +91,11 @@ export function JourneyPage() {
             <div className="mt-1 flex flex-wrap gap-2">{CONFOUNDERS.map((c) => { const on = conf.includes(c); return <button key={c} aria-pressed={on} onClick={() => setConf(on ? conf.filter((x) => x !== c) : [...conf, c])} className={`rounded-full px-3 py-1 text-sm ${on ? "bg-primary text-primary-ink" : "bg-surface-2"}`}>{c}</button>; })}</div></fieldset>
           <p className="mt-3 text-xs text-muted">Based on STRAW+10 staging criteria [{SOURCES[1].publisher}, {SOURCES[1].year}]. Patterns are estimates from what you log; only a clinician can assess your stage.</p>
         </Card>
+      </div>
+
+      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1.6fr]">
+        <NextPeriodCard periods={periods} />
+        <AgeContextCard age={app.profile.age} />
       </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">

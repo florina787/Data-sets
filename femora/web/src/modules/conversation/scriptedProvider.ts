@@ -2,6 +2,7 @@
 // Shown as "Offline" in the UI. A live provider (see liveProvider.ts) implements the same interface.
 import type { ChatProvider, Reply, ReplyContext } from "./types";
 import { companionize, encourager, precise } from "./persona";
+import { populationContext } from "../forecast/forecast";
 
 type Rule = { test: RegExp; reply: (c: ReplyContext) => Reply };
 
@@ -19,6 +20,20 @@ const STORIES = [
 ];
 
 const RULES: Rule[] = [
+  // ---- forecasts: personal next period (time series on her logs) and population context (NHANES). Never her final period.
+  { test: /\b(next period|when will my period|period (be )?due|predict my period)\b/, reply: (c) => {
+    const f = c.journey?.forecast;
+    if (!f || f.status !== "ok") return { text: f?.status === "too-irregular" ? "Your recent cycles vary too much for me to forecast honestly, which is common during the menopausal transition. I'd rather not guess." : "I need four or more logged period start dates before I can forecast. Shall we log them?", actions: [{ kind: "open", label: "Open Menopause Journey", payload: "/app/journey" }] };
+    const d = (x: string) => new Date(x + "T12:00").toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    return { text: `Based on your own cycles, your next period is most likely around **${d(f.nextStart!)}**, probably between ${d(f.earliest!)} and ${d(f.latest!)}.${f.backtestMAE !== undefined ? ` On your past cycles this method was off by about ${f.backtestMAE} days.` : ""}\nIt's an estimate, not a fertility or contraception tool.`, actions: [{ kind: "open", label: "See forecast", payload: "/app/journey" }] };
+  } },
+  { test: /\b(when will i (reach|hit|go through|start) (the )?menopause|age (of|at) menopause|average age.*menopause|how old.*menopause)\b/, reply: (c) => {
+    const age = c.journey?.age;
+    const p = age && age >= 35 && age <= 60 ? populationContext(age) : null;
+    return { text: "Nobody, including me, can predict exactly when your final period will be. Here's what real data shows. In the U.S. national NHANES survey (2013–2018), the median age at natural menopause was **51** (CDC NHANES, analysed by FEMORA)." +
+      (p ? `\nAmong women aged ${age}, about ${Math.round(p.reached * 100)}% had reached it.` : "") +
+      "\nYour own cycle changes and symptoms tell you more than averages do, and a clinician can help interpret them.", actions: [{ kind: "open", label: "See the curve", payload: "/app/journey" }] };
+  } },
   // ---- journey facts (deterministic, from her own records)
   { test: /\b(last period|my cycles?|cycle length|how long (are|is) my cycles?|my symptoms (this|last) (week|fortnight))\b/, reply: (c) => {
     const j = c.journey;
@@ -46,6 +61,14 @@ const RULES: Rule[] = [
   { test: /\b(story|stories|inspire me|something inspiring)\b/, reply: (c) => ({
     text: STORIES[c.history.length % STORIES.length] + "\n\nThis is an original story, written to inspire. The characters are fictional.",
     followUps: ["Tell me another story", "Make me laugh", "That inspired me"] }) },
+  // ---- loneliness
+  { test: /\b(lonel\w*|alone|isolat\w*|no friends|miss my friends)\b/, reply: (c) => ({
+    text: `That sounds hard${c.profile.livesAlone ? ", especially when you come home to a quiet place" : ""}. Loneliness is common in midlife, after moves, changes in work or family, and it isn't a personal failing.\n` +
+      "Would it help to talk about what a good week of connection used to look like for you? Some women find one small, regular thing easier than a big social plan: a weekly walk with one person, a class, or an online circle with people going through the same change.",
+    followUps: ["What used to help me feel connected?", "Show me circles near me", "I just want to vent for a bit"],
+    actions: [{ kind: "open", label: "Explore Sisterhood circles", payload: "/app/sisterhood" }, { kind: "log-symptom", label: "Log: feeling lonely", payload: "Loneliness" }],
+  }) },
+
   // ---- companion library: everyday life and emotions (validate → encourage → small ideas → caring question)
   { test: /\b(overwhelm\w*|too much|can'?t cope|exhausted by everything|burn(ed|t)? out)\b/, reply: () => ({
     text: "That sounds like a lot to carry, and it makes complete sense that you feel overwhelmed. You've been holding so many things together.\n" +
@@ -115,14 +138,6 @@ const RULES: Rule[] = [
   { test: /\bi('m| am) (a )?(vegetarian|vegan|pescatarian)\b/, reply: (c) => {
     const diet = c.text.toLowerCase().match(/vegetarian|vegan|pescatarian/)![0];
     return { text: `Thanks for telling me. I'll keep ${diet} options in mind when we talk about food.`, memory: `Eats a ${diet} diet` }; } },
-
-  // ---- loneliness
-  { test: /\b(lonel\w*|alone|isolat\w*|no friends|miss my friends)\b/, reply: (c) => ({
-    text: `That sounds hard${c.profile.livesAlone ? ", especially when you come home to a quiet place" : ""}. Loneliness is common in midlife, after moves, changes in work or family, and it isn't a personal failing.\n` +
-      "Would it help to talk about what a good week of connection used to look like for you? Some women find one small, regular thing easier than a big social plan: a weekly walk with one person, a class, or an online circle with people going through the same change.",
-    followUps: ["What used to help me feel connected?", "Show me circles near me", "I just want to vent for a bit"],
-    actions: [{ kind: "open", label: "Explore Sisterhood circles", payload: "/app/sisterhood" }, { kind: "log-symptom", label: "Log: feeling lonely", payload: "Loneliness" }],
-  }) },
 
   // ---- sleep
   { test: /\b(sleep\w*|slept|insomnia|wake up|waking|night sweats?|tired|exhausted)\b/, reply: (c) => ({

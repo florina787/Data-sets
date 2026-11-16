@@ -1,7 +1,9 @@
 // Validated-rule safety layer. Runs BEFORE any provider, scripted or live. Rules, not model judgement.
 import type { Reply } from "./types";
 
-const CRISIS = [/\b(kill|hurt|harm)\s+(myself|me)\b/, /\bsuicid/, /\bend (my|it all|my life)\b/, /\bwant to die\b/, /\bno reason to live\b/, /\bself[- ]harm/];
+const CRISIS = [/\b(kill|hurt|harm)\s+(myself|me)\b/, /\bsuicid/, /\bend (my|it all|my life)\b/, /\bwant to die\b/, /\bno reason to live\b/, /\bself[- ]harm/,
+  /\b(don'?t|do not) want to (live|be alive|be here|exist|wake up)( anymore)?\b/, /\bbetter off (dead|without me)\b/, /\bno point (in )?(living|going on|being alive)\b/,
+  /\bcan'?t go on\b/, /\btake my (own )?life\b/, /\bwish i (was|were) dead\b/, /\bnot worth living\b/];
 const ABUSE = [/\b(he|she|they|partner|husband) (hits|hit|beats|threatens|threatened) me\b/, /\bi('m| am) not safe\b/];
 const URGENT = [/\bchest pain\b/, /\bcan'?t breathe\b/, /\bfaint(ed|ing)\b/, /\bbleeding (after|since) (my )?(menopause|periods stopped)\b/, /\bpostmenopausal bleeding\b/, /\bsoaking (a|one) pad (every|each) hour\b/];
 

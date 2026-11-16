@@ -17,6 +17,9 @@ describe("copilot", () => {
     expect(r.provider).toBe("safety-rules");
     expect(r.text).toMatch(/emergency number/);
   });
+  it.each(["I don't want to live anymore", "Everyone would be better off without me", "There's no point in living", "I can't go on like this", "I wish I was dead"])("catches crisis phrasing: %s", (t) => {
+    expect(safetyCheck(t)?.safety).toBe("crisis");
+  });
   it("flags postmenopausal bleeding as urgent", () => {
     expect(safetyCheck("I have postmenopausal bleeding")?.safety).toBe("urgent-medical");
   });

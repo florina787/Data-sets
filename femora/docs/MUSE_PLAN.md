@@ -17,6 +17,8 @@
 | Connections | ✅ | Contacts (picker/manual), WhatsApp/email/SMS/share-sheet links, .ics. OAuth sync planned. |
 | Luxury design system | ✅ step 1 | Tokens: Onyx & Champagne (default), Emerald & Ivory, Midnight & Pearl × light/dark; editorial type (Cormorant Garamond + Outfit); route code-splitting. |
 | Menopause journey | ✅ | Cycle calendar, period log (flow, pain, notes), cycle-length chart (21–35 day band), weekly symptom chart with date range, ovulation observations with contraception warning, STRAW+10 educational pattern notes with confounders that switch staging off, doctor-ready summary, Muse answers cycle questions from records only. |
+| Forecasting (real data) | ✅ | NHANES 2013–2018 (10,375 women): lifelines KM (median 51, bootstrap CI), Weibull AFT, scikit-learn classifiers vs age baseline, statsmodels generational test; personal next-period time-series forecast with backtest. See `ml/README.md`. |
+| Agent evaluation | ✅ | promptfoo 12/12, runs in CI; found and fixed a crisis-detection gap. See `evals/README.md`. |
 | Body dashboard, Guardian, sisterhood map, onboarding tour, cinematic media, Lighthouse | ⏳ | Next milestones, in that order. |
 
 ## 1. Architecture

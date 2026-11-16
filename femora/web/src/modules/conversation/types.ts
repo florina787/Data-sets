@@ -37,7 +37,7 @@ export interface ReplyContext {
   history: Message[];
   profile: { name: string; stage?: string; cuisine: string[]; diet?: string; livesAlone?: boolean };
   memory: string[];
-  journey?: { lastPeriod?: string; daysSinceLast?: number; avgCycle?: number; cyclesLogged: number; topSymptoms14d: [string, number][] };
+  journey?: { lastPeriod?: string; daysSinceLast?: number; avgCycle?: number; cyclesLogged: number; topSymptoms14d: [string, number][]; forecast?: { status: string; nextStart?: string; earliest?: string; latest?: string; backtestMAE?: number }; age?: number };
   food: { weekProtein: number; weekDays: number; weekAlcoholDays: number; weekCaffeineAvg: number; todayCalcium: number; calciumTarget: number; proteinTarget: number };
 }
 

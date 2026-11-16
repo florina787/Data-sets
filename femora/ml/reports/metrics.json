@@ -1,0 +1,143 @@
+{
+  "cohort_flow": {
+    "women_in_rhq_files": 10375,
+    "women_aged_20_64": 6474,
+    "after_excluding_surgical_pregnancy_breastfeeding": 5561,
+    "analysis_cohort": 4640,
+    "natural_menopause_events": 1221
+  },
+  "classifier": {
+    "age_only_logistic": {
+      "cv_auc_mean": 0.9841,
+      "cv_auc_sd": 0.002,
+      "test_auc": 0.9876,
+      "test_brier": 0.0385,
+      "calibration": {
+        "predicted": [
+          0.0,
+          0.0,
+          0.0,
+          0.001,
+          0.006,
+          0.027,
+          0.168,
+          0.605,
+          0.927,
+          0.993
+        ],
+        "observed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.018,
+          0.14,
+          0.615,
+          0.964,
+          1.0
+        ]
+      }
+    },
+    "logistic_full": {
+      "cv_auc_mean": 0.9845,
+      "cv_auc_sd": 0.0021,
+      "test_auc": 0.987,
+      "test_brier": 0.0388,
+      "calibration": {
+        "predicted": [
+          0.0,
+          0.0,
+          0.0,
+          0.001,
+          0.005,
+          0.022,
+          0.133,
+          0.553,
+          0.909,
+          0.99
+        ],
+        "observed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.011,
+          0.109,
+          0.591,
+          0.914,
+          1.0
+        ]
+      }
+    },
+    "gradient_boosting": {
+      "cv_auc_mean": 0.9817,
+      "cv_auc_sd": 0.0023,
+      "test_auc": 0.9856,
+      "test_brier": 0.0409,
+      "calibration": {
+        "predicted": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.001,
+          0.012,
+          0.137,
+          0.554,
+          0.914,
+          0.994
+        ],
+        "observed": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.011,
+          0.12,
+          0.581,
+          0.914,
+          1.0
+        ]
+      }
+    }
+  },
+  "weibull": {
+    "rho": 12.143775554687203,
+    "test_concordance": 0.535,
+    "effects": {
+      "bmi": {
+        "time_ratio": 1.0011,
+        "p": 0.0
+      },
+      "menarche_age": {
+        "time_ratio": 1.0036,
+        "p": 0.0
+      },
+      "pregnancies": {
+        "time_ratio": 0.9997,
+        "p": 0.0
+      },
+      "smoker_current": {
+        "time_ratio": 0.9582,
+        "p": 0.0
+      }
+    },
+    "note": "Weibull AFT: S(t)=exp(-(t/lambda)^rho), log(lambda)=Intercept+sum(beta*x). Time ratio >1 means later menopause."
+  },
+  "km_median_age": 51.0,
+  "generations_test": {
+    "framework": "statsmodels Logit",
+    "window": "women aged 45-55",
+    "n": 1025,
+    "odds_ratio_per_birth_year": 1.0263,
+    "ci95": [
+      0.9355,
+      1.1259
+    ],
+    "p": 0.5825,
+    "note": "Within one survey period, age and birth year are almost collinear, so generational effects are weakly identifiable. Treat as descriptive."
+  }
+}
