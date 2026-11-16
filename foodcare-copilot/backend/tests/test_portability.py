@@ -44,8 +44,14 @@ def test_stop_tree_stops_a_process_and_its_children():
 
 
 def test_greeting_gets_a_friendly_help_answer(platform):
-    assert router.parse("Hi").intents == ["help"]
+    for hello in ("Hi", "hii", "Hi there, how are you?", "hey whats up", "who are you", "Hi Jerry 👋", "Namaste",
+                  "good evening team", "thanks!"):
+        assert router.parse(hello).intents == ["help"], hello
+    assert router.parse("What is the weather in Paris?").intents == []  # still declined, not small talk
     assert router.parse("Hi, how did our sales do in the last 4 weeks?").intents == ["sales"]
     answer = engine.ask("Hi", user("val.viewer"))
     assert answer["answer"].startswith("Hi! I'm Jerry") and "global supply chain" in answer["answer"]
     assert "can't answer" not in answer["answer"]
+    assert engine.ask("how are you?", user("val.viewer"))["answer"].startswith("Hi! I'm Jerry, FoodCare's read-only "
+                                                                           "copilot. I'm running well")
+    assert engine.ask("thanks!", user("val.viewer"))["answer"].startswith("You're welcome!")

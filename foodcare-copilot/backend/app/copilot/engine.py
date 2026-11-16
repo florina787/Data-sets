@@ -425,7 +425,14 @@ def h_inspection(p: Parsed, c: Ctx) -> list[str]:
 
 
 def h_help(p: Parsed, c: Ctx) -> list[str]:
-    hello = "Hi! I'm Jerry, FoodCare's read-only copilot. " if router.GREETING.match(p.question) else ""
+    hello = ""
+    if router.is_small_talk(p.question):
+        words = set(re.findall(r"[a-z']+", p.question.lower()))
+        hello = "Hi! I'm Jerry, FoodCare's read-only copilot. "
+        if {"thanks", "thank", "thx", "ty", "cheers"} & words and not router.GREETING_WORDS & words:
+            hello = "You're welcome! "
+        elif {"how", "doing", "going"} & words:
+            hello += "I'm running well, thanks for asking. "
     return [hello + "I answer read-only questions about FoodCare's **sales and promotions**, **inventory**, "
             "**product compliance**, **potato inspections**, the **global supply chain** (OriginTrace: trace a site "
             "or incident back to the farm), **software delivery** (runs, tests, releases), **incidents** and "

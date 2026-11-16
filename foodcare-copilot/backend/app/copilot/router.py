@@ -25,8 +25,22 @@ WAREHOUSES = {"toronto": "DC-TOR", "montreal": "DC-MTL", "montréal": "DC-MTL", 
 CHANNELS = {"retail": "retail", "grocery": "retail", "marketplace": "marketplace", "web store": "web",
             "online store": "web", "webstore": "web", "website": "web", "e-commerce": "web"}
 
-GREETING = re.compile(r"^\s*(hi|hello|hey|hiya|good (morning|afternoon|evening)|thanks|thank you|yo)\b[\s!.,?]*"
-                      r"(jerry|copilot|there)?[\s!.,?]*$", re.IGNORECASE)
+# Small talk: a message made only of these words (any order, any punctuation or emoji) gets a
+# friendly introduction instead of "I can't answer that". Real questions still route normally.
+SMALL_TALK_WORDS = frozenset("""
+hi hii hiii hello helo hello hey heya hiya howdy yo sup namaste greetings welcome morning afternoon evening good
+day there jerry copilot flo team all everyone guys how are you u r doing do going is it whats what's what up new
+who your name nice to meet pleased thanks thank thx ty cheers ok okay cool great awesome fine well today
+the a an and i im i'm am me so bot assistant again back oh
+""".split())
+GREETING_WORDS = frozenset("hi hii hiii hello helo hey heya hiya howdy yo sup namaste greetings welcome morning "
+                           "afternoon evening".split())
+
+
+def is_small_talk(question: str) -> bool:
+    words = re.findall(r"[a-z']+", question.lower())
+    return bool(words) and len(words) <= 12 and all(w in SMALL_TALK_WORDS for w in words)
+
 
 INTENTS: dict[str, tuple[str, ...]] = {
     "sales": ("sales", "sell", "revenue", "selling", "sold", "units", "trend", "top product", "best seller",
@@ -120,7 +134,7 @@ def parse(question: str) -> Parsed:
         ranked = ["inventory"]
     elif not ranked and (skus or provinces or channels) and _has(text, "low"):
         ranked = ["inventory"]
-    if not ranked and GREETING.match(question):
+    if not ranked and is_small_talk(question):
         ranked = ["help"]
     if "help" in ranked and len(ranked) > 1:
         ranked.remove("help")
