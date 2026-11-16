@@ -36,6 +36,28 @@ and restart. Do not download or pull any model, do not install Ollama, do not st
 do not commit or push anything.
 ```
 
+## 2b. Already running it? Update and restart (paste this)
+
+```text
+Update and restart the Flo & Jerry app. Do NOT use VS Code tasks. Use PowerShell, ONE simple command per call,
+exactly as written. Never use "bash -c" or "bash -lc" with a quoted string, and never write if/then/fi.
+
+1. Stop the running app: find what listens on ports 8700 and 8801 with
+   Get-NetTCPConnection -LocalPort 8700,8801 -State Listen
+   then stop each OwningProcess with Stop-Process -Id <id> -Force
+2. Set-Location to the Data-sets folder (the git clone), then: git pull
+3. git log --oneline -1        (must show 1a7213d or newer; if not, stop and tell me)
+4. Set-Location .\foodcare-copilot
+5. & "C:\Program Files\Git\bin\bash.exe" scripts/setup.sh        (wait for "Setup complete")
+6. & "C:\Program Files\Git\bin\bash.exe" scripts/reset_demo.sh   (clears old demo data; keeps conversations and inspections)
+7. & "C:\Program Files\Git\bin\bash.exe" scripts/start.sh        (background; wait for "Uvicorn running on")
+8. Invoke-RestMethod http://127.0.0.1:8700/api/health               (must show status ok)
+9. Check memory: Get-Item .\var\memory\memory.db | Select-Object Length, LastWriteTime
+10. Tell me to open http://127.0.0.1:8700, choose "Val Park (Viewer)", open Ask Copilot and type "Hi".
+If any step fails, stop and show me the first error line. Do not download models, do not install Python 3.15
+or C++ build tools, do not commit or push.
+```
+
 Copilot will ask before running each command. Read each one and click **Continue** only if it matches the steps above.
 
 ## 3. Or run it yourself without Copilot
