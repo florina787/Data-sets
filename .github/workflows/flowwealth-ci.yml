@@ -1,0 +1,48 @@
+name: FLOW WEALTH CI
+
+on:
+  pull_request:
+    paths: ["flowwealth/**", ".github/workflows/flowwealth-ci.yml"]
+  push:
+    branches: [master]
+    paths: ["flowwealth/**", ".github/workflows/flowwealth-ci.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flowwealth/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+      - run: uv sync --frozen
+      # Deterministic: synthetic data, no network, no API keys.
+      - run: uv run pytest
+      # End-to-end smoke at reduced scale: build lake -> experiment -> replay.
+      - run: |
+          uv run python -m flowwealth.data.pipeline --lake /tmp/lake --version ci --tickers 80 --start 2020-01-01 --end 2023-12-31
+          uv run python -m flowwealth.research.experiment --lake /tmp/lake --version ci --out /tmp/reports
+          uv run python -m flowwealth.research.replay --lake /tmp/lake --version ci --out /tmp/artifacts
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: flowwealth/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: flowwealth/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

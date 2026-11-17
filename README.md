@@ -11,6 +11,14 @@ From this Dataset, Students will develop & Learn-
 6. Result through Training & Testing the Data
 7. Machine Learning Algorithm Implementation
 
+
+## Projects in this repository
+
+- [FLOW WEALTH v4](flowwealth/README.md) — evidence-first financial research platform (alpha)
+- [ConvoLens AI](convolens/README.md) — customer conversation intelligence
+- [LexGuard](lexguard/README.md) — legal AI governance
+- [Enterprise Agentic AI](enterprise-agentic-ai/README.md) — agentic RAG copilot
+
 Here are many of the links mentioned so far:
 This Links are taken from Quora(https://www.quora.com/Where-can-I-find-large-datasets-open-to-the-public)
 Cross-disciplinary data repositories, data collections and data search engines:
