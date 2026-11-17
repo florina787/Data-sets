@@ -6,7 +6,10 @@ Rules enforced here (and tested in tests/test_leakage.py):
 * labels use bars t+1..t+h and carry ``label_end_ts`` so splits can purge overlaps;
 * a ticker that delists inside the horizon gets its delisting return (last price),
   not a dropped row -- dropping it would be survivorship bias;
-* cross-sectional ranks are computed per date only from tickers present that date.
+* cross-sectional ranks are computed per *availability cohort* (bars sharing one
+  ``available_at``), never per calendar date: exchanges close at different UTC
+  times, and a per-date rank would let an Asian close "see" New York bars that
+  only exist ~15 hours later.
 """
 from __future__ import annotations
 
@@ -54,10 +57,10 @@ def build_features(bars: pd.DataFrame, horizons: tuple[int, ...] = (5,), rank: b
     rng = (df["high"] - df["low"]) / df["close"]
     f["range_20"] = rng.groupby(df.ticker).transform(lambda s: s.rolling(20, min_periods=15).mean())
 
+    cohort = df["available_at"]
     if rank:
-        date_key = df["ts"].dt.normalize()
         for c in list(FEATURES):
-            f[f"{c}_rk"] = f[c].groupby(date_key).rank(pct=True) - 0.5
+            f[f"{c}_rk"] = f[c].groupby(cohort).rank(pct=True) - 0.5
 
     out = pd.concat([df[["ticker", "ts", "available_at", "adj_close"]], f], axis=1)
 
@@ -75,7 +78,7 @@ def build_features(bars: pd.DataFrame, horizons: tuple[int, ...] = (5,), rank: b
         fwd_ts = fwd_ts.where(~fill, delisted_last)
         out[f"fwd_ret_{h}"] = np.log(fwd_px / px)
         out[f"label_end_{h}"] = fwd_ts
-        xs = out[f"fwd_ret_{h}"].groupby(df["ts"].dt.normalize())
+        xs = out[f"fwd_ret_{h}"].groupby(cohort)
         out[f"fwd_xs_{h}"] = out[f"fwd_ret_{h}"] - xs.transform("mean")  # cross-sectional (market-neutral) target
         out[f"fwd_up_{h}"] = (out[f"fwd_ret_{h}"] > 0).astype(float).where(out[f"fwd_ret_{h}"].notna())
     return out

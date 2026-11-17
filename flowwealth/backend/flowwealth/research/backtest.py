@@ -1,7 +1,8 @@
 """Cross-sectional long/short and long-only backtests with costs and liquidity limits.
 
 Rebalances every ``horizon`` bars on non-overlapping windows, so each period's
-return is realised before the next decision. Signals at date t are formed from
+return is realised before the next decision. Long/short legs are chosen per
+availability cohort (exchanges closing at the same time). Signals at date t are formed from
 data available at t's close; trades are assumed filled at that close plus costs
 (execution-delay cost is in ``slippage_bps``).
 """
@@ -42,8 +43,11 @@ def run_backtest(frame: pd.DataFrame, signal_col: str, ret_col: str, horizon: in
         g = df[df["date"] == d].set_index("ticker")
         if len(g) < 20:
             continue
-        q_hi = g[signal_col].quantile(1 - quantile)
-        q_lo = g[signal_col].quantile(quantile)
+        # Select within each availability cohort: a name's selection may only depend on
+        # signals that exist when its own market closes (no cross-timezone look-ahead).
+        cohort = g["available_at"] if "available_at" in g else pd.Series(0, index=g.index)
+        q_hi = g[signal_col].groupby(cohort).transform(lambda s: s.quantile(1 - quantile))
+        q_lo = g[signal_col].groupby(cohort).transform(lambda s: s.quantile(quantile))
         longs = g.index[g[signal_col] >= q_hi]
         shorts = g.index[g[signal_col] <= q_lo] if not long_only else []
         w = pd.Series(0.0, index=g.index)

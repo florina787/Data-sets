@@ -32,6 +32,12 @@ def generate_universe(n_tickers: int, start: str, end: str, seed: int = 7) -> tu
     vol = np.array([0.008, 0.012, 0.028])[regime]
     market = mu + vol * rng.standard_t(4, T) / np.sqrt(2)
     sector_f = rng.normal(0, 0.006, (len(SECTORS), T)) * (vol / 0.01)
+    # country factor: persistent (AR(1)) local drift + shocks, so country composites differ
+    countries = sorted({EXCHANGES[e].country for e in exch_codes})
+    c_idx = {c: k for k, c in enumerate(countries)}
+    country_f = np.zeros((len(countries), T))
+    for t in range(1, T):
+        country_f[:, t] = 0.15 * country_f[:, t - 1] + rng.normal(0, 0.005, len(countries))
 
     master_rows, frames = [], []
     for i in range(n_tickers):
@@ -45,6 +51,7 @@ def generate_universe(n_tickers: int, start: str, end: str, seed: int = 7) -> tu
         delist_idx = int(rng.integers(T // 2, T - 5)) if rng.random() < 0.08 else T
         n = delist_idx - list_idx
         r = beta * market[list_idx:delist_idx] + sector_f[sector, list_idx:delist_idx] \
+            + country_f[c_idx[EXCHANGES[exch_codes[i % len(exch_codes)]].country], list_idx:delist_idx] \
             + idio * rng.standard_t(5, n) / np.sqrt(5 / 3)
         # weak, noisy short-term momentum so models have *something* (small) to find
         r[1:] += 0.03 * r[:-1]

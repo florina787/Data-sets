@@ -98,3 +98,16 @@ def test_lightgbm_trains_and_predicts(clean_small):
     f = build_features(bars, horizons=(5,)).dropna(subset=["fwd_xs_5", "ret_20_rk"])
     m = LightGBMForecaster(n_estimators=20, min_child_samples=200).fit(f[feature_columns()], f.fwd_xs_5)
     assert len(m.predict(f[feature_columns()].head(10))) == 10
+
+
+def test_ranks_do_not_use_later_closing_markets(clean_small):
+    """Cut mid-UTC-day: Asian closes are in, New York is not. Asian ranks must not change."""
+    bars, _, _ = clean_small
+    day = bars.ts.dt.normalize().sort_values().unique()[len(bars.ts.dt.normalize().unique()) // 2]
+    cut = pd.Timestamp(day) + pd.Timedelta(hours=12)
+    full = build_features(bars, horizons=(5,))
+    trunc = build_features(bars[bars.available_at <= cut], horizons=(5,))
+    early = trunc[trunc.ts.dt.normalize() == day]
+    assert len(early) and (early.ts < cut).all()
+    a = full.set_index(["ticker", "ts"]).loc[early.set_index(["ticker", "ts"]).index, feature_columns()]
+    pd.testing.assert_frame_equal(a.sort_index(), early.set_index(["ticker", "ts"])[feature_columns()].sort_index(), rtol=1e-9)

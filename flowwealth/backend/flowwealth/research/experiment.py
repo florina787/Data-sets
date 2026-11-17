@@ -51,7 +51,7 @@ def run(lake_root: Path, version: str, horizon: int = 5, out: Path | None = None
         tr = train_df.dropna(subset=[y_col])
         model.fit(tr[X_cols], tr[y_col])
         pred = pd.Series(model.predict(test_df[X_cols]), index=test_df.index)
-        ic = information_coefficient(pred, test_df[y_col], test_df["ts"].dt.normalize())
+        ic = information_coefficient(pred, test_df[y_col], test_df["available_at"])  # per availability cohort
         return pred, ic
 
     wf_rows = []
