@@ -65,7 +65,7 @@ export function BodyPage() {
       <PageHeader title="Body, movement & mind" sub="Your own records, from blood pressure and sleep to joints, skin and mood. Muse shows trends and explains published guideline ranges. No scores, no diagnoses."
         actions={records.length ? <Button onClick={exportCSV}><Download size={16} /> Export CSV</Button> : undefined} />
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+      <div data-tour="body-tiles" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         {METRICS.map((x) => { const r = inRange(records, x.id, "30d"); const su = summary(r); return (
           <button key={x.id} onClick={() => setSel(x.id)} aria-pressed={sel === x.id} className={`rounded-f-sm p-3 text-left transition ${sel === x.id ? "bg-primary text-primary-ink" : "bg-surface shadow-f hover:-translate-y-0.5"}`}>
             <div className={`text-xs ${sel === x.id ? "opacity-80" : "text-muted"}`}>{x.label}</div>
@@ -74,7 +74,7 @@ export function BodyPage() {
           </button>); })}
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
+      <div data-tour="body-chart" className="mt-5 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
         <Card title={`${m.label}${m.unit && !m.scale ? ` (${m.unit})` : ""}`} actions={
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex rounded-full bg-surface-2 p-0.5" role="radiogroup" aria-label="Date range">{(Object.keys(RANGES) as RangeKey[]).map((k) => <button key={k} role="radio" aria-checked={range === k} onClick={() => setRange(k)} className={`rounded-full px-2.5 py-1 text-xs ${range === k ? "bg-surface shadow-f" : "text-muted"}`}>{k}</button>)}</div>

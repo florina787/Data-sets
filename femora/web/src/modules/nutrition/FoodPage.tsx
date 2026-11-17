@@ -70,11 +70,11 @@ export function FoodPage() {
       <div className="grid gap-5 lg:grid-cols-[1.25fr_1fr]">
         <div className="space-y-5">
           <Card title={<span className="flex items-center gap-2"><Sparkles size={18} className="text-accent" /> Describe what you ate</span>}>
-            <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (nl.trim()) logNatural(); }}>
+            <form data-tour="food-describe" className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (nl.trim()) logNatural(); }}>
               <label className="flex-1"><span className="sr-only">Describe your meal</span>
                 <input className={inputCls} placeholder='e.g. "2 idli and sambar with chai for breakfast"' value={nl} onChange={(e) => setNl(e.target.value)} /></label>
               <Button type="submit" variant="primary" disabled={!nl.trim()}>Log</Button>
-              <Button onClick={() => setScan(true)} aria-label="Scan food with camera"><Camera size={18} /> <span className="hidden sm:inline">Scan</span></Button>
+              <Button data-tour="food-scan" onClick={() => setScan(true)} aria-label="Scan food with camera"><Camera size={18} /> <span className="hidden sm:inline">Scan</span></Button>
             </form>
             {scan && <FoodScanner region={location?.region} onClose={() => setScan(false)} onAdd={(f) => add(f.id)} />}
             {nlNote && <p className="mt-2 text-sm text-muted" role="status">{nlNote}</p>}
@@ -126,12 +126,12 @@ export function FoodPage() {
         </div>
 
         <div className="space-y-5">
-          <Card title="Today at a glance">
+          <div data-tour="food-glance"><Card title="Today at a glance">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2">
               <div><h4 className="mb-2 text-sm font-medium">Where your energy came from</h4><EnergyDonut n={t.values} /></div>
               <div><h4 className="mb-2 text-sm font-medium">Sugar percentage</h4><SugarGauge n={t.values} label="Added sugar, share of today's calories" /></div>
             </div>
-          </Card>
+          </Card></div>
           <Card title="Your week"><WeekChart data={week} targets={{ protein: targets.protein ?? 60, calcium: targets.calcium ?? 1200, fiber: targets.fiber ?? 21 }} /></Card>
           <Card title="Today's nutrients" actions={<span className="text-sm text-muted">{Math.round(t.values.kcal)} kcal · {t.entries} items</span>}>
             <ul className="space-y-3">

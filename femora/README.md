@@ -4,7 +4,7 @@
 
 <br>
 
-![Tests](https://img.shields.io/badge/tests-122%20passing-3d7a58?style=for-the-badge)
+![Tests](https://img.shields.io/badge/tests-134%20passing-3d7a58?style=for-the-badge)
 ![React](https://img.shields.io/badge/React%2019-17140f?style=for-the-badge&logo=react&logoColor=e7cf9f)
 ![TypeScript](https://img.shields.io/badge/TypeScript-17140f?style=for-the-badge&logo=typescript&logoColor=e7cf9f)
 ![Vite](https://img.shields.io/badge/Vite-17140f?style=for-the-badge&logo=vite&logoColor=e7cf9f)
@@ -306,10 +306,12 @@ pie showData title 83 automated tests
 | Luxury themes, responsive layout, route code-splitting | ✅ Available |
 | Menopause journey (cycle calendar, symptoms, stage education, doctor summary) | ✅ Available |
 | Forecasting trained on **10,375 real women** (CDC NHANES) with open-source lifelines, scikit-learn, statsmodels; personal next-period forecast | ✅ Available, see [ml/README.md](ml/README.md) |
-| Agent evaluation with promptfoo (14/14 passing, in CI) | ✅ Available, see [evals/README.md](evals/README.md) |
+| Agent evaluation with promptfoo (15/15 passing, in CI) | ✅ Available, see [evals/README.md](evals/README.md) |
 | Health dashboard (14 measures, date ranges, comparisons, guideline ranges, CSV export) | ✅ Available |
 | Guardian (emergency call, SOS drafts, check-ins, emergency card) | ✅ Available; automatic alerts need a server |
-| Sisterhood map · onboarding tour | 🔜 In development |
+| Global sisterhood map (MapLibre, 15 verified organisations, privacy-preserving markers) | ✅ Available |
+| Welcome flow, guided tours, help centre, "Ask Muse how to" | ✅ Available |
+| Healthcare (clinician discovery) · cinematic media | 🔜 In development |
 | Accounts, encrypted sync, Gmail/Outlook, push notifications, mobile app, wearables | 🗺️ Roadmap (needs a server or the mobile app) |
 | Clinical validation | ⏳ Not yet; Muse is not a medical device |
 
@@ -334,7 +336,7 @@ npm run dev        # http://127.0.0.1:5174
 ```
 
 ```bash
-npm test           # 122 tests
+npm test           # 134 tests
 npm run build      # production build
 ```
 

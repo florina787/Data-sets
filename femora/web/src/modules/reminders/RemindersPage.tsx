@@ -32,7 +32,7 @@ export function RemindersPage() {
       <Notice tone="neutral">Stored only in this browser. Notifications appear while Muse is open, and browser alerts need your permission (Settings → Notifications). Delivery on locked or closed devices needs the future mobile app.</Notice>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
-        <Card title={<span className="flex items-center gap-2"><Pill size={18} className="text-primary" /> Today</span>} actions={meds.length ? <Button size="sm" onClick={exportList}><Download size={14} /> Export list</Button> : undefined}>
+        <Card title={<span data-tour="planner-today" className="flex items-center gap-2"><Pill size={18} className="text-primary" /> Today</span>} actions={meds.length ? <Button size="sm" onClick={exportList}><Download size={14} /> Export list</Button> : undefined}>
           {doses.length === 0 ? <p className="text-sm text-muted">No medication or supplements scheduled. Add one below.</p> : (
             <ul className="divide-y divide-line">{doses.map((d) => (
               <li key={d.med.id + d.time} className="flex flex-wrap items-center gap-2 py-2.5">
@@ -65,7 +65,7 @@ export function RemindersPage() {
           </form>
         </Card>
 
-        <Card title={<span className="flex items-center gap-2"><Stethoscope size={18} className="text-primary" /> Check-ups & appointments</span>}>
+        <Card title={<span data-tour="planner-checkups" className="flex items-center gap-2"><Stethoscope size={18} className="text-primary" /> Check-ups & appointments</span>}>
           {checkups.length === 0 ? <p className="text-sm text-muted">Record your last check-ups and upcoming appointments. Muse only reminds you about dates you enter.</p> : (
             <ul className="divide-y divide-line">{[...checkups].sort((a, b) => (a.next ?? "9").localeCompare(b.next ?? "9")).map((x) => { const s = checkupState(x); const d = x.next ? daysUntil(x.next) : 0; return (
               <li key={x.id} className="py-3">

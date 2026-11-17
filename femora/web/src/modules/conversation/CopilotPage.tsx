@@ -116,10 +116,10 @@ export function CopilotPage() {
           <h1 className="font-display text-xl">Muse</h1>
           <Badge tone={currentProvider().live ? "good" : "neutral"}>{currentProvider().live ? "Model connected" : "Offline mode"}</Badge>
           <span className="text-xs text-muted">{currentProvider().label}</span>
-          <label className="ml-auto flex items-center gap-2 text-sm"><input type="checkbox" checked={brief} onChange={(e) => setBrief(e.target.checked)} /> Brief answers</label>
+          <label data-tour="brief" className="ml-auto flex items-center gap-2 text-sm"><input type="checkbox" checked={brief} onChange={(e) => setBrief(e.target.checked)} /> Brief answers</label>
           <div className="flex lg:hidden"><Button size="sm" onClick={() => { const c = newConversation(mode); upsert(c); setActiveId(c.id); }}><Plus size={14} /> New</Button></div>
         </header>
-        <nav aria-label="Copilot mode" className="flex gap-2 overflow-x-auto border-b border-line px-5 py-2">
+        <nav data-tour="modes" aria-label="Copilot mode" className="flex gap-2 overflow-x-auto border-b border-line px-5 py-2">
           {MODES.map((m) => (
             <button key={m.id} title={m.blurb} aria-pressed={mode === m.id} onClick={() => { setMode(m.id); if (active) patch(active.id, { mode: m.id }); }}
               className={`shrink-0 rounded-full px-3 py-1.5 text-sm ${mode === m.id ? "bg-primary text-primary-ink" : "bg-surface-2 text-ink hover:bg-line"}`}>{m.label}</button>
@@ -166,7 +166,7 @@ export function CopilotPage() {
             <button className="ml-3 text-muted underline" onClick={() => setOpenSource(null)}>Close</button>
           </div>) : null; })()}
 
-        <form className="border-t border-line p-4" onSubmit={(e) => { e.preventDefault(); send(draft); }}>
+        <form data-tour="composer" className="border-t border-line p-4" onSubmit={(e) => { e.preventDefault(); send(draft); }}>
           <div className="flex items-end gap-2">
             <label className="flex-1"><span className="sr-only">Message Muse</span>
               <textarea rows={2} className={inputCls + " resize-none"} placeholder="Write as much as you like…" value={draft}

@@ -72,10 +72,10 @@ export function JourneyPage() {
   return (
     <div>
       <PageHeader title="Menopause journey" sub="Your cycles, symptoms and patterns, in your own records. Muse explains what patterns can mean, with honest uncertainty. It never diagnoses or predicts your final period."
-        actions={<Button variant="primary" onClick={download}><Download size={16} /> Doctor-ready summary</Button>} />
+        actions={<Button data-tour="journey-summary" variant="primary" onClick={download}><Download size={16} /> Doctor-ready summary</Button>} />
 
       <div className="grid gap-5 lg:grid-cols-[1fr_1.1fr]">
-        <Card><Calendar month={month} periods={periods} symptomDays={symptomDays} onPrev={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} onNext={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} /></Card>
+        <Card><div data-tour="journey-calendar"><Calendar month={month} periods={periods} symptomDays={symptomDays} onPrev={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} onNext={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} /></div></Card>
 
         <Card title="What your pattern may mean">
           <div className="rounded-f-sm bg-surface-2 p-4">
@@ -93,7 +93,7 @@ export function JourneyPage() {
         </Card>
       </div>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1.6fr]">
+      <div data-tour="journey-forecast" className="mt-5 grid gap-5 lg:grid-cols-[1fr_1.6fr]">
         <NextPeriodCard periods={periods} />
         <AgeContextCard age={app.profile.age} />
       </div>

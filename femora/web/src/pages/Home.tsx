@@ -19,7 +19,7 @@ export function Home() {
   const joyOn = app.prefs.categories.joy.enabled;
   return (
     <div className="space-y-6">
-      <section className="hero-grad relative overflow-hidden rounded-f-lg p-8 text-white md:p-12">
+      <section data-tour="home-hero" className="hero-grad relative overflow-hidden rounded-f-lg p-8 text-white md:p-12">
         <p className="flex items-center gap-2 text-sm uppercase tracking-[0.25em] opacity-80"><Sparkles size={16} /> Your Muse</p>
         <h1 className="mt-3 font-display text-4xl md:text-5xl">{greeting(app.profile.name)}</h1>
         <p className="mt-3 max-w-2xl text-lg opacity-90">{list[0]?.text}</p>

@@ -4,6 +4,7 @@ import type { ChatProvider, Reply, ReplyContext } from "./types";
 import { companionize, encourager, precise } from "./persona";
 import { populationContext } from "../forecast/forecast";
 import { bpNote } from "../body/logic";
+import { searchHelp } from "../onboarding/help";
 
 type Rule = { test: RegExp; reply: (c: ReplyContext) => Reply };
 
@@ -21,6 +22,12 @@ const STORIES = [
 ];
 
 const RULES: Rule[] = [
+  // ---- "Ask Muse how to": answers from the help centre, with a guided tour
+  { test: /^(how (do|can|should) i|how to|where (do|can) i|show me how|help me (use|find|set))\b/, reply: (c) => {
+    const a = searchHelp(c.text)[0];
+    if (!a || a.id === "talk" && !/talk|chat|muse|mode|voice/.test(c.text.toLowerCase())) return { text: "I'm not sure which part of Muse you mean. The Help centre has guides for every feature, and I'm happy to explain anything.", actions: [{ kind: "open", label: "Open Help centre", payload: "/app/help" }] };
+    return { text: `**${a.title}**\n${a.steps.map((x) => `- ${x}`).join("\n")}`, actions: [...(a.tour ? [{ kind: "open" as const, label: "Show me", payload: `/app?tour=${a.tour}` }] : []), { kind: "open" as const, label: "Help centre", payload: "/app/help" }] };
+  } },
   // ---- whole-body facts (her own records only)
   { test: /\b(my (blood pressure|bp)|how (am i|have i been) sleeping|my sleep|my steps|how many steps|my mood (this|lately)|my weight)\b/, reply: (c) => {
     const b = c.body ?? {};

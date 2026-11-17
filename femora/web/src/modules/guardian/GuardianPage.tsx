@@ -38,7 +38,7 @@ export function GuardianPage() {
     <div>
       <PageHeader title="Guardian" sub="Your safety tools, always one tap away. Muse helps you reach people fast. It never claims a message was delivered when it can't confirm it." />
 
-      <section aria-label="Emergency" className="rounded-f-lg border-2 border-danger bg-danger/8 p-5 md:p-6">
+      <section data-tour="guardian-emergency" aria-label="Emergency" className="rounded-f-lg border-2 border-danger bg-danger/8 p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-3">
           <ShieldAlert className="text-danger" size={28} aria-hidden />
           <h2 className="font-display text-2xl">In an emergency</h2>
@@ -82,7 +82,7 @@ export function GuardianPage() {
           <p className="mt-2 text-xs text-muted">Shared with Connections. Stored only on this device.</p>
         </Card>
 
-        <Card title="Safety check-ins">
+        <div data-tour="guardian-checkins"><Card title="Safety check-ins">
           {g.checkIns.length === 0 ? <p className="text-sm text-muted">Schedule a check-in, for example after a walk or before bed. If you miss it, Muse alerts you while it's open and helps you message someone.</p> : (
             <ul className="divide-y divide-line">{g.checkIns.map((c) => { const s = checkInStatus(c, g.log); return (
               <li key={c.id} className="py-2.5 text-sm">
@@ -99,7 +99,7 @@ export function GuardianPage() {
             <Field label="Days"><div className="flex flex-wrap gap-1">{DAYS.map((d, i) => <button type="button" key={d} aria-pressed={ci.days.includes(i)} onClick={() => setCi({ ...ci, days: ci.days.includes(i) ? ci.days.filter((x) => x !== i) : [...ci.days, i].sort() })} className={`rounded-full px-2 py-0.5 text-xs ${ci.days.includes(i) ? "bg-primary text-primary-ink" : "bg-surface-2"}`}>{d}</button>)}</div></Field>
             <div className="col-span-2"><Button type="submit" variant="primary"><Plus size={16} /> Add check-in</Button></div>
           </form>
-        </Card>
+        </Card></div>
       </div>
 
       <Card className="mt-5" title="Emergency information" actions={<div className="flex gap-2"><Button size="sm" onClick={printCard}><Printer size={14} /> Print card</Button>

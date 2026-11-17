@@ -9,6 +9,10 @@ import { Credit } from "./Credit";
 import { LocationDialog } from "./LocationDialog";
 import { ReminderWatcher } from "../modules/reminders/useReminders";
 import { GuardianWatcher } from "../modules/guardian/useGuardian";
+import { Onboarding } from "../modules/onboarding/Onboarding";
+import { TourOverlay } from "../modules/onboarding/TourOverlay";
+import { tourStore } from "../modules/onboarding/tours";
+import { usePersistent } from "../lib/usePersistent";
 import { setProvider } from "../modules/conversation/router";
 import { llamaProvider, DEFAULT_LLAMA, type LlamaConfig } from "../modules/conversation/llamaProvider";
 
@@ -26,6 +30,8 @@ export function AppShell() {
   const nav = useNavigate();
   const loc = useLocation();
   const online = useOnline();
+  const [onboarded, setOnboarded] = usePersistent("onboarded", () => false);
+  useEffect(() => { const t = new URLSearchParams(loc.search).get("tour"); if (t) tourStore.start(t); }, [loc.search]);
   useEffect(() => { setBell(false); }, [loc.pathname]);
   useEffect(() => { const c = load<LlamaConfig>("llama", DEFAULT_LLAMA); if (c.enabled) setProvider(llamaProvider(c)); }, []);
   const unread = app.notices.filter((n) => !n.read).length;
@@ -34,14 +40,15 @@ export function AppShell() {
     <div className="min-h-screen">
       <ReminderWatcher />
       <GuardianWatcher />
-      {(!app.location || editLoc) && <LocationDialog onClose={app.location ? () => setEditLoc(false) : undefined} />}
+      {!onboarded ? <Onboarding onDone={() => setOnboarded(true)} /> : (!app.location || editLoc) && <LocationDialog onClose={app.location ? () => setEditLoc(false) : undefined} />}
+      <TourOverlay />
       <div className="flex">
         <aside className={`fixed inset-y-0 left-0 z-30 w-68 transform border-r border-line bg-surface px-4 py-6 transition-transform lg:static lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`} aria-label="Main navigation">
           <div className="mb-8 flex items-center justify-between px-2">
             <Link to="/" className="flex items-center gap-2"><Logo /><span className="font-display text-2xl tracking-wide">FEMORA <span className="text-accent">Muse</span></span></Link>
             <button className="lg:hidden" aria-label="Close menu" onClick={() => setOpen(false)}><X /></button>
           </div>
-          <nav className="space-y-0.5">
+          <nav className="space-y-0.5" data-tour="nav">
             {NAV.map((n) => (
               <NavLink key={n.path} to={n.path} end={n.path === "/app"} onClick={() => setOpen(false)}
                 className={({ isActive }) => `flex items-center gap-3 rounded-f-sm px-3 py-2.5 text-[15px] ${isActive ? "bg-primary text-primary-ink" : "text-ink hover:bg-surface-2"}`}>
@@ -60,10 +67,10 @@ export function AppShell() {
             <span className={`flex items-center gap-1 text-xs ${online ? "text-good" : "text-warn"}`} role="status" title={online ? "Online: live listings can refresh" : "Offline: showing saved data only"}>
               {online ? <Wifi size={14} /> : <WifiOff size={14} />}<span className="hidden sm:inline">{online ? "Online" : "Offline · saved data only"}</span></span>
             <div className="ml-auto flex items-center gap-2">
-              <select aria-label="Theme" className="hidden rounded-full border border-line bg-surface px-3 py-1.5 text-sm md:block" value={app.preset} onChange={(e) => app.setPreset(e.target.value as typeof app.preset)}>
+              <select data-tour="theme" aria-label="Theme" className="hidden rounded-full border border-line bg-surface px-3 py-1.5 text-sm md:block" value={app.preset} onChange={(e) => app.setPreset(e.target.value as typeof app.preset)}>
                 <option value="onyx">Onyx & Champagne</option><option value="emerald">Emerald & Ivory</option><option value="midnight">Midnight & Pearl</option>
               </select>
-              <div className="relative">
+              <div className="relative" data-tour="bell">
                 <button aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`} aria-expanded={bell} className="relative rounded-full p-2 hover:bg-surface-2" onClick={() => setBell(!bell)}>
                   <Bell size={18} />{unread > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-semibold text-white">{unread}</span>}
                 </button>

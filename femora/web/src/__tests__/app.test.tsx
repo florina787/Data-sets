@@ -16,7 +16,7 @@ describe("app", () => {
   });
 
   it("navigates every module without crashing", async () => {
-    for (const p of ["/app", "/app/copilot", "/app/food", "/app/joy", "/app/settings", "/app/free-care", "/app/reminders", "/app/medscan", "/app/connections", "/app/journey", "/app/sisterhood", "/app/care", "/app/guardian", "/app/body"]) {
+    for (const p of ["/app", "/app/copilot", "/app/food", "/app/joy", "/app/settings", "/app/free-care", "/app/reminders", "/app/medscan", "/app/connections", "/app/journey", "/app/sisterhood", "/app/care", "/app/guardian", "/app/body", "/app/help"]) {
       const { unmount } = at(p);
       expect(await screen.findByText("florinaregius@yahoo.com")).toBeInTheDocument();
       await screen.findByRole("heading", { level: 1 }, { timeout: 3000 });
