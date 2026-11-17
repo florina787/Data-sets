@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, ImageUp, X } from "lucide-react";
 import { Button } from "../../components/ui";
 import { FOODS, type Food } from "./foods";
-import { SugarGauge } from "./Charts";
+import { SugarGauge } from "./SugarGauge";
 import { sugarPct } from "./engine";
 
 export function FoodScanner({ region, onAdd, onClose }: { region?: string; onAdd: (f: Food) => void; onClose: () => void }) {

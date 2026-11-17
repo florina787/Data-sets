@@ -40,7 +40,7 @@ export function MedScanPage() {
                   <button aria-label={`Delete ${r.test}`} className="text-muted hover:text-danger" onClick={() => setResults((rs) => rs.filter((_, j) => j !== i))}><Trash2 size={15} /></button></div>
                 {r.what && <p className="text-sm text-muted">{r.what}</p>}<p className="mt-1 text-sm">{explain(r)}</p>
               </li>); })}</ul>)}
-          {qs.length > 0 && <div className="mt-4"><h4 className="font-medium">Questions to ask your clinician</h4><ul className="mt-1 list-disc pl-5 text-sm">{qs.map((q) => <li key={q}>{q}</li>)}</ul></div>}
+          {qs.length > 0 && <div className="mt-4"><h3 className="font-medium">Questions to ask your clinician</h3><ul className="mt-1 list-disc pl-5 text-sm">{qs.map((q) => <li key={q}>{q}</li>)}</ul></div>}
           <form className="mt-4 grid grid-cols-2 gap-2 border-t border-line pt-4 sm:grid-cols-3" onSubmit={(e) => { e.preventDefault(); const v = Number(f.value); if (!f.test || Number.isNaN(v) || f.value === "") return;
             const meta = COMMON_TESTS.find((t) => t.test === f.test);
             setResults((rs) => [...rs, { test: f.test, value: v, unit: f.unit, low: f.low === "" ? undefined : Number(f.low), high: f.high === "" ? undefined : Number(f.high), what: meta?.what ?? "", date: f.date }]);

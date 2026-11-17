@@ -1,4 +1,5 @@
 import { lazy, Suspense, useMemo, useState } from "react";
+import { useIdle } from "../../lib/useIdle";
 import { Link } from "react-router-dom";
 import { BadgeCheck, ExternalLink, List, Map as MapIcon, Search, Users } from "lucide-react";
 import { useApp } from "../../lib/app-state";
@@ -24,6 +25,11 @@ export function SisterhoodPage() {
   const list = useMemo(() => filterPlaces(PLACES, q, cats, freeOnly), [q, cats, freeOnly]);
   const selected = PLACES.find((p) => p.id === sel);
   const saved = load<Opportunity[]>(`saved-opps:${app.profile.id}`, []);
+  // The interactive map is heavy: on phones (or data-saver) show a preview until she asks; on larger screens load when idle.
+  const small = typeof window !== "undefined" && (window.matchMedia?.("(max-width: 767px)").matches || (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true);
+  const idle = useIdle();
+  const [wantMap, setWantMap] = useState(false);
+  const showLive = wantMap || (!small && idle) || !!fly;
 
   async function findCity(e: React.FormEvent) {
     e.preventDefault(); if (!place.trim()) return;
@@ -53,7 +59,12 @@ export function SisterhoodPage() {
 
       <div className="mt-4 grid gap-5 lg:grid-cols-[1.6fr_1fr]">
         <div data-tour="sisterhood-map">
-          {view === "map" ? <Suspense fallback={<div className="h-[420px] rounded-f bg-surface-2" />}><SisterhoodMap places={list} selected={sel} onSelect={setSel} flyTo={fly} /></Suspense> : (
+          {view === "map" ? (showLive ? <Suspense fallback={<div className="h-[420px] rounded-f bg-surface-2 md:h-[520px]" />}><SisterhoodMap places={list} selected={sel} onSelect={setSel} flyTo={fly} /></Suspense> : (
+            <div className="relative h-[420px] overflow-hidden rounded-f bg-surface-2 md:h-[520px]">
+              <img src={`${import.meta.env.BASE_URL}sisterhood-map-preview.webp`} alt="Preview of the world map with organisation markers" className="h-full w-full object-cover" width={657} height={520} />
+              <div className="absolute inset-0 grid place-items-center bg-black/10"><Button variant="primary" onClick={() => setWantMap(true)}><MapIcon size={16} /> Explore the interactive map</Button></div>
+              <span className="absolute bottom-2 right-2 rounded bg-white/85 px-1.5 text-[10px] text-[#333]">© OpenStreetMap contributors · OpenFreeMap</span>
+            </div>)) : (
             <ul className="grid gap-3 sm:grid-cols-2">{list.map((p) => (
               <li key={p.id}><button onClick={() => setSel(p.id)} aria-pressed={sel === p.id} className={`h-full w-full rounded-f bg-surface p-4 text-left shadow-f ${sel === p.id ? "ring-2 ring-accent" : ""}`}>
                 <Badge tone="accent">{p.category}</Badge><div className="mt-1 font-display text-lg leading-snug">{p.name}</div><div className="text-sm text-muted">{p.area}</div></button></li>))}</ul>)}

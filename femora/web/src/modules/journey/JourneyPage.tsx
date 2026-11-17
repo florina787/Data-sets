@@ -1,17 +1,19 @@
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Download, Plus, Trash2, BookOpen } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Legend, ReferenceArea, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useApp } from "../../lib/app-state";
 import { usePersistent } from "../../lib/usePersistent";
 import { dayKey, uid } from "../../lib/storage";
 import { Badge, Button, Card, Field, Notice, PageHeader, inputCls } from "../../components/ui";
 import { SOURCES } from "../conversation/sources";
-import { AgeContextCard, NextPeriodCard } from "../forecast/ForecastCards";
+import { lazy, Suspense } from "react";
+const CycleChart = lazy(() => import("./JourneyCharts").then((m) => ({ default: m.CycleChart })));
+const SymptomChart = lazy(() => import("./JourneyCharts").then((m) => ({ default: m.SymptomChart })));
+const NextPeriodCard = lazy(() => import("../forecast/ForecastCards").then((m) => ({ default: m.NextPeriodCard })));
+const AgeContextCard = lazy(() => import("../forecast/ForecastCards").then((m) => ({ default: m.AgeContextCard })));
+import { useIdle } from "../../lib/useIdle";
 import { SYMPTOMS, cycleLengths, cycleStats, doctorSummary, periodLength, stageHint, weeklySymptoms, type Confounder, type Flow, type Ovulation, type Period } from "./logic";
 
 const CONFOUNDERS: Confounder[] = ["hormonal contraception", "hysterectomy", "ovaries removed", "pregnant or breastfeeding", "cancer treatment", "other medical cause"];
-const tip = { contentStyle: { background: "var(--f-surface)", border: "1px solid var(--f-line)", borderRadius: 12, color: "var(--f-ink)" } };
-const PALETTE = ["var(--f-primary)", "var(--f-accent)", "var(--f-warm)", "var(--f-good)"];
 
 function Calendar({ month, periods, symptomDays, onPrev, onNext }: { month: Date; periods: Period[]; symptomDays: Set<string>; onPrev: () => void; onNext: () => void }) {
   const first = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -27,19 +29,19 @@ function Calendar({ month, periods, symptomDays, onPrev, onNext }: { month: Date
         <span className="font-display text-xl">{first.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</span>
         <Button size="sm" aria-label="Next month" onClick={onNext}><ChevronRight size={16} /></Button>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted">{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <div key={d}>{d}</div>)}</div>
-      <div className="mt-1 grid grid-cols-7 gap-1" role="grid" aria-label="Cycle calendar">
-        {Array.from({ length: offset }, (_, i) => <div key={"e" + i} />)}
+      <div aria-hidden="true" className="grid grid-cols-7 gap-1 text-center text-xs text-muted">{["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <div key={d}>{d}</div>)}</div>
+      <ol className="mt-1 grid grid-cols-7 gap-1" aria-label={`Cycle calendar, ${first.toLocaleDateString(undefined, { month: "long", year: "numeric" })}`}>
+        {Array.from({ length: offset }, (_, i) => <li key={"e" + i} aria-hidden="true" />)}
         {Array.from({ length: days }, (_, i) => {
           const k = dayKey(new Date(month.getFullYear(), month.getMonth(), i + 1, 12));
           const p = inPeriod(k), sym = symptomDays.has(k);
           return (
-            <div key={k} role="gridcell" aria-label={`${k}${p ? ", period" : ""}${sym ? ", symptoms logged" : ""}`}
+            <li key={k} aria-label={`${new Date(k + "T12:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}${p ? ", period" : ""}${sym ? ", symptoms logged" : ""}`}
               className={`relative grid aspect-square place-items-center rounded-full text-sm ${p ? "bg-warm text-white" : "bg-surface-2"} ${isStart(k) ? "ring-2 ring-warm ring-offset-2 ring-offset-surface" : ""} ${k === today ? "font-bold outline outline-1 outline-ink" : ""}`}>
-              {i + 1}{sym && <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-accent" />}
-            </div>);
+              <span aria-hidden="true">{i + 1}</span>{sym && <span aria-hidden="true" className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-accent" />}
+            </li>);
         })}
-      </div>
+      </ol>
       <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted"><span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-warm" /> Period</span><span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-accent" /> Symptoms logged</span></div>
     </div>
   );
@@ -55,6 +57,7 @@ export function JourneyPage() {
   const [sf, setSf] = useState({ name: SYMPTOMS[0], severity: 2 as 1 | 2 | 3, impact: 1 as 0 | 1 | 2 | 3, date: dayKey(new Date()), note: "" });
   const [of, setOf] = useState({ date: dayKey(new Date()), kind: "LH test positive" as Ovulation["kind"], value: "" });
   const [weeks, setWeeks] = useState(8);
+  const idle = useIdle(); // charts mount after first paint
 
   const sorted = [...periods].sort((a, b) => b.start.localeCompare(a.start));
   const stats = cycleStats(periods);
@@ -94,39 +97,17 @@ export function JourneyPage() {
       </div>
 
       <div data-tour="journey-forecast" className="mt-5 grid gap-5 lg:grid-cols-[1fr_1.6fr]">
-        <NextPeriodCard periods={periods} />
-        <AgeContextCard age={app.profile.age} />
+        <Suspense fallback={<div className="min-h-[12rem] rounded-f bg-surface shadow-f" />}>{idle ? <NextPeriodCard periods={periods} /> : <div className="min-h-[12rem] rounded-f bg-surface shadow-f" />}</Suspense>
+        <Suspense fallback={<div className="min-h-[24rem] rounded-f bg-surface shadow-f" />}>{idle ? <AgeContextCard age={app.profile.age} /> : <div className="min-h-[24rem] rounded-f bg-surface shadow-f" />}</Suspense>
       </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <Card title="Cycle lengths">
-          {lengths.length === 0 ? <p className="text-sm text-muted">Log at least two period start dates to see your cycle lengths.</p> : (
-            <figure aria-label={`Cycle lengths: ${lengths.map((l) => `${l.cycle} ${l.days} days`).join(", ")}`}>
-              <div className="h-60"><ResponsiveContainer><BarChart data={lengths} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                <CartesianGrid vertical={false} stroke="var(--f-line)" />
-                <ReferenceArea y1={21} y2={35} fill="var(--f-good)" fillOpacity={0.08} />
-                <XAxis dataKey="cycle" tick={{ fill: "var(--f-muted)", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "var(--f-muted)", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Tooltip {...tip} formatter={(v) => `${v} days`} cursor={{ fill: "var(--f-surface-2)" }} />
-                <Bar dataKey="days" fill="var(--f-warm)" radius={[8, 8, 0, 0]} animationDuration={700} />
-              </BarChart></ResponsiveContainer></div>
-              <figcaption className="text-xs text-muted">Each bar is one cycle (first day to the next first day). The shaded band marks the commonly cited 21–35 day range.</figcaption>
-            </figure>)}
+          {lengths.length === 0 ? <p className="text-sm text-muted">Log at least two period start dates to see your cycle lengths.</p> : (idle && <Suspense fallback={<div className="h-64" />}><CycleChart lengths={lengths} /></Suspense>)}
         </Card>
 
         <Card title="Symptoms over time" actions={<select aria-label="Date range" className="rounded-full border border-line bg-surface px-3 py-1 text-sm" value={weeks} onChange={(e) => setWeeks(Number(e.target.value))}><option value={4}>4 weeks</option><option value={8}>8 weeks</option><option value={12}>12 weeks</option><option value={26}>6 months</option></select>}>
-          {app.symptoms.length === 0 ? <p className="text-sm text-muted">Log symptoms below, or from a conversation with Muse, to see your trends.</p> : (
-            <figure aria-label={`Weekly symptom counts for the last ${weeks} weeks`}>
-              <div className="h-60"><ResponsiveContainer><BarChart data={weekly} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                <CartesianGrid vertical={false} stroke="var(--f-line)" />
-                <XAxis dataKey="week" tick={{ fill: "var(--f-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis allowDecimals={false} tick={{ fill: "var(--f-muted)", fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Tooltip {...tip} cursor={{ fill: "var(--f-surface-2)" }} />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />
-                {top.map((n, i) => <Bar key={n} dataKey={n} stackId="s" fill={PALETTE[i]} radius={i === top.length - 1 ? [6, 6, 0, 0] : 0} animationDuration={700} />)}
-              </BarChart></ResponsiveContainer></div>
-              <figcaption className="text-xs text-muted">Number of times each of your most-logged symptoms was recorded per week.</figcaption>
-            </figure>)}
+          {app.symptoms.length === 0 ? <p className="text-sm text-muted">Log symptoms below, or from a conversation with Muse, to see your trends.</p> : (idle && <Suspense fallback={<div className="h-64" />}><SymptomChart weekly={weekly} top={top} weeks={weeks} /></Suspense>)}
         </Card>
       </div>
 
@@ -175,9 +156,9 @@ export function JourneyPage() {
 
       <Card className="mt-5" title={<span className="flex items-center gap-2"><BookOpen size={18} className="text-accent" /> Understanding the transition</span>}>
         <div className="grid gap-5 text-sm md:grid-cols-3">
-          <div><h4 className="font-display text-lg">Perimenopause</h4><p className="mt-1 text-muted">The years before periods stop, when hormone levels fluctuate. Cycles may become irregular, and symptoms like hot flashes, sleep changes and mood shifts can begin, sometimes years before the final period.</p></div>
-          <div><h4 className="font-display text-lg">Menopause</h4><p className="mt-1 text-muted">The final menstrual period, recognised only looking back after 12 months without a period. Most women reach it between 45 and 55 [S1]. Earlier menopause, or menopause after surgery or treatment, deserves specific medical advice.</p></div>
-          <div><h4 className="font-display text-lg">Postmenopause</h4><p className="mt-1 text-muted">The years after. Some symptoms ease while bone and heart health become more important. Effective hormonal and non-hormonal treatments exist [S3]; a clinician can help you weigh them.</p></div>
+          <div><h3 className="font-display text-lg">Perimenopause</h3><p className="mt-1 text-muted">The years before periods stop, when hormone levels fluctuate. Cycles may become irregular, and symptoms like hot flashes, sleep changes and mood shifts can begin, sometimes years before the final period.</p></div>
+          <div><h3 className="font-display text-lg">Menopause</h3><p className="mt-1 text-muted">The final menstrual period, recognised only looking back after 12 months without a period. Most women reach it between 45 and 55 [S1]. Earlier menopause, or menopause after surgery or treatment, deserves specific medical advice.</p></div>
+          <div><h3 className="font-display text-lg">Postmenopause</h3><p className="mt-1 text-muted">The years after. Some symptoms ease while bone and heart health become more important. Effective hormonal and non-hormonal treatments exist [S3]; a clinician can help you weigh them.</p></div>
         </div>
         <ul className="mt-4 space-y-1 text-xs text-muted">{SOURCES.map((s) => <li key={s.id}>[{s.id}] <a className="underline" href={s.url} target="_blank" rel="noreferrer">{s.title}</a> · {s.publisher}, {s.year}</li>)}</ul>
       </Card>

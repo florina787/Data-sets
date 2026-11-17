@@ -13,7 +13,7 @@ export function LocationDialog({ onClose }: { onClose?: () => void }) {
   const [city, setCity] = useState(app.location?.city ?? app.profile.city);
   const ok = region && city.trim().length >= 2;
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="loc-title">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 pt-[10vh]" role="dialog" aria-modal="true" aria-labelledby="loc-title">
       <form className="w-full max-w-md rounded-f-lg bg-surface p-6 shadow-f" onSubmit={(e) => { e.preventDefault(); if (ok) { app.setLocation({ region, city: city.trim() }); onClose?.(); } }}>
         <div className="mb-1 flex items-center gap-2 text-primary"><MapPin size={20} /><span className="text-sm font-semibold uppercase tracking-wide">FEMORA is global</span></div>
         <h2 id="loc-title" className="font-display text-2xl">Where are you, {app.profile.name}?</h2>

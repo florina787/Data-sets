@@ -4,7 +4,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 export function Card({ children, className = "", title, actions }: { children: ReactNode; className?: string; title?: ReactNode; actions?: ReactNode }) {
   return (
     <section className={`rounded-f bg-surface p-5 shadow-f ${className}`}>
-      {(title || actions) && <div className="mb-3 flex items-center justify-between gap-3">{title && <h3 className="font-display text-lg">{title}</h3>}{actions}</div>}
+      {(title || actions) && <div className="mb-3 flex items-center justify-between gap-3">{title && <h2 className="font-display text-lg">{title}</h2>}{actions}</div>}
       {children}
     </section>
   );

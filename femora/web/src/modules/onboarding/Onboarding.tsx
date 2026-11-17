@@ -22,8 +22,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const toggle = (x: string) => app.updateProfile({ interests: app.profile.interests.includes(x) ? app.profile.interests.filter((y) => y !== x) : [...app.profile.interests, x] });
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="ob-title">
-      <div className="f-enter w-full max-w-xl overflow-hidden rounded-f-lg bg-surface shadow-f">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 pt-[6vh]" role="dialog" aria-modal="true" aria-labelledby="ob-title">
+      <div className="f-rise w-full max-w-xl overflow-hidden rounded-f-lg bg-surface shadow-f">
         <div className="hero-grad px-8 pb-6 pt-8 text-[#f7f1e6]">
           <div className="flex items-center gap-2"><Logo /><span className="font-display text-xl">FEMORA <span className="text-[#d7b57a]">Muse</span></span>
             <button className="ml-auto text-sm text-[#e9e1d2] underline" onClick={() => finish(false)}>Skip</button></div>

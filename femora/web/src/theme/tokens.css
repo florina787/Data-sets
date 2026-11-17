@@ -12,10 +12,10 @@
   --f-line: #e4ddd0;
   --f-primary: #17140f;       /* onyx buttons */
   --f-primary-ink: #fbf6ec;
-  --f-accent: #a8844c;        /* champagne gold (AA on ivory for large text and icons) */
+  --f-accent: #7c5f2b;        /* champagne bronze: WCAG AA (≥4.5:1) on every light surface */
   --f-warm: #b5654a;
-  --f-good: #3d7a58;
-  --f-warn: #9a6a12;
+  --f-good: #2f6a4a;
+  --f-warn: #7a5410;
   --f-danger: #b23a32;
   --f-hero-from: #14110e;
   --f-hero-to: #4a3c28;
@@ -24,7 +24,7 @@
   --f-radius-lg: 32px;
   --f-shadow: 0 1px 2px rgb(23 20 15 / 0.04), 0 12px 32px rgb(23 20 15 / 0.06);
   --f-font-body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-font-display: "Cormorant Garamond", "Fraunces", Georgia, serif;
+  --f-font-display: "Cormorant Garamond", Georgia, serif;
   --f-motion: 220ms;
   color-scheme: light;
 }
@@ -77,11 +77,14 @@ body { margin: 0; }
 .hero-grad { background: linear-gradient(135deg, var(--f-hero-from), var(--f-hero-to)); }
 
 /* Luxury presets. Swap in Profile → theme picker; no component changes. */
-[data-preset="emerald"] { --f-bg: #f6f3ec; --f-surface: #fffdf8; --f-surface-2: #ebe9df; --f-line: #dcdccd; --f-ink: #10241c; --f-primary: #0f3b2c; --f-primary-ink: #f6f1e4; --f-accent: #9b7d43; --f-hero-from: #0b2a1f; --f-hero-to: #2f5a45; }
-[data-preset="midnight"] { --f-bg: #f5f5f3; --f-surface: #ffffff; --f-surface-2: #eceef2; --f-line: #dde0e7; --f-ink: #121a2e; --f-primary: #131d3b; --f-primary-ink: #f4f1ea; --f-accent: #8a7a5c; --f-hero-from: #0c1328; --f-hero-to: #2c3a63; }
+[data-preset="emerald"] { --f-bg: #f6f3ec; --f-surface: #fffdf8; --f-surface-2: #ebe9df; --f-line: #dcdccd; --f-ink: #10241c; --f-primary: #0f3b2c; --f-primary-ink: #f6f1e4; --f-accent: #7f6431; --f-hero-from: #0b2a1f; --f-hero-to: #2f5a45; }
+[data-preset="midnight"] { --f-bg: #f5f5f3; --f-surface: #ffffff; --f-surface-2: #eceef2; --f-line: #dde0e7; --f-ink: #121a2e; --f-primary: #131d3b; --f-primary-ink: #f4f1ea; --f-accent: #6f6248; --f-hero-from: #0c1328; --f-hero-to: #2c3a63; }
 [data-theme="dark"][data-preset="emerald"] { --f-bg: #0b1511; --f-surface: #12201a; --f-surface-2: #1a2c24; --f-line: #26392f; --f-ink: #eef1e8; --f-primary: #d4bd85; --f-primary-ink: #0b1511; --f-accent: #c9ad70; }
 [data-theme="dark"][data-preset="midnight"] { --f-bg: #0b0f1c; --f-surface: #131a2c; --f-surface-2: #1c2438; --f-line: #283149; --f-ink: #eef0f6; --f-primary: #e6dcc6; --f-primary-ink: #0b0f1c; --f-accent: #cbb98f; }
 
 h1, h2, .font-display { letter-spacing: -0.01em; }
 @keyframes f-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .f-enter { animation: f-fade-up 420ms cubic-bezier(.2,.7,.2,1) both; }
+/* Transform-only entrance: never starts invisible, so it doesn't hide the largest paint from browsers. */
+@keyframes f-rise { from { transform: translateY(10px); } to { transform: none; } }
+.f-rise { animation: f-rise 420ms cubic-bezier(.2,.7,.2,1) both; }

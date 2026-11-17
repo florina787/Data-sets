@@ -98,7 +98,7 @@ export function AppShell() {
               </button>
             </div>
           </header>
-          <main className="f-enter mx-auto max-w-7xl p-4 lg:p-10" key={loc.pathname}><Suspense fallback={<div role="status" aria-label="Loading" className="grid min-h-[40vh] place-items-center"><span className="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-accent" /></div>}><Outlet /></Suspense></main>
+          <main className="f-rise mx-auto min-h-[calc(100vh-4rem)] max-w-7xl p-4 lg:p-10" key={loc.pathname}><Suspense fallback={<div role="status" aria-label="Loading" className="grid min-h-[40vh] place-items-center"><span className="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-accent" /></div>}><Outlet /></Suspense></main>
           <footer className="border-t border-line px-4 py-6 text-center lg:px-8"><Credit /></footer>
         </div>
       </div>

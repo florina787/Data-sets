@@ -5,8 +5,13 @@ import { addDays, dayKey, uid } from "../../lib/storage";
 import { Badge, Button, Card, Notice, PageHeader, Progress, inputCls } from "../../components/ui";
 import { REGIONS, foodById, type Nutrient } from "./foods";
 import { META, MEALS, parseNatural, searchFoods, sugarPct, totals, type LogEntry, type Meal } from "./engine";
-import { EnergyDonut, SugarGauge, WeekChart, type DayPoint } from "./Charts";
+import { lazy, Suspense } from "react";
+import type { DayPoint } from "./Charts";
+import { SugarGauge } from "./SugarGauge";
+const EnergyDonut = lazy(() => import("./Charts").then((m) => ({ default: m.EnergyDonut })));
+const WeekChart = lazy(() => import("./Charts").then((m) => ({ default: m.WeekChart })));
 import { FoodScanner } from "./FoodScanner";
+import { useIdle } from "../../lib/useIdle";
 import { loadLog, loadTargets, saveLog, saveTargets } from "./store";
 
 const SHOWN: Nutrient[] = ["protein", "fiber", "calcium", "vitD", "iron", "b12", "addedSugar", "satFat", "sodium", "caffeine", "alcohol"];
@@ -41,6 +46,7 @@ export function FoodPage() {
   const t = useMemo(() => totals(today), [today]);
   const results = searchFoods(q, region);
   const isToday = dk === dayKey(new Date());
+  const idle = useIdle(); // charts mount after first paint to keep the page responsive
   const week: DayPoint[] = useMemo(() => Array.from({ length: 7 }, (_, i) => {
     const d = addDays(date, i - 6); const v = totals(log.filter((e) => e.date === dayKey(d))).values;
     return { day: d.toLocaleDateString(undefined, { weekday: "short" }), protein: v.protein, calcium: v.calcium, fiber: v.fiber, sugarPct: sugarPct(v) };
@@ -128,11 +134,11 @@ export function FoodPage() {
         <div className="space-y-5">
           <div data-tour="food-glance"><Card title="Today at a glance">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2">
-              <div><h4 className="mb-2 text-sm font-medium">Where your energy came from</h4><EnergyDonut n={t.values} /></div>
-              <div><h4 className="mb-2 text-sm font-medium">Sugar percentage</h4><SugarGauge n={t.values} label="Added sugar, share of today's calories" /></div>
+              <div className="min-h-[11rem]"><h3 className="mb-2 text-sm font-medium">Where your energy came from</h3>{idle ? <Suspense fallback={null}><EnergyDonut n={t.values} /></Suspense> : null}</div>
+              <div><h3 className="mb-2 text-sm font-medium">Sugar percentage</h3><SugarGauge n={t.values} label="Added sugar, share of today's calories" /></div>
             </div>
           </Card></div>
-          <Card title="Your week"><WeekChart data={week} targets={{ protein: targets.protein ?? 60, calcium: targets.calcium ?? 1200, fiber: targets.fiber ?? 21 }} /></Card>
+          <Card title="Your week"><div className="min-h-[18.5rem]">{!idle ? null : <Suspense fallback={null}><WeekChart data={week} targets={{ protein: targets.protein ?? 60, calcium: targets.calcium ?? 1200, fiber: targets.fiber ?? 21 }} /></Suspense>}</div></Card>
           <Card title="Today's nutrients" actions={<span className="text-sm text-muted">{Math.round(t.values.kcal)} kcal · {t.entries} items</span>}>
             <ul className="space-y-3">
               {SHOWN.map((k) => {

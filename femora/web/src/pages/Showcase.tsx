@@ -44,7 +44,9 @@ export function Showcase() {
         </nav>
         <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-16 md:pt-24">
           <p className="text-sm uppercase tracking-[0.35em] text-[#d7b57a]">Women's health · menopause · life</p>
-          <h1 className="mt-6 max-w-4xl font-display text-6xl leading-[1.02] md:text-8xl">A companion that <span key={i} className="f-enter block italic text-[#e7cf9f]">{LINES[i]}</span></h1>
+          <h1 className="mt-6 max-w-4xl font-display text-6xl leading-[1.02] md:text-8xl">A companion that{" "}
+            {/* All lines share one grid cell, so the hero is always as tall as the longest line: no layout shift. */}
+            <span className="grid italic text-[#e7cf9f]">{LINES.map((l, k) => <span key={l} aria-hidden={k !== i} className={`col-start-1 row-start-1 transition-opacity duration-700 motion-reduce:transition-none ${k === i ? "opacity-100" : "opacity-0"}`}>{l}</span>)}</span></h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-[#e9e1d2]">FEMORA Muse brings conversation, nutrition, health planning and trusted discovery into one calm, private place, through perimenopause, menopause and every chapter around them.</p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link to="/app/copilot"><Button className="!bg-[#d7b57a] !text-[#17140f]">Meet your Muse</Button></Link>
