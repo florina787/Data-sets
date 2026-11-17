@@ -8,6 +8,7 @@ import { Logo } from "./ui";
 import { Credit } from "./Credit";
 import { LocationDialog } from "./LocationDialog";
 import { ReminderWatcher } from "../modules/reminders/useReminders";
+import { GuardianWatcher } from "../modules/guardian/useGuardian";
 import { setProvider } from "../modules/conversation/router";
 import { llamaProvider, DEFAULT_LLAMA, type LlamaConfig } from "../modules/conversation/llamaProvider";
 
@@ -32,6 +33,7 @@ export function AppShell() {
   return (
     <div className="min-h-screen">
       <ReminderWatcher />
+      <GuardianWatcher />
       {(!app.location || editLoc) && <LocationDialog onClose={app.location ? () => setEditLoc(false) : undefined} />}
       <div className="flex">
         <aside className={`fixed inset-y-0 left-0 z-30 w-68 transform border-r border-line bg-surface px-4 py-6 transition-transform lg:static lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`} aria-label="Main navigation">

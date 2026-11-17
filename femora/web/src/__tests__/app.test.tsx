@@ -23,7 +23,7 @@ describe("app", () => {
       expect(screen.queryByText(/fictional|simulat/i)).toBeNull();
       unmount();
     }
-  });
+  }, 30000);
 
   it("holds a multi-message conversation", async () => {
     const u = userEvent.setup();

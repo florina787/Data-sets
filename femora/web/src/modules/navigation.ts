@@ -13,10 +13,10 @@ export const NAV: NavItem[] = [
   { path: "/app/free-care", label: "Discover", icon: Gift, status: "demonstrated", summary: "Verified health campaigns, official programmes, yoga and spiritual zones, events you save" },
   { path: "/app/joy", label: "My Joy Map", icon: Smile, status: "demonstrated", milestone: 2, summary: "Record what brings you happiness and confidence" },
   { path: "/app/journey", label: "Menopause journey", icon: CalendarHeart, status: "demonstrated", milestone: 3, summary: "Cycle calendar, symptoms, ovulation observations, stage education with uncertainty, doctor-ready summary" },
-  { path: "/app/body", label: "Body, movement & mind", icon: Activity, status: "planned", milestone: 5, summary: "Walking, sleep, hip and joint pain, hair, skin, nails, brain fog and mood" },
+  { path: "/app/body", label: "Body, movement & mind", icon: Activity, status: "demonstrated", milestone: 5, summary: "Weight, blood pressure, glucose, sleep, steps, joints, skin, hair, nails, brain fog and mood: your records, your trends" },
   { path: "/app/sisterhood", label: "Global sisterhood", icon: Globe2, status: "planned", milestone: 6, summary: "Interactive MapLibre world map of support organisations, events and circles" },
   { path: "/app/care", label: "Healthcare", icon: Stethoscope, status: "planned", milestone: 7, summary: "Clinician discovery, appointments, questions and downloadable summaries" },
-  { path: "/app/guardian", label: "Guardian safety", icon: ShieldCheck, status: "planned", milestone: 7, summary: "Trusted contacts, emergency information, check-ins and SOS, once delivery is verified" },
+  { path: "/app/guardian", label: "Guardian safety", icon: ShieldCheck, status: "demonstrated", milestone: 7, summary: "Emergency call, SOS drafts to trusted people, check-ins, emergency card. Honest about what needs a server" },
   { path: "/app/connections", label: "Connections", icon: Link2, status: "demonstrated", summary: "Contacts, WhatsApp, email, text and calendar, with you in control" },
   { path: "/app/settings", label: "Profile & privacy", icon: Settings, status: "demonstrated", summary: "Profile, notifications, model, memory and your data" },
 ];

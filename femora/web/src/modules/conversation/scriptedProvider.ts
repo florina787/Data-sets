@@ -3,6 +3,7 @@
 import type { ChatProvider, Reply, ReplyContext } from "./types";
 import { companionize, encourager, precise } from "./persona";
 import { populationContext } from "../forecast/forecast";
+import { bpNote } from "../body/logic";
 
 type Rule = { test: RegExp; reply: (c: ReplyContext) => Reply };
 
@@ -20,6 +21,18 @@ const STORIES = [
 ];
 
 const RULES: Rule[] = [
+  // ---- whole-body facts (her own records only)
+  { test: /\b(my (blood pressure|bp)|how (am i|have i been) sleeping|my sleep|my steps|how many steps|my mood (this|lately)|my weight)\b/, reply: (c) => {
+    const b = c.body ?? {};
+    const parts: string[] = [];
+    if (b.lastBp) { const n = bpNote(b.lastBp.sys, b.lastBp.dia); parts.push(`Your last blood pressure reading was **${b.lastBp.sys}/${b.lastBp.dia}** on ${new Date(b.lastBp.date + "T12:00").toLocaleDateString()}: ${n.label.toLowerCase()}. ${n.text}`); }
+    if (b.sleep7 !== undefined) parts.push(`You've averaged **${b.sleep7} hours** of sleep over the last 7 days.`);
+    if (b.steps7 !== undefined) parts.push(`Your 7-day average is **${Math.round(b.steps7).toLocaleString()} steps** a day.`);
+    if (b.mood7 !== undefined) parts.push(`Your mood has averaged ${b.mood7} out of 5 this week.`);
+    if (b.weightChange30 !== undefined) parts.push(`Your weight changed by ${b.weightChange30 > 0 ? "+" : ""}${b.weightChange30} kg over 30 days.`);
+    if (!parts.length) return { text: "I don't have any of those records yet, so I won't guess. You can add them in Body, movement & mind.", actions: [{ kind: "open", label: "Open health dashboard", payload: "/app/body" }] };
+    return { text: parts.join("\n") + "\nThese are your own entries. Trends matter more than single readings.", actions: [{ kind: "open", label: "See my trends", payload: "/app/body" }] };
+  } },
   // ---- forecasts: personal next period (time series on her logs) and population context (NHANES). Never her final period.
   { test: /\b(next period|when will my period|period (be )?due|predict my period)\b/, reply: (c) => {
     const f = c.journey?.forecast;
@@ -53,8 +66,8 @@ const RULES: Rule[] = [
     text: "Looking after your health shouldn't depend on your budget. FEMORA gathers free health check-ups, sample collection (like at-home HPV kits), consultations, community events and free goodies near you.\nFollow the categories you care about and I'll notify you when something comes up.",
     actions: [{ kind: "open", label: "See free care near me", payload: "/app/free-care" }] }) },
   { test: /\b(unsafe|safety|walking home|followed|scared to go out|trusted contact|sos)\b/, reply: () => ({
-    text: "Your safety matters most. If you're in danger right now, call your local emergency number.\nFor everyday peace of mind: share your plans with someone you trust, keep your phone charged, and choose well-lit routes. FEMORA Guardian will add trusted contacts, scheduled check-ins and an SOS. It's coming in a later milestone.",
-    actions: [{ kind: "open", label: "About Guardian", payload: "/app/guardian" }] }) },
+    text: "Your safety matters most. If you're in danger right now, call your local emergency number.\nFor everyday peace of mind: share your plans with someone you trust, keep your phone charged, and choose well-lit routes. Guardian lets you call emergency services in one tap, send an SOS draft to trusted people (you press send), and schedule check-ins.",
+    actions: [{ kind: "open", label: "Open Guardian", payload: "/app/guardian" }] }) },
   // ---- joy: humour and stories (when invited)
   { test: /\b(make me laugh|joke|funny|cheer me up|lighten)\b/, reply: (c) => ({
     text: JOKES[c.history.length % JOKES.length], followUps: ["Another one!", "Tell me a story", "That's so me 😂"] }) },

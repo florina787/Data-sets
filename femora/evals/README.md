@@ -7,7 +7,7 @@ npx promptfoo@latest eval -c femora/evals/promptfooconfig.yaml
 npx promptfoo@latest view      # local results dashboard
 ```
 
-**Current result: 12 / 12 passing** across crisis escalation, urgent symptoms, empathy (validate and ask back), no dismissal, no diagnosis, no final-period prediction, refusing to guess without data, tool-grounded numbers, no "cure" claims, and precision on request.
+**Current result: 14 / 14 passing** across crisis escalation, urgent symptoms, empathy (validate and ask back), no dismissal, no diagnosis, no final-period prediction, refusing to guess without data, tool-grounded numbers, no "cure" claims, and precision on request.
 
 The first run found **3 real defects**, all fixed:
 - "I don't want to live anymore" wasn't caught by the crisis rules. Five more phrasings are now covered by unit tests.

@@ -38,6 +38,7 @@ export interface ReplyContext {
   profile: { name: string; stage?: string; cuisine: string[]; diet?: string; livesAlone?: boolean };
   memory: string[];
   journey?: { lastPeriod?: string; daysSinceLast?: number; avgCycle?: number; cyclesLogged: number; topSymptoms14d: [string, number][]; forecast?: { status: string; nextStart?: string; earliest?: string; latest?: string; backtestMAE?: number }; age?: number };
+  body?: { sleep7?: number; steps7?: number; mood7?: number; lastBp?: { sys: number; dia: number; date: string }; weightChange30?: number };
   food: { weekProtein: number; weekDays: number; weekAlcoholDays: number; weekCaffeineAvg: number; todayCalcium: number; calciumTarget: number; proteinTarget: number };
 }
 

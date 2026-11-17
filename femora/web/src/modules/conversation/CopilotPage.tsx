@@ -9,6 +9,7 @@ import { STAGE_LABEL } from "../../data/examples/profiles";
 import { foodFacts } from "../nutrition/summary";
 import { journeyFacts, type Period } from "../journey/logic";
 import { forecastNextPeriod } from "../forecast/forecast";
+import { bodyFacts, type BodyRecord } from "../body/logic";
 import { load } from "../../lib/storage";
 import { MODES, type Action, type Message, type Mode } from "./types";
 import { reply, currentProvider } from "./router";
@@ -53,6 +54,7 @@ export function CopilotPage() {
       profile: { name: app.profile.name, stage: app.profile.stage ? STAGE_LABEL[app.profile.stage] : undefined, cuisine: app.profile.cuisine, diet: app.profile.diet, livesAlone: app.profile.livesAlone },
       memory: app.memoryEnabled ? app.memory.map((m) => m.text) : [],
       food: foodFacts(app.profile.id),
+      body: bodyFacts(load<BodyRecord[]>(`body:${app.profile.id}`, [])),
       journey: (() => { const ps = load<Period[]>(`periods:${app.profile.id}`, []); return { ...journeyFacts(ps, app.symptoms), forecast: forecastNextPeriod(ps), age: app.profile.age || undefined }; })(),
     });
     setTyping(null);

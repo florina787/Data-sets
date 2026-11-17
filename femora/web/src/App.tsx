@@ -14,6 +14,8 @@ const RemindersPage = lazy(() => import("./modules/reminders/RemindersPage").the
 const MedScanPage = lazy(() => import("./modules/medscan/MedScanPage").then((m) => ({ default: m.MedScanPage })));
 const ConnectionsPage = lazy(() => import("./modules/connections/ConnectionsPage").then((m) => ({ default: m.ConnectionsPage })));
 const JourneyPage = lazy(() => import("./modules/journey/JourneyPage").then((m) => ({ default: m.JourneyPage })));
+const BodyPage = lazy(() => import("./modules/body/BodyPage").then((m) => ({ default: m.BodyPage })));
+const GuardianPage = lazy(() => import("./modules/guardian/GuardianPage").then((m) => ({ default: m.GuardianPage })));
 const Joy = lazy(() => import("./pages/Joy").then((m) => ({ default: m.Joy })));
 const Settings = lazy(() => import("./pages/Settings").then((m) => ({ default: m.Settings })));
 
@@ -43,12 +45,14 @@ export function AppRoutes() {
           <Route path="food" element={<FoodPage />} />
           <Route path="joy" element={<Joy />} />
           <Route path="journey" element={<JourneyPage />} />
+          <Route path="body" element={<BodyPage />} />
+          <Route path="guardian" element={<GuardianPage />} />
           <Route path="free-care" element={<FreeCarePage />} />
           <Route path="reminders" element={<RemindersPage />} />
           <Route path="medscan" element={<MedScanPage />} />
           <Route path="connections" element={<ConnectionsPage />} />
           <Route path="settings" element={<Settings />} />
-          {["body", "sisterhood", "care", "guardian"].map((p) => <Route key={p} path={p} element={<Planned path={`/app/${p}`} />} />)}
+          {["sisterhood", "care"].map((p) => <Route key={p} path={p} element={<Planned path={`/app/${p}`} />} />)}
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

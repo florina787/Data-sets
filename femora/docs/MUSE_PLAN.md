@@ -19,7 +19,9 @@
 | Menopause journey | ✅ | Cycle calendar, period log (flow, pain, notes), cycle-length chart (21–35 day band), weekly symptom chart with date range, ovulation observations with contraception warning, STRAW+10 educational pattern notes with confounders that switch staging off, doctor-ready summary, Muse answers cycle questions from records only. |
 | Forecasting (real data) | ✅ | NHANES 2013–2018 (10,375 women): lifelines KM (median 51, bootstrap CI), Weibull AFT, scikit-learn classifiers vs age baseline, statsmodels generational test; personal next-period time-series forecast with backtest. See `ml/README.md`. |
 | Agent evaluation | ✅ | promptfoo 12/12, runs in CI; found and fixed a crisis-detection gap. See `evals/README.md`. |
-| Body dashboard, Guardian, sisterhood map, onboarding tour, cinematic media, Lighthouse | ⏳ | Next milestones, in that order. |
+| Health dashboard | ✅ | 14 user-entered measures (weight, waist, BP, glucose, HbA1c, sleep, steps, exercise, joint/hip pain with location, brain fog, mood, skin, hair, nails); 7d–all date ranges, metric comparison, expandable insights, ACC/AHA and ADA guideline-range notes with urgent alerts, CSV export. No scores or diagnoses. Muse answers from these records. |
+| Guardian | ✅ partial | Works now: one-tap emergency call (country number), SOS drafts via SMS/WhatsApp with optional one-time location (never claims delivery), trusted contacts, scheduled check-ins with in-app alerts, emergency card (print/save). Needs a server: automatic missed-check-in alerts, live location. Needs the mobile app: closed-app alerts, fall detection. |
+| Sisterhood map, onboarding tour, cinematic media, Lighthouse | ⏳ | Next milestones, in that order. |
 
 ## 1. Architecture
 UI (`pages`, `*Page.tsx`) → domain logic (`modules/*/logic.ts`, `engine.ts`; pure, tested) → storage adapter (`lib/storage.ts`, versioned) → AI gateway (`modules/conversation/router.ts` + `ChatProvider`). Safety, scheduling, eligibility and numbers are deterministic; the LLM only writes conversation.
@@ -62,8 +64,8 @@ Consent-first memory; no hidden contact upload; nothing sent without her tap; pr
 
 ## Next milestones
 1. ~~Menopause journey~~ ✅
-2. Health dashboard with reusable date-range charts.
-3. Guardian (trusted contacts, check-ins; SOS only once delivery is verified).
+2. ~~Health dashboard~~ ✅
+3. ~~Guardian~~ ✅ (server/mobile parts pending)
 4. Sisterhood map.
 5. Onboarding tour + help centre; cinematic homepage media once licensed imagery or video is supplied.
 6. Service worker / PWA offline shell; Lighthouse measurement.
