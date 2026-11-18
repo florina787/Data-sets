@@ -23,7 +23,8 @@
 | Guardian | ✅ partial | Works now: one-tap emergency call (country number), SOS drafts via SMS/WhatsApp with optional one-time location (never claims delivery), trusted contacts, scheduled check-ins with in-app alerts, emergency card (print/save). Needs a server: automatic missed-check-in alerts, live location. Needs the mobile app: closed-app alerts, fall detection. |
 | Global sisterhood map | ✅ | MapLibre (BSD) + OpenFreeMap/OpenStreetMap tiles, lazy-loaded; 15 organisations verified on 17 Nov 2026 (HTTP 200 + page title); country/region/city-level markers only, online resources list-only; clustering, search, category and free filters, map/list switch, detail panel, optional OpenStreetMap city search on request; list fallback without WebGL. Member circles wait for accounts and moderation. |
 | Onboarding & help | ✅ | 5-step welcome (skippable, restartable), 8 spotlight tours bound to real elements, 12 searchable help articles with 4 short WebM animations recorded from the app, "Ask Muse how to" answers from the help centre and launches tours. |
-| Cinematic media, Lighthouse, Healthcare/MedAccess | ⏳ | Needs licensed imagery; Lighthouse run pending; MedAccess repo not accessible. |
+| Lighthouse | ✅ | 8 pages × mobile/desktop: accessibility, best practices and SEO 100 everywhere; performance 84–100. See `LIGHTHOUSE.md`. |
+| Cinematic media, Healthcare/MedAccess | ⏳ | Needs licensed imagery; MedAccess repo not accessible. |
 
 ## 1. Architecture
 UI (`pages`, `*Page.tsx`) → domain logic (`modules/*/logic.ts`, `engine.ts`; pure, tested) → storage adapter (`lib/storage.ts`, versioned) → AI gateway (`modules/conversation/router.ts` + `ChatProvider`). Safety, scheduling, eligibility and numbers are deterministic; the LLM only writes conversation.
@@ -70,4 +71,4 @@ Consent-first memory; no hidden contact upload; nothing sent without her tap; pr
 3. ~~Guardian~~ ✅ (server/mobile parts pending)
 4. ~~Sisterhood map~~ ✅
 5. ~~Onboarding tour + help centre~~ ✅; cinematic homepage media once licensed imagery or video is supplied.
-6. Service worker / PWA offline shell; Lighthouse measurement.
+6. Service worker / PWA offline shell; ~~Lighthouse measurement~~ ✅

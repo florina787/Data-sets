@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="640" viewBox="0 0 1600 640">
+<rect width="1600" height="640" rx="32" fill="#17140f"/>
+<text x="70" y="80" font-family="Cormorant Garamond, Georgia, serif" font-size="46" fill="#f7f1e6">Measured, not claimed: Lighthouse 12.8</text>
+<text x="72" y="118" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#d7b57a">Performance on simulated mobile and desktop · accessibility, best practices and SEO are 100 on every page</text>
+<text x="306" y="190" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Homepage</text>
+<rect x="330" y="166" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="166" width="1135" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1475" y="180" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">97</text>
+<rect x="330" y="186" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="186" width="1170" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1510" y="200" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">100</text>
+<text x="306" y="240" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">App home</text>
+<rect x="330" y="216" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="216" width="1135" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1475" y="230" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">97</text>
+<rect x="330" y="236" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="236" width="1170" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1510" y="250" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">100</text>
+<text x="306" y="290" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Talk to Muse</text>
+<rect x="330" y="266" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="266" width="1100" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1440" y="280" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">94</text>
+<rect x="330" y="286" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="286" width="1170" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1510" y="300" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">100</text>
+<text x="306" y="340" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Food</text>
+<rect x="330" y="316" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="316" width="983" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1323" y="330" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">84</text>
+<rect x="330" y="336" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="336" width="1170" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1510" y="350" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">100</text>
+<text x="306" y="390" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Journey</text>
+<rect x="330" y="366" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="366" width="994" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1334" y="380" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">85</text>
+<rect x="330" y="386" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="386" width="1158" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1498" y="400" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">99</text>
+<text x="306" y="440" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Health dashboard</text>
+<rect x="330" y="416" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="416" width="1041" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1381" y="430" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">89</text>
+<rect x="330" y="436" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="436" width="1158" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1498" y="450" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">99</text>
+<text x="306" y="490" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Guardian</text>
+<rect x="330" y="466" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="466" width="1100" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1440" y="480" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">94</text>
+<rect x="330" y="486" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="486" width="1170" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1510" y="500" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">100</text>
+<text x="306" y="540" text-anchor="end" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#f7f1e6">Sisterhood map</text>
+<rect x="330" y="516" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="516" width="1112" height="16" rx="8" fill="#d7b57a"></rect>
+<text x="1452" y="530" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#d7b57a">95</text>
+<rect x="330" y="536" width="1170" height="16" rx="8" fill="#2b241c"/><rect x="330" y="536" width="1030" height="16" rx="8" fill="#7cc79c"></rect>
+<text x="1370" y="550" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#7cc79c">88</text>
+<rect x="330" y="582" width="14" height="14" rx="3" fill="#d7b57a"/><text x="352" y="594" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#f7f1e6">Mobile (slow 4G, 4× CPU)</text><rect x="610" y="582" width="14" height="14" rx="3" fill="#7cc79c"/><text x="632" y="594" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#f7f1e6">Desktop</text>
+</svg>

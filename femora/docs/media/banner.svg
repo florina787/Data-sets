@@ -14,12 +14,12 @@
 <text x="230" y="168" font-family="Cormorant Garamond, Georgia, 'Times New Roman', serif" font-size="78" fill="#f7f1e6" letter-spacing="2">FEMORA <tspan fill="url(#gold)" font-style="italic">Muse</tspan></text>
 <text x="232" y="214" font-family="Helvetica, Arial, sans-serif" font-size="17" letter-spacing="7" fill="#d7b57a">WOMEN’S HEALTH · MENOPAUSE · LIFE</text>
 <text x="100" y="330" font-family="Cormorant Garamond, Georgia, serif" font-size="54" fill="#f7f1e6">A companion that <tspan font-style="italic" fill="#e7cf9f">walks beside you.</tspan></text>
-<text x="102" y="380" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#e9e1d2" opacity=".9">Conversation · global nutrition · health planner · MedScan · verified discovery · private by design</text>
+<text x="102" y="380" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#e9e1d2" opacity=".9">Conversation · nutrition · menopause journey · health dashboard · Guardian · global sisterhood</text>
 <g font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#f7f1e6">
-<rect x="100" y="420" width="208.0" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="118" y="446">8 conversation modes</text>
-<rect x="322.0" y="420" width="165.0" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="340.0" y="446">42 world dishes</text>
-<rect x="501.0" y="420" width="173.6" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="519.0" y="446">83 tests passing</text>
-<rect x="688.6" y="420" width="147.8" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="706.6" y="446">Offline-first</text>
-<rect x="850.4000000000001" y="420" width="165.0" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="868.4000000000001" y="446">llama.cpp ready</text>
-<rect x="1029.4" y="420" width="165.0" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="1047.4" y="446">3 luxury themes</text>
+<rect x="100" y="420" width="208" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="118" y="446">8 conversation modes</text>
+<rect x="322" y="420" width="251" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="340" y="446">10,375 women in the model</text>
+<rect x="587" y="420" width="182" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="605" y="446">134 tests passing</text>
+<rect x="783" y="420" width="182" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="801" y="446">Accessibility 100</text>
+<rect x="979" y="420" width="148" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="997" y="446">Offline-first</text>
+<rect x="1141" y="420" width="165" height="40" rx="20" fill="#ffffff" fill-opacity=".08" stroke="#d7b57a" stroke-opacity=".5"/><text x="1159" y="446">3 luxury themes</text>
 </g></svg>
