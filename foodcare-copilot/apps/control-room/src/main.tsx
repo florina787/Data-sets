@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
@@ -14,9 +14,9 @@ import Executive from "./screens/Executive";
 import Incidents from "./screens/Incidents";
 import Inspection from "./screens/Inspection";
 import Observability from "./screens/Observability";
-import EvaluationLab from "./screens/EvaluationLab";
+const EvaluationLab = lazy(() => import("./screens/EvaluationLab"));
 import QualityIntelligence from "./screens/QualityIntelligence";
-import AgentIntelligence from "./screens/AgentIntelligence";
+const AgentIntelligence = lazy(() => import("./screens/AgentIntelligence"));
 import Inventory from "./screens/Inventory";
 import Overview from "./screens/Overview";
 import Quality from "./screens/Quality";
@@ -28,13 +28,19 @@ import PulsePage from "./screens/Pulse";
 import Priorities from "./screens/Priorities";
 import Network from "./screens/Network";
 import Technology from "./screens/Technology";
-import Reports from "./screens/Reports";
+const Reports = lazy(() => import("./screens/Reports"));
+const Defense = lazy(() => import("./screens/Defense"));
+const Portfolio = lazy(() => import("./screens/Portfolio"));
+const Connect = lazy(() => import("./screens/Connect"));
+const Exports = lazy(() => import("./screens/Exports"));
+const Demo = lazy(() => import("./screens/Demo"));
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <AppProvider>
         <Layout>
+          <Suspense fallback={<p className="p-6 text-sm text-ink-muted">Loading…</p>}>
           <Routes>
             <Route path="/" element={<PulsePage />} />
             <Route path="/executive" element={<Executive />} />
@@ -42,6 +48,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/network" element={<Network />} />
             <Route path="/technology" element={<Technology />} />
             <Route path="/reports" element={<Reports />} />
+            <Route path="/defense" element={<Defense />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/connect" element={<Connect />} />
+            <Route path="/exports" element={<Exports />} />
+            <Route path="/demo" element={<Demo />} />
             <Route path="/copilot" element={<CopilotPage />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/inventory" element={<Inventory />} />
@@ -63,6 +74,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/evidence" element={<Evidence />} />
             <Route path="*" element={<p>Page not found.</p>} />
           </Routes>
+          </Suspense>
         </Layout>
       </AppProvider>
     </BrowserRouter>

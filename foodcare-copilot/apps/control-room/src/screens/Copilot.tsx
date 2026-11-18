@@ -4,10 +4,13 @@ import { Provenance } from "../components/ui";
 import { useApp } from "../context";
 import { useBlob } from "../hooks";
 import { FriesCarton } from "../components/Illustrations";
+import { ActionBar, openXray, PolicyChips } from "../components/visuals/Actions";
+import { VisualList } from "../components/visuals/VisualRenderer";
 
 type Source = { id: string; kind: string; label: string; ref: string; detail?: string };
 type Answer = {
   conversation_id: string; question: string; answer: string; sources: Source[]; answered: boolean; agent_run_id?: string;
+  visuals?: any[]; ui_actions?: any[]; policy?: any; data_status?: string; limitations?: string[];
   tool_calls: { tool: string; args: Record<string, unknown> }[]; intents: string[]; entities: Record<string, unknown>;
   mode: string; provenance: string; notice: string | null; follow_ups: string[]; follow_up?: boolean;
   attachments?: { type: string; batch_id: string; potato_no: number }[];
@@ -82,6 +85,9 @@ function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
       {a.notice && <p className="mb-2 rounded bg-amber-100 px-2 py-1 text-xs text-amber-700">{a.notice}</p>}
       <Rich text={a.answer} sources={a.sources} onCite={setFocus} />
       {a.attachments?.filter((x) => x.type === "potato").map((x) => <PotatoAttachment key={`${x.batch_id}-${x.potato_no}`} batchId={x.batch_id} no={x.potato_no} />)}
+      <VisualList visuals={a.visuals ?? []} />
+      <ActionBar actions={a.ui_actions ?? []} />
+      <PolicyChips a={a} />
       {a.sources.length > 0 && (
         <div className="mt-3 border-t border-cream-200 pt-2">
           <div className="label mb-1">Sources</div>
@@ -108,7 +114,8 @@ function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
         </div>
       )}
       <p className="mt-2 text-[11px] text-navy-600">
-        Limits: answers come only from the cited demo data and records; figures marked synthetic are not real business results. Check before acting.
+        {(a.limitations?.length ? a.limitations : ["Answers come only from the cited demo data and records."]).join(" ")} Check before acting.
+        {a.agent_run_id && <> · <button className="text-teal hover:underline" onClick={() => openXray(a.agent_run_id!)}>Show how Jerry knows</button></>}
       </p>
       <Feedback a={a} />
     </div>
@@ -135,6 +142,38 @@ function Feedback({ a }: { a: Answer }) {
           <button className="btn-ghost text-xs" type="submit">Send</button>
         </form>
       )}
+    </div>
+  );
+}
+
+const WELCOME = [
+  { icon: "◎", title: "Daily recap", text: "What changed, what matters, what to decide.", q: "Jerry, what changed since yesterday?", basis: "From your records" },
+  { icon: "⛨", title: "Threats & savings", text: "Security posture, downtime and unused licences.", q: "Jerry, tell me where our threats are, whether malware or server downtime is affecting the business, and how much we can save on unused licenses", basis: "Simulated telemetry, labelled" },
+  { icon: "▦", title: "Every team's work", text: "What departments are building and what is blocked.", q: "Jerry, summarize what every team is building and what needs my attention.", basis: "Synthetic portfolio" },
+  { icon: "⤓", title: "Board pack", text: "A policy-filtered, board-ready PDF.", q: "Prepare a PDF for my board", basis: "Real file, filtered" },
+];
+
+/** Conversation-first landing (reference: personal assistant greeting with suggestion cards). */
+function JerryWelcome({ name, onAsk }: { name: string; onAsk: (q: string) => void }) {
+  return (
+    <div className="jerry-hero relative overflow-hidden rounded-3xl border border-surface-line px-6 py-10 md:px-10" data-testid="jerry-welcome">
+      <div className="relative">
+        <div className="eyebrow">Jerry · Enterprise AI command copilot</div>
+        <h2 className="mt-3 text-3xl font-light tracking-tight text-ink md:text-5xl">Hey {name}, I'm <span className="font-semibold text-champagne">Jerry</span>.</h2>
+        <p className="mt-3 max-w-2xl text-ink-muted">Ask about your business, technology, security or teams. I answer from cited, policy-filtered data, show the evidence, and never act on my own.</p>
+        <ul className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {WELCOME.map((w) => (
+            <li key={w.title}>
+              <button onClick={() => onAsk(w.q)} className="welcome-card group flex h-full w-full flex-col rounded-2xl border border-surface-line p-4 text-left transition hover:-translate-y-0.5 hover:border-teal">
+                <span aria-hidden className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-teal/10 text-lg text-teal">{w.icon}</span>
+                <span className="font-semibold text-ink">{w.title}</span>
+                <span className="mt-1 text-sm text-ink-muted">{w.text}</span>
+                <span className="mt-auto pt-4 text-[11px] text-ink-faint">✦ {w.basis}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -222,9 +261,10 @@ export function Conversation({ pending, onConsumed, compact = false, resume, onS
     <div className="flex h-full min-h-0 flex-col">
       <div className={`min-h-0 flex-1 space-y-3 overflow-y-auto ${compact ? "p-3" : "py-2"}`} aria-live="polite">
         {!user && <p className="rounded bg-amber-100 p-2 text-sm text-amber-700">Sign in with any demo account (the viewer works) to ask the copilot.</p>}
-        {turns.length === 0 && user && (
+        {turns.length === 0 && user && !compact && <JerryWelcome name={user.display_name.split(" ")[0]} onAsk={ask} />}
+        {turns.length === 0 && user && compact && (
           <div className="text-sm text-navy-700">
-            <p>I answer read-only questions about FoodCare's sales and promotions, inventory, product compliance, software delivery, incidents and policies. Every figure has a citation. I don't guess, and I can't take actions.</p>
+            <p>I answer read-only questions about sales, stock, compliance, inspections, the supply chain, security, licences, delivery portfolio and system health. Every figure has a citation. I don't guess, and I can't take actions.</p>
             <div className="mt-2 flex flex-wrap gap-1">
               {examples.map((e) => <button key={e} onClick={() => ask(e)} className="rounded-full border border-cream-300 bg-white px-2 py-1 text-xs hover:bg-cream-200">{e}</button>)}
             </div>

@@ -8,11 +8,11 @@ import { sectionFor } from "../Layout";
 const SUGGESTIONS: Record<string, string[]> = {
   overview: ["Jerry, what changed since yesterday?", "What should I focus on before my board meeting?", "Are our AI systems healthy?"],
   priorities: ["What happened to the quality issue we discussed last week?", "What changed since yesterday?", "Is there enough apple stock for the Ontario weekend campaign?"],
-  operations: ["Why are sales declining?", "Which products are running low in Vancouver?", "Which listings have allergen issues?"],
+  operations: ["Where are we losing money through waste, spoilage, and stockouts?", "Which factories, stores, or distribution centers are underperforming, and why?", "What is Marketing building?"],
   network: ["Which suppliers are creating the most exposure?", "OriginTrace: summarise global supply chain risk and exposure", "What is the supply chain exposure in Peru?"],
   jerry: ["Give me a briefing", "What can you do?", "How did our sales do in the last 4 weeks?"],
-  technology: ["Are our AI systems healthy?", "Which incidents are open?", "What happened in the checkout incident?"],
-  reports: ["What changed since yesterday?", "Give me a briefing", "How did our sales do in the last 4 weeks?"],
+  technology: ["Are we under attack?", "Which licenses are unused?", "How does this connect to Databricks and Kubernetes?"],
+  reports: ["Prepare a PDF for my board", "Prepare a security and savings board report", "Make this board-ready"],
 };
 
 export function JerryDock() {

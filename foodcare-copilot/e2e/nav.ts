@@ -10,7 +10,9 @@ const SECTION_OF: Record<string, string> = {
   "Model Evaluation Lab": "Technology", "Agent Intelligence": "Technology", "Delivery overview": "Technology",
   "Brief intake": "Technology", "Delivery board": "Technology", Requirements: "Technology", Engineering: "Technology",
   Quality: "Technology", "Release center": "Technology", Incidents: "Technology", "Scenario templates": "Technology",
-  "Weekly CTO review": "Reports", "Evidence & audit": "Reports",
+  "Weekly CTO review": "Reports", "Evidence & audit": "Reports", "Export Studio": "Reports",
+  "Guided CTO demo": "Overview", "Team & delivery portfolio": "Operations", "Defense Command": "Technology",
+  "Connect your enterprise": "Technology",
 };
 
 export async function navTo(page: Page, label: string) {

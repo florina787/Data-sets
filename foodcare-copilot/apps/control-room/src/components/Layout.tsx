@@ -7,27 +7,29 @@ import { CopilotDrawer, openCopilot } from "../screens/Copilot";
 import GeoChip from "./geo/GeoChip";
 import { InvestigationPanel } from "./pulse/InvestigationPanel";
 import { JerryDock } from "./pulse/JerryDock";
+import { XrayPanel } from "./visuals/Actions";
 import { FriesCarton } from "./Illustrations";
 import { Short, Status } from "./ui";
 
 /** Flo & Jerry 3.0 navigation: 7 primary sections, one secondary level (NN/g progressive disclosure). */
 export const SECTIONS: { key: string; label: string; icon: string; items: [string, string, string?][] }[] = [
-  { key: "overview", label: "Overview", icon: "◎", items: [["/", "Enterprise Pulse"], ["/executive", "Executive Command"]] },
+  { key: "overview", label: "Overview", icon: "◎", items: [["/", "Enterprise Pulse"], ["/executive", "Executive Command"], ["/demo", "Guided CTO demo"]] },
   { key: "priorities", label: "My Priorities", icon: "◆", items: [["/priorities", "Priorities & decisions"]] },
   { key: "operations", label: "Operations", icon: "▤", items: [
     ["/quality-intel", "Quality Intelligence"], ["/inspection", "Potato Inspection"], ["/inventory", "Inventory"],
-    ["/sales", "Sales & Promotions"], ["/compliance", "Compliance & Food Safety"]] },
+    ["/sales", "Sales & Promotions"], ["/compliance", "Compliance & Food Safety"], ["/portfolio", "Team & delivery portfolio"]] },
   { key: "network", label: "Global Network", icon: "◍", items: [["/network", "Supply-chain globe"]] },
   { key: "jerry", label: "Jerry AI", icon: "✦", items: [["/copilot", "Ask Copilot"]] },
   { key: "technology", label: "Technology", icon: "⚙", items: [
-    ["/technology", "Technology health"], ["/observability", "System Observability"],
+    ["/technology", "Technology health"], ["/defense", "Defense Command"], ["/connect", "Connect your enterprise"],
+    ["/observability", "System Observability"],
     ["/evaluation", "Model Evaluation Lab"], ["/agents", "Agent Intelligence"],
     ["/delivery", "Delivery overview", "Digital delivery"], ["/brief", "Brief intake", "Digital delivery"],
     ["/board", "Delivery board", "Digital delivery"], ["/requirements", "Requirements", "Digital delivery"],
     ["/engineering", "Engineering", "Digital delivery"], ["/quality", "Quality", "Digital delivery"],
     ["/releases", "Release center", "Digital delivery"], ["/incidents", "Incidents", "Digital delivery"],
     ["/templates", "Scenario templates", "Digital delivery"]] },
-  { key: "reports", label: "Reports", icon: "▦", items: [["/reports", "Weekly CTO review"], ["/evidence", "Evidence & audit"]] },
+  { key: "reports", label: "Reports", icon: "▦", items: [["/reports", "Weekly CTO review"], ["/exports", "Export Studio"], ["/evidence", "Evidence & audit"]] },
 ];
 
 export function sectionFor(path: string) {
@@ -359,6 +361,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </div>
       <CopilotDrawer />
       <InvestigationPanel />
+      <XrayPanel />
       <JerryDock />
     </div>
   );

@@ -110,6 +110,10 @@ export const ROLE_CAN: Record<string, string[]> = {
   "fault.inject": ["engineer"],
   "traffic.generate": ["engineer"],
   "demo.control": ["engineer", "release_approver", "product_owner", "marketing"],
+  "connector.test": ["engineer", "release_approver"],
+  "containment.propose": ["engineer"],
+  "containment.approve": ["engineer", "release_approver"],
+  "alert.manage": ["engineer", "release_approver"],
 };
 
 /** UI hint only; the server enforces the same rules and records rejected attempts. */
