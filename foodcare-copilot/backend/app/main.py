@@ -774,6 +774,27 @@ def xray(agent_run_id: str, user: User = Depends(current_user)) -> dict:
                     "tool names, timings, statuses and source states are shown."}
 
 
+@app.get("/api/motion/{story}.gif")
+def motion_gif(story: str, site: str | None = Query(default=None, pattern=r"^GEO-[A-Z]{3}-\d{2}$"),
+               user: User = Depends(current_user)):
+    """A Motion Story as an animated GIF, drawn from the same validated, policy-filtered story data."""
+    from fastapi.responses import Response
+
+    from app import motion, visuals
+    from app.copilot import command
+    from app.copilot.router import Parsed
+
+    if story not in ("architecture", "supplier_disruption", "farm_to_market"):
+        raise NotFound("Unknown story")
+    p = Parsed(question=story, intents=[], scores={}, username=user.username, role=user.role,
+               focus={"kind": "suppliers", "sites": [site]} if site else None)
+    data, _, errors = visuals.validate([command._story(story, p)], [])
+    if not data:
+        raise PlatformError("Story failed validation")
+    return Response(motion.render(data[0]), media_type="image/gif", headers={
+        "Content-Disposition": f'attachment; filename="flo-jerry-{story}.gif"', "Cache-Control": "no-store"})
+
+
 # --- Privacy Shield (see app/privacy.py) ------------------------------------------------
 
 @app.get("/api/suppliers")

@@ -18,23 +18,41 @@ SKU_ALIASES = [
     ("BH-COLDBREW-300", ("cold brew", "coldbrew", "coffee", "brewhouse")),
     ("NT-OATMILK-1L", ("oat milk", "oatmilk", "oat", "nutriterra")),
 ]
-PROVINCE_NAMES = {"ontario": "ON", "quebec": "QC", "québec": "QC", "british columbia": "BC", "alberta": "AB",
-                  "manitoba": "MB", "nova scotia": "NS"}
+PROVINCE_NAMES = {
+    "ontario": "ON",
+    "quebec": "QC",
+    "québec": "QC",
+    "british columbia": "BC",
+    "alberta": "AB",
+    "manitoba": "MB",
+    "nova scotia": "NS",
+}
 PROVINCE_CODE = re.compile(r"\b(ON|QC|BC|AB|MB|NS)\b")
 WAREHOUSES = {"toronto": "DC-TOR", "montreal": "DC-MTL", "montréal": "DC-MTL", "vancouver": "DC-VAN"}
-CHANNELS = {"retail": "retail", "grocery": "retail", "marketplace": "marketplace", "web store": "web",
-            "online store": "web", "webstore": "web", "website": "web", "e-commerce": "web"}
+CHANNELS = {
+    "retail": "retail",
+    "grocery": "retail",
+    "marketplace": "marketplace",
+    "web store": "web",
+    "online store": "web",
+    "webstore": "web",
+    "website": "web",
+    "e-commerce": "web",
+}
 
 # Small talk: a message made only of these words (any order, any punctuation or emoji) gets a
 # friendly introduction instead of "I can't answer that". Real questions still route normally.
-SMALL_TALK_WORDS = frozenset("""
+SMALL_TALK_WORDS = frozenset(
+    """
 hi hii hiii hello helo hello hey heya hiya howdy yo sup namaste greetings welcome morning afternoon evening good
 day there jerry copilot flo team all everyone guys how are you u r doing do going is it whats what's what up new
 who your name nice to meet pleased thanks thank thx ty cheers ok okay cool great awesome fine well today
 the a an and i im i'm am me so bot assistant again back oh
-""".split())
-GREETING_WORDS = frozenset("hi hii hiii hello helo hey heya hiya howdy yo sup namaste greetings welcome morning "
-                           "afternoon evening".split())
+""".split()
+)
+GREETING_WORDS = frozenset(
+    "hi hii hiii hello helo hey heya hiya howdy yo sup namaste greetings welcome morning afternoon evening".split()
+)
 
 
 def is_small_talk(question: str) -> bool:
@@ -43,39 +61,313 @@ def is_small_talk(question: str) -> bool:
 
 
 INTENTS: dict[str, tuple[str, ...]] = {
-    "sales": ("sales", "sell", "revenue", "selling", "sold", "units", "trend", "top product", "best seller",
-              "bestseller", "best-selling", "turnover", "growth"),
-    "campaign": ("campaign", "promotion", "promo", "uplift", "offer", "buy 2", "buy two", "b2g1", "3-for-2",
-                 "weekend", "discount"),
-    "inventory": ("stock", "inventory", "warehouse", "reorder", "run out", "running out", "running low", "low on",
-                  "low stock", "days of cover", "supply", "inbound", "purchase order", "out of stock", "shortage",
-                  "stock-out", "replenish"),
-    "compliance": ("allergen", "ingredient", "compliance", "label", "listing", "regulatory", "gluten", "recall"),
-    "delivery": ("release", "deploy", "gate", "blocked", "approval", "approve", "pipeline", "requirement",
-                 "test", "build", "change set", "patch", "regression", "delivery run", "brief"),
-    "incident": ("incident", "outage", "timeout", "failure", "failing", "error rate", "rollback", "roll back",
-                 "root cause", "checkout errors", "outage"),
-    "policy": ("policy", "returns", "refund", "cancellation", "rule", "standard", "guideline", "what does the",
-               "allowed to", "stacking"),
-    "overview": ("summary", "overview", "how are we doing", "briefing", "focus on", "priorities", "what should i",
-                 "status of the business", "headlines", "today"),
+    "sales": (
+        "sales",
+        "sell",
+        "revenue",
+        "selling",
+        "sold",
+        "units",
+        "trend",
+        "top product",
+        "best seller",
+        "bestseller",
+        "best-selling",
+        "turnover",
+        "growth",
+    ),
+    "campaign": (
+        "campaign",
+        "promotion",
+        "promo",
+        "uplift",
+        "offer",
+        "buy 2",
+        "buy two",
+        "b2g1",
+        "3-for-2",
+        "weekend",
+        "discount",
+    ),
+    "inventory": (
+        "stock",
+        "inventory",
+        "warehouse",
+        "reorder",
+        "run out",
+        "running out",
+        "running low",
+        "low on",
+        "low stock",
+        "days of cover",
+        "supply",
+        "inbound",
+        "purchase order",
+        "out of stock",
+        "shortage",
+        "stock-out",
+        "replenish",
+    ),
+    "compliance": (
+        "food safety",
+        "allergen",
+        "ingredient",
+        "compliance",
+        "label",
+        "listing",
+        "regulatory",
+        "gluten",
+        "recall",
+    ),
+    "delivery": (
+        "release",
+        "deploy",
+        "gate",
+        "blocked",
+        "approval",
+        "approve",
+        "pipeline",
+        "requirement",
+        "test",
+        "build",
+        "change set",
+        "patch",
+        "regression",
+        "delivery run",
+        "brief",
+    ),
+    "incident": (
+        "incident",
+        "outage",
+        "timeout",
+        "failure",
+        "failing",
+        "error rate",
+        "rollback",
+        "roll back",
+        "root cause",
+        "checkout errors",
+        "outage",
+    ),
+    "policy": (
+        "policy",
+        "returns",
+        "refund",
+        "cancellation",
+        "rule",
+        "standard",
+        "guideline",
+        "what does the",
+        "allowed to",
+        "stacking",
+    ),
+    "overview": (
+        "how is my business",
+        "business performing",
+        "performing today",
+        "summary",
+        "overview",
+        "how are we doing",
+        "briefing",
+        "focus on",
+        "priorities",
+        "what should i",
+        "status of the business",
+        "headlines",
+        "today",
+    ),
     "help": ("what can you do", "help", "how do i use", "examples"),
-    "pulse": ("what changed", "changed since", "since yesterday", "since my last", "since last", "board meeting",
-              "my priorities", "decision journal", "my decisions", "follow-up", "follow up", "investigation",
-              "discussed", "last week", "outcome"),
-    "tech_health": ("ai systems", "systems healthy", "system health", "healthy", "reliable", "reliability",
-                    "uptime", "integrations", "operating cost", "ai cost", "jerry available", "is jerry"),
-    "origin_trace": ("origintrace", "trace", "traceability", "origin", "upstream", "supply chain", "supply network",
-                     "geographic", "country", "countries", "global", "globe", "map", "farm", "factory",
-                     "exposure", "financial exposure", "risk forecast"),
-    "suppliers": ("supplier", "suppliers", "vendor", "vendors", "procurement", "contract terms", "negotiated",
-                  "contract", "contracts"),
-    "privacy": ("confidential", "hide", "personal information", "without personal", "redact", "redacted",
-                "privacy", "pii", "sensitive", "employee", "employees", "salary", "salaries", "personal data"),
-    "inspection": ("potato", "potatoes", "defect", "defective", "defects", "rejected", "reject", "inspection",
-                   "inspected", "graded", "grading", "batch", "greening", "rot", "bruise", "not good", "moderate",
-                   "processing spec", "meets spec", "meet spec", "quality grade", "specification", "specifications"),
+    "pulse": (
+        "what changed",
+        "changed since",
+        "since yesterday",
+        "since my last",
+        "since last",
+        "board meeting",
+        "my priorities",
+        "decision journal",
+        "my decisions",
+        "follow-up",
+        "follow up",
+        "investigation",
+        "discussed",
+        "last week",
+        "outcome",
+    ),
+    "tech_health": (
+        "ai systems",
+        "systems healthy",
+        "system health",
+        "healthy",
+        "reliable",
+        "reliability",
+        "uptime",
+        "integrations",
+        "operating cost",
+        "ai cost",
+        "jerry available",
+        "is jerry",
+    ),
+    "origin_trace": (
+        "origintrace",
+        "trace",
+        "traceability",
+        "origin",
+        "upstream",
+        "supply chain",
+        "supply network",
+        "geographic",
+        "country",
+        "countries",
+        "global",
+        "globe",
+        "map",
+        "farm",
+        "factory",
+        "exposure",
+        "financial exposure",
+        "risk forecast",
+    ),
+    "export": (
+        "pdf",
+        "board-ready",
+        "board ready",
+        "export",
+        "executive summary",
+        "board pack",
+        "convert this",
+        "make this board",
+        "for leadership",
+        "technology report",
+        "supplier risk report",
+        "report",
+    ),
+    "animate": (
+        "animate",
+        "animation",
+        "motion",
+        "visualize",
+        "visualise",
+        "visually",
+        "walk me through",
+        "show how",
+        "product journey",
+        "spreads",
+    ),
+    "xray": (
+        "x-ray",
+        "xray",
+        "where did the information come from",
+        "where did this come from",
+        "how do you know",
+        "how jerry knows",
+        "show me the evidence",
+        "source lineage",
+        "information come from",
+        "came from",
+        "intelligence come from",
+    ),
+    "scenario": ("what if", "shuts down", "shut down", "stops shipping", "goes offline", "supplier fails"),
+    "impact": ("factories would", "would be affected", "affected factories", "downstream"),
+    "compare": ("compare the top two", "compare them", "compare the two", "top two", "side by side"),
+    "globe": ("on the globe", "on the map", "show them", "european", "europe", "asian", "asia", "african", "americas"),
+    "plan": ("action plan", "prepare a plan", "what do you recommend", "recommend", "recommendation"),
+    "architecture": (
+        "architecture",
+        "how do you connect",
+        "connect to",
+        "databricks",
+        "kubernetes",
+        "k8s",
+        "mcp",
+        "show me my enterprise",
+        "my enterprise",
+        "systems work together",
+        "how does this connect",
+        "integration",
+        "legacy",
+    ),
+    "losses": ("waste", "spoilage", "stockout", "stockouts", "losing money", "shrink", "expiry", "overstock"),
+    "facilities": (
+        "factories",
+        "factory",
+        "stores",
+        "distribution centers",
+        "distribution centres",
+        "underperforming",
+        "throughput",
+        "downtime",
+        "oee",
+    ),
+    "suppliers": (
+        "supplier",
+        "suppliers",
+        "vendor",
+        "vendors",
+        "procurement",
+        "contract terms",
+        "negotiated",
+        "contract",
+        "contracts",
+    ),
+    "privacy": (
+        "confidential",
+        "hide",
+        "personal information",
+        "without personal",
+        "redact",
+        "redacted",
+        "privacy",
+        "pii",
+        "sensitive",
+        "employee",
+        "employees",
+        "salary",
+        "salaries",
+        "personal data",
+    ),
+    "inspection": (
+        "potato",
+        "potatoes",
+        "defect",
+        "defective",
+        "defects",
+        "rejected",
+        "reject",
+        "inspection",
+        "inspected",
+        "graded",
+        "grading",
+        "batch",
+        "greening",
+        "rot",
+        "bruise",
+        "not good",
+        "moderate",
+        "processing spec",
+        "meets spec",
+        "meet spec",
+        "quality grade",
+        "specification",
+        "specifications",
+    ),
 }
+
+
+# Precedence among commands (first match wins); a command must score at least as high as any topic.
+COMMANDS = (
+    "export",
+    "animate",
+    "xray",
+    "scenario",
+    "impact",
+    "compare",
+    "globe",
+    "plan",
+    "architecture",
+    "losses",
+    "facilities",
+)
 
 
 @dataclass
@@ -98,13 +390,28 @@ class Parsed:
     geo_node: str | None = None
     country: str | None = None
     role: str | None = None  # set by the engine, used by the Privacy Shield
+    focus: dict | None = None  # what the conversation is about (set by the engine from memory)
+    last_agent_run_id: str | None = None
 
     def entities(self) -> dict:
-        return {k: v for k, v in {"skus": self.skus, "provinces": self.provinces, "warehouses": self.warehouses,
-                                  "channels": self.channels, "weeks": self.weeks, "run_id": self.run_id,
-                                  "incident_id": self.incident_id, "release_id": self.release_id,
-                                  "potato_no": self.potato_no, "batch_id": self.batch_id,
-                                  "geo_node": self.geo_node, "country": self.country}.items() if v}
+        return {
+            k: v
+            for k, v in {
+                "skus": self.skus,
+                "provinces": self.provinces,
+                "warehouses": self.warehouses,
+                "channels": self.channels,
+                "weeks": self.weeks,
+                "run_id": self.run_id,
+                "incident_id": self.incident_id,
+                "release_id": self.release_id,
+                "potato_no": self.potato_no,
+                "batch_id": self.batch_id,
+                "geo_node": self.geo_node,
+                "country": self.country,
+            }.items()
+            if v
+        }
 
 
 def _has(text: str, keyword: str) -> bool:
@@ -142,9 +449,15 @@ def parse(question: str) -> Parsed:
     if scores["suppliers"] and (scores["inspection"] or re.search(r"\b(batch|batches|potato|potatoes|lot)\b", text)):
         scores["inspection"] = max(scores["inspection"], scores["suppliers"])  # supplier *of a batch*: inspection
         scores["suppliers"] = 0
+    if scores["pulse"] and scores["overview"]:
+        scores["pulse"] = scores["overview"]  # "how are we doing, and what changed?" → both
     if "board" in text and scores["overview"]:
         scores["pulse"] = max(scores["pulse"], scores["overview"])  # brief me AND show what needs deciding
     ranked = [i for i, s in sorted(scores.items(), key=lambda kv: -kv[1]) if s > 0]
+    top_other = max([v for k, v in scores.items() if k not in COMMANDS] or [0])
+    command = next((k for k in COMMANDS if scores[k] and scores[k] >= top_other), None)
+    if command:  # an explicit command ("make this a PDF", "animate…") wins over the topic it mentions
+        ranked = [command]
     if not ranked and warehouses:
         ranked = ["inventory"]
     elif not ranked and (skus or provinces or channels) and _has(text, "low"):
@@ -155,16 +468,16 @@ def parse(question: str) -> Parsed:
         ranked.remove("help")
     if len(ranked) > 1 and scores[ranked[1]] < scores[ranked[0]]:
         ranked = ranked[:1]  # a weaker secondary intent would add unrelated material
-    run_id = (m.group(0).upper() if (m := re.search(r"\brun-[0-9a-f]{10}\b", text)) else None)
-    incident_id = (m.group(0).upper() if (m := re.search(r"\binc-[0-9a-f]{10}\b", text)) else None)
-    release_id = (m.group(0).upper() if (m := re.search(r"\brel-[0-9a-z]{6,12}\b", text)) else None)
-    batch_id = (m.group(0).upper() if (m := re.search(r"\bins-[0-9a-f]{10}\b", text)) else None)
+    run_id = m.group(0).upper() if (m := re.search(r"\brun-[0-9a-f]{10}\b", text)) else None
+    incident_id = m.group(0).upper() if (m := re.search(r"\binc-[0-9a-f]{10}\b", text)) else None
+    release_id = m.group(0).upper() if (m := re.search(r"\brel-[0-9a-z]{6,12}\b", text)) else None
+    batch_id = m.group(0).upper() if (m := re.search(r"\bins-[0-9a-f]{10}\b", text)) else None
     potato_no = None
     if m := re.search(r"(?:#\s?|\bpotato(?:es)?\s+(?:no\.?\s*|number\s*)?#?)(\d{1,4})\b", text):
         potato_no = int(m.group(1))
     if (potato_no or batch_id) and "inspection" not in ranked[:2]:
         ranked = ["inspection"] + [r for r in ranked if r != "inspection"][:1]
-    geo_node = (m.group(0).upper() if (m := re.search(r"\bgeo-(?:far|sup|fac|dis|mar|inc)-\d{2,4}\b", text)) else None)
+    geo_node = m.group(0).upper() if (m := re.search(r"\bgeo-(?:far|sup|fac|dis|mar|inc)-\d{2,4}\b", text)) else None
     country = None
     if geo_node or scores["origin_trace"]:
         from app import geo
@@ -172,5 +485,20 @@ def parse(question: str) -> Parsed:
         country = geo.find_country(question)
     if geo_node and "origin_trace" not in ranked[:1]:
         ranked = ["origin_trace"] + [r for r in ranked if r != "origin_trace"][:1]
-    return Parsed(question, ranked[:2], scores, skus, provinces, warehouses, channels, max(1, min(weeks, 8)),
-                  run_id, incident_id, release_id, potato_no, batch_id, geo_node=geo_node, country=country)
+    return Parsed(
+        question,
+        ranked[:2],
+        scores,
+        skus,
+        provinces,
+        warehouses,
+        channels,
+        max(1, min(weeks, 8)),
+        run_id,
+        incident_id,
+        release_id,
+        potato_no,
+        batch_id,
+        geo_node=geo_node,
+        country=country,
+    )

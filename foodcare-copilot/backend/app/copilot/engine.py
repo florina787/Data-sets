@@ -20,10 +20,10 @@ from typing import Callable
 
 from pydantic import BaseModel, Field
 
-from app import graphs
+from app import graphs, visuals
 from app.auth import User
 from app.config import get_settings
-from app.copilot import router
+from app.copilot import command, router
 from app.copilot.router import Parsed, parse
 from app.db import kv_get, new_id, now_iso, row, rows
 from app.enterprise import queries as q
@@ -62,6 +62,9 @@ class Ctx:
         self.tool_calls: list[dict] = []
         self.attachments: list[dict] = []
         self.policies: list[dict] = []
+        self.visuals: list[dict] = []
+        self.ui_actions: list[dict] = []
+        self.focus: dict | None = None
 
     def call(self, tool: str, fn: Callable, **args):
         from app import privacy
@@ -628,6 +631,10 @@ HANDLERS = {"sales": h_sales, "campaign": h_campaign, "inventory": h_inventory, 
             "help": h_help, "inspection": h_inspection, "origin_trace": h_origin_trace,
             "pulse": h_pulse, "tech_health": h_tech_health, "suppliers": h_suppliers,
             "privacy": h_privacy}
+HANDLERS.update({"export": command.h_export, "animate": command.h_animate, "architecture": command.h_architecture,
+                 "xray": command.h_xray, "scenario": command.h_scenario, "globe": command.h_globe,
+                 "compare": command.h_compare, "impact": command.h_impact, "plan": command.h_plan,
+                 "losses": command.h_losses, "facilities": command.h_facilities})
 
 
 FOLLOW_UP = re.compile(r"^\s*(and|what about|how about|same for|and for|what of|now for)\b", re.IGNORECASE)
@@ -665,6 +672,11 @@ def compose(p: Parsed) -> tuple[list[str], Ctx, list[str]]:
     if not paragraphs:
         # Unclassified question: only answer from a document if it is a strong match.
         paragraphs = h_policy(p, c, min_score=8.0)
+    elif not set(intents) & set(router.COMMANDS):
+        try:
+            command.visualize(intents, p, c)
+        except Exception:  # noqa: BLE001 - a failed chart must never cost the user the answer
+            c.visuals = []
     if p.question.lower().lstrip().startswith(ACTION_VERBS):
         paragraphs.insert(0, "I'm read-only, so I can't do that. Approvals, deployments, rollbacks and fault "
                              "controls are actions in the workflow screens and need the right role. Here is the "
@@ -754,7 +766,8 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
     previous = window["context"]
     p, follow_up = apply_follow_up(parse(question), previous)
     prev_entities = previous.get("entities", {})
-    p = replace(p, username=user.username, conversation_id=conversation_id, role=user.role)
+    p = replace(p, username=user.username, conversation_id=conversation_id, role=user.role,
+                focus=previous.get("focus"), last_agent_run_id=previous.get("last_agent_run_id"))
     if "inspection" in p.intents:
         if not p.batch_id and prev_entities.get("batch_id"):
             p.batch_id = prev_entities["batch_id"]
@@ -793,26 +806,30 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
     if follow_up:
         notice = ((notice + " ") if notice else "") + (
             "Follow-up: used the topic of your previous question (" + ", ".join(intents) + ").")
+    vis, acts, vis_errors = visuals.validate(c.visuals, c.ui_actions)
     result = {
         "conversation_id": conversation_id, "question": question, "answered": answered,
         "answer": "\n\n".join(paragraphs), "sources": c.sources, "tool_calls": c.tool_calls,
         "intents": intents, "entities": p.entities(), "mode": answer_mode, "provenance": provenance,
         "notice": notice, "usage": usage, "read_only": True, "follow_up": follow_up, "attachments": c.attachments,
         "follow_ups": [e for e in EXAMPLES if e.lower() != question.lower()][:3],
+        "visual_schema": visuals.SCHEMA_VERSION, "visuals": vis, "ui_actions": acts,
+        "data_status": _data_status(c, vis), "limitations": _limitations(c, vis, answered),
         "policy": {"policy_applied": True, "datasets": c.policies,
                    "approved_sources": sorted({s_["ref"].split(":")[0] for s_ in c.sources}),
                    "restricted_excluded": any(x["excluded"] for x in c.policies),
                    "aggregated": any(x["aggregated"] for x in c.policies)},
     }
+    agent_run_id = new_id("AGR")
     context = {"intents": intents if answered else previous.get("intents", []),
                "entities": p.entities() if answered else previous.get("entities", {}),
-               "live_answers": live_answers}
+               "live_answers": live_answers, "focus": c.focus or previous.get("focus"),
+               "last_agent_run_id": agent_run_id}
     from app import privacy
 
     # Memory and traces never store secrets a user may have typed (the answer is already policy-filtered).
     store.save_turn(conversation_id, user.username, privacy.scrub(question), result["answer"],
                     {**result, "question": privacy.scrub(question)}, context)
-    agent_run_id = new_id("AGR")
     result["agent_run_id"] = agent_run_id
     store.record_agent_run({
         "id": agent_run_id, "agent": "copilot.supervisor", "conversation_id": conversation_id,
@@ -822,9 +839,34 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
         "detail": {"intents": intents, "mode": answer_mode, "follow_up": follow_up, "username": user.username,
                    "entities": p.entities(),
                    "sources": [{k: src.get(k) for k in ("id", "kind", "label", "ref")} for src in c.sources],
-                   "context": graphs.scope(p.entities(), intents, c.sources)},
+                   "context": graphs.scope(p.entities(), intents, c.sources),
+                   "visuals": [v["kind"] for v in vis], "visual_errors": vis_errors},
     }, c.tool_calls)
     return result
+
+
+def _data_status(c: Ctx, vis: list[dict]) -> str:
+    kinds = {v.get("provenance") for v in vis} | {s_.get("kind") for s_ in c.sources}
+    if not kinds - {None}:
+        return "none"
+    if {"synthetic", "data"} & kinds:
+        return "synthetic"
+    if "modeled" in kinds:
+        return "modeled"
+    return "operational_record"
+
+
+def _limitations(c: Ctx, vis: list[dict], answered: bool) -> list[str]:
+    out = []
+    if any(v.get("provenance") == "synthetic" for v in vis) or any(s_.get("kind") == "data" for s_ in c.sources):
+        out.append("Uses the fictional company's synthetic data — not real business results.")
+    if any(v.get("provenance") == "modeled" or v.get("kind") == "forecast_band" for v in vis):
+        out.append("Includes a modelled scenario with stated assumptions — a range, not a prediction.")
+    if any(x["excluded"] or x["aggregated"] for x in c.policies):
+        out.append("Privacy Shield applied: some fields are banded or excluded for your role.")
+    if not answered:
+        out.append("The available data cannot answer this question.")
+    return out
 
 
 def history(conversation_id: str, username: str) -> list[dict]:
