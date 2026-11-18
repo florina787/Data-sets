@@ -1,3 +1,8 @@
+> [!WARNING]
+> **Deprecated prototype — not the FLOW WEALTH product.** This directory was built on synthetic data before the intended application was
+> identified. FLOW WEALTH v5 lives in [`flo-enterprise/`](../flo-enterprise/) (FLO), which reuses this prototype's leakage-safe algorithms
+> on real Kaggle data. Nothing here should be used for research results. Kept only as a reference for the ported algorithms.
+
 # FLOW WEALTH v4 — evidence-first financial research platform
 
 Every forecast recorded. Every model earns its place.

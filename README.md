@@ -14,7 +14,8 @@ From this Dataset, Students will develop & Learn-
 
 ## Projects in this repository
 
-- [FLOW WEALTH v4](flowwealth/README.md) — evidence-first financial research platform (alpha)
+- [FLO / FLOW WEALTH](flo-enterprise/README.md) — governed investment-intelligence workspace (the FLOW WEALTH product)
+- [flowwealth (deprecated)](flowwealth/README.md) — synthetic prototype, superseded by FLO
 - [ConvoLens AI](convolens/README.md) — customer conversation intelligence
 - [LexGuard](lexguard/README.md) — legal AI governance
 - [Enterprise Agentic AI](enterprise-agentic-ai/README.md) — agentic RAG copilot
