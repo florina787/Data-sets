@@ -45,6 +45,9 @@ PERMISSIONS: dict[str, set[str]] = {
     "memory.admin": {"engineer", "release_approver"},
     "ml.evaluate": {"engineer", "product_owner", "release_approver"},
     "connector.test": {"engineer", "release_approver"},
+    "containment.propose": {"engineer"},
+    "containment.approve": {"engineer", "release_approver"},
+    "alert.manage": {"engineer", "release_approver"},
 }
 
 

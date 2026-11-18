@@ -23,6 +23,19 @@ from reportlab.platypus import KeepTogether, Paragraph, SimpleDocTemplate, Space
 from app.errors import NotFound, PlatformError
 
 KINDS = {
+    "security_posture": "Executive cybersecurity posture",
+    "incident_impact": "Incident impact report",
+    "availability": "Downtime and availability report",
+    "remediation": "Remediation priorities",
+    "licenses": "Software license optimization",
+    "renewals": "Renewal planning",
+    "security_savings": "Security and financial efficiency briefing",
+    "portfolio_weekly": "Weekly delivery portfolio",
+    "project_status": "Cross-functional project status",
+    "tech_dependencies": "Technology dependency report",
+    "commercial_review": "Commercial initiative review",
+    "marketing_readiness": "Marketing campaign technology readiness",
+    "delivery_board": "Board-ready enterprise delivery briefing",
     "executive": "Executive summary",
     "board": "Board briefing",
     "technology": "Technology health report",
@@ -318,9 +331,213 @@ def _content(kind: str, user, ref: str | None) -> dict:
             ],
             "next_steps": [p["next_step"] for p in prios[:2]],
         }
+    elif kind in OPS_KINDS:
+        base |= _ops_content(kind, user)
     else:
         raise PlatformError(f"Unknown report type. Choose one of: {', '.join(KINDS)}")
     return base
+
+
+OPS_KINDS = {
+    "security_posture",
+    "incident_impact",
+    "availability",
+    "remediation",
+    "licenses",
+    "renewals",
+    "security_savings",
+    "portfolio_weekly",
+    "project_status",
+    "tech_dependencies",
+    "commercial_review",
+    "marketing_readiness",
+    "delivery_board",
+}
+
+
+def _m(cents: int) -> str:
+    return f"CAD {cents / 100:,.0f}"
+
+
+def _ops_content(kind: str, user) -> dict:
+    """Security, availability, licence and portfolio reports — from the same minimised functions as the app."""
+    from app import defense, portfolio, privacy
+
+    sim = [
+        "Security, availability and licence figures are simulated telemetry; no SIEM, EDR, scanner or billing "
+        "system is connected.",
+        "Correlation between events in time is not evidence of cause.",
+    ]
+    if kind in ("security_posture", "incident_impact", "remediation", "security_savings"):
+        t = defense.threats()
+        active = [x for x in t["threats"] if x["status"] != "resolved"]
+        out = {
+            "summary": [
+                t["under_attack"],
+                f"{t['summary']['confirmed_active']} confirmed, {t['summary']['suspected']} "
+                f"suspected and {t['summary']['alerts']} alert(s) active.",
+            ],
+            "findings": [
+                f"{x['severity']}: {x['type'].replace('_', ' ')} on {x['asset_name']} "
+                f"({x['classification'].replace('_', ' ')}; affects {', '.join(x['services'])})"
+                for x in active
+            ],
+            "next_steps": defense.briefing()["recommendations"],
+            "charts": [
+                (
+                    "Active items by severity",
+                    ["critical", "high", "medium", "low"],
+                    [t["summary"]["by_severity"][s_] for s_ in ("critical", "high", "medium", "low")],
+                    "items",
+                )
+            ],
+            "tables": [
+                (
+                    "Vulnerability exposure",
+                    ["ID", "Asset", "CVSS", "Exploit known", "Internet-facing"],
+                    [
+                        [v["id"], v["asset"], v["cvss"], v["exploit_known"], v["internet_facing"]]
+                        for v in t["vulnerabilities"]
+                    ],
+                )
+            ],
+            "evidence": [
+                {
+                    "label": f"{x['source']} detection {', '.join(x['event_ids'])}",
+                    "ref": "defense:threats",
+                    "provenance": "synthetic",
+                    "as_of": x["seen"],
+                }
+                for x in active[:8]
+            ],
+            "assumptions": sim,
+        }
+        if kind == "security_savings":
+            sv = defense.license_savings()
+            out["summary"].append(
+                f"Estimated unused licence spend {_m(sv['totals']['unused_spend_annual_cents'])} a "
+                "year (cost savings, not revenue)."
+            )
+            out["tables"].append(
+                (
+                    "Licence savings (estimated, rounded)",
+                    ["Product", "Unused", "Renewal", "Realisable note"],
+                    [[x["product"], x["unused"], x["renewal"], x["realizable_note"]] for x in sv["licenses"]],
+                )
+            )
+        return out
+    if kind == "availability":
+        d = defense.downtime()
+        return {
+            "summary": [
+                f"{len(d['outages'])} outage(s) recorded; storefront health check: "
+                f"{'answering' if d['live']['storefront_reachable'] else 'not answering'} (live record)."
+            ],
+            "findings": [
+                f"{o['service']}: {o['minutes']} min, RTO {o['rto_min']} min, "
+                f"{'within' if o['within_rto'] else 'exceeded'}; cause recorded: {o['cause_recorded'] or 'none'}"
+                for o in d["outages"]
+            ]
+            + [c_["statement"] for c_ in d["correlations"]],
+            "next_steps": [
+                "Record a confirmed cause for each outage before assigning remediation.",
+                "Define revenue-per-hour for services that lack one to make impact estimable.",
+            ],
+            "charts": [
+                (
+                    "Outage minutes",
+                    [o["service"] for o in d["outages"]],
+                    [o["minutes"] for o in d["outages"]],
+                    "minutes",
+                )
+            ],
+            "tables": [
+                (
+                    "Business dependencies",
+                    ["Service", "Depends on", "RTO (min)"],
+                    [[x["service"], ", ".join(x["depends_on"]), x["rto_min"]] for x in d["dependencies"]],
+                )
+            ],
+            "assumptions": sim,
+        }
+    if kind in ("licenses", "renewals"):
+        sv = defense.license_savings(granted=False)
+        t = sv["totals"]
+        rows = sv["licenses"] if kind == "licenses" else [x for x in sv["licenses"] if x["notice_open"]]
+        return {
+            "summary": [
+                f"Unused units: {t['unused']:,}. Estimated unused spend {_m(t['unused_spend_annual_cents'])} "
+                f"a year; realisable this quarter {_m(t['realizable_this_quarter_cents'])}.",
+                sv["terms"],
+            ],
+            "findings": [f"{x['product']}: {x['unused']} unused of {x['paid']}; {x['realizable_note']}" for x in rows],
+            "next_steps": [
+                f"Renegotiate {x['product']} before {x['notice_deadline']}" for x in rows if x["renegotiate"]
+            ]
+            or ["No renegotiation window is open."],
+            "charts": [("Unused units by product", [x["product"] for x in rows], [x["unused"] for x in rows], "units")],
+            "tables": [
+                (
+                    "Contract constraints",
+                    ["Product", "Billing", "Minimum", "Cancellation", "Notice by"],
+                    [
+                        [x["product"], x["billing"], x["min_seats"], x["cancellation"], x["notice_deadline"]]
+                        for x in rows
+                    ],
+                )
+            ],
+            "assumptions": sim + ["Unit prices are confidential; money totals are rounded to the nearest CAD 1,000."],
+        }
+    data = portfolio.portfolio(privacy.Principal(user.username, user.role), "export")
+    items = data["initiatives"]
+    if kind == "commercial_review":
+        items = [x for x in items if x["dept"] == "Commercial"]
+    if kind == "marketing_readiness":
+        items = [x for x in items if x["dept"] == "Marketing" or x["id"] in ("INI-COM-02", "INI-TEC-03", "INI-TEC-04")]
+    if kind == "tech_dependencies":
+        items = portfolio.dependents_of("Technology")
+    late = [x for x in items if x["status"] in ("delayed", "blocked")]
+    return {
+        "summary": [
+            f"{len(items)} initiative(s); {len(late)} delayed or blocked; "
+            f"{sum(x['budget_variance_pct'] > 0 for x in items)} over budget.",
+            data["note"],
+        ],
+        "findings": [
+            f"{x['name']} ({x['dept']}): {x['status'].replace('_', ' ')}, {x['progress_pct']}% complete, "
+            f"{x['schedule_slip_days']} day(s) late, budget {x['budget_variance_pct']:+.1f}%"
+            for x in items
+        ],
+        "next_steps": [a["decision"] + f" (due {a['due']})" for a in data["approvals"]],
+        "charts": [
+            (
+                "Budget used (%)",
+                [x["name"] for x in items][:10],
+                [round(100 * x["spend_cents"] / x["budget_cents"], 1) for x in items][:10],
+                "%",
+            )
+        ],
+        "tables": [
+            (
+                "Initiatives",
+                ["Initiative", "Owner", "Status", "Next milestone", "Technology (verified/inferred)"],
+                [
+                    [
+                        x["name"],
+                        x["owner"],
+                        x["status"],
+                        (x["next_milestone"] or {}).get("name", "—"),
+                        "; ".join(f"{t_['name']} ({t_['relation']})" for t_ in x["tech"]) or "—",
+                    ]
+                    for x in items
+                ],
+            )
+        ],
+        "assumptions": [
+            "Portfolio records are a synthetic fixture; Jira, Azure DevOps and SharePoint are not connected.",
+            "Owner names are synthetic display names; personnel ratings are never included.",
+        ],
+    }
 
 
 def build(kind: str, user, ref: str | None = None) -> tuple[bytes, str]:

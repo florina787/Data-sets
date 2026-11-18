@@ -23,7 +23,7 @@ from pydantic import BaseModel, Field
 from app import graphs, visuals
 from app.auth import User
 from app.config import get_settings
-from app.copilot import command, router
+from app.copilot import command, command_ops, router
 from app.copilot.router import Parsed, parse
 from app.db import kv_get, new_id, now_iso, row, rows
 from app.enterprise import queries as q
@@ -634,7 +634,11 @@ HANDLERS = {"sales": h_sales, "campaign": h_campaign, "inventory": h_inventory, 
 HANDLERS.update({"export": command.h_export, "animate": command.h_animate, "architecture": command.h_architecture,
                  "xray": command.h_xray, "scenario": command.h_scenario, "globe": command.h_globe,
                  "compare": command.h_compare, "impact": command.h_impact, "plan": command.h_plan,
-                 "losses": command.h_losses, "facilities": command.h_facilities})
+                 "losses": command.h_losses, "facilities": command.h_facilities,
+                 "threats": command_ops.h_threats, "downtime": command_ops.h_downtime,
+                 "containment": command_ops.h_containment, "alerts": command_ops.h_alerts,
+                 "licenses": command_ops.h_licenses, "defense_brief": command_ops.h_defense_brief,
+                 "portfolio": command_ops.h_portfolio, "team_brief": command_ops.h_team_brief})
 
 
 FOLLOW_UP = re.compile(r"^\s*(and|what about|how about|same for|and for|what of|now for)\b", re.IGNORECASE)

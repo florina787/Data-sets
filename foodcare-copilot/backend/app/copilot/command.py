@@ -195,15 +195,22 @@ def visualize(intents: list[str], p: Parsed, c) -> None:
 
 
 def _export_kind(text: str) -> str:
-    for kind, words in (
-        ("technology", ("technology", "tech ")),
-        ("supplier_risk", ("supplier",)),
-        ("architecture", ("architecture",)),
-        ("decisions", ("decision", "action summary")),
-        ("investigation", ("investigation",)),
-        ("board", ("board",)),
-        ("conversation", ("this conversation", "this into", "convert this", "this to pdf", "this to a pdf")),
-    ):
+    rules = (("security_savings", ("security and savings", "security and financial", "threats and savings")),
+             ("incident_impact", ("incident impact",)), ("availability", ("downtime", "availability", "outage")),
+             ("remediation", ("remediation",)), ("renewals", ("renewal",)),
+             ("licenses", ("license", "licence", "software spend", "savings")),
+             ("security_posture", ("security", "cyber", "threat")),
+             ("delivery_board", ("enterprise delivery", "delivery briefing")),
+             ("portfolio_weekly", ("delivery portfolio", "weekly delivery", "portfolio")),
+             ("project_status", ("cross-functional", "project status")),
+             ("tech_dependencies", ("technology dependency", "dependency report")),
+             ("commercial_review", ("commercial initiative", "commercial review")),
+             ("marketing_readiness", ("campaign technology", "marketing campaign", "readiness")),
+             ("technology", ("technology", "tech ")), ("supplier_risk", ("supplier",)),
+             ("architecture", ("architecture",)), ("decisions", ("decision", "action summary")),
+             ("investigation", ("investigation",)), ("board", ("board",)),
+             ("conversation", ("this conversation", "this into", "convert this", "this to pdf", "this to a pdf")))
+    for kind, words in rules:
         if any(w in text for w in words):
             return kind
     return "executive"

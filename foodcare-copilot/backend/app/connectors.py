@@ -335,6 +335,7 @@ def registry() -> list[dict]:
 
     db_state, db_detail = tested("databricks", databricks_config() is not None)
     k8_state, k8_detail = tested("kubernetes", kubernetes_config() is not None)
+    SIMULATED = "Adapter interface defined; this demo shows labelled simulated records — no live connection."  # noqa: N806
     planned = "No adapter yet. Needs a read-only service account and an approved schema mapping."
     items = [
         (
@@ -388,6 +389,20 @@ def registry() -> list[dict]:
             "read",
         ),
         ("events", "Event streams", "Streaming", "planned", planned, "none"),
+        ("siem", "SIEM (security events)", "Security", "simulated", SIMULATED, "read"),
+        ("edr", "Endpoint detection & response", "Security", "simulated", SIMULATED, "read"),
+        ("vuln_scanner", "Vulnerability scanner", "Security", "simulated", SIMULATED, "read"),
+        ("identity", "Identity & access monitoring", "Security", "simulated", SIMULATED, "read"),
+        ("cspm", "Cloud security posture", "Security", "simulated", SIMULATED, "read"),
+        ("network_monitor", "Network security monitoring", "Security", "simulated", SIMULATED, "read"),
+        ("threat_intel", "Threat-intelligence feeds", "Security", "planned", planned, "none"),
+        ("containment", "Containment actions (EDR/IdP/proxy/K8s)", "Security", "planned",
+         "No write connector. Containment is preview/dry-run only, behind approvals.", "none"),
+        ("billing", "Billing / procurement / SaaS admin", "Finance", "simulated", SIMULATED, "read"),
+        ("jira", "Jira / Azure DevOps / GitHub Projects", "Delivery", "simulated", SIMULATED, "read"),
+        ("docs_portfolio", "Confluence / SharePoint", "Delivery", "planned", planned, "none"),
+        ("notifications", "Notification channels (email, chat, paging)", "Alerting", "planned",
+         "Not configured: alerts are shown in the app only.", "none"),
     ]
     return [
         {

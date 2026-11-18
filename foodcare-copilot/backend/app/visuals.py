@@ -13,6 +13,9 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, Field, TypeAdapter, ValidationError
 
 SCHEMA_VERSION = "1.0"
+# Only in-app pages (optionally one ?key=value) or this app's export/motion files: no external URLs.
+URL_PATTERN = (r"^/[a-z-]*(\?[a-z_]+=[A-Za-z0-9_-]+)?$"
+               r"|^/api/(exports|motion)/[a-z_]+\.(pdf|gif)(\?ref=[A-Za-z0-9-]+)?$")
 Prov = Literal["verified", "operational_record", "modeled", "synthetic", "mixed"]
 Label = Annotated[str, Field(max_length=120)]
 
@@ -154,6 +157,52 @@ class ActionPlan(BaseModel):
     provenance: Prov
 
 
+class Axis(BaseModel):
+    label: Label
+    value: Annotated[float, Field(ge=0, le=100)]
+    detail: Annotated[str, Field(max_length=160)] | None = None
+
+
+class Radar(BaseModel):
+    kind: Literal["radar"] = "radar"
+    title: Label
+    axes: list[Axis] = Field(min_length=3, max_length=10)
+    provenance: Prov
+    caption: Annotated[str, Field(max_length=300)] | None = None
+
+
+class Heatmap(BaseModel):
+    kind: Literal["heatmap"] = "heatmap"
+    title: Label
+    rows: list[Label] = Field(max_length=20)
+    columns: list[Label] = Field(max_length=10)
+    values: list[list[Annotated[int, Field(ge=0, le=4)]]]  # 0 none · 1 low · 2 medium · 3 high · 4 critical
+    provenance: Prov
+
+
+class GanttMilestone(BaseModel):
+    name: Label
+    date: Annotated[str, Field(max_length=10)]
+    state: Literal["done", "overdue", "upcoming"]
+
+
+class GanttRow(BaseModel):
+    label: Label
+    group: Annotated[str, Field(max_length=40)]
+    start: Annotated[str, Field(max_length=10)]
+    end: Annotated[str, Field(max_length=10)]
+    status: Literal["on_track", "at_risk", "delayed", "blocked", "done"]
+    milestones: list[GanttMilestone] = Field(max_length=8)
+
+
+class Gantt(BaseModel):
+    kind: Literal["gantt"] = "gantt"
+    title: Label
+    today: Annotated[str, Field(max_length=10)]
+    rows: list[GanttRow] = Field(max_length=20)
+    provenance: Prov
+
+
 Visual = Annotated[
     KpiCards
     | BarChart
@@ -164,17 +213,20 @@ Visual = Annotated[
     | FlowGraph
     | MotionStory
     | Timeline
-    | ActionPlan,
+    | ActionPlan
+    | Radar
+    | Heatmap
+    | Gantt,
     Field(discriminator="kind"),
 ]
 
 
 class UiAction(BaseModel):
-    type: Literal["open_globe", "download", "open_xray", "open_page", "open_motion"]
+    type: Literal["open_globe", "download", "open_xray", "open_page", "open_motion", "open_containment"]
     label: Label
     geo: dict[str, str] | None = None  # {country?, node?, incident?}
     sites: list[Annotated[str, Field(max_length=20)]] = Field(default=[], max_length=40)
-    url: Annotated[str, Field(max_length=200, pattern=r"^/(api/exports|api/motion|[a-z-]*)")] | None = None
+    url: Annotated[str, Field(max_length=200, pattern=URL_PATTERN)] | None = None
     agent_run_id: Annotated[str, Field(max_length=40)] | None = None
 
 

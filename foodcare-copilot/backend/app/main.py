@@ -795,6 +795,115 @@ def motion_gif(story: str, site: str | None = Query(default=None, pattern=r"^GEO
         "Content-Disposition": f'attachment; filename="flo-jerry-{story}.gif"', "Cache-Control": "no-store"})
 
 
+# --- Defense Command and Team Intelligence (see app/defense.py, app/portfolio.py) ----------
+
+class AlertStateBody(BaseModel):
+    state: str = Field(pattern="^(acknowledged|suppressed|resolved|open)$")
+    note: str | None = Field(default=None, max_length=300)
+
+
+class ContainmentBody(BaseModel):
+    action: str = Field(max_length=40)
+    asset_id: str = Field(max_length=60)
+    indicator: str | None = Field(default=None, max_length=200)
+
+
+class StepUpBody(BaseModel):
+    password: str = Field(min_length=1, max_length=200)
+
+
+class ExecuteBody(BaseModel):
+    idempotency_key: str = Field(min_length=8, max_length=80, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+@app.get("/api/defense/threats")
+def defense_threats(user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.threats() | {"attack_paths": defense.attack_paths()}
+
+
+@app.get("/api/defense/downtime")
+def defense_downtime(user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.downtime()
+
+
+@app.get("/api/defense/alerts")
+def defense_alerts(user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return {"alerts": defense.alerts(), "channels": [], "note": "No notification channel is configured."}
+
+
+@app.post("/api/defense/alerts/{alert_id}")
+def defense_alert_state(alert_id: str, body: AlertStateBody, user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.set_alert_state(alert_id, body.state, user, body.note)
+
+
+@app.get("/api/defense/licenses")
+def defense_licenses(user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.license_savings(granted=user.role == "procurement")
+
+
+@app.get("/api/defense/briefing")
+def defense_briefing(user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.briefing()
+
+
+@app.post("/api/defense/containment/preview")
+def containment_preview(body: ContainmentBody, user: User = Depends(current_user)) -> dict:
+    """Dry-run plan for any signed-in user. Changes nothing."""
+    from app import defense
+
+    return defense.preview(body.action, body.asset_id, user, body.indicator)
+
+
+@app.get("/api/defense/containment")
+def containment_list(user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    defense.ensure()
+    return {"proposals": [defense.get_proposal(r["id"]) for r in rows(
+        "SELECT id FROM defense_proposals ORDER BY created_at DESC LIMIT 50")],
+        "live_execution_available": defense.CONTAINMENT_LIVE, "chain": defense.verify_chain()}
+
+
+@app.post("/api/defense/containment")
+def containment_propose(body: ContainmentBody, user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.propose(body.action, body.asset_id, user, body.indicator)
+
+
+@app.post("/api/defense/containment/{proposal_id}/approve")
+def containment_approve(proposal_id: str, body: StepUpBody, user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.approve(proposal_id, user, body.password)
+
+
+@app.post("/api/defense/containment/{proposal_id}/execute")
+def containment_execute(proposal_id: str, body: ExecuteBody, user: User = Depends(current_user)) -> dict:
+    from app import defense
+
+    return defense.execute(proposal_id, user, body.idempotency_key)
+
+
+@app.get("/api/portfolio")
+def portfolio_view(user: User = Depends(current_user)) -> dict:
+    from app import portfolio, privacy
+
+    return portfolio.portfolio(privacy.principal_for(user), "ui")
+
+
 # --- Privacy Shield (see app/privacy.py) ------------------------------------------------
 
 @app.get("/api/suppliers")
