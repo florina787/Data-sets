@@ -44,6 +44,7 @@ PERMISSIONS: dict[str, set[str]] = {
     "demo.control": {"engineer", "release_approver", "product_owner", "marketing"},
     "memory.admin": {"engineer", "release_approver"},
     "ml.evaluate": {"engineer", "product_owner", "release_approver"},
+    "connector.test": {"engineer", "release_approver"},
 }
 
 

@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { navTo } from "./nav";
 
 // Global supply-chain maps: one reusable component on several pages, a shared geographic
 // selection, provenance labels, OriginTrace, reduced motion and a phone-width layout.
 const SHOTS = "../docs/screenshots";
 
 test("global supply map: drill-down, shared selection, OriginTrace", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/network"); // 3.0: the map's home is Global Network (optional on the Enterprise Pulse)
   await page.getByLabel("Signed in as").selectOption({ label: "Val Park (Viewer)" });
   const map = page.getByTestId("supply-map").first();
   await map.scrollIntoViewIfNeeded();
@@ -35,7 +36,7 @@ test("global supply map: drill-down, shared selection, OriginTrace", async ({ pa
   // The selection follows the user to another dashboard and survives a reload.
   const chip = page.getByTestId("geo-chip");
   await expect(chip).toContainText("Peru › GEO-");
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Inventory" }).click();
+  await navTo(page, "Inventory");
   await expect(chip).toContainText("Peru › GEO-");
   await expect(page.getByTestId("supply-map").getByRole("navigation", { name: "Geographic selection" }).getByRole("button", { name: "Peru" })).toBeVisible();
   await page.reload();
@@ -49,7 +50,7 @@ test("global supply map: drill-down, shared selection, OriginTrace", async ({ pa
   await drawer.getByRole("button", { name: "Close" }).click();
 
   // Quality Intelligence opens on the incidents view of the same component.
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Quality Intelligence" }).click();
+  await navTo(page, "Quality Intelligence");
   const qmap = page.getByTestId("supply-map");
   await expect(qmap.getByRole("tab", { name: "Quality incidents" })).toHaveAttribute("aria-selected", "true");
   await page.getByTestId("geo-chip").getByRole("button", { name: "Clear geographic selection" }).click();
@@ -60,7 +61,7 @@ test("global supply map: drill-down, shared selection, OriginTrace", async ({ pa
 test("reduced motion starts on the 2D map; phone width has no sideways scroll", async ({ browser }) => {
   const ctx = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  await page.goto("/");
+  await page.goto("/network"); // 3.0: the map's home is Global Network (optional on the Enterprise Pulse)
   const map = page.getByTestId("supply-map");
   await map.scrollIntoViewIfNeeded();
   await expect(map).toHaveAttribute("data-mode", "2d");

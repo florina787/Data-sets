@@ -6,10 +6,10 @@ import { ReactNode, useState } from "react";
 // #38bdf8; diverging gain #10b981 / loss #ef4444 (secondary-encoded by sign labels
 // and direction); status colours always come with a text label.
 
-const INK = "#f8fafc";
-const MUTED = "#94a3b8";
-const GRID = "#1e3654";
-const SERIES = "#38bdf8";
+const INK = "#F3F0E9";
+const MUTED = "#A3AEBC";
+const GRID = "#22374F";
+const SERIES = "#45C5B8";
 const GAIN = "#10b981";
 const LOSS = "#ef4444";
 

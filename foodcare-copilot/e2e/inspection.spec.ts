@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { navTo } from "./nav";
 import path from "path";
 
 // Potato inspection studio on SYNTHETIC rendered images (drawn shapes, not photos).
@@ -7,7 +8,7 @@ const SHOTS = "../docs/screenshots";
 test("potato inspection: upload, grade, inspect one potato, thresholds", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel("Signed in as").selectOption({ label: "Val Park (Viewer)" });
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Potato Inspection" }).click();
+  await navTo(page, "Potato Inspection");
   const main = page.getByRole("main");
   await expect(main.getByText(/classical image processing \(no trained model\)/)).toBeVisible();
 
@@ -64,7 +65,7 @@ test("potato inspection: upload, grade, inspect one potato, thresholds", async (
   await drawer.getByRole("button", { name: "Close" }).click();
 
   // Quality Intelligence aggregates the stored batches.
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Quality Intelligence" }).click();
+  await navTo(page, "Quality Intelligence");
   await expect(main.getByText("Inspection recommendations")).toBeVisible();
   await expect(main.getByText(/Reject candidate · needs approval/).first()).toBeVisible();
   await main.getByRole("tab", { name: "Human review" }).click();

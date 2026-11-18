@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { navTo } from "./nav";
 
 // Model Evaluation Lab: registry honesty and a recorded evaluation on the SYNTHETIC set.
 const SHOTS = "../docs/screenshots";
@@ -7,7 +8,7 @@ test("model evaluation lab records an evaluation with provenance", async ({ page
   test.setTimeout(4 * 60 * 1000);
   await page.goto("/");
   await page.getByLabel("Signed in as").selectOption({ label: "Eli Novak (Engineer)" });
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Model Evaluation Lab" }).click();
+  await navTo(page, "Model Evaluation Lab");
   const main = page.getByRole("main");
   await expect(main.getByText("No trained model is registered yet.")).toBeVisible();
   await expect(main.getByRole("cell", { name: "potato-detector-classical@1.0" })).toBeVisible();

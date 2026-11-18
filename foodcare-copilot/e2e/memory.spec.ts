@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { navTo } from "./nav";
 
 // Persistent conversation memory: follow-ups, history sidebar, search, resume and delete.
 const SHOTS = "../docs/screenshots";
@@ -6,7 +7,7 @@ const SHOTS = "../docs/screenshots";
 test("conversation history: follow-up, search, resume and delete", async ({ page }) => {
   await page.goto("/");
   await page.getByLabel("Signed in as").selectOption({ label: "Val Park (Viewer)" });
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Ask Copilot" }).click();
+  await navTo(page, "Ask Copilot");
   const main = page.getByRole("main");
   const history = main.getByRole("complementary", { name: "Conversation history" });
   await history.getByRole("button", { name: "New conversation" }).click();
@@ -35,7 +36,7 @@ test("conversation history: follow-up, search, resume and delete", async ({ page
 
   // Survives a reload (server-side memory, not browser state).
   await page.reload();
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Ask Copilot" }).click();
+  await navTo(page, "Ask Copilot");
   const conv = history.getByRole("button", { name: /^Top selling products in Ontario/ });
   await expect(conv).toBeVisible();
 

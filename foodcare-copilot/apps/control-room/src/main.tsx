@@ -24,6 +24,11 @@ import Releases from "./screens/Releases";
 import Requirements from "./screens/Requirements";
 import Sales from "./screens/Sales";
 import Templates from "./screens/Templates";
+import PulsePage from "./screens/Pulse";
+import Priorities from "./screens/Priorities";
+import Network from "./screens/Network";
+import Technology from "./screens/Technology";
+import Reports from "./screens/Reports";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -31,7 +36,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <AppProvider>
         <Layout>
           <Routes>
-            <Route path="/" element={<Executive />} />
+            <Route path="/" element={<PulsePage />} />
+            <Route path="/executive" element={<Executive />} />
+            <Route path="/priorities" element={<Priorities />} />
+            <Route path="/network" element={<Network />} />
+            <Route path="/technology" element={<Technology />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="/copilot" element={<CopilotPage />} />
             <Route path="/sales" element={<Sales />} />
             <Route path="/inventory" element={<Inventory />} />

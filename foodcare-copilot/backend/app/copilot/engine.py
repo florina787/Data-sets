@@ -61,9 +61,12 @@ class Ctx:
         self.sources: list[dict] = []
         self.tool_calls: list[dict] = []
         self.attachments: list[dict] = []
+        self.policies: list[dict] = []
 
     def call(self, tool: str, fn: Callable, **args):
-        entry = {"tool": tool, "args": {k: v for k, v in args.items() if v not in (None, [], "")},
+        from app import privacy
+
+        entry = {"tool": tool, "args": privacy.scrub_obj({k: v for k, v in args.items() if v not in (None, [], "")}),
                  "started_at": now_iso(), "status": "ok"}
         started = time.perf_counter()
         try:
@@ -510,9 +513,121 @@ def h_origin_trace(p: Parsed, c: Ctx) -> list[str]:
     return out
 
 
+def h_pulse(p: Parsed, c: Ctx) -> list[str]:
+    """What changed, what matters now, and the user's own decisions and investigations."""
+    from app import pulse
+
+    prios = c.call("enterprise_priorities", pulse.priorities, username=p.username)
+    since = c.call("since_last_visit", pulse.since_last_visit, username=p.username)
+    cite_p = c.cite(q.src("record", "Enterprise priorities (derived from enterprise data and app records)",
+                          "pulse:priorities", f"{len(prios)} item(s)"))
+    out = []
+    if since["first_visit"]:
+        out.append("This is your first visit, so there is no earlier baseline to compare against.")
+    elif since["changes"]:
+        cite_s = c.cite(q.src("record", "Changes since your last visit", "pulse:since", since["since"][:16]))
+        out.append(f"**Since your last visit** ({since['since'][:16].replace('T', ' ')} UTC) {cite_s}:\n"
+                   + "\n".join(f"- {x['text']}" for x in since["changes"]))
+    else:
+        out.append("Nothing meaningful has changed since your last visit.")
+    if prios:
+        out.append(f"**Top priorities** {cite_p}:\n" + "\n".join(
+            f"{i}. {x['title']} — {x['next_step']} ({x['provenance'].replace('_', ' ')})"
+            for i, x in enumerate(prios[:3], 1)))
+    decs = c.call("decision_journal", pulse.list_decisions, username=p.username)
+    invs = c.call("investigations", pulse.list_investigations, username=p.username)
+    if decs or invs:
+        cite_j = c.cite(q.src("record", "Your decision journal and investigations", "decisions+investigations",
+                              f"{len(decs)} decision(s), {len(invs)} investigation(s)"))
+        lines = []
+        for d in decs[:3]:
+            cmp = "; ".join(f"{x['metric'].replace('_', ' ')} {x['then']} → {x['now']}"
+                           for x in d.get("comparison", []))
+            lines.append(f"- Decision “{d['title']}” ({d['status']})"
+                         + (f": outcome recorded — {d['outcome']}" if d.get("outcome") else "")
+                         + (f". Since then: {cmp}" if cmp else ". No tracked measure has changed since."))
+        for i in invs[:3]:
+            cmp = "; ".join(f"{x['metric'].replace('_', ' ')} {x['then']} → {x['now']}" for x in i["changes"])
+            lines.append(f"- Investigation “{i['title']}” ({i['status']})"
+                         + (f": since it was opened, {cmp}" if cmp else ": no tracked measure has changed since."))
+        out.append(f"**Your earlier work** {cite_j}:\n" + "\n".join(lines)
+                   + "\nChanges are shown side by side; they do not prove a decision caused them.")
+    elif re.search(r"discussed|last week|investigation|decision", p.question.lower()):
+        out.append("You have no saved investigations or decisions yet. Use “Save investigation” or “Record decision” "
+                   "on a priority, and I'll track it here.")
+    return out
+
+
+def h_tech_health(p: Parsed, c: Ctx) -> list[str]:
+    from app import pulse
+
+    qs = c.call("technology_health", pulse.technology, username=p.username)
+    cite = c.cite(q.src("record", "Technology health (storefront health check, agent runs, model calls, ratings)",
+                        "pulse:technology", "measured now"))
+    return [f"**Technology health** {cite}:\n" + "\n".join(f"- **{x['question']}** {x['answer']}" for x in qs)]
+
+
+_RESTRICTED_ASK = re.compile(r"contract|terms|negotiated|price per|pricing|bank|account details|contact|email|phone|"
+                             r"salar|national id|personal|who is the account manager|api key|credential|password", re.I)
+
+
+def _principal(p: Parsed):
+    from app import privacy
+
+    return privacy.Principal(p.username or "anonymous", p.role or "viewer",
+                             privacy.USER_TENANT.get(p.username or "", privacy.DEFAULT_TENANT))
+
+
+def h_suppliers(p: Parsed, c: Ctx) -> list[str]:
+    """Suppliers needing attention, minimised by the Privacy Shield before Jerry (or the LLM) sees them."""
+    from app import privacy
+
+    recs, rep = c.call("supplier_scorecard", privacy.suppliers, principal=_principal(p), purpose="llm")
+    c.policies.append(rep.as_dict())
+    cite = c.cite(q.src("data", "Supplier scorecard (policy-filtered; synthetic suppliers)", "ent_suppliers",
+                        f"{len(recs)} supplier(s); confidential fields banded, restricted fields excluded"))
+    if not recs:
+        return [f"No suppliers are visible to you under the current data policy {cite}."]
+    attention = sorted(recs, key=lambda r: (-(r["open_incidents"] or 0), r["quality_pass_pct"]))[:5]
+    lines = [f"{i}. **{r['name']}** ({r['country']}, {r['category']}): quality pass {r['quality_pass_pct']}%, on time "
+             f"{r['on_time_pct']}%, {r['open_incidents']} incident(s) in 365 days, annual spend "
+             f"{r['annual_spend_cents']}" for i, r in enumerate(attention, 1)]
+    out = [f"**Suppliers that need attention** {cite} (ranked by incidents, then quality pass rate):\n"
+           + "\n".join(lines)]
+    if _RESTRICTED_ASK.search(p.question):
+        out.append("I can't share contract terms, negotiated prices, contact people or bank details here. The "
+                   "Privacy Shield removes them on the server before the data reaches me, for every role, including "
+                   "the CTO workspace. What I can offer: spend bands, performance, incident history and exposure. "
+                   "Exact commercial terms stay in the procurement system, for people with a procurement role.")
+    out.append("Policy applied: confidential fields are shown as bands; personal and banking details are excluded. "
+               "Supplier records are synthetic demonstration data.")
+    return out
+
+
+def h_privacy(p: Parsed, c: Ctx) -> list[str]:
+    from app import privacy
+
+    sites, rep = c.call("workforce_summary", privacy.employees_summary, principal=_principal(p), purpose="llm")
+    c.policies.append(rep.as_dict())
+    cite = c.cite(q.src("data", "Workforce summary (aggregated; no personal data)", "ent_employees",
+                        "headcount by site only"))
+    return [
+        "Confidential details are already hidden — not by the screen, but on the server before any data reaches me, "
+        "your browser, an export or a log. This applies to every role and workspace, including the CTO workspace.",
+        "**What the policy does:** other companies' records are removed (tenant isolation); confidential values "
+        "(spend, contract terms, negotiated prices) become bands or summaries; personal and restricted data "
+        "(names, emails, phone numbers, salaries, national IDs, bank details, credentials) never leave the server. "
+        "Every application of the policy is audited, with counts only.",
+        f"**Authorised alternative — workforce by site** {cite}: " + "; ".join(
+            f"{s['site']} {s['headcount']}" for s in sites) + ". Individual employee records are not available here.",
+    ]
+
+
 HANDLERS = {"sales": h_sales, "campaign": h_campaign, "inventory": h_inventory, "compliance": h_compliance,
             "delivery": h_delivery, "incident": h_incident, "policy": h_policy, "overview": h_overview,
-            "help": h_help, "inspection": h_inspection, "origin_trace": h_origin_trace}
+            "help": h_help, "inspection": h_inspection, "origin_trace": h_origin_trace,
+            "pulse": h_pulse, "tech_health": h_tech_health, "suppliers": h_suppliers,
+            "privacy": h_privacy}
 
 
 FOLLOW_UP = re.compile(r"^\s*(and|what about|how about|same for|and for|what of|now for)\b", re.IGNORECASE)
@@ -639,7 +754,7 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
     previous = window["context"]
     p, follow_up = apply_follow_up(parse(question), previous)
     prev_entities = previous.get("entities", {})
-    p = replace(p, username=user.username, conversation_id=conversation_id)
+    p = replace(p, username=user.username, conversation_id=conversation_id, role=user.role)
     if "inspection" in p.intents:
         if not p.batch_id and prev_entities.get("batch_id"):
             p.batch_id = prev_entities["batch_id"]
@@ -684,17 +799,25 @@ def ask(question: str, user: User, conversation_id: str | None = None, mode: str
         "intents": intents, "entities": p.entities(), "mode": answer_mode, "provenance": provenance,
         "notice": notice, "usage": usage, "read_only": True, "follow_up": follow_up, "attachments": c.attachments,
         "follow_ups": [e for e in EXAMPLES if e.lower() != question.lower()][:3],
+        "policy": {"policy_applied": True, "datasets": c.policies,
+                   "approved_sources": sorted({s_["ref"].split(":")[0] for s_ in c.sources}),
+                   "restricted_excluded": any(x["excluded"] for x in c.policies),
+                   "aggregated": any(x["aggregated"] for x in c.policies)},
     }
     context = {"intents": intents if answered else previous.get("intents", []),
                "entities": p.entities() if answered else previous.get("entities", {}),
                "live_answers": live_answers}
-    store.save_turn(conversation_id, user.username, question, result["answer"], result, context)
+    from app import privacy
+
+    # Memory and traces never store secrets a user may have typed (the answer is already policy-filtered).
+    store.save_turn(conversation_id, user.username, privacy.scrub(question), result["answer"],
+                    {**result, "question": privacy.scrub(question)}, context)
     agent_run_id = new_id("AGR")
     result["agent_run_id"] = agent_run_id
     store.record_agent_run({
         "id": agent_run_id, "agent": "copilot.supervisor", "conversation_id": conversation_id,
         "status": "ok" if answered else "declined", "started_at": started_at, "finished_at": now_iso(),
-        "duration_ms": round((time.perf_counter() - t0) * 1000, 2), "input_summary": question,
+        "duration_ms": round((time.perf_counter() - t0) * 1000, 2), "input_summary": privacy.scrub(question),
         "output_summary": result["answer"][:500],
         "detail": {"intents": intents, "mode": answer_mode, "follow_up": follow_up, "username": user.username,
                    "entities": p.entities(),

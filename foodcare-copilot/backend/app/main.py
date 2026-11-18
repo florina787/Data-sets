@@ -679,6 +679,284 @@ def agents_activity(limit: int = Query(default=60, ge=1, le=300), user: User = D
     return graphs.activity(limit)
 
 
+# --- MCP server, connectors, Executive Export Studio, Enterprise X-Ray --------------------
+
+@app.post("/mcp", include_in_schema=False)
+async def mcp_endpoint(request: Request, user: User = Depends(current_user)):
+    """MCP (JSON-RPC 2.0 over HTTP): approved, read-only, policy-filtered tools."""
+    from fastapi.responses import JSONResponse, Response
+
+    from app import mcp_server
+
+    try:
+        message = await request.json()
+    except ValueError:
+        return JSONResponse({"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "parse error"}})
+    if isinstance(message, list):
+        out = [r for m in message[:20] if (r := await run_in_threadpool(mcp_server.handle, m, user)) is not None]
+        return JSONResponse(out) if out else Response(status_code=202)
+    result = await run_in_threadpool(mcp_server.handle, message, user)
+    return JSONResponse(result) if result is not None else Response(status_code=202)
+
+
+@app.get("/api/connectors")
+def connector_registry(user: User = Depends(current_user)) -> dict:
+    from app import connectors
+
+    return {"connectors": connectors.registry(), "states": list(connectors.STATES)}
+
+
+@app.post("/api/connectors/{connector_id}/test")
+def connector_test(connector_id: str, user: User = Depends(current_user)) -> dict:
+    """Run a real read-only test request (only for configured adapters)."""
+    from app import connectors
+
+    auth.require(user, "connector.test", "connector", connector_id)
+    return connectors.test_connection(connector_id, user.username)
+
+
+@app.get("/api/exports")
+def export_kinds(user: User = Depends(current_user)) -> dict:
+    from app import exports
+
+    return {"kinds": exports.KINDS, "classification": exports.CLASSIFICATION}
+
+
+@app.get("/api/exports/{kind}.pdf")
+def export_pdf(kind: str, ref: str | None = Query(default=None, max_length=80), user: User = Depends(current_user)):
+    """A policy-filtered PDF built in memory for this user (no temporary files)."""
+    from fastapi.responses import Response
+
+    from app import exports
+
+    pdf, name = exports.build(kind, user, ref)
+    return Response(pdf, media_type="application/pdf", headers={
+        "Content-Disposition": f'attachment; filename="{name}"', "Cache-Control": "no-store"})
+
+
+@app.get("/api/xray/{agent_run_id}")
+def xray(agent_run_id: str, user: User = Depends(current_user)) -> dict:
+    """Sanitized execution graph for one of the user's answers (no payloads, prompts or secrets)."""
+    from app import connectors, privacy
+    from app.memory.store import get_store
+
+    store = get_store()
+    run = next((r for r in store.query("SELECT * FROM agent_runs WHERE id = ?", (agent_run_id,))), None)
+    detail = json.loads(run["detail_json"]) if run else {}
+    if not run or detail.get("username") != user.username:
+        raise NotFound("Trace not found")
+    calls = store.tool_calls_for(agent_run_id)
+    reg = {c["id"]: c for c in connectors.registry()}
+    tool_source = {"supplier_scorecard": "demo_data", "workforce_summary": "demo_data", "sales_summary": "demo_data",
+                   "campaign_stock_risk": "demo_data", "inventory_status": "demo_data", "compliance_check": "demo_data",
+                   "technology_health": "app_records", "enterprise_priorities": "demo_data",
+                   "geo_origin_trace": "demo_data", "local_llm.answer": "local_llm"}
+    steps = [{"id": "question", "label": "Your question", "kind": "input",
+              "detail": privacy.scrub(run["input_summary"])},
+             {"id": "orchestrator", "label": "Jerry orchestrator", "kind": "agent",
+              "detail": f"Intents: {', '.join(detail.get('intents', [])) or 'none'}; mode {detail.get('mode')}"},
+             {"id": "policy", "label": "Policy engine", "kind": "policy",
+              "detail": "Tenant isolation, field classification and minimisation applied before tools return data"}]
+    for i, c in enumerate(calls):
+        src = tool_source.get(c["tool"], "app_records")
+        steps.append({"id": f"tool{i}", "label": c["tool"], "kind": "tool", "status": c["status"],
+                      "duration_ms": c["duration_ms"], "source": src,
+                      "source_state": reg.get(src, {}).get("state"), "detail": "Read-only tool (arguments withheld)"})
+    steps += [{"id": "evidence", "label": f"Evidence ({len(detail.get('sources', []))} source(s))", "kind": "evidence",
+               "detail": "; ".join(s_["label"] for s_ in detail.get("sources", []))[:600]},
+              {"id": "answer", "label": "Visual answer", "kind": "output",
+               "detail": privacy.scrub(run["output_summary"])[:300]}]
+    return {"agent_run_id": agent_run_id, "status": run["status"], "duration_ms": run["duration_ms"],
+            "started_at": run["started_at"], "steps": steps, "real_trace": True,
+            "external_systems": [{"id": k, "name": reg[k]["name"], "state": reg[k]["state"]}
+                                 for k in ("databricks", "kubernetes", "mcp_server")],
+            "note": "Recorded execution of this answer. Arguments, prompts and payloads are withheld; only "
+                    "tool names, timings, statuses and source states are shown."}
+
+
+# --- Privacy Shield (see app/privacy.py) ------------------------------------------------
+
+@app.get("/api/suppliers")
+def supplier_scorecard(user: User = Depends(current_user)) -> dict:
+    """Supplier scorecard after server-side minimisation for this user (purpose: ui)."""
+    from app import privacy
+
+    recs, rep = privacy.suppliers(privacy.principal_for(user), "ui")
+    return {"suppliers": recs, "policy": rep.as_dict(), "provenance": "synthetic"}
+
+
+@app.get("/api/privacy/policy")
+def privacy_policy(user: User = Depends(current_user)) -> dict:
+    """The classification and minimisation rules (field categories only — never values)."""
+    from app import privacy
+
+    return {
+        "levels": list(privacy.LEVELS),
+        "datasets": {d: {lvl: sorted({privacy.FIELD_LABEL.get(f, f.replace("_", " ")) for f, lv in cls.items()
+                                      if lv == lvl}) for lvl in privacy.LEVELS}
+                     for d, cls in privacy.CLASSIFICATION.items()},
+        "your_role": user.role, "your_tenant": privacy.principal_for(user).tenant,
+        "confidential_visible_to_you": {d: user.role in roles for d, roles in privacy.CONFIDENTIAL_GRANTS.items()},
+        "minimised_purposes": sorted(privacy.MINIMISED_PURPOSES),
+        "note": "Enforced on the server before data reaches the browser, Jerry, the local model, MCP clients, exports, "
+                "logs or memory. Workspace lenses (including CTO) never unlock restricted data.",
+    }
+
+
+# --- Flo & Jerry 3.0: enterprise pulse and continuity (see app/pulse.py) ------------------
+
+class LensBody(BaseModel):
+    lens: str = Field(max_length=20)
+
+
+class JournalDecisionBody(BaseModel):
+    title: str = Field(min_length=1, max_length=160)
+    decision: str = Field(min_length=1, max_length=1000)
+    problem: str | None = Field(default=None, max_length=1000)
+    recommendation: str | None = Field(default=None, max_length=1000)
+    owner: str | None = Field(default=None, max_length=120)
+    priority_id: str | None = Field(default=None, max_length=80)
+    follow_up_on: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+
+class DecisionUpdate(BaseModel):
+    outcome: str | None = Field(default=None, max_length=1000)
+    status: str | None = Field(default=None, pattern="^(open|done|dropped)$")
+    follow_up_on: str | None = Field(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+
+class InvestigationBody(BaseModel):
+    title: str = Field(min_length=1, max_length=160)
+    priority_id: str | None = Field(default=None, max_length=80)
+    geo: dict | None = None
+    notes: str | None = Field(default=None, max_length=4000)
+
+
+class InvestigationUpdate(BaseModel):
+    notes: str | None = Field(default=None, max_length=4000)
+    status: str | None = Field(default=None, pattern="^(open|closed)$")
+
+
+class FeedbackBody(BaseModel):
+    helpful: bool
+    conversation_id: str | None = Field(default=None, max_length=80)
+    agent_run_id: str | None = Field(default=None, max_length=80)
+    comment: str | None = Field(default=None, max_length=1000)
+
+
+@app.get("/api/pulse")
+def enterprise_pulse(mark: bool = True, user: User = Depends(current_user)) -> dict:
+    """Briefing, since-last-visit, enterprise health and priorities for the signed-in user."""
+    from app import pulse
+
+    return pulse.pulse(user.username, user.role, mark)
+
+
+@app.get("/api/me/lens")
+def get_lens(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return pulse.state(user.username, user.role)
+
+
+@app.put("/api/me/lens")
+def put_lens(body: LensBody, user: User = Depends(current_user)) -> dict:
+    """Change the workspace lens. A lens changes layout and emphasis only, never permissions."""
+    from app import pulse
+
+    try:
+        pulse.set_lens(user.username, body.lens)
+    except ValueError as exc:
+        raise PlatformError(str(exc)) from None
+    return pulse.state(user.username, user.role)
+
+
+@app.get("/api/priorities")
+def list_priorities(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return {"priorities": pulse.priorities(user.username)}
+
+
+@app.get("/api/decisions")
+def decisions(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return {"decisions": pulse.list_decisions(user.username)}
+
+
+@app.post("/api/decisions")
+def add_decision(body: JournalDecisionBody, user: User = Depends(current_user)) -> dict:
+    """Record a decision in the user's own journal. Nothing is executed in an enterprise system."""
+    from app import pulse
+
+    return pulse.add_decision(user.username, body.model_dump())
+
+
+@app.patch("/api/decisions/{decision_id}")
+def update_decision(decision_id: str, body: DecisionUpdate, user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    try:
+        return pulse.update_decision(user.username, decision_id, body.model_dump(exclude_unset=True))
+    except KeyError:
+        raise NotFound("Decision not found") from None
+
+
+@app.get("/api/investigations")
+def investigations(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return {"investigations": pulse.list_investigations(user.username)}
+
+
+@app.post("/api/investigations")
+def add_investigation(body: InvestigationBody, user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return pulse.add_investigation(user.username, body.model_dump())
+
+
+@app.patch("/api/investigations/{inv_id}")
+def update_investigation(inv_id: str, body: InvestigationUpdate, user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    try:
+        return pulse.update_investigation(user.username, inv_id, body.model_dump(exclude_unset=True))
+    except KeyError:
+        raise NotFound("Investigation not found") from None
+
+
+@app.post("/api/copilot/feedback")
+def copilot_feedback(body: FeedbackBody, user: User = Depends(current_user)) -> dict:
+    """Helpful / not helpful on a Jerry answer (stored; used in the Technology trust signal)."""
+    from app import pulse
+
+    pulse.add_feedback(user.username, body.model_dump())
+    return {"ok": True}
+
+
+@app.get("/api/technology")
+def technology(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return {"questions": pulse.technology(user.username)}
+
+
+@app.get("/api/reports/weekly")
+def weekly_report(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return pulse.weekly_review(user.username)
+
+
+@app.get("/api/reports/history")
+def history_report(user: User = Depends(current_user)) -> dict:
+    from app import pulse
+
+    return pulse.history(user.username)
+
+
 # --- global supply-chain maps (synthetic scenario; see app/geo.py) ----------------------
 
 @app.get("/api/geo/network")

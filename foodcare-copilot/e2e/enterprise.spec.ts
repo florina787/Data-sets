@@ -1,10 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { navTo } from "./nav";
 
 // Enterprise copilot: executive overview, domain screens and grounded Q&A.
 const SHOTS = "../docs/screenshots";
 
 test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/executive"); // 3.0: "/" is the Enterprise Pulse; Executive Command moved here
   await expect(page.getByRole("heading", { name: "Executive Command" })).toBeVisible();
   await expect(page.getByText("Revenue, last 4 weeks")).toBeVisible();
   await expect(page.getByText(/FreshSip Apple/).first()).toBeVisible(); // campaign stock risk surfaced
@@ -27,7 +28,7 @@ test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
   await drawer.getByRole("button", { name: "Close" }).click();
 
   // Honest refusal for questions outside the data.
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Ask Copilot" }).click();
+  await navTo(page, "Ask Copilot");
   await page.getByRole("main").getByLabel("Ask the copilot").fill("What is the weather in Paris?");
   await page.getByRole("main").getByRole("button", { name: "Ask", exact: true }).click();
   await expect(page.getByRole("main").getByText(/can't answer that from FoodCare's data/)).toBeVisible();
@@ -37,18 +38,17 @@ test("executive overview, domain screens and Ask Copilot", async ({ page }) => {
   await page.screenshot({ path: `${SHOTS}/22-copilot-page.png`, fullPage: true });
 
   // Domain screens.
-  const nav = page.getByRole("navigation", { name: "Primary" });
-  await nav.getByRole("link", { name: "Sales & Promotions" }).click();
+  await navTo(page, "Sales & Promotions");
   await expect(page.getByText("Promotion uplift in units")).toBeVisible();
   await expect(page.getByText("Rentrée 3-for-2").first()).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/23-sales-promotions.png`, fullPage: true });
-  await nav.getByRole("link", { name: "Inventory" }).click();
+  await navTo(page, "Inventory");
   await expect(page.getByText(/Days of cover, as of/)).toBeVisible();
   await expect(page.getByText(/Stock shelf, as of/)).toBeVisible();
   await page.getByRole("button", { name: /FreshSip Apple at DC-TOR/ }).click();
   await expect(page.getByRole("dialog", { name: "FreshSip Apple at DC-TOR" })).toContainText("PO-55102");
   await page.screenshot({ path: `${SHOTS}/24-inventory.png`, fullPage: true });
-  await nav.getByRole("link", { name: "Compliance & Food Safety" }).click();
+  await navTo(page, "Compliance & Food Safety");
   await expect(page.getByRole("main").getByText("listing is missing declared allergen(s): oats (gluten)")).toBeVisible();
   await page.screenshot({ path: `${SHOTS}/25-product-compliance.png`, fullPage: true });
 });

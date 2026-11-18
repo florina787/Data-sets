@@ -1,4 +1,5 @@
 import { expect, Page, test } from "@playwright/test";
+import { navTo } from "./nav";
 import { STORE } from "./playwright.config";
 
 // Browser verification of the flagship workflow, driven through the real UIs:
@@ -16,7 +17,7 @@ async function signIn(page: Page, displayName: string) {
 }
 
 async function go(page: Page, label: string) {
-  await page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: label, exact: true }).click();
+  await navTo(page, label);
 }
 
 async function shot(page: Page, name: string) {
@@ -25,7 +26,7 @@ async function shot(page: Page, name: string) {
 
 test("flagship delivery, release and incident workflow", async ({ page, context }) => {
   page.on("dialog", (dialog) => dialog.accept());
-  await page.goto("/");
+  await page.goto("/delivery"); // 3.0: release status lives with the delivery demo controls
   await expect(page.getByText("DEMO ENVIRONMENT")).toBeVisible();
   await expect(page.getByText(/release REL-BASELINE/)).toBeVisible();
 

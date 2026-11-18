@@ -150,6 +150,9 @@ def seed() -> None:
                               json.dumps(o.get("ingredients", rec["ingredients"])),
                               json.dumps(o.get("allergens", rec["allergens"])), "2026-10-20", o.get("note")))
         conn.execute("COMMIT")
+    from app import privacy
+
+    privacy.seed()  # sensitive supplier/employee fixtures, protected by the Privacy Shield
 
 
 def ensure_seeded() -> None:
@@ -161,3 +164,10 @@ def ensure_seeded() -> None:
             seeded = True
     if not seeded:
         seed()
+        return
+    with session() as conn:
+        has_suppliers = conn.execute("SELECT name FROM sqlite_master WHERE name = 'ent_suppliers'").fetchone()
+    if not has_suppliers:
+        from app import privacy
+
+        privacy.seed()

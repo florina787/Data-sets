@@ -1,47 +1,113 @@
 import { ReactNode, useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { api, login, logout, post, waitForJob } from "../api";
 import { can, useApp } from "../context";
 import { useAction } from "../hooks";
 import { CopilotDrawer, openCopilot } from "../screens/Copilot";
 import GeoChip from "./geo/GeoChip";
+import { InvestigationPanel } from "./pulse/InvestigationPanel";
+import { JerryDock } from "./pulse/JerryDock";
 import { FriesCarton } from "./Illustrations";
 import { Short, Status } from "./ui";
 
-const NAV: [string, [string, string][]][] = [
-  ["Executive", [
-    ["/", "Executive Command"],
-    ["/copilot", "Ask Copilot"],
-  ]],
-  ["Quality & Inspection", [
-    ["/quality-intel", "Quality Intelligence"],
-    ["/inspection", "Potato Inspection"],
-    ["/evaluation", "Model Evaluation Lab"],
-  ]],
-  ["Operations Intelligence", [
-    ["/inventory", "Inventory"],
-    ["/sales", "Sales & Promotions"],
-  ]],
-  ["Risk, Compliance & ESG", [
-    ["/compliance", "Compliance & Food Safety"],
-  ]],
-  ["AI Platform", [
-    ["/agents", "Agent Intelligence"],
-    ["/observability", "System Observability"],
-  ]],
-  ["Digital Delivery", [
-    ["/delivery", "Delivery overview"],
-    ["/brief", "Brief intake"],
-    ["/board", "Delivery board"],
-    ["/requirements", "Requirements"],
-    ["/engineering", "Engineering"],
-    ["/quality", "Quality"],
-    ["/releases", "Release center"],
-    ["/incidents", "Incidents"],
-    ["/templates", "Scenario templates"],
-    ["/evidence", "Evidence & audit"],
-  ]],
+/** Flo & Jerry 3.0 navigation: 7 primary sections, one secondary level (NN/g progressive disclosure). */
+export const SECTIONS: { key: string; label: string; icon: string; items: [string, string, string?][] }[] = [
+  { key: "overview", label: "Overview", icon: "◎", items: [["/", "Enterprise Pulse"], ["/executive", "Executive Command"]] },
+  { key: "priorities", label: "My Priorities", icon: "◆", items: [["/priorities", "Priorities & decisions"]] },
+  { key: "operations", label: "Operations", icon: "▤", items: [
+    ["/quality-intel", "Quality Intelligence"], ["/inspection", "Potato Inspection"], ["/inventory", "Inventory"],
+    ["/sales", "Sales & Promotions"], ["/compliance", "Compliance & Food Safety"]] },
+  { key: "network", label: "Global Network", icon: "◍", items: [["/network", "Supply-chain globe"]] },
+  { key: "jerry", label: "Jerry AI", icon: "✦", items: [["/copilot", "Ask Copilot"]] },
+  { key: "technology", label: "Technology", icon: "⚙", items: [
+    ["/technology", "Technology health"], ["/observability", "System Observability"],
+    ["/evaluation", "Model Evaluation Lab"], ["/agents", "Agent Intelligence"],
+    ["/delivery", "Delivery overview", "Digital delivery"], ["/brief", "Brief intake", "Digital delivery"],
+    ["/board", "Delivery board", "Digital delivery"], ["/requirements", "Requirements", "Digital delivery"],
+    ["/engineering", "Engineering", "Digital delivery"], ["/quality", "Quality", "Digital delivery"],
+    ["/releases", "Release center", "Digital delivery"], ["/incidents", "Incidents", "Digital delivery"],
+    ["/templates", "Scenario templates", "Digital delivery"]] },
+  { key: "reports", label: "Reports", icon: "▦", items: [["/reports", "Weekly CTO review"], ["/evidence", "Evidence & audit"]] },
 ];
+
+export function sectionFor(path: string) {
+  return SECTIONS.find((s) => s.items.some(([to]) => (to === "/" ? path === "/" : path === to || path.startsWith(`${to}/`))))
+    ?? SECTIONS[0];
+}
+
+function PrimaryNav() {
+  const { pathname } = useLocation();
+  const active = sectionFor(pathname).key;
+  const [open, setOpen] = useState<string>(active);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => { setOpen(active); setMobileOpen(false); }, [active, pathname]);
+  return (
+    <nav aria-label="Primary" className="border-b border-surface-line bg-surface-side/80 md:w-64 md:shrink-0 md:border-b-0 md:border-r">
+      <button type="button" className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-ink md:hidden" aria-expanded={mobileOpen} onClick={() => setMobileOpen((v) => !v)}>
+        <span><span aria-hidden className="mr-2 text-champagne">☰</span>Menu · {sectionFor(pathname).label}</span>
+        <span aria-hidden>{mobileOpen ? "▾" : "▸"}</span>
+      </button>
+      <ul className={`${mobileOpen ? "flex" : "hidden"} flex-col gap-1 p-3 pt-0 md:flex md:pt-3`}>
+        {SECTIONS.map((s) => {
+          const expanded = open === s.key;
+          let lastGroup: string | undefined;
+          return (
+            <li key={s.key} className="md:w-full">
+              <button type="button" aria-expanded={expanded} aria-controls={`nav-${s.key}`} onClick={() => setOpen(expanded ? "" : s.key)}
+                className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-[15px] transition-colors ${active === s.key ? "bg-teal/10 font-semibold text-ink selected-glow" : "text-ink-muted hover:bg-elevated hover:text-ink"}`}>
+                <span aria-hidden className={`w-4 text-center ${active === s.key ? "text-champagne" : "text-ink-faint"}`}>{s.icon}</span>
+                <span className="flex-1">{s.label}</span>
+                {s.items.length > 1 && <span aria-hidden className="text-xs text-ink-faint">{expanded ? "▾" : "▸"}</span>}
+              </button>
+              {expanded && (
+                <ul id={`nav-${s.key}`} className="mb-1 ml-5 mt-1 space-y-0.5 border-l border-surface-line pl-3">
+                  {s.items.map(([to, label, group]) => {
+                    const heading = group && group !== lastGroup ? group : null;
+                    lastGroup = group;
+                    return (
+                      <li key={to}>
+                        {heading && <div className="label px-2 pb-1 pt-2">{heading}</div>}
+                        <NavLink to={to} end={to === "/"} className={({ isActive }) => `block rounded-lg px-2.5 py-1.5 text-sm transition-colors ${isActive ? "bg-elevated font-medium text-ink before:mr-2 before:inline-block before:h-1.5 before:w-1.5 before:rounded-full before:bg-teal" : "text-ink-muted hover:bg-elevated/70 hover:text-ink"}`}>
+                          {label}
+                        </NavLink>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      <div className="m-3 mt-4 hidden items-start gap-2 rounded-xl border border-surface-line bg-elevated/60 p-3 text-xs text-ink-muted md:flex">
+        <Jerry size={28} />
+        <span>Jerry answers from cited data, says when it can't, and never takes actions on its own.</span>
+      </div>
+    </nav>
+  );
+}
+
+function LensSwitcher() {
+  const { user } = useApp();
+  const [state, setState] = useState<any>(null);
+  useEffect(() => {
+    setState(null);
+    if (user) api("/api/me/lens").then(setState).catch(() => setState(null));
+  }, [user?.username]);
+  if (!user || !state) return null;
+  return (
+    <label className="flex items-center gap-1.5 text-xs text-ink-muted" title={state.note}>
+      <span className="hidden lg:inline">Workspace</span>
+      <select aria-label="Workspace lens" className="rounded-lg border border-surface-line bg-elevated px-2 py-1.5 text-sm text-ink" value={state.lens}
+        onChange={(e) => api("/api/me/lens", { method: "PUT", body: JSON.stringify({ lens: e.target.value }) }).then((s) => {
+          setState(s);
+          window.dispatchEvent(new CustomEvent("lens:changed", { detail: s.lens }));
+        })}>
+        {Object.entries(state.lenses).map(([k, v]) => <option key={k} value={k}>{v as string}</option>)}
+      </select>
+    </label>
+  );
+}
 
 function AccountSwitcher() {
   const { user, refreshAll } = useApp();
@@ -106,7 +172,7 @@ export function DemoControls({ compact = false }: { compact?: boolean }) {
       refreshAll();
     }, "Demo reset: baseline v1.0 redeployed. Sign in again.");
   return (
-    <div className={`flex flex-wrap items-center gap-2 ${compact ? "" : "rounded-lg bg-surface-raised p-2"}`}>
+    <div data-testid="demo-controls" className={`flex flex-wrap items-center gap-2 ${compact ? "" : "rounded-lg bg-surface-raised p-2"}`}>
       <span className="text-xs text-cream-200">Guided demo</span>
       <Status value={status} />
       {status === "running" ? (
@@ -158,7 +224,7 @@ function Meter({ label, value, title }: { label: string; value: number | null; t
   );
 }
 
-function SystemPills() {
+export function SystemPills() {
   const { system } = useApp();
   const [r, setR] = useState<any>(null);
   useEffect(() => {
@@ -220,10 +286,47 @@ function Notifications() {
   );
 }
 
-export function Layout({ children }: { children: ReactNode }) {
+/** Digital-delivery demo controls (moved out of the global header into Technology in 3.0). */
+export function DeliveryDemoPanel() {
   const { system, runs, runId, setRunId } = useApp();
-  const fault = system?.fault?.active;
   const process = system?.storefront?.process;
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+      <DemoControls compact />
+      <div className="flex items-center gap-2">
+        <label htmlFor="run" className="text-xs text-ink-muted">Run</label>
+        <select id="run" className="max-w-[300px] rounded-lg border border-surface-line bg-elevated px-2 py-1 text-xs" value={runId ?? ""} onChange={(e) => setRunId(e.target.value || null)}>
+          {runs.length === 0 && <option value="">No runs yet</option>}
+          {runs.map((r) => (<option key={r.id} value={r.id}>{r.id} · {r.status}</option>))}
+        </select>
+      </div>
+      <span className="text-xs text-ink-muted">Live storefront:</span>
+      <a className="text-xs font-semibold text-teal underline-offset-2 hover:underline" href={system?.storefront?.url ?? "#"} target="_blank" rel="noreferrer">
+        {system?.storefront?.url ?? "-"}
+      </a>
+      <span className="text-xs text-ink-muted">
+        {process ? <>release {process.release_id} @ <Short value={process.revision} n={8} /></> : "not running"}
+      </span>
+      <span className="text-xs text-ink-muted">Mode: {system?.live_mode?.available ? "DEMO (LIVE available)" : "DEMO (LIVE not configured)"}</span>
+    </div>
+  );
+}
+
+/** Plain-language status of Jerry (no CPU/RAM in the executive header; those live in Technology). */
+function JerryPill() {
+  const { system } = useApp();
+  const live = system?.live_mode?.available;
+  return (
+    <NavLink to="/technology" className="pill hover:border-teal" title={live ? `Local model: ${system?.live_mode?.model}` : system?.live_mode?.reason ?? "Checking…"}>
+      <span aria-hidden className={`h-2 w-2 rounded-full ${system ? (live ? "bg-leaf-500" : "bg-champagne") : "bg-ink-faint"}`} />
+      {system ? (live ? "Jerry · local AI" : "Jerry · rules-based") : "Jerry · checking"}
+    </NavLink>
+  );
+}
+
+export function Layout({ children }: { children: ReactNode }) {
+  const { system } = useApp();
+  const fault = system?.fault?.active;
   return (
     <div className="flex min-h-screen flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
@@ -235,62 +338,28 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-3">
             <Jerry size={40} />
             <div>
-              <div className="text-lg font-semibold leading-tight tracking-tight text-navy-900">Flo &amp; Jerry <span className="text-navy-600">—</span> <span className="bg-gradient-to-r from-royal-400 to-ice-400 bg-clip-text text-transparent">Food Copilot 2.0</span></div>
-              <div className="text-xs text-navy-600">Agentic AI for End-to-End Food Manufacturing Excellence</div>
+              <div className="text-lg font-semibold leading-tight tracking-tight text-ink">Flo &amp; Jerry <span className="text-ink-faint">·</span> <span className="text-champagne">3.0</span></div>
+              <div className="text-xs text-ink-muted">Enterprise Intelligence &amp; Mission Control</div>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <GeoChip />
-            <SystemPills />
+            <JerryPill />
             <Notifications />
-            <button className="btn-primary" onClick={() => openCopilot()}><span aria-hidden>✦</span> Ask Copilot</button>
+            <LensSwitcher />
+            <button className="btn-primary" onClick={() => openCopilot()}><span aria-hidden>✦</span> Ask Jerry</button>
             <AccountSwitcher />
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-surface-line/70 pt-2.5 text-sm">
-          <DemoControls compact />
-          <div className="flex items-center gap-2">
-            <label htmlFor="run" className="text-xs text-navy-600">Run</label>
-            <select id="run" className="max-w-[300px] rounded-lg border border-surface-line bg-surface-raised px-2 py-1 text-xs" value={runId ?? ""} onChange={(e) => setRunId(e.target.value || null)}>
-              {runs.length === 0 && <option value="">No runs yet</option>}
-              {runs.map((r) => (<option key={r.id} value={r.id}>{r.id} · {r.status}</option>))}
-            </select>
-          </div>
-          <span className="text-xs text-navy-600">Live storefront:</span>
-          <a className="text-xs font-semibold text-ice-400 underline-offset-2 hover:underline" href={system?.storefront?.url ?? "#"} target="_blank" rel="noreferrer">
-            {system?.storefront?.url ?? "-"}
-          </a>
-          <span className="text-xs text-navy-600">
-            {process ? <>release {process.release_id} @ <Short value={process.revision} n={8} /></> : "not running"}
-          </span>
-          {fault && <span className="rounded bg-brick-700 px-2 py-0.5 text-xs font-semibold text-white">Injected fault active: inventory timeout</span>}
-          <span className="text-xs text-navy-600">Mode: {system?.live_mode?.available ? "DEMO (LIVE available)" : "DEMO (LIVE not configured)"}</span>
-        </div>
+        {fault && <div className="mt-2 rounded-lg border border-risk/50 bg-brick-100 px-3 py-1.5 text-xs font-semibold text-brick-700" role="status">Injected fault active: inventory timeout — a scripted demo fault (see Technology › Incidents)</div>}
       </header>
       <div className="flex flex-1 flex-col md:flex-row">
-        <nav aria-label="Primary" className="border-b border-surface-line bg-surface-side/70 md:w-60 md:shrink-0 md:border-b-0 md:border-r">
-          {NAV.map(([group, items]) => (
-            <div key={group} className="px-3 pt-4">
-              <div className="label px-3 pb-1.5">{group}</div>
-              <ul className="flex flex-row flex-wrap gap-0.5 md:flex-col">
-                {items.map(([to, label]) => (
-                  <li key={to}>
-                    <NavLink to={to} end={to === "/"} className={({ isActive }) => `relative block rounded-lg px-3 py-1.5 text-sm transition-colors ${isActive ? "bg-royal-600/15 font-medium text-white before:absolute before:inset-y-1.5 before:left-0 before:w-0.5 before:rounded-full before:bg-ice-400" : "text-navy-700 hover:bg-surface-raised hover:text-navy-900"}`}>
-                      {label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          <div className="m-3 mt-6 flex items-center gap-2 rounded-xl border border-surface-line bg-surface-card/70 p-3 text-xs text-navy-600">
-            <Jerry size={28} />
-            <span>Jerry answers from cited data and never takes actions.</span>
-          </div>
-        </nav>
+        <PrimaryNav />
         <main id="main" className="min-w-0 flex-1 p-4 md:p-6 lg:p-8">{children}</main>
       </div>
       <CopilotDrawer />
+      <InvestigationPanel />
+      <JerryDock />
     </div>
   );
 }

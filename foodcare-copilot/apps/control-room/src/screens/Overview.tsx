@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { DemoControls } from "../components/Layout";
+import { DeliveryDemoPanel } from "../components/Layout";
 import { Card, Empty, Notice, Short, Status, Time } from "../components/ui";
 import { useApp } from "../context";
 import { usePoll } from "../hooks";
@@ -39,7 +39,8 @@ export default function Overview() {
       </div>
       {error && <Notice kind="error">Could not load overview: {error}</Notice>}
 
-      <Card title="Guided demo" actions={<div className="rounded-lg bg-navy-900 p-1"><DemoControls compact /></div>}>
+      <Card title="Guided demo">
+        <div className="mb-3 rounded-lg bg-midnight/60 p-2"><DeliveryDemoPanel /></div>
         <p className="mb-3 text-sm text-navy-600">
           Each step signs in as a demo account and calls the same APIs as the screens. It waits for real tests,
           git operations, deployments and HTTP traffic to finish, then checks the actual outcome against the expected one.

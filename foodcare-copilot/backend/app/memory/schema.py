@@ -159,6 +159,28 @@ CREATE TABLE llm_usage (
 CREATE INDEX llm_usage_ts ON llm_usage (ts);
 CREATE INDEX llm_usage_user ON llm_usage (username, ts);
 """),
+    (7, "cto_continuity", """
+CREATE TABLE user_state (
+    username TEXT PRIMARY KEY, lens TEXT, last_seen_at TEXT, prev_seen_at TEXT, updated_at TEXT
+);
+CREATE TABLE decisions (
+    id TEXT PRIMARY KEY, username TEXT NOT NULL, title TEXT NOT NULL, problem TEXT, evidence_json TEXT NOT NULL
+        DEFAULT '[]', recommendation TEXT, decision TEXT NOT NULL, owner TEXT, priority_id TEXT,
+    created_at TEXT NOT NULL, follow_up_on TEXT, status TEXT NOT NULL DEFAULT 'open', outcome TEXT,
+    outcome_recorded_at TEXT, baseline_json TEXT NOT NULL DEFAULT '{}'
+);
+CREATE INDEX decisions_user ON decisions (username, created_at);
+CREATE TABLE investigations (
+    id TEXT PRIMARY KEY, username TEXT NOT NULL, title TEXT NOT NULL, priority_id TEXT, geo_json TEXT,
+    notes TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'open', created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL, snapshot_json TEXT NOT NULL DEFAULT '{}'
+);
+CREATE INDEX investigations_user ON investigations (username, updated_at);
+CREATE TABLE answer_feedback (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, conversation_id TEXT, agent_run_id TEXT,
+    helpful INTEGER NOT NULL, comment TEXT, created_at TEXT NOT NULL
+);
+"""),
 ]
 
 

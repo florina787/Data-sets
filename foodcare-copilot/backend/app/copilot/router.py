@@ -60,9 +60,18 @@ INTENTS: dict[str, tuple[str, ...]] = {
     "overview": ("summary", "overview", "how are we doing", "briefing", "focus on", "priorities", "what should i",
                  "status of the business", "headlines", "today"),
     "help": ("what can you do", "help", "how do i use", "examples"),
+    "pulse": ("what changed", "changed since", "since yesterday", "since my last", "since last", "board meeting",
+              "my priorities", "decision journal", "my decisions", "follow-up", "follow up", "investigation",
+              "discussed", "last week", "outcome"),
+    "tech_health": ("ai systems", "systems healthy", "system health", "healthy", "reliable", "reliability",
+                    "uptime", "integrations", "operating cost", "ai cost", "jerry available", "is jerry"),
     "origin_trace": ("origintrace", "trace", "traceability", "origin", "upstream", "supply chain", "supply network",
                      "geographic", "country", "countries", "global", "globe", "map", "farm", "factory",
                      "exposure", "financial exposure", "risk forecast"),
+    "suppliers": ("supplier", "suppliers", "vendor", "vendors", "procurement", "contract terms", "negotiated",
+                  "contract", "contracts"),
+    "privacy": ("confidential", "hide", "personal information", "without personal", "redact", "redacted",
+                "privacy", "pii", "sensitive", "employee", "employees", "salary", "salaries", "personal data"),
     "inspection": ("potato", "potatoes", "defect", "defective", "defects", "rejected", "reject", "inspection",
                    "inspected", "graded", "grading", "batch", "greening", "rot", "bruise", "not good", "moderate",
                    "processing spec", "meets spec", "meet spec", "quality grade", "specification", "specifications"),
@@ -88,6 +97,7 @@ class Parsed:
     conversation_id: str | None = None
     geo_node: str | None = None
     country: str | None = None
+    role: str | None = None  # set by the engine, used by the Privacy Shield
 
     def entities(self) -> dict:
         return {k: v for k, v in {"skus": self.skus, "provinces": self.provinces, "warehouses": self.warehouses,
@@ -129,6 +139,11 @@ def parse(question: str) -> Parsed:
         scores["inventory"] += 1
     if skus and any(w in text for w in ("ingredient", "allergen", "contain")):
         scores["compliance"] += 1
+    if scores["suppliers"] and (scores["inspection"] or re.search(r"\b(batch|batches|potato|potatoes|lot)\b", text)):
+        scores["inspection"] = max(scores["inspection"], scores["suppliers"])  # supplier *of a batch*: inspection
+        scores["suppliers"] = 0
+    if "board" in text and scores["overview"]:
+        scores["pulse"] = max(scores["pulse"], scores["overview"])  # brief me AND show what needs deciding
     ranked = [i for i, s in sorted(scores.items(), key=lambda kv: -kv[1]) if s > 0]
     if not ranked and warehouses:
         ranked = ["inventory"]

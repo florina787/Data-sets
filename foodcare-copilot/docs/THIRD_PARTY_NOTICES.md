@@ -35,3 +35,14 @@ Jerry (fries carton), the potatoes and the fries illustrations are original SVG 
 
 ## Re-checking
 Re-run the licence scan after adding any dependency. The command is in `docs/MODEL_EVALUATION.md`, under "Licence scan".
+
+## Added in Flo & Jerry 3.0
+
+| Package | Version | Licence | Used for |
+|---|---|---|---|
+| reportlab | 4.2.5 | BSD | Executive Export Studio PDFs (built in memory) |
+| chardet | 7.7.0 | 0BSD | Dependency of reportlab |
+| three | 0.169.0 | MIT | 3D supply-chain globe (lazy-loaded) |
+| d3-geo | 3.1.1 | ISC | 2D map projection |
+| topojson-client | 3.1.0 | ISC | Decoding world borders |
+| world-atlas | 2.0.2 | ISC (data: Natural Earth, public domain) | Country borders, offline |

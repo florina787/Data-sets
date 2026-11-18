@@ -7,7 +7,7 @@ import { FriesCarton } from "../components/Illustrations";
 
 type Source = { id: string; kind: string; label: string; ref: string; detail?: string };
 type Answer = {
-  conversation_id: string; question: string; answer: string; sources: Source[]; answered: boolean;
+  conversation_id: string; question: string; answer: string; sources: Source[]; answered: boolean; agent_run_id?: string;
   tool_calls: { tool: string; args: Record<string, unknown> }[]; intents: string[]; entities: Record<string, unknown>;
   mode: string; provenance: string; notice: string | null; follow_ups: string[]; follow_up?: boolean;
   attachments?: { type: string; batch_id: string; potato_no: number }[];
@@ -106,6 +106,34 @@ function AnswerView({ a, onAsk }: { a: Answer; onAsk: (q: string) => void }) {
         <div className="mt-2 flex flex-wrap gap-1">
           {a.follow_ups.map((f) => <button key={f} onClick={() => onAsk(f)} className="rounded-full border border-cream-300 px-2 py-0.5 text-xs hover:bg-cream-200">{f}</button>)}
         </div>
+      )}
+      <p className="mt-2 text-[11px] text-navy-600">
+        Limits: answers come only from the cited demo data and records; figures marked synthetic are not real business results. Check before acting.
+      </p>
+      <Feedback a={a} />
+    </div>
+  );
+}
+
+/** Helpful / Not helpful with an optional correction (Amershi et al. G9, G15). Stored; never changes data. */
+function Feedback({ a }: { a: Answer }) {
+  const [state, setState] = useState<"idle" | "down" | "sent">("idle");
+  const [comment, setComment] = useState("");
+  const send = (helpful: boolean, text?: string) =>
+    post("/api/copilot/feedback", { helpful, conversation_id: a.conversation_id, agent_run_id: a.agent_run_id, comment: text })
+      .then(() => setState("sent")).catch(() => setState("idle"));
+  if (state === "sent") return <p className="mt-2 text-xs text-teal" role="status">Thanks — your rating is saved and counted in Technology › AI trust.</p>;
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-navy-600">
+      <span>Was this helpful?</span>
+      <button className="rounded-full border border-cream-300 px-2 py-0.5 hover:border-teal" onClick={() => send(true)}>Helpful</button>
+      <button className="rounded-full border border-cream-300 px-2 py-0.5 hover:border-teal" aria-expanded={state === "down"} onClick={() => setState("down")}>Not helpful</button>
+      {state === "down" && (
+        <form className="flex w-full flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); send(false, comment); }}>
+          <label className="sr-only" htmlFor={`fb-${a.agent_run_id}`}>What was wrong?</label>
+          <input id={`fb-${a.agent_run_id}`} className="min-w-0 flex-1 rounded border px-2 py-1" placeholder="What was wrong or missing? (optional)" value={comment} onChange={(e) => setComment(e.target.value)} />
+          <button className="btn-ghost text-xs" type="submit">Send</button>
+        </form>
       )}
     </div>
   );
