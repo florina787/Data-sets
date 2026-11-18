@@ -1,0 +1,116 @@
+# Role -> permissions. Deny by default: anything not listed is denied.
+# Wildcards: "domain:*" grants every action in the domain.
+roles:
+  executive:
+    - exec:read
+    - finance:read
+    - investment:read_aggregate
+    - risk:read_aggregate
+    - decisions:read
+    - decisions:write
+    - scenarios:run
+    - board:prepare
+    - board:distribute
+    - ask:use
+    - docs:read
+    - export:standard
+    - approvals:decide
+  finance:
+    - finance:read
+    - records:change
+    - export:standard
+  cio:
+    - product_research:read
+    - investment:read
+    - investment:read_aggregate
+    - portfolio:read
+    - research:read
+    - market:read
+    - risk:read
+    - risk:read_aggregate
+    - scenarios:run
+    - ask:use
+    - docs:read
+    - export:standard
+    - portfolio:modify
+    - approvals:decide
+    - decisions:read
+  investment_analyst:
+    - product_research:read
+    - investment:read
+    - investment:read_aggregate
+    - portfolio:read
+    - research:read
+    - market:read
+    - risk:read
+    - scenarios:run
+    - ask:use
+    - docs:read
+  wealth_advisor:
+    - wealth:read
+    - client:read
+    - portfolio:read
+    - comms:draft
+    - comms:send
+    - recommendation:deliver
+    - research:read
+    - product_research:read
+    - market:read
+    - retirement:run
+    - ask:use
+    - docs:read
+    - privacy:rehydrate
+    - export:sensitive
+  external_advisor:
+    - product_research:read
+    - market:read
+    - ask:use
+    - docs:read
+  compliance_officer:
+    - compliance:read
+    - compliance:write
+    - client:read
+    - audit:read
+    - approvals:decide
+    - ask:use
+    - docs:read
+    - research:read
+    - decisions:read
+    - privacy:rehydrate
+    - export:standard
+  privacy_officer:
+    - approvals:decide
+    - privacy:admin
+    - privacy:rehydrate
+    - client:read
+    - audit:read
+    - ask:use
+    - docs:read
+  ai_admin:
+    - aiops:read
+    - aiops:manage
+    - audit:read
+    - ask:use
+    - docs:read
+    - evals:run
+  risk_officer:   # second-line risk oversight: aggregate exposures, scenarios and risk register; no client or portfolio-level records
+    - risk:read
+    - risk:read_aggregate
+    - investment:read_aggregate
+    - scenarios:run
+    - compliance:read
+    - research:read
+    - ask:use
+    - docs:read
+  prospect:       # business owner exploring FLO: conversation + public product/market information only
+    - ask:use
+    - product_research:read
+    - market:read
+  orchestrator:   # service identity used by the agent harness (never assigned to humans)
+    - model:invoke
+# Actions that no role may perform in this demonstration, regardless of grants or approvals.
+prohibited:
+  - trade:execute
+  - shell:execute
+  - db:raw_query
+  - network:unrestricted

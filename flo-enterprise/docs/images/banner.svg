@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="FLO Enterprise - Financial Leadership, Operations and Wealth Intelligence">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B1220"/><stop offset="1" stop-color="#162338"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D4AF37"/><stop offset="1" stop-color="#F1D77A"/></linearGradient>
+  </defs>
+  <rect width="1280" height="320" rx="18" fill="url(#bg)"/>
+  <g opacity="0.16" stroke="#3B82F6" fill="none" stroke-width="2">
+    <polyline points="640,250 700,236 760,242 820,214 880,222 940,190 1000,198 1060,160 1120,170 1180,128 1240,112"/>
+    <polyline points="640,270 700,262 760,266 820,250 880,256 940,238 1000,244 1060,226 1120,232 1180,214 1240,206" stroke="#10B981"/>
+  </g>
+  <g transform="translate(64,78)">
+    <rect width="96" height="96" rx="22" fill="#0B1220" stroke="#D4AF37" stroke-width="3"/>
+    <path d="M30 70 V26 H68 M30 48 H60" stroke="url(#gold)" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="186" y="128" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="64" font-weight="800" fill="#ECF0F6" letter-spacing="2">FLO <tspan fill="url(#gold)">Enterprise</tspan></text>
+  <text x="188" y="170" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="24" fill="#94A3B8">Financial Leadership, Operations &amp; Wealth Intelligence</text>
+  <text x="188" y="214" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#ECF0F6">Governed agentic AI for investment management · 20 agents · deterministic analytics · zero-trust controls</text>
+  <g font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="600">
+    <rect x="188" y="240" width="150" height="30" rx="15" fill="#10B981" fill-opacity="0.15" stroke="#10B981"/><text x="263" y="260" text-anchor="middle" fill="#10B981">SYNTHETIC DATA</text>
+    <rect x="350" y="240" width="170" height="30" rx="15" fill="#3B82F6" fill-opacity="0.15" stroke="#3B82F6"/><text x="435" y="260" text-anchor="middle" fill="#7FB0FA">MOCK INTEGRATIONS</text>
+    <rect x="532" y="240" width="190" height="30" rx="15" fill="#D4AF37" fill-opacity="0.15" stroke="#D4AF37"/><text x="627" y="260" text-anchor="middle" fill="#D4AF37">INDEPENDENT DEMO</text>
+    <rect x="734" y="240" width="190" height="30" rx="15" fill="#EF4444" fill-opacity="0.15" stroke="#EF4444"/><text x="829" y="260" text-anchor="middle" fill="#F38B8B">TRADING PROHIBITED</text>
+  </g>
+</svg>

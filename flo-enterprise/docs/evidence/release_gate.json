@@ -1,0 +1,87 @@
+{
+ "status": "PASS",
+ "generated_at": "2026-11-04T16:00:58Z",
+ "blocking_failures": [],
+ "checks": [
+  {
+   "check": "critical_tests (security + financial correctness)",
+   "passed": true,
+   "blocking": true,
+   "seconds": 16.8,
+   "tail": [
+    "..............................................................s......... [ 55%]",
+    "..........................................................               [100%]"
+   ]
+  },
+  {
+   "check": "full_test_suite",
+   "passed": true,
+   "blocking": true,
+   "seconds": 17.1,
+   "tail": [
+    "...................................................................s.... [ 39%]",
+    "........................................................................ [ 79%]",
+    "......................................                                   [100%]"
+   ]
+  },
+  {
+   "check": "opa_policy_tests",
+   "passed": null,
+   "blocking": false,
+   "seconds": 0.0,
+   "tail": [
+    "tool not installed"
+   ]
+  },
+  {
+   "check": "evaluation_suite",
+   "passed": true,
+   "blocking": true,
+   "seconds": 3.4,
+   "tail": [
+    "{\"cases\": 10, \"passed\": 10, \"pass_rate\": 1.0, \"financial_identity_check\": true, \"latency_ms\": {\"p50\": 40.2, \"max\": 109.4}}"
+   ]
+  },
+  {
+   "check": "static_analysis (ruff)",
+   "passed": true,
+   "blocking": true,
+   "seconds": 0.0,
+   "tail": [
+    "All checks passed!"
+   ]
+  },
+  {
+   "check": "security_lint (bandit, high severity)",
+   "passed": true,
+   "blocking": true,
+   "seconds": 1.5,
+   "tail": []
+  },
+  {
+   "check": "dependency_audit (pip-audit)",
+   "passed": true,
+   "blocking": false,
+   "seconds": 10.3,
+   "tail": [
+    "No known vulnerabilities found"
+   ]
+  },
+  {
+   "check": "secret_scan",
+   "passed": true,
+   "blocking": true,
+   "seconds": 0,
+   "tail": [
+    "no secrets found"
+   ]
+  },
+  {
+   "check": "frontend_typecheck",
+   "passed": true,
+   "blocking": true,
+   "seconds": 5.4,
+   "tail": []
+  }
+ ]
+}

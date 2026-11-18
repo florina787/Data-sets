@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: {{ .Release.Name }}-api, labels: { app: {{ .Release.Name }}-api } }
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector: { matchLabels: { app: {{ .Release.Name }}-api } }
+  template:
+    metadata:
+      labels: { app: {{ .Release.Name }}-api }
+      annotations: { prometheus.io/scrape: "true", prometheus.io/port: "8000", checksum/policy: {{ .Files.Get "files/opa-data.json" | sha256sum }} }
+    spec:
+      automountServiceAccountToken: false
+      securityContext: { runAsNonRoot: true, runAsUser: 10001, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: api
+          image: "{{ .Values.image.api }}:{{ .Values.image.tag }}"
+          ports: [{ containerPort: 8000 }]
+          env: {{- include "flo.env" . | nindent 12 }}
+          envFrom: [{ secretRef: { name: {{ .Values.existingSecret }} } }]
+          resources: { requests: { cpu: {{ .Values.api.cpu }}, memory: {{ .Values.api.memory }} } }
+          readinessProbe: { httpGet: { path: /readyz, port: 8000 } }
+          livenessProbe: { httpGet: { path: /healthz, port: 8000 } }
+          {{- include "flo.secure" . | nindent 10 }}
+          volumeMounts: [{ name: var, mountPath: /app/var }]
+        - name: opa
+          image: {{ .Values.opa.image }}
+          args: ["run", "--server", "--addr", "127.0.0.1:8181", "/policies"]
+          {{- include "flo.secure" . | nindent 10 }}
+          volumeMounts: [{ name: policy, mountPath: /policies, readOnly: true }]
+      volumes:
+        - { name: var, emptyDir: {} }
+        - { name: policy, configMap: { name: {{ .Release.Name }}-opa } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: {{ .Release.Name }}-api }
+spec: { selector: { app: {{ .Release.Name }}-api }, ports: [{ port: 8000 }] }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: {{ .Release.Name }}-api }
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: {{ .Release.Name }}-api }
+  minReplicas: {{ .Values.api.minReplicas }}
+  maxReplicas: {{ .Values.api.maxReplicas }}
+  metrics: [{ type: Resource, resource: { name: cpu, target: { type: Utilization, averageUtilization: 65 } } }]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: {{ .Release.Name }}-opa }
+data:
+  data.json: {{ .Files.Get "files/opa-data.json" | quote }}
+  flo_authz.rego: {{ .Files.Get "files/flo_authz.rego" | quote }}

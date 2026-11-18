@@ -1,0 +1,19 @@
+[project]
+name = "flo-enterprise"
+version = "1.0.0"
+description = "FLO - Financial Leadership, Operations & Wealth Intelligence (independent architecture demonstration, synthetic data only)"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["backend*", "agents*", "harness*", "governance*", "privacy*", "analytics*", "integrations*", "retrieval*", "scenarios*", "approvals*", "observability*", "data*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+markers = [
+  "critical: release-blocking security or financial-correctness test",
+  "postgres: requires a running PostgreSQL (FLO_TEST_PG_URL)",
+  "opa: requires the opa binary on PATH",
+]
+filterwarnings = ["ignore::DeprecationWarning"]
