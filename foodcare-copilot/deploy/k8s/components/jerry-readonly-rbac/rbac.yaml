@@ -1,0 +1,25 @@
+# Least privilege: get/list on deployments and pods only. No secrets, configmaps, exec, logs,
+# port-forward, writes, or cluster-wide access. Never bind Jerry to cluster-admin.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jerry-health-reader
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jerry-health-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: jerry-health-reader
+subjects:
+  - kind: ServiceAccount
+    name: foodcare-copilot

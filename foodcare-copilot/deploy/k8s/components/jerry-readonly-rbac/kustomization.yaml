@@ -1,0 +1,16 @@
+# Optional: lets Jerry read Deployment and Pod health in its own namespace (read-only).
+# Add "components: [../../components/jerry-readonly-rbac]" to an overlay to enable it, and set
+# FOODCARE_K8S_NAMESPACES to the same namespace(s). Without this component the app never calls
+# the Kubernetes API (the base disables the service-account token).
+# The base NetworkPolicy allows no egress to the API server: add an egress rule for your
+# cluster's API endpoint (an ipBlock for the control-plane address, port 443/6443).
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+resources:
+  - rbac.yaml
+patches:
+  - target: {kind: ServiceAccount, name: foodcare-copilot}
+    patch: |-
+      - op: replace
+        path: /automountServiceAccountToken
+        value: true

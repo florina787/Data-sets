@@ -2,7 +2,7 @@
 
 <img src="docs/media/orbit.gif" alt="Jerry, the smiling fries carton, with potatoes orbiting around him" width="300">
 
-# Flo & Jerry — Food Copilot 2.0
+# Flo & Jerry — Food Copilot 3.0
 
 ### Agentic AI for end-to-end food manufacturing, explained so anyone can follow it
 
@@ -104,6 +104,7 @@ Every animation below is **a real recording of the running app**: a script (`e2e
 18. [Run it on Kubernetes (enterprise integration)](#18-run-it-on-kubernetes-enterprise-integration)
 19. [System metrics and token usage](#19-system-metrics-and-token-usage)
 20. [Global Supply Chain Intelligence maps](#20-global-supply-chain-intelligence-maps)
+21. [Flo & Jerry 3.0: command, defense and team intelligence](#21-flo--jerry-30-command-defense-and-team-intelligence)
 
 ---
 
@@ -861,6 +862,14 @@ foodcare-copilot/
 | [docs/MCCAIN_INTEGRATION.md](docs/MCCAIN_INTEGRATION.md) | Research note: how a large food manufacturer's platform looks from public sources, and how this app plugs into it |
 | [docs/PRODUCTION_GAPS.md](docs/PRODUCTION_GAPS.md) | What a real deployment would still need |
 | [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md) | Feature-by-feature status |
+| [docs/VALIDATION_REPORT.md](docs/VALIDATION_REPORT.md) | 3.0 test results and what was not validated |
+| [docs/CONVERSATIONAL_AI_ARCHITECTURE.md](docs/CONVERSATIONAL_AI_ARCHITECTURE.md), [docs/VISUAL_RESPONSE_SCHEMAS.md](docs/VISUAL_RESPONSE_SCHEMAS.md), [docs/ENTERPRISE_XRAY_ARCHITECTURE.md](docs/ENTERPRISE_XRAY_ARCHITECTURE.md) | How Jerry answers with visuals, and how "Show how Jerry knows" works |
+| [docs/PRIVACY_SHIELD.md](docs/PRIVACY_SHIELD.md) | Server-side classification, minimisation and canary tests |
+| [docs/MCP_CONNECTOR_ARCHITECTURE.md](docs/MCP_CONNECTOR_ARCHITECTURE.md), [docs/DATABRICKS_INTEGRATION.md](docs/DATABRICKS_INTEGRATION.md), [docs/KUBERNETES_INTEGRATION.md](docs/KUBERNETES_INTEGRATION.md) | Honest connector states, the MCP server, read-only Databricks and Kubernetes |
+| [docs/DEFENSE_COMMAND.md](docs/DEFENSE_COMMAND.md), [docs/TEAM_INTELLIGENCE.md](docs/TEAM_INTELLIGENCE.md) | Threats, guarded containment, licence savings; what every team is building |
+| [docs/EXECUTIVE_EXPORT_STUDIO.md](docs/EXECUTIVE_EXPORT_STUDIO.md), [docs/MOTION_STORIES.md](docs/MOTION_STORIES.md) | Board-ready PDFs and animated explanations |
+| [docs/CTO_SALES_DEMO.md](docs/CTO_SALES_DEMO.md) | The guided CTO demo script |
+| [docs/CTO_UX_RESEARCH.md](docs/CTO_UX_RESEARCH.md), [docs/CTO_UX_AUDIT.md](docs/CTO_UX_AUDIT.md), [docs/FLO_JERRY_3_DESIGN_SYSTEM.md](docs/FLO_JERRY_3_DESIGN_SYSTEM.md), [docs/FLO_JERRY_3_USER_JOURNEYS.md](docs/FLO_JERRY_3_USER_JOURNEYS.md), [docs/FLO_JERRY_3_IMPLEMENTATION.md](docs/FLO_JERRY_3_IMPLEMENTATION.md) | Research basis, audit, design system, journeys and code map |
 
 ---
 
@@ -1140,4 +1149,35 @@ Edit `fixtures/geo/scenario.json`, or point `FOODCARE_GEO_SCENARIO` at your own 
 
 ---
 
-*Flo & Jerry — Food Copilot 2.0 is a portfolio prototype. All companies, products, people and figures in it are fictional.*
+## 21. Flo & Jerry 3.0: command, defense and team intelligence
+
+3.0 turns Jerry into a conversation-first command centre for a CTO. Ask a question and get a
+**visual answer** (charts, network graphs, heatmaps, Gantt, motion stories) with sources, a
+**"Show how Jerry knows"** X-Ray of the real path the answer took, and a **board-ready PDF** on request.
+
+![Jerry answering "Are we under attack?" with a posture radar, exposure graph and vulnerability heatmap](docs/screenshots/40-jerry-threats.png)
+
+| Area | Where | What it does |
+|---|---|---|
+| Enterprise Pulse | Overview | What changed since your last visit, ranked priorities, decisions |
+| Jerry AI | Jerry AI → Ask Copilot | Visual answers, follow-ups, X-Ray, exports, motion stories |
+| Defense Command | Technology | Simulated threats and downtime, guarded containment (dry run only), licence savings |
+| Team & delivery portfolio | Operations | What 9 departments are building, dependencies, budgets, approvals |
+| Connect your enterprise | Technology | Every connector with its *verified* state; Databricks and Kubernetes are read-only |
+| Export Studio | Reports | Board-ready PDF reports, filtered by the same privacy policy |
+| Guided CTO demo | Overview | Three scripted conversations for a live presentation |
+
+![Containment preview: protected refrigeration is refused; an endpoint isolation needs approval and stays a dry run](docs/screenshots/41-containment.png)
+
+![Team portfolio: delivery timeline, cross-team dependencies and budget use](docs/screenshots/42-portfolio.png)
+
+**The rules 3.0 keeps:** privacy is enforced on the server before data reaches the model, screen,
+MCP clients or PDFs, and the CTO role is not a bypass. Containment is never a universal kill
+switch and never runs from a chat message. Protected refrigeration and production lines are
+refused. Savings are called avoided expenditure, not revenue. No connector is called "connected"
+without a successful request. Security, licence and portfolio data are **simulated** and labelled.
+Results: [docs/VALIDATION_REPORT.md](docs/VALIDATION_REPORT.md).
+
+---
+
+*Flo & Jerry — Food Copilot 3.0 is a portfolio prototype. All companies, products, people and figures in it are fictional.*
