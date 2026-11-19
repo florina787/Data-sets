@@ -29,7 +29,10 @@ NAV = [("executive", "Executive Command Center", ["exec:read"]), ("investment", 
        ("approvals", "Approvals", ["approvals:decide", "comms:send", "board:distribute", "export:sensitive"]),
        ("decisions", "Decision Memory", ["decisions:read"]), ("knowledge", "Knowledge Search", ["docs:read"]),
        ("aiops", "AI Operations", ["aiops:read"]), ("governance", "Governance & Audit", ["audit:read"]),
-       ("privacy", "Privacy Console", ["privacy:admin", "privacy:rehydrate"]), ("data", "Data Products", [])]
+       ("privacy", "Privacy Console", ["privacy:admin", "privacy:rehydrate"]), ("data", "Data Products", []),
+       # FLOW WEALTH market research (public historical market data and research results)
+       ("markets", "Market Intelligence", ["market:read"]), ("research", "AI Research Lab", ["quant:read"]),
+       ("predictions", "Prediction Memory", ["quant:read"]), ("market-data", "Data Intelligence", ["market:read"])]
 
 
 @router.get("/healthz")

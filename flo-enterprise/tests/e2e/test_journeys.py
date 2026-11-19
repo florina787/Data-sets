@@ -38,7 +38,9 @@ def test_role_aware_navigation(client, H):
     nav = lambda u: {n["id"] for n in client.get("/api/me", headers=H(u)).json()["navigation"]}  # noqa: E731
     assert {"executive", "decisions"} <= nav("u-ceo") and "wealth" not in nav("u-ceo")
     assert {"wealth", "approvals"} <= nav("u-advisor") and "executive" not in nav("u-advisor")
-    assert nav("u-external") == {"products", "knowledge", "data"}
+    # external advisors already held market:read (public data): they see the public market pages, never model research (quant:read)
+    assert nav("u-external") == {"products", "knowledge", "data", "markets", "market-data"}
+    assert {"research", "predictions"} <= nav("u-cio") and not {"markets", "research"} & nav("u-compliance")
     assert "aiops" in nav("u-aiadmin")
 
 

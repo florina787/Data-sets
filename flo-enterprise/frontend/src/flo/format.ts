@@ -61,6 +61,8 @@ export const PROVENANCE_LABEL: Record<string, string> = {
   calculated_from_user_inputs: "Calculated from your inputs",
   illustrative_assumption: "Illustrative assumption",
   workflow_trace: "Workflow trace",
+  historical_market_data: "Historical market data · Kaggle · ends 2017-11-10",
+  research_result: "Research result · not validated",
 };
 
 export const STATUS_LABEL: Record<string, string> = {

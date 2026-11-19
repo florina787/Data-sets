@@ -23,6 +23,10 @@ const AIOps = lazy(() => import("@/pages/AIOps"));
 const Governance = lazy(() => import("@/pages/Governance"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const DataProducts = lazy(() => import("@/pages/DataProducts"));
+const MarketIntelligence = lazy(() => import("@/pages/MarketIntelligence"));
+const ResearchLab = lazy(() => import("@/pages/ResearchLab"));
+const PredictionMemory = lazy(() => import("@/pages/PredictionMemory"));
+const DataIntelligence = lazy(() => import("@/pages/DataIntelligence"));
 
 const qc = new QueryClient({ defaultOptions: { queries: { staleTime: 60_000, retry: (n, e: any) => n < 1 && ![401, 403, 404].includes(e?.status) } } });
 
@@ -49,6 +53,10 @@ function Shell() {
           <Route path="/governance" element={<Governance />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/data" element={<DataProducts />} />
+          <Route path="/markets" element={<MarketIntelligence />} />
+          <Route path="/research" element={<ResearchLab />} />
+          <Route path="/predictions" element={<PredictionMemory />} />
+          <Route path="/market-data" element={<DataIntelligence />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

@@ -533,6 +533,11 @@ def _headline(intent: dict, facts: dict, rec: dict, narrative: str, results: lis
         fd = facts["firm_diagnostic_agent"]
         headline = ("Thank you. Here is a preliminary, clearly labelled view of your firm, and what I need to make it precise"
                     if fd["known"] else "Welcome. Tell me a little about your firm and I will build a preliminary view")
+    elif iid == "bull_bear" and facts.get("evidence_aggregator_agent"):
+        g = facts["evidence_aggregator_agent"]  # lead with the balanced aggregate, never one side's case
+        headline = (f"{g['ticker']} as of {g['as_of']} (historical): {g['n_bull']} bull points, {g['n_bear']} bear points, "
+                    f"{g['n_skeptic']} skeptic checks. No validated trading edge" if not g["aggregate"]["validated_edge"] else
+                    f"{g['ticker']}: {g['n_bull']} bull points, {g['n_bear']} bear points, {g['n_skeptic']} skeptic checks")
     first = None
     if headline is None:
         pref = HEADLINE_PREF.get(iid, ("finding", "current_state"))

@@ -9,11 +9,11 @@ import { EChart } from "./EChart";
 
 type Row = Record<string, string | number | null | undefined>;
 
-export function toCSV(rows: Row[]) {
+export function toCSV(rows: Row[], header = "# SYNTHETIC DATA - FLO") {
   if (!rows.length) return "";
   const cols = Object.keys(rows[0]);
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  return ["# SYNTHETIC DATA - FLO", cols.join(","), ...rows.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");
+  return [header, cols.join(","), ...rows.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");
 }
 
 function save(href: string, name: string) {
@@ -23,8 +23,8 @@ function save(href: string, name: string) {
   a.click();
 }
 
-export function ChartCard({ id, title, subtitle, lineage, option, rows, height, onClick, loading, error, children, actions, askContext }: {
-  id: string; title: string; subtitle?: string; lineage?: Lineage; option?: any; rows?: Row[]; height?: number;
+export function ChartCard({ id, title, subtitle, lineage, option, rows, height, onClick, loading, error, children, actions, askContext, csvHeader }: {
+  id: string; title: string; subtitle?: string; lineage?: Lineage; option?: any; rows?: Row[]; height?: number; csvHeader?: string;
   onClick?: (p: any) => void; loading?: boolean; error?: unknown; children?: ReactNode; actions?: ReactNode; askContext?: Record<string, string>;
 }) {
   const { ask, lang } = useApp();
@@ -34,7 +34,7 @@ export function ChartCard({ id, title, subtitle, lineage, option, rows, height, 
     const inst = ref.current?.getEchartsInstance();
     if (inst) save(inst.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: "#162338" }), `flo-${id}.png`);
   };
-  const exportCsv = () => rows && save(URL.createObjectURL(new Blob([toCSV(rows)], { type: "text/csv" })), `flo-${id}.csv`);
+  const exportCsv = () => rows && save(URL.createObjectURL(new Blob([toCSV(rows, csvHeader)], { type: "text/csv" })), `flo-${id}.csv`);
   return (
     <Card className="flex flex-col p-4" data-chart={id}>
       <div className="mb-2 flex items-start justify-between gap-2">

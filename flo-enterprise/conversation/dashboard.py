@@ -7,6 +7,7 @@ the browser renders data, it never executes chart code.
 """
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
 from typing import Any
 
@@ -55,7 +56,7 @@ class Ctx:
         self.client_choices: list[dict] = []
 
     def tool(self, name: str, **args) -> dict:
-        key = (name, tuple(sorted(args.items(), key=lambda kv: kv[0])))
+        key = (name, json.dumps(args, sort_keys=True, default=str))  # JSON so list arguments (tickers) are hashable
         if key not in self.memo:
             self.memo[key] = self.ctx.tool(name, **args)
             self.tools.append(name)
@@ -813,6 +814,8 @@ def visualization_agent(ctx, q: VizQ):
             withheld.append({"chart_id": cid, "code": e.code})
         except HarnessError as e:
             withheld.append({"chart_id": cid, "code": e.failure_class})
+        except ValueError:  # schema validation failed (e.g. no data points): withhold the chart, never fail the answer
+            withheld.append({"chart_id": cid, "code": "invalid_or_empty"})
     facts = {"n": len(charts), "withheld": len(withheld)}
     gen = ctx_harness().narrate(ctx, "viz", facts, classification="public")
     return AgentOutput(agent="visualization_agent", narrative=gen.text, facts={**facts, "charts": charts, "kpis": kpis, "withheld_charts": withheld,

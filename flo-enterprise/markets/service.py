@@ -71,7 +71,7 @@ ALIASES = {"APPLE": "AAPL", "MICROSOFT": "MSFT", "NVIDIA": "NVDA", "AMAZON": "AM
            "FACEBOOK": "FB", "META": "FB", "TESLA": "TSLA", "NETFLIX": "NFLX", "INTEL": "INTC", "IBM": "IBM", "JPMORGAN": "JPM",
            "JP MORGAN": "JPM", "EXXON": "XOM", "WALMART": "WMT", "COCA-COLA": "KO", "COCA COLA": "KO", "BOEING": "BA",
            "BERKSHIRE": "BRK-B", "VISA": "V", "DISNEY": "DIS", "PFIZER": "PFE", "CHEVRON": "CVX", "ORACLE": "ORCL",
-           "S&P 500": "SPY", "S&P500": "SPY", "THE MARKET": "SPY", "AMD": "AMD", "CISCO": "CSCO", "STARBUCKS": "SBUX"}
+           "S&P 500": "SPY", "S&P500": "SPY", "AMD": "AMD", "CISCO": "CSCO", "STARBUCKS": "SBUX"}
 STOP = {"A", "I", "AND", "OR", "THE", "FOR", "OF", "TO", "IN", "ON", "VS", "IS", "IT", "AT", "BY", "BE", "AN", "AS", "ARE", "WAS",
         "ME", "MY", "DO", "IF", "SO", "UP", "GO", "AI", "US", "ETF", "CEO", "CFO", "FLO", "YTD", "PM", "AM", "ALL", "NEW", "ANY",
         "SHOW", "WHY", "HOW", "WHAT", "BULL", "BEAR", "RISK", "MODEL", "DATA", "LONG", "TERM", "OVER", "LAST", "NEXT", "BEST",

@@ -32,11 +32,11 @@ const axis = (tk: Tokens, extra: object = {}) => ({ axisLine: { show: false }, a
 
 // LumaTrade-style hero line: gold-to-lime stroke with a soft glow and an area that fades to nothing
 export const HERO_STROKE = ["#D4AF37", "#E2C766", "#C8E06B"];
-const linear = (dir: "h" | "v", stops: [number, string][]) => ({ type: "linear", x: 0, y: 0, x2: dir === "h" ? 1 : 0, y2: dir === "v" ? 1 : 0,
+export const linear = (dir: "h" | "v", stops: [number, string][]) => ({ type: "linear", x: 0, y: 0, x2: dir === "h" ? 1 : 0, y2: dir === "v" ? 1 : 0,
   colorStops: stops.map(([offset, color]) => ({ offset, color })) });
-const heroLine = () => linear("h", [[0, HERO_STROKE[0]], [0.55, HERO_STROKE[1]], [1, HERO_STROKE[2]]]);
-const fadeArea = (hex: string, a = 0.28) => linear("v", [[0, hexA(hex, a)], [1, hexA(hex, 0)]]);
-function hexA(hex: string, a: number) {
+export const heroLine = () => linear("h", [[0, HERO_STROKE[0]], [0.55, HERO_STROKE[1]], [1, HERO_STROKE[2]]]);
+export const fadeArea = (hex: string, a = 0.28) => linear("v", [[0, hexA(hex, a)], [1, hexA(hex, 0)]]);
+export function hexA(hex: string, a: number) {
   const h = hex.replace("#", "");
   const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;

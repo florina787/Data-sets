@@ -3,7 +3,8 @@ export const VIZ_SCHEMA_VERSION = "flo.viz/1.0";
 export const CHART_TYPES = ["line", "area", "stacked_area", "bar", "hbar", "stacked_bar", "grouped_bar", "combo", "waterfall", "donut", "treemap",
   "heatmap", "matrix", "scatter", "geo", "tornado", "scorecard", "agent_graph"] as const;
 export type ChartType = (typeof CHART_TYPES)[number];
-export type Provenance = "platform_synthetic" | "user_supplied" | "calculated_from_user_inputs" | "illustrative_assumption" | "workflow_trace";
+export type Provenance = "platform_synthetic" | "user_supplied" | "calculated_from_user_inputs" | "illustrative_assumption" | "workflow_trace"
+  | "historical_market_data" | "research_result";
 
 export type Series = { name: string; values: (number | null)[]; unit: string; metric_id?: string | null; render: "auto" | "bar" | "line" | "area";
   role: "primary" | "comparison" | "baseline" | "scenario" | "limit"; stack?: string | null };

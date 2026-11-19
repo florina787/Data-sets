@@ -148,7 +148,7 @@ def _t_cmp(f):
 def _t_ov(f):
     return (f"Latest available session {f['as_of']} (historical, not today): SPY returned {f['r1y']}% over 1 year and {f['r3y']}% over 3 years. "
             f"{f['b200']}% of the 1,000-stock universe traded above its 200-session average. Regime: {f['regime']} with crash-risk level "
-            f"{f['level']} (score {f['score']} of 4). Best sector over 1 year among S&P 500 members: {f['best_sector']} ({f['best_sector_r']}%).")
+            f"{f['level']} (score {f['score']} of {f['score_max']}). Best sector over 1 year among S&P 500 members: {f['best_sector']} ({f['best_sector_r']}%).")
 
 
 @REGISTRY.register(_mspec("market_data_agent", "Historical prices, comparisons and the market overview from the Kaggle research lake.", MKT_ROLES,
@@ -176,7 +176,8 @@ def market_data_agent(ctx, q: MarketQ):
     best = d["sectors_1y_equal_weight_sp500_members"][0]
     facts = {"as_of": d["as_of"], "r1y": _p1(d["spy"]["return_1y"]), "r3y": _p1(d["spy"]["return_3y"]), "b200": _p1(d["breadth"]["share_above_200d"]),
              "regime": d["regime"]["regime"].replace("_", " "), "level": d["regime"]["level"], "score": d["regime"]["score"],
-             "best_sector": best["sector"], "best_sector_r": _p1(best["return_1y"]), "data_status": d["data_status"]}
+             "best_sector": best["sector"], "best_sector_r": _p1(best["return_1y"]), "data_status": d["data_status"], "score_max": 4,
+             "constants": {"universe": 1000, "trend_window_sessions": 200, "years": [1, 3], "index_name_number": 500}}
     return _out(ctx, "market_data_agent", "market_overview", facts, ["market_overview_spy", "market_sectors"])
 
 
@@ -198,7 +199,10 @@ def market_regime_agent(ctx, q: MarketQ):
     facts = {"as_of": d["as_of"], "regime": d["regime"].replace("_", " "), "level": d["level"], "score": d["score"],
              "vol": _p1(i["vol_20_annualised"]), "vol_pct": _p1(i["vol_percentile_1y"]), "trend": _p1(i["spy_vs_200d_mean"]),
              "dd": _p1(i["drawdown_from_1y_high"]), "prec": _p1(hi["precision"]), "rec": _p1(hi["recall"]),
-             "base": _p1(d["evaluation"]["base_rate"]), "data_status": d["data_status"]}
+             "base": _p1(d["evaluation"]["base_rate"]), "data_status": d["data_status"],
+             # methodology constants printed in the narrative (grounded like any other number)
+             "constants": {"vol_window_sessions": 20, "trend_window_sessions": 200, "lookback_years": 1, "event_drop_pct": 10,
+                           "event_window_sessions": 20, "score_max": 4}}
     return _out(ctx, "market_regime_agent", "market_regime", facts, ["market_regime_history"])
 
 
@@ -383,7 +387,8 @@ def data_intelligence_agent(ctx, q: MarketQ):
     facts = {"n_ingested": sum(x["ingested"] for x in d["datasets"]), "n_catalog": len(d["datasets"]), "rows": f"{p['normalised']['rows']:,}",
              "tickers": f"{p['normalised']['tickers']:,}", "start": p["normalised"]["start"], "end": p["normalised"]["end"],
              "licence": p["kaggle_license"], "score": d["research_lake"]["quality"]["score"], "dups": f"{p['files']['duplicates_skipped']:,}",
-             "feed": "disabled: " + " ".join(d["current_feed"]["reasons"]) if not d["current_feed"]["scheduler_enabled"] else "enabled"}
+             "feed": "disabled: " + " ".join(d["current_feed"]["reasons"]) if not d["current_feed"]["scheduler_enabled"] else "enabled",
+             "score_scale": 100}
     return _out(ctx, "data_intelligence_agent", "data_intelligence", facts, ["dataset_coverage"])
 
 

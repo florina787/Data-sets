@@ -144,6 +144,9 @@ def prediction_accuracy(c) -> ChartSpec:
     d = c.tool("markets.predictions")
     g = {k.split(":", 1)[1]: v for k, v in d["groups"].items() if k.startswith("regime:") and v["resolved"]}
     cats = sorted(g)
+    if not cats:
+        from harness.errors import UpstreamUnavailable
+        raise UpstreamUnavailable("no resolved forecasts in Prediction Memory yet")
     return ChartSpec(chart_id="prediction_accuracy", chart_type="combo", title="Prediction Memory: direction correct by market regime",
                      subtitle="Historical replay forecasts (simulated clock), benchmark-relative outcome", categories=[x.replace("_", " ") for x in cats],
                      series=[Series(name="Direction correct", values=[round(g[k]["accuracy"], 4) for k in cats], unit="%", render="bar"),

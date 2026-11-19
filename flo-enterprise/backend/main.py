@@ -13,7 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import TimeoutError as SATimeoutError
 
-from backend.api import routes_ai, routes_compliance, routes_conversation, routes_core, routes_exec, routes_invest, routes_wealth
+from backend.api import (routes_ai, routes_compliance, routes_conversation, routes_core, routes_exec, routes_invest, routes_markets,
+                         routes_wealth)
 from backend.config import get_settings
 from observability.telemetry import HTTP_LATENCY
 
@@ -82,5 +83,5 @@ async def pool_exhausted(request: Request, exc: SATimeoutError):
                         headers={"Retry-After": "2"})
 
 
-for r in (routes_core, routes_exec, routes_invest, routes_wealth, routes_ai, routes_compliance, routes_conversation):
+for r in (routes_core, routes_exec, routes_invest, routes_wealth, routes_ai, routes_compliance, routes_conversation, routes_markets):
     app.include_router(r.router)

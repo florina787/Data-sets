@@ -143,7 +143,10 @@ def test_provider_failure_retries_then_circuit_opens(ctx_for):
 
 
 def test_every_agent_registers_full_contract():
-    assert len(REGISTRY.agents) == 26  # 25 specialists + the visualization agent
+    from agents.market import MARKET_AGENTS
+    # 25 enterprise specialists + the visualization agent + the 11 FLOW WEALTH market agents (exact, so unregistered drift is caught)
+    assert len(MARKET_AGENTS) == 11 and set(MARKET_AGENTS) <= set(REGISTRY.agents)
+    assert len(REGISTRY.agents) == 26 + len(MARKET_AGENTS)
     for a in REGISTRY.agents.values():
         c = a.spec.contract()
         for k in ("name", "version", "owner", "allowed_roles", "allowed_tools", "input_schema", "output_schema", "budget",

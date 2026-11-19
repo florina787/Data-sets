@@ -238,7 +238,7 @@ def market_intent(text: str, state: dict) -> tuple[str | None, list[str]]:
     """Route market-research questions. Fires only on market-specific evidence (a resolved ticker, or research phrases), so
     enterprise questions keep their existing routing."""
     t = text
-    if re.search(r"why (did|was|were|has|is) .{0,60}(reject|not (been )?promot|decline)|reject(ed|ion)? .{0,40}(model|opportunit|forecast)|promotion decision", t, re.I):
+    if re.search(r"why (did|was|were|has|is) .{0,60}(reject|not (been )?promot)|reject(ed|ion)? .{0,40}(model|opportunit|forecast)|promotion decision", t, re.I):
         return "model_rejection", []
     if re.search(r"prediction memory|forecast (history|ledger)|past (forecasts|predictions)|prediction (ledger|history)|immutable forecasts?", t, re.I):
         return "prediction_memory", []
