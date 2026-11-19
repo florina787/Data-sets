@@ -28,7 +28,7 @@ Run the Flo & Jerry app in this workspace by following .github/copilot-instructi
 5. Stop anything on ports 8700 and 8801 (task "Flo & Jerry: stop").
 6. Run the task "Flo & Jerry: start (demo mode)" (or scripts/start.sh) and wait for "Uvicorn running on".
 7. Confirm http://127.0.0.1:8700/api/health returns ok, then tell me to open http://127.0.0.1:8700,
-   choose "Val Park (Viewer)" in the account picker, and scroll Executive Command to "Global supply chain intelligence".
+   choose "Eli Novak (Engineer)" in the account picker, and open Overview -> Guided CTO demo.
 8. If any step fails, stop, show me the first error line and explain it in plain words before trying a fix.
 Optional local model: check whether Ollama answers at http://127.0.0.1:11434/v1/models. If it does, show me the
 model names and ask which one to use; then copy .env.example to .env, set FOODCARE_LLM_BASE_URL and FOODCARE_LLM_MODEL,
@@ -46,14 +46,16 @@ exactly as written. Never use "bash -c" or "bash -lc" with a quoted string, and 
    Get-NetTCPConnection -LocalPort 8700,8801 -State Listen
    then stop each OwningProcess with Stop-Process -Id <id> -Force
 2. Set-Location to the Data-sets folder (the git clone), then: git pull
-3. git log --oneline -1        (must show 1a7213d or newer; if not, stop and tell me)
+3. git log --oneline -1        (must show c3ca8a9 or newer; if not, stop and tell me)
 4. Set-Location .\foodcare-copilot
-5. & "C:\Program Files\Git\bin\bash.exe" scripts/setup.sh        (wait for "Setup complete")
+5. & "C:\Program Files\Git\bin\bash.exe" scripts/setup.sh        (wait for "Setup complete"; 3.0 adds the reportlab package, so this step is required)
 6. & "C:\Program Files\Git\bin\bash.exe" scripts/reset_demo.sh   (clears old demo data; keeps conversations and inspections)
 7. & "C:\Program Files\Git\bin\bash.exe" scripts/start.sh        (background; wait for "Uvicorn running on")
 8. Invoke-RestMethod http://127.0.0.1:8700/api/health               (must show status ok)
 9. Check memory: Get-Item .\var\memory\memory.db | Select-Object Length, LastWriteTime
-10. Tell me to open http://127.0.0.1:8700, choose "Val Park (Viewer)", open Ask Copilot and type "Hi".
+10. Tell me to open http://127.0.0.1:8700, choose "Eli Novak (Engineer)" in the account picker, then try:
+    Jerry AI -> Ask Copilot -> "Are we under attack?";  Overview -> Guided CTO demo;
+    Technology -> Defense Command;  Operations -> Team & delivery portfolio;  Reports -> Export Studio.
 If any step fails, stop and show me the first error line. Do not download models, do not install Python 3.15
 or C++ build tools, do not commit or push.
 ```
