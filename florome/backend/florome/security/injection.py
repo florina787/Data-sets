@@ -27,7 +27,7 @@ INJECTION_PATTERNS = [
         r"\bcurl\s+https?://|\bwget\s+https?://|rm\s+-rf\s",
     ]
 ]
-_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f​-‏‪-‮⁦-⁩]")
+_CONTROL = re.compile("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f\\u200b-\\u200f\\u202a-\\u202e\\u2066-\\u2069]")  # escapes, not literal bidi chars
 
 
 def scan(text: str) -> list[str]:

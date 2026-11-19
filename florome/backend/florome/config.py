@@ -34,6 +34,18 @@ class Settings(BaseSettings):
     github_repository: str | None = None  # "owner/name"
     github_api_url: str = "https://api.github.com"
 
+    # ---- Florome Shield
+    shield_tools_dir: str = str(PACKAGE_DIR.parent / ".tools" / "bin")  # opengrep, trivy, opa (scripts/fetch_shield_tools.sh)
+    shield_authorized_roots: list[str] = Field(default_factory=lambda: [str(PACKAGE_DIR / "shield" / "range" / "targets")])
+    shield_require_network_namespace: bool = True  # verification refuses to run without `unshare -n`
+    shield_opa_mode: Literal["required", "optional", "off"] = "optional"  # optional: use OPA if installed; errors fail closed
+    shield_scan_quota_per_hour: int = 30
+    shield_verify_quota_per_hour: int = 120
+    shield_tool_timeout_seconds: float = 180.0
+    shield_probe_timeout_seconds: float = 30.0
+    signing_key: SecretStr | None = None  # HMAC key for plan signatures; an ephemeral key is generated when unset (demo)
+    rate_limit_per_minute: int = 240  # mutating requests per principal
+
     def mcp_allowlist(self) -> dict[str, list[str]]:
         """name -> argv for allow-listed stdio servers. Commands are fixed here, never taken from API input."""
         allowed = {name: [sys.executable, "-m", mod] for name, mod in BUNDLED_MCP_SERVERS.items()}

@@ -6,10 +6,11 @@ from dataclasses import dataclass
 
 ROLE_PERMISSIONS: dict[str, set[str]] = {
     "viewer": {"read"},
-    "operator": {"read", "rca:run", "plan:create", "plan:execute", "mcp:invoke_read"},
-    "approver": {"read", "plan:approve"},
+    "operator": {"read", "rca:run", "plan:create", "plan:execute", "mcp:invoke_read", "shield:research"},
+    "approver": {"read", "plan:approve", "shield:review"},
     "admin": {"read", "rca:run", "plan:create", "plan:execute", "plan:approve", "mcp:invoke_read", "mcp:manage",
-              "connections:manage", "governance:manage", "demo:reset"},
+              "connections:manage", "governance:manage", "demo:reset", "shield:research", "shield:verify", "shield:manage",
+              "shield:review"},
 }
 
 

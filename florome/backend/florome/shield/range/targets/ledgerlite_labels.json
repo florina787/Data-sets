@@ -1,0 +1,15 @@
+{
+  "note": "Ground truth for evaluation only. The research engine must never read this file.",
+  "target": "ledgerlite",
+  "sites": [
+    {"function": "search_invoices", "class": "sql_injection", "vulnerable": true},
+    {"function": "by_customer", "class": "sql_injection", "vulnerable": false},
+    {"function": "get_invoice", "class": "broken_access_control", "vulnerable": true},
+    {"function": "get_my_invoice", "class": "broken_access_control", "vulnerable": false},
+    {"function": "download", "class": "path_traversal", "vulnerable": true},
+    {"function": "read_file", "class": "path_traversal", "vulnerable": false},
+    {"function": "ping", "class": "command_injection", "vulnerable": true},
+    {"function": "echo", "class": "command_injection", "vulnerable": false},
+    {"function": "import_ledger", "class": "unsafe_deserialization", "vulnerable": true}
+  ]
+}

@@ -1,0 +1,42 @@
+# Florome-authored Opengrep rules (Apache-2.0 with Florome). Each rule maps to one Shield vulnerability class.
+rules:
+  - id: florome.sql-built-from-fstring
+    languages: [python]
+    severity: ERROR
+    message: SQL statement built with an f-string or concatenation is passed to execute()
+    metadata: {vuln_class: sql_injection, cwe: CWE-89}
+    pattern-either:
+      - pattern: $DB.execute(f"...", ...)
+      - pattern: $DB.execute("..." + $X, ...)
+      - pattern: $DB.execute("...".format(...), ...)
+  - id: florome.subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: Process launched through a shell with a formatted command string
+    metadata: {vuln_class: command_injection, cwe: CWE-78}
+    pattern-either:
+      - pattern: subprocess.$F(f"...", ..., shell=True, ...)
+      - pattern: subprocess.$F($CMD + $X, ..., shell=True, ...)
+      - pattern: os.system(f"...")
+  - id: florome.open-joined-path
+    languages: [python]
+    severity: WARNING
+    message: File opened from a path joined with a value that is not checked to stay inside the base directory
+    metadata: {vuln_class: path_traversal, cwe: CWE-22}
+    pattern: open(os.path.join($BASE, $NAME), ...)
+  - id: florome.pickle-loads
+    languages: [python]
+    severity: ERROR
+    message: pickle deserialisation of data that may be attacker-controlled
+    metadata: {vuln_class: unsafe_deserialization, cwe: CWE-502}
+    pattern-either:
+      - pattern: pickle.loads(...)
+      - pattern: pickle.load(...)
+  - id: florome.eval-call
+    languages: [python]
+    severity: ERROR
+    message: Dynamic code execution
+    metadata: {vuln_class: code_injection, cwe: CWE-94}
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)

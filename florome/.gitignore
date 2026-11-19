@@ -9,3 +9,4 @@ dist/
 .env
 frontend/test-results/
 *.egg-info/
+.tools/
