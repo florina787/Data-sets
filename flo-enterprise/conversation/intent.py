@@ -86,6 +86,26 @@ INTENTS: dict[str, IntentDef] = {d.id: d for d in [
               ("firm_fee_sensitivity", "firm_market_scenarios", "firm_data_readiness"), "firm", (), ("user_supplied",), roadmap=True),
     IntentDef("risk_overview", "Enterprise risk review", "risk_compliance", ("risk_agent", "portfolio_agent"),
               ("risk_heatmap", "concentration_top_issuers", "correlation"), "concentration", ("risk.enterprise_score",), ("risk",)),
+    # ---- FLOW WEALTH market research (public historical market data; see markets/)
+    IntentDef("market_security", "Historical stock analysis", "investment", ("market_data_agent", "news_research_agent"),
+              ("market_price_history", "market_drawdown", "market_news_events"), "market_security", (), ("market",)),
+    IntentDef("market_compare", "Stock comparison", "investment", ("market_data_agent",), ("market_compare",), None, (), ("market",)),
+    IntentDef("market_overview", "Market overview (latest available data)", "investment", ("market_data_agent", "market_regime_agent"),
+              ("market_overview_spy", "market_sectors", "market_regime_history"), "market", (), ("market",)),
+    IntentDef("market_regime", "Market regime and crash-risk level", "investment", ("market_regime_agent",), ("market_regime_history",), "market",
+              (), ("market",)),
+    IntentDef("model_accuracy", "Forecasting model evaluation", "investment", ("quant_research_agent",), ("model_holdout_equity", "model_comparison"),
+              "model", (), ("market", "research")),
+    IntentDef("model_rejection", "Why a model was rejected", "investment", ("model_governance_agent", "quant_research_agent"), ("model_comparison",),
+              "model", (), ("research",)),
+    IntentDef("bull_bear", "Bull versus bear evidence", "investment",
+              ("bull_researcher_agent", "bear_researcher_agent", "skeptic_agent", "evidence_aggregator_agent", "news_research_agent"),
+              ("market_price_history", "market_news_events"), "market_security", (), ("market", "research")),
+    IntentDef("market_news", "Headline evidence for a stock", "investment", ("news_research_agent",), ("market_news_events",), None, (), ("market",)),
+    IntentDef("prediction_memory", "Prediction Memory", "investment", ("prediction_memory_agent",), ("prediction_accuracy",), "ledger", (),
+              ("research",)),
+    IntentDef("market_datasets", "Market datasets and provenance", "investment", ("data_intelligence_agent",), ("dataset_coverage",), None, (),
+              ("market",)),
     IntentDef("greeting", "Welcome", "none", (), ()),
     IntentDef("help", "What FLO can do", "none", (), ()),
     IntentDef("general", "General question", "auto", (), ()),
@@ -210,6 +230,57 @@ def entities_of(text: str) -> dict[str, Any]:
     return e
 
 
+MARKET_INTENTS = {"market_security", "market_compare", "market_overview", "market_regime", "model_accuracy", "model_rejection", "bull_bear",
+                  "market_news", "prediction_memory", "market_datasets"}
+
+
+def market_intent(text: str, state: dict) -> tuple[str | None, list[str]]:
+    """Route market-research questions. Fires only on market-specific evidence (a resolved ticker, or research phrases), so
+    enterprise questions keep their existing routing."""
+    t = text
+    if re.search(r"why (did|was|were|has|is) .{0,60}(reject|not (been )?promot|decline)|reject(ed|ion)? .{0,40}(model|opportunit|forecast)|promotion decision", t, re.I):
+        return "model_rejection", []
+    if re.search(r"prediction memory|forecast (history|ledger)|past (forecasts|predictions)|prediction (ledger|history)|immutable forecasts?", t, re.I):
+        return "prediction_memory", []
+    if re.search(r"model accuracy|accuracy of (the )?(models?|forecasts?)|holdout|backtest|trading edge|research lab|forecast(ing)? (models?|accuracy)|"
+                 r"model (results|evaluation|performance)", t, re.I):
+        return "model_accuracy", []
+    if re.search(r"which datasets|what datasets|data ?sets? (are|is) available|market data sources?|data intelligence|dataset licen|kaggle", t, re.I):
+        return "market_datasets", []
+    if re.search(r"market regime|\bregime\b|crash[- ]risk|market conditions", t, re.I):
+        return "market_regime", []
+    if re.search(r"market overview|state of the (stock )?market|how (did|was|is) the (stock )?market|stock market (overview|summary)", t, re.I):
+        return "market_overview", []
+    from markets import service as S
+    tk = S.resolve_tickers(t)
+    prev_tk = state.get("tickers") or []
+    if not tk and prev_tk and state.get("last_intent") in MARKET_INTENTS and re.search(r"\b(bull|bear|skeptic|evidence|news|headlines?|risk|"
+                                                                                       r"drawdown|compare|case|it|this stock|that stock)\b", t, re.I):
+        tk = list(prev_tk)
+    if not tk:
+        return None, []
+    if re.search(r"\bbull\b|\bbear\b|evidence|\bcase for\b|\bcase against\b|thesis|skeptic", t, re.I):
+        return "bull_bear", tk[:1]
+    if re.search(r"\bnews\b|headlines?|announcement", t, re.I):
+        return "market_news", tk[:1]
+    if len(tk) >= 2:
+        return "market_compare", tk
+    return "market_security", tk[:1]
+
+
+def research_profile_of(text: str) -> dict[str, str]:
+    out = {}
+    m = re.search(r"\b(long[- ]term|position|swing|intraday|day[- ]trad\w*|swift|scalp\w*)\b", text, re.I)
+    if m:
+        w = m.group(1).lower()
+        out["speed"] = "long_term" if w.startswith("long") else "intraday" if w.startswith(("intraday", "day")) else \
+            "swift" if w.startswith(("swift", "scalp")) else w
+    m = re.search(r"\b(conservative|moderate|aggressive)\b", text, re.I)
+    if m:
+        out["appetite"] = m.group(1).lower()
+    return out
+
+
 def _match(text: str) -> str | None:
     for rx, iid in RULES:
         if re.search(rx, text, re.I):
@@ -243,7 +314,8 @@ def classify(text: str, persona_id: str, principal: Principal, engine, state: di
     ents = entities_of(text)
     scen = scenario_of(text)
     prev = state.get("last_intent")
-    iid = overrides.get("intent") if overrides.get("intent") in INTENTS else _match(text)
+    m_iid, m_tickers = (None, []) if overrides.get("intent") in INTENTS else market_intent(text, state)
+    iid = overrides.get("intent") if overrides.get("intent") in INTENTS else (m_iid or _match(text))
     if overrides.get("chart_id") and iid is None:
         iid = "general"  # explain-a-chart: let the graph's chart routing pick the agents
     is_cue = prev is not None and (bool(FOLLOWUP_CUE.search(text)) or len(text.split()) <= 7)
@@ -280,6 +352,16 @@ def classify(text: str, persona_id: str, principal: Principal, engine, state: di
         if sec:
             entities["sector"] = sec
         mods["sector_shock"] = {"sector": sec, "shock": shock_of(text) if shock_of(text) is not None else -0.15}
+    if d.id in MARKET_INTENTS:
+        from markets import service as S
+        if m_tickers:
+            entities["tickers"] = m_tickers
+        start, end = S.parse_period(text)
+        if start:
+            entities["start"] = start
+        if end:
+            entities["end"] = end
+        entities.update(research_profile_of(text))
     if d.id == "portfolio_performance" and re.search(r"sector|contribut", text, re.I):
         mods["focus"] = "sector_contribution"
     if overrides.get("focus"):

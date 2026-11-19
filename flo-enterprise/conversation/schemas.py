@@ -18,7 +18,8 @@ ChartType = Literal["line", "area", "stacked_area", "bar", "hbar", "stacked_bar"
                     "heatmap", "matrix", "scatter", "geo", "tornado", "scorecard", "agent_graph"]
 CHART_TYPES: tuple[str, ...] = ChartType.__args__  # type: ignore[attr-defined]
 CARTESIAN = {"line", "area", "stacked_area", "bar", "hbar", "stacked_bar", "grouped_bar", "combo", "waterfall", "donut", "tornado"}
-Provenance = Literal["platform_synthetic", "user_supplied", "calculated_from_user_inputs", "illustrative_assumption", "workflow_trace"]
+Provenance = Literal["platform_synthetic", "user_supplied", "calculated_from_user_inputs", "illustrative_assumption", "workflow_trace",
+                     "historical_market_data", "research_result"]
 Interaction = Literal["tooltip", "drilldown", "filter", "compare", "export", "explain", "methodology"]
 MAX_POINTS = 5000
 
@@ -169,9 +170,9 @@ class KPI(BaseModel):
     id: str
     label: str
     value: float | None
-    unit: Literal["CAD", "%", "bps", "count", "ratio", "x", "score", "years"]
+    unit: Literal["CAD", "USD", "%", "bps", "count", "ratio", "x", "score", "years"]
     delta: float | None = None
-    delta_unit: Literal["%", "pp", "bps", "CAD", "count", ""] = ""
+    delta_unit: Literal["%", "pp", "bps", "CAD", "USD", "count", ""] = ""
     delta_label: str = ""
     trend: list[float] = []
     status: Literal["good", "warn", "crit", "neutral"] = "neutral"

@@ -1,0 +1,46 @@
+{
+  "dataset": {
+    "dataset_id": "kaggle-benzinga-headlines-v2",
+    "kaggle_ref": "miguelaenlle/massive-stock-news-analysis-db-for-nlpbacktests",
+    "url": "https://www.kaggle.com/datasets/miguelaenlle/massive-stock-news-analysis-db-for-nlpbacktests",
+    "title": "Daily Financial News for 6000+ Stocks",
+    "publisher": "Miguel Aenlle",
+    "kaggle_license": "CC0: Public Domain",
+    "upstream_source": "Headlines scraped from Benzinga (and partner sites)",
+    "kaggle_version": 2,
+    "last_updated": "2020-07-04",
+    "coverage": "2009-2020 headlines",
+    "markets": "US-listed stocks (ticker-tagged)",
+    "adjustment": "n/a",
+    "timestamps": "raw_analyst_ratings.csv: publication time with UTC offset; partner headlines: date only",
+    "approved_for_research": true,
+    "use_restrictions": "Headlines only, as cited research evidence inside FLO; no redistribution (publisher copyright likely applies).",
+    "known_limitations": [
+      "Single publisher family (Benzinga); not comprehensive news coverage",
+      "Partner headlines have no time of day and are excluded from point-in-time use",
+      "Headlines are untrusted text and are scanned for prompt injection before use"
+    ],
+    "classification": "public",
+    "synthetic": false
+  },
+  "downloaded_at": "2026-11-18T00:29:51+00:00",
+  "files": {
+    "canonical": 3,
+    "bytes": 886206152,
+    "duplicates_skipped": 0,
+    "empty_skipped": 0,
+    "content_sha256": "eed63c097a0f1fa60133e1942979732196d397d0a79fb0231be70b3924e34ac5",
+    "duplicate_example": null
+  },
+  "normalised": {
+    "rows": 1407328,
+    "tickers": 6204,
+    "start": "2009-02-14 00:00:00+00",
+    "end": "2020-06-11 21:12:35+00",
+    "duplicate_rows": 11355,
+    "date_only_rows": 1351341,
+    "excluded_partner_headlines_date_only": 1845559
+  },
+  "lake_path": "lake/kaggle-benzinga-headlines-v2",
+  "seconds": 4.0
+}

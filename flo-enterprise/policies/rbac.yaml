@@ -15,10 +15,13 @@ roles:
     - docs:read
     - export:standard
     - approvals:decide
+    - market:read
+    - quant:read
   finance:
     - finance:read
     - records:change
     - export:standard
+    - market:read
   cio:
     - product_research:read
     - investment:read
@@ -35,6 +38,7 @@ roles:
     - portfolio:modify
     - approvals:decide
     - decisions:read
+    - quant:read
   investment_analyst:
     - product_research:read
     - investment:read
@@ -46,6 +50,7 @@ roles:
     - scenarios:run
     - ask:use
     - docs:read
+    - quant:read
   wealth_advisor:
     - wealth:read
     - client:read
@@ -61,6 +66,7 @@ roles:
     - docs:read
     - privacy:rehydrate
     - export:sensitive
+    - quant:read
   external_advisor:
     - product_research:read
     - market:read
@@ -93,6 +99,8 @@ roles:
     - ask:use
     - docs:read
     - evals:run
+    - market:read
+    - quant:read
   risk_officer:   # second-line risk oversight: aggregate exposures, scenarios and risk register; no client or portfolio-level records
     - risk:read
     - risk:read_aggregate
@@ -102,12 +110,15 @@ roles:
     - research:read
     - ask:use
     - docs:read
+    - market:read
+    - quant:read
   prospect:       # business owner exploring FLO: conversation + public product/market information only
     - ask:use
     - product_research:read
     - market:read
   orchestrator:   # service identity used by the agent harness (never assigned to humans)
     - model:invoke
+# market:read = public historical market data and headlines; quant:read = model research results and evidence packs.
 # Actions that no role may perform in this demonstration, regardless of grants or approvals.
 prohibited:
   - trade:execute

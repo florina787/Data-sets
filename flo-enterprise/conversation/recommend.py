@@ -383,6 +383,17 @@ def build_plan(recs: list[Recommendation], title: str) -> ImplementationPlan | N
 
 
 FOLLOWUPS = {
+    "market_security": ["Compare Bull and Bear evidence for it.", "Show the news headlines.", "Compare it with SPY over the last 5 years.",
+                        "Show model accuracy over the holdout period."],
+    "market_compare": ["Compare Bull and Bear evidence for the first one.", "Explain the latest available market regime."],
+    "market_overview": ["Explain the latest available market regime.", "Show model accuracy over the holdout period."],
+    "market_regime": ["Show the market overview.", "Show model accuracy over the holdout period."],
+    "model_accuracy": ["Why did the model reject this opportunity?", "Show Prediction Memory.", "Which datasets are available?"],
+    "model_rejection": ["Show model accuracy over the holdout period.", "Show Prediction Memory."],
+    "bull_bear": ["Show the news headlines.", "Why did the model reject this opportunity?"],
+    "market_news": ["Compare Bull and Bear evidence for it."],
+    "prediction_memory": ["Show model accuracy over the holdout period.", "Which datasets are available?"],
+    "market_datasets": ["Show model accuracy over the holdout period.", "Explain the latest available market regime."],
     "portfolio_performance": ["Compare it with last quarter.", "Which sector contributed the most?", "What happens if that sector falls 15%?",
                               "Analyze our portfolio concentration risk."],
     "sector_scenario": ["What happens if it falls 25% instead?", "Simulate a market downturn.", "Show our portfolio performance."],
@@ -409,8 +420,29 @@ FOLLOWUPS = {
 }
 
 
+def _markets(b: Builder) -> None:
+    """FLOW WEALTH: observed facts and limitations only. No proposed actions: FLO gives no trading recommendations, and no
+    model has a validated edge."""
+    f = b.f
+    m = f.get("market_data_agent")
+    if m and m.get("tr") is not None:
+        b.ins("current_state", f"{m['ticker']} returned {m['tr']}% from {m['start']} to {m['end']} versus {m['spy_tr']}% for SPY",
+              f"Annualised {m['cagr']}%, volatility {m['vol']}%, maximum drawdown {m['mdd']}%.", "info",
+              [_ev("market_data_agent", "tr", f, "markets.security"), _ev("market_data_agent", "spy_tr", f)])
+    q = f.get("quant_research_agent")
+    if q:
+        b.ins("finding", f"Verdict: {q['verdict']}", f"Best 5-session model {q['best']}: gross Sharpe {q['gross']}, net Sharpe {q['net']} after costs.",
+              "warning", [_ev("quant_research_agent", "verdict", f, "markets.model_report"), _ev("quant_research_agent", "net", f)])
+    if any(k in f for k in ("market_data_agent", "market_regime_agent", "quant_research_agent", "evidence_aggregator_agent", "news_research_agent",
+                            "bull_researcher_agent", "prediction_memory_agent", "data_intelligence_agent")):
+        b.limitations += ["Market data is historical (Kaggle, ends 2017-11-10); it is not a current feed and is not investment advice.",
+                          "The stock universe is survivorship-biased: companies that delisted before 2017 are missing.",
+                          "No forecasting model passed validation after transaction costs (NO VALIDATED TRADING EDGE)."]
+
+
 def build(intent: str, facts: Facts, roadmap: bool, persona_functions: tuple[str, ...]) -> dict:
     b = Builder(facts)
+    _markets(b)
     _executive(b)
     _investment(b)
     _performance(b)

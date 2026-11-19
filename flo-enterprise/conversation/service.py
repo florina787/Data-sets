@@ -251,7 +251,7 @@ def _persist(principal: Principal, cid: str, text: str, client_message_id: str |
     new_state = dict(state)
     new_state.update(last_intent=payload["intent"]["intent"], persona=payload["persona"])
     if payload["status"] in ("complete", "partial", "needs_input"):
-        for k in ("client_id", "portfolio_id", "sector"):
+        for k in ("client_id", "portfolio_id", "sector", "tickers"):
             if ents.get(k) and payload["status"] != "denied":
                 new_state[k] = ents[k]
         mods = payload["intent"]["modifiers"]
@@ -331,7 +331,7 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
     if intent["intent"] != "general" and intent["agents"]:
         ctx_ctx["route_hint"] = {"domain": INTENTS[intent["intent"]].domain if INTENTS[intent["intent"]].domain in
                                  ("executive", "investment", "wealth", "risk_compliance", "ai_operations") else "executive", "agents": intent["agents"]}
-    for k in ("client_id", "portfolio_id"):
+    for k in ("client_id", "portfolio_id", "tickers", "start", "end", "speed", "appetite"):
         if plan.entities.get(k):
             ctx_ctx[k] = plan.entities[k]
     if overrides.get("chart_id") and "route_hint" not in ctx_ctx:
@@ -412,7 +412,9 @@ def _run(principal: Principal, store, cid: str, message_id: str, request_id: str
                                                                          "group_by": plan.modifiers.get("group_by"), "client_id": plan.entities.get("client_id"),
                                                                          "scenario": plan.modifiers.get("scenario") or {},
                                                                          "business_profile": plan.modifiers.get("business_profile") or {},
-                                                                         "sector_shock": plan.modifiers.get("sector_shock") or {}, "persona": pid})
+                                                                         "sector_shock": plan.modifiers.get("sector_shock") or {}, "persona": pid,
+                                                                         "tickers": plan.entities.get("tickers") or [], "start": plan.entities.get("start"),
+                                                                         "end": plan.entities.get("end")})
             charts = [ChartSpec.model_validate(c) for c in out.facts["charts"]]
             kpis = [KPI.model_validate(k) for k in out.facts["kpis"]]
             withheld = out.facts["withheld_charts"]
@@ -604,8 +606,12 @@ def _agent_runs(intent: dict, ctx, agent_events: list[dict], rec: dict) -> list[
 
 def _freshness(charts: list[ChartSpec], store) -> DataFreshness:
     lins = [c.lineage for c in charts if c.lineage.as_of]
+    real = [c.lineage for c in charts if c.provenance in ("historical_market_data", "research_result")]
+    # synthetic only when some chart is synthetic (or there are no charts): real market answers are not badged synthetic
+    synthetic = not charts or any(c.lineage.synthetic for c in charts if c.chart_id != "agent_graph")
+    version = real[0].dataset_version if real and not synthetic else store.version
     return DataFreshness(as_of=max((x.as_of for x in lins), default=None), refreshed_at=max((x.refreshed_at or "" for x in lins), default=None) or None,
-                         dataset_version=store.version, synthetic=True, sources=sorted({s for c in charts for s in c.lineage.sources}))
+                         dataset_version=version, synthetic=synthetic, sources=sorted({s for c in charts for s in c.lineage.sources}))
 
 
 def _agent_graph(intent: dict, ans: dict | None, ctx, agent_events: list[dict]) -> ChartSpec:

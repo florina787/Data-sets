@@ -496,3 +496,39 @@ class ConversationMessage(Base):
     entity_refs: Mapped[dict] = mapped_column(JSON)
     response: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+
+
+class MarketPrediction(Base):
+    """FLOW WEALTH prediction ledger: append-only (DB triggers reject UPDATE/DELETE) and SHA-256 hash-chained.
+    A forecast is written before its outcome is knowable; `mode` separates historical replay from forward tests."""
+    __tablename__ = "market_predictions"
+    seq: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    id: Mapped[str] = mapped_column(String(40), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    mode: Mapped[str] = mapped_column(String(24), index=True)
+    model_version: Mapped[str] = mapped_column(String(80), index=True)
+    dataset_version: Mapped[str] = mapped_column(String(80))
+    ticker: Mapped[str] = mapped_column(String(16), index=True)
+    horizon_sessions: Mapped[int] = mapped_column(Integer)
+    feature_cutoff: Mapped[datetime] = mapped_column(DateTime)
+    outcome_due: Mapped[datetime] = mapped_column(DateTime, index=True)
+    predicted_excess_return: Mapped[float | None] = mapped_column(Float, nullable=True)
+    predicted_rank_pct: Mapped[float | None] = mapped_column(Float, nullable=True)
+    uncertainty: Mapped[float | None] = mapped_column(Float, nullable=True)
+    regime: Mapped[str] = mapped_column(String(40))
+    evidence: Mapped[dict] = mapped_column(JSON)
+    prev_hash: Mapped[str] = mapped_column(String(64))
+    hash: Mapped[str] = mapped_column(String(64))
+
+
+class MarketPredictionOutcome(Base):
+    __tablename__ = "market_prediction_outcomes"
+    prediction_id: Mapped[str] = mapped_column(String(40), ForeignKey("market_predictions.id"), primary_key=True)
+    resolved_at: Mapped[datetime] = mapped_column(DateTime)
+    actual_return: Mapped[float | None] = mapped_column(Float, nullable=True)
+    benchmark_return: Mapped[float | None] = mapped_column(Float, nullable=True)
+    actual_excess_return: Mapped[float | None] = mapped_column(Float, nullable=True)
+    direction_correct: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    abs_error: Mapped[float | None] = mapped_column(Float, nullable=True)
+    status: Mapped[str] = mapped_column(String(24))
+    source: Mapped[str] = mapped_column(String(120))

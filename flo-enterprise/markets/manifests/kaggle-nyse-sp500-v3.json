@@ -1,0 +1,44 @@
+{
+  "dataset": {
+    "dataset_id": "kaggle-nyse-sp500-v3",
+    "kaggle_ref": "dgawlik/nyse",
+    "url": "https://www.kaggle.com/datasets/dgawlik/nyse",
+    "title": "New York Stock Exchange (S&P 500 prices and fundamentals)",
+    "publisher": "Dominik Gawlik",
+    "kaggle_license": "CC0: Public Domain",
+    "upstream_source": "Prices from Yahoo Finance; fundamentals from annual SEC 10-K filings (per the description)",
+    "kaggle_version": 3,
+    "last_updated": "2017-02-22",
+    "coverage": "Daily 2010-01-04 to 2016-12-30; fundamentals fiscal years 2012-2016",
+    "markets": "501 S&P 500 constituents (2016 list)",
+    "adjustment": "prices.csv raw; prices-split-adjusted.csv split-adjusted only (no dividends)",
+    "timestamps": "Trade date; fundamentals carry period end only (no filing date)",
+    "approved_for_research": true,
+    "use_restrictions": "Research and education; Yahoo-derived prices may not be redistributed commercially.",
+    "known_limitations": [
+      "Constituent list is a 2016 snapshot (survivorship bias)",
+      "Fundamentals have no filing/acceptance date, so they are NOT used in point-in-time signals",
+      "Used for cross-source validation, split detection and sector labels (GICS)"
+    ],
+    "classification": "public",
+    "synthetic": false
+  },
+  "downloaded_at": "2026-11-18T00:17:25+00:00",
+  "files": {
+    "canonical": 4,
+    "bytes": 105844882,
+    "duplicates_skipped": 0,
+    "empty_skipped": 0,
+    "content_sha256": "05bc831e33c65b3ce772df021ef1f9e9089511e567176d6b868773bac127d2a4",
+    "duplicate_example": null
+  },
+  "normalised": {
+    "rows": 851264,
+    "tickers": 501,
+    "start": "2010-01-04",
+    "end": "2016-12-30",
+    "securities": 505
+  },
+  "lake_path": "lake/kaggle-nyse-sp500-v3",
+  "seconds": 0.8
+}

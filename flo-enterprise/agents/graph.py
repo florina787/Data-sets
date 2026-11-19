@@ -22,6 +22,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, Send, interrupt
 
 import agents.specialists  # noqa: F401 (registers agents)
+import agents.market  # noqa: F401 (registers FLOW WEALTH market tools and agents)
 from backend.config import get_settings
 from governance import audit
 from harness.context import RunContext
@@ -178,6 +179,8 @@ def _make_supervisor(name: str):
             if spec.input_model.__name__ == "FirmQ":
                 prof = ctxd.get("business_profile") or {}
                 inp.update({k: prof[k] for k in ("aum", "fee_bps", "revenue", "expenses", "advisors", "clients", "net_flows") if prof.get(k) is not None})
+            if spec.input_model.__name__ == "MarketQ":
+                inp.update({k: ctxd[k] for k in ("tickers", "start", "end", "speed", "appetite") if ctxd.get(k)})
             if spec.input_model.__name__ == "ScenarioQ" and scen:
                 inp.update({k: scen[k] for k in ("preset", "equity_shock", "rate_shock_bps") if scen.get(k) is not None})
             elif spec.input_model.__name__ == "ScenarioQ":

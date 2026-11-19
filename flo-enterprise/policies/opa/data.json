@@ -218,7 +218,9 @@
      "audit:read",
      "ask:use",
      "docs:read",
-     "evals:run"
+     "evals:run",
+     "market:read",
+     "quant:read"
     ],
     "cio": [
      "product_research:read",
@@ -235,7 +237,8 @@
      "export:standard",
      "portfolio:modify",
      "approvals:decide",
-     "decisions:read"
+     "decisions:read",
+     "quant:read"
     ],
     "compliance_officer": [
      "compliance:read",
@@ -263,7 +266,9 @@
      "ask:use",
      "docs:read",
      "export:standard",
-     "approvals:decide"
+     "approvals:decide",
+     "market:read",
+     "quant:read"
     ],
     "external_advisor": [
      "product_research:read",
@@ -274,7 +279,8 @@
     "finance": [
      "finance:read",
      "records:change",
-     "export:standard"
+     "export:standard",
+     "market:read"
     ],
     "investment_analyst": [
      "product_research:read",
@@ -286,7 +292,8 @@
      "risk:read",
      "scenarios:run",
      "ask:use",
-     "docs:read"
+     "docs:read",
+     "quant:read"
     ],
     "orchestrator": [
      "model:invoke"
@@ -313,7 +320,9 @@
      "compliance:read",
      "research:read",
      "ask:use",
-     "docs:read"
+     "docs:read",
+     "market:read",
+     "quant:read"
     ],
     "wealth_advisor": [
      "wealth:read",
@@ -329,10 +338,11 @@
      "ask:use",
      "docs:read",
      "privacy:rehydrate",
-     "export:sensitive"
+     "export:sensitive",
+     "quant:read"
     ]
    }
   },
-  "version": "1.4.0+86b3901f65"
+  "version": "1.5.0+dfb5d1df14"
  }
 }

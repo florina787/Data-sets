@@ -1,0 +1,50 @@
+{
+  "dataset": {
+    "dataset_id": "kaggle-us-stocks-etfs-v3",
+    "kaggle_ref": "borismarjanovic/price-volume-data-for-all-us-stocks-etfs",
+    "url": "https://www.kaggle.com/datasets/borismarjanovic/price-volume-data-for-all-us-stocks-etfs",
+    "title": "Huge Stock Market Dataset (all U.S. stocks and ETFs)",
+    "publisher": "Boris Marjanovic",
+    "kaggle_license": "CC0: Public Domain",
+    "upstream_source": "Not stated by the uploader (\"This dataset belongs to me\")",
+    "kaggle_version": 3,
+    "last_updated": "2017-11-16",
+    "coverage": "Daily, 1962-01-02 to 2017-11-10 (most series much shorter); research window 2005-02-25 to 2017-11-10",
+    "markets": "NYSE, NASDAQ, NYSE MKT stocks and ETFs",
+    "adjustment": "Prices adjusted for splits and dividends by the uploader (back-adjusted); no raw prices",
+    "timestamps": "Trade date only; FLO assumes availability at 16:30 America/New_York on that date",
+    "approved_for_research": true,
+    "use_restrictions": "Research and education inside FLO. Do not redistribute the data; upstream terms are unknown.",
+    "known_limitations": [
+      "SURVIVORSHIP BIAS: every stock series reaches 2017 (no series ends before 2017-01-01); companies that delisted earlier are absent",
+      "Back-adjusted price levels embed later dividends and splits; only returns and volume-based features are used",
+      "SPY history in this dataset starts 2005-02-25, which bounds the benchmark window",
+      "The archive ships a byte-identical duplicate copy under Data/; ingestion deduplicates it by checksum",
+      "32 empty stock files"
+    ],
+    "classification": "public",
+    "synthetic": false
+  },
+  "downloaded_at": "2026-11-18T00:17:24+00:00",
+  "files": {
+    "canonical": 8507,
+    "bytes": 809023326,
+    "duplicates_skipped": 8507,
+    "empty_skipped": 64,
+    "content_sha256": "343e4badddb403fd3f18748f7024193fe35c6c65205f96f39719770d39f0a113",
+    "duplicate_example": [
+      "Data/ETFs/aadr.us.txt",
+      "ETFs/aadr.us.txt"
+    ]
+  },
+  "normalised": {
+    "rows": 17453243,
+    "tickers": 8507,
+    "start": "1962-01-02",
+    "end": "2017-11-10",
+    "stock_rows": 14887665,
+    "etf_rows": 2565578
+  },
+  "lake_path": "lake/kaggle-us-stocks-etfs-v3",
+  "seconds": 15.4
+}

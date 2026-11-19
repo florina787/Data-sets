@@ -1,0 +1,66 @@
+{
+  "quality": {
+    "window_start": "2005-02-25",
+    "bars": 15827054,
+    "duplicate_rows_removed": 0,
+    "flags": {
+      "spike_reversal": 764,
+      "unadjusted_corporate_action": 2,
+      "ok": 15799989,
+      "zero_volume": 26165,
+      "ohlc_violation": 80,
+      "non_positive": 54
+    },
+    "missing_sessions": 443254,
+    "score": 97.23,
+    "score_formula": "100*(1-(dup+unadjusted_ca+ohlc+non_positive+spike_reversal+missing+0.25*zero_volume)/(bars+missing))"
+  },
+  "validation": {
+    "survivorship": {
+      "sp500_2016_members_absent_from_primary": 11,
+      "examples": [
+        "BHI",
+        "COH",
+        "DOW",
+        "HAR",
+        "LLTC",
+        "MJN",
+        "RAI",
+        "SPLS",
+        "TSO",
+        "WFM",
+        "YHOO"
+      ],
+      "note": "members acquired or delisted before Nov 2017 (e.g. WFM, RAI) have no history at all"
+    },
+    "unadjusted_corporate_actions_flagged": [
+      "CAG 2016-11-10",
+      "DHR 2016-07-05"
+    ],
+    "cross_source_daily_returns": {
+      "overlapping_ticker_days": 822318,
+      "tickers": 488,
+      "share_within_0.1pct": 0.9857,
+      "share_within_1pct": 0.998,
+      "median_abs_diff": 2.0066310335409288e-05,
+      "note": "secondary is split-adjusted only; differences concentrate on ex-dividend dates"
+    },
+    "splits": {
+      "detected_in_secondary": 110,
+      "matched_in_primary": 105,
+      "primary_smooth_on_split_day": 103,
+      "raw_jump_on_split_day": 100,
+      "note": "a smooth primary return on a day the raw price jumped confirms the primary series is split-adjusted"
+    }
+  },
+  "counts": {
+    "research_window_bars": 15827054,
+    "research_window_clean_stock_bars": 13238982,
+    "research_window_tickers": 8507,
+    "sessions": 3201,
+    "research_window": [
+      "2005-02-25",
+      "2017-11-10"
+    ]
+  }
+}

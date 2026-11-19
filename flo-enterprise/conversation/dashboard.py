@@ -23,7 +23,9 @@ VIZ_TOOLS = ["finance.kpis", "finance.aum_trend", "finance.aum_waterfall", "fina
              "investment.enterprise_concentration", "investment.correlation", "investment.geographic_exposure", "investment.fund_list", "risk.heatmap",
              "scenario.run", "scenario.compare", "scenario.sensitivity", "wealth.advisor_productivity", "wealth.book_health", "advisory.firm_model",
              "investment.performance", "scenario.sector_shock",
-             "client.profile", "client.portfolios", "client.goals", "client.suitability", "client.retirement"]
+             "client.profile", "client.portfolios", "client.goals", "client.suitability", "client.retirement",
+             "markets.security", "markets.compare", "markets.overview", "markets.regime", "markets.news", "markets.model_report",
+             "markets.predictions", "markets.datasets", "markets.evidence"]
 VIZ_ROLES = frozenset({"executive", "finance", "cio", "investment_analyst", "wealth_advisor", "external_advisor", "compliance_officer",
                        "privacy_officer", "ai_admin", "risk_officer", "prospect"})
 MONTH_FILTER = lambda v: FilterSpec(id="months", label="Window", options=[12, 24], value=v)  # noqa: E731
@@ -40,6 +42,9 @@ class VizQ(BaseModel):
     business_profile: dict[str, Any] = {}
     sector_shock: dict[str, Any] = {}
     persona: str = "ceo"
+    tickers: list[str] = Field(default_factory=list, max_length=4)
+    start: str | None = Field(None, pattern=r"^\d{4}-\d{2}-\d{2}$")
+    end: str | None = Field(None, pattern=r"^\d{4}-\d{2}-\d{2}$")
 
 
 class Ctx:
@@ -595,6 +600,9 @@ ALIASES = {"concentration": "concentration_top_issuers", "sector_treemap": "sect
            "allocation": "client_allocation", "actual_vs_budget": "budget_variance", "benchmarks": "relative_return", "timeline": None,
            "drawdown": None, "performance": None, "goal_progress": "goal_progress", "firm_kpis": None}
 CLIENT_CHARTS = {"client_allocation", "risk_return", "goal_progress", "retirement_projection", "cash_flow"}
+TICKER_CHARTS: set[str] = set()   # market charts that need one (or two) tickers; filled by conversation.market_dashboard
+TWO_TICKER_CHARTS: set[str] = set()
+TICKER_KPIS: set[str] = set()
 # tools each chart reads; used to compose dashboards from data the identity can use (the gateway still enforces every call)
 CHART_TOOLS = {"aum_trend": ["finance.aum_trend"], "aum_waterfall": ["finance.aum_waterfall"], "net_flows": ["finance.net_flows_by"],
                "revenue_expenses": ["finance.revenue_expenses"], "margin_trend": ["finance.margin_trend"], "revenue_yield": ["finance.margin_trend"],
@@ -789,14 +797,15 @@ def _t_viz(f):
 def visualization_agent(ctx, q: VizQ):
     c = Ctx(ctx, q)
     charts, withheld, kpis, notes = [], [], [], []
-    if q.kpis in KPI_SETS:
+    if q.kpis in KPI_SETS and not (q.kpis in TICKER_KPIS and not q.tickers):
         try:
             kpis = [k.model_dump() for k in KPI_SETS[q.kpis](c)]
         except HarnessError as e:
             notes.append(f"KPIs withheld: {e.code}")
     for cid in q.charts:
         b = BUILDERS.get(cid)
-        if b is None or (cid in CLIENT_CHARTS and not q.client_id):
+        if b is None or (cid in CLIENT_CHARTS and not q.client_id) or (cid in TICKER_CHARTS and not q.tickers) or \
+                (cid in TWO_TICKER_CHARTS and len(q.tickers) < 2):
             continue
         try:
             charts.append(b(c).model_dump())
@@ -846,4 +855,9 @@ def tables_for(intent: str, facts_by_agent: dict[str, dict]) -> list[Table]:
     if fd.get("assessment", {}).get("integrations"):
         out.append(Table(table_id="integrations", title="Data integrations that would unlock verified analytics", columns=["System", "Data", "Enables"],
                          rows=[[x["system"], x["data"], x["enables"]] for x in fd["assessment"]["integrations"]], provenance="user_supplied"))
+    from conversation import market_dashboard as _md
+    out.extend(_md.tables(facts_by_agent))
     return out
+
+
+from conversation import market_dashboard  # noqa: E402,F401  (registers FLOW WEALTH market builders)
