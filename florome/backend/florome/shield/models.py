@@ -246,3 +246,19 @@ class BenchmarkRun(Base):
     per_site: Mapped[list[Any]] = mapped_column(default=list)
     note: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+
+class AgentExecution(Base):
+    """One run of a Shield agent stage under the supervisor (declared permissions, tools, budgets)."""
+
+    __tablename__ = "shield_agent_executions"
+    id: Mapped[str] = mapped_column(String(64), primary_key=True, default=lambda: new_id("agx"))
+    tenant_id: Mapped[str] = mapped_column(String(64), index=True)
+    agent: Mapped[str] = mapped_column(String(60))
+    subject: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(20))  # succeeded | failed | cancelled | over_budget
+    tools_used: Mapped[list[Any]] = mapped_column(default=list)
+    seconds: Mapped[float] = mapped_column(Float)
+    output_summary: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)

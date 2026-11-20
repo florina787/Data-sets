@@ -53,6 +53,12 @@ def token_for(tenant_id: str, role: str) -> str:
 
 
 def wipe_tenant(db: Session, tenant_id: str) -> None:
+    from florome.shield import models as sm
+
+    for model in (sm.ContainmentEvent, sm.TemporaryCredential, sm.AgentExecution, sm.BenchmarkRun, sm.SecurityPolicyDecision,
+                  sm.RemediationPatch, sm.VulnerabilityFinding, sm.VerificationRun, sm.SecurityHypothesis, sm.FindingEvidence, sm.ScanRun,
+                  sm.TrustBoundary, sm.CodeRelationship, sm.CodeSymbol, sm.RepositorySnapshot, sm.Repository, sm.MCPServerManifest):
+        db.execute(delete(model).where(model.tenant_id == tenant_id))
     for model in (ValidationResult, ActionExecution, Approval, RemediationPlan, Hypothesis, RCAReport, Evidence, Incident,
                   MCPToolRecord, MCPServerRecord, Dependency, Resource, Connection, CostRecord, AuditEvent, User):
         db.execute(delete(model).where(model.tenant_id == tenant_id))

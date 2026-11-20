@@ -54,6 +54,14 @@ def _schema_hash(name: str, schema: dict[str, Any]) -> str:
     return audit.sha256({"name": name, "schema": schema})
 
 
+def manifest_hash(server_info: dict[str, Any], tools: list[Any]) -> str:
+    """Whole-server manifest: identity plus every tool's name, description, schema and annotations."""
+    return audit.sha256({"server": {"name": server_info.get("name"), "version": server_info.get("version")},
+                         "tools": sorted(({"name": t.name, "description": t.description or "", "schema": t.input_schema or {},
+                                           "annotations": t.annotations.model_dump() if t.annotations else None} for t in tools),
+                                         key=lambda x: x["name"])})
+
+
 class MCPGateway:
     def __init__(self, settings: Settings):
         self.settings = settings
@@ -176,6 +184,11 @@ class MCPGateway:
 
         if not actor.can("mcp:invoke_read"):
             raise deny("Missing permission mcp:invoke_read")
+        from florome.shield.models import MCPServerManifest  # Shield extension: server-level pin and revocation
+
+        manifest = db.scalars(select(MCPServerManifest).where(MCPServerManifest.server_id == server.id)).first()
+        if manifest is not None and manifest.revoked:
+            raise deny(f"Server '{server.name}' is revoked: {manifest.revoked_reason}", 403)
         if not tool.enabled:
             raise deny(f"Tool is not enabled: {tool.quarantine_reason or 'disabled'}", 409)
         if tool.access != "read":
@@ -188,11 +201,15 @@ class MCPGateway:
         try:
             async with self._session(server.name) as s:
                 with anyio.fail_after(self.settings.mcp_call_timeout_seconds):
-                    live = {t.name: t for t in (await s.list_tools()).tools}
+                    live_list = (await s.list_tools()).tools
+                live = {t.name: t for t in live_list}
+                info = s.server_info
+                manifest_drift = manifest is not None and manifest_hash(
+                    {"name": getattr(info, "name", None), "version": getattr(info, "version", None)}, live_list) != manifest.manifest_hash
                 lt = live.get(tool.name)
                 drifted = lt is None or _schema_hash(lt.name, lt.input_schema or {}) != tool.schema_hash
                 result = None
-                if not drifted:
+                if not drifted and not manifest_drift:
                     with anyio.fail_after(self.settings.mcp_call_timeout_seconds):
                         result = await s.call_tool(tool.name, arguments)
         except MCPGatewayError:
@@ -204,6 +221,12 @@ class MCPGateway:
             audit.record(db, actor.tenant_id, actor.user_id, "mcp.invoke", f"{server.name}/{tool.name}", "failed", {"error": type(exc).__name__})
             raise MCPGatewayError(f"MCP call failed: {type(exc).__name__}", 502) from exc
 
+        if manifest_drift:  # the server's manifest changed after it was pinned: revoke the whole server
+            manifest.revoked, manifest.revoked_reason = True, "Manifest changed since it was pinned"
+            for t in db.scalars(select(MCPToolRecord).where(MCPToolRecord.server_id == server.id)):
+                t.enabled, t.quarantine_reason = False, "Server revoked: manifest drift"
+            db.flush()
+            raise deny("Server manifest differs from the pinned manifest; server revoked", 409)
         if drifted:  # raised outside the transport context so it is not wrapped by the task group
             tool.enabled, tool.quarantine_reason = False, "Schema changed since review; re-review required."
             db.flush()

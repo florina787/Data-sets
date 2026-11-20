@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from florome import __version__
 from florome.api.v1 import router
+from florome.shield.api import router as shield_router
 from florome.config import Settings, get_settings
 from florome.context import AppContext
 from florome.models import init_engine, session_factory
@@ -65,6 +66,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["*"],
                        allow_headers=["Authorization", "Content-Type"])
 
+    from fastapi.responses import JSONResponse
+
+    windows: dict[str, deque] = {}
+
+    @app.middleware("http")
+    async def rate_limit(request: Request, call_next):  # noqa: ANN001, ANN202
+        """Sliding one-minute window per bearer credential for mutating requests."""
+        if request.method in ("POST", "PUT", "PATCH", "DELETE"):
+            import hashlib
+
+            ident = request.headers.get("authorization") or (request.client.host if request.client else "anonymous")
+            key = hashlib.sha256(ident.encode()).hexdigest()
+            now = time.monotonic()
+            q = windows.setdefault(key, deque())
+            while q and now - q[0] > 60:
+                q.popleft()
+            if len(q) >= settings.rate_limit_per_minute:
+                return JSONResponse({"detail": "Rate limit exceeded"}, status_code=429, headers={"Retry-After": "60"})
+            q.append(now)
+        return await call_next(request)
+
     @app.middleware("http")
     async def request_log(request: Request, call_next):  # noqa: ANN001, ANN202
         rid = request.headers.get("x-request-id") or uuid.uuid4().hex[:16]
@@ -79,6 +101,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return response
 
     app.include_router(router)
+    app.include_router(shield_router)
     return app
 
 

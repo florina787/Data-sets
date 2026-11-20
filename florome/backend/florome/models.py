@@ -177,6 +177,7 @@ class RemediationPlan(Base):
     current_step: Mapped[int] = mapped_column(Integer, default=0)  # durable checkpoint
     last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
     version: Mapped[int] = mapped_column(Integer, default=1)  # optimistic concurrency
+    signature: Mapped[str] = mapped_column(String(64), default="")  # HMAC over (id, tenant, plan_hash); key is not in the DB
 
 
 class Approval(Base):

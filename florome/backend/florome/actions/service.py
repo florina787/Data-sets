@@ -89,6 +89,7 @@ def create_plan(db: Session, ctx: AppContext, actor: Principal, incident: Incide
                            created_by=actor.user_id)
     db.add(plan)
     db.flush()
+    plan.signature = ctx.sign(plan.id, plan.tenant_id, plan.plan_hash)
     audit.record(db, incident.tenant_id, actor.user_id, "plan.create", plan.id, "success",
                  {"incident": incident.id, "status": status, "plan_hash": plan.plan_hash, "steps": [s["action_id"] for s in draft["steps"]]})
     return plan
@@ -154,6 +155,10 @@ async def execute(db: Session, ctx: AppContext, actor: Principal, plan: Remediat
         raise deny(f"Plan is '{plan.status}'; only approved plans (or failed plans being resumed) can execute", 409)
     if plan_hash(plan.steps, plan.policy_decision.get("validation_targets", []), plan.incident_id) != plan.plan_hash:
         raise deny("Stored plan does not match its hash; refusing to execute", 409)
+    import hmac
+
+    if not hmac.compare_digest(plan.signature or "", ctx.sign(plan.id, plan.tenant_id, plan.plan_hash)):
+        raise deny("Plan signature invalid: the plan was not produced by this control plane", 409)
     if plan.requires_approval and _valid_approval(db, plan) is None:
         raise deny("No valid approval: missing, expired, or bound to a different plan version")
     remaining = [s for s in plan.steps if s.get("status") != "succeeded"]

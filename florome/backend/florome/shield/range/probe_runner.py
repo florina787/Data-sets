@@ -27,7 +27,7 @@ def main() -> None:
     from fastapi.testclient import TestClient
 
     mod = importlib.import_module(meta["module"])
-    client = TestClient(getattr(mod, meta["app_variable"]))
+    client = TestClient(getattr(mod, meta["app_variable"]), raise_server_exceptions=False)  # a rejected payload is a 5xx, not a crash
     ids = meta["identities"]
     user, other = list(ids)[0], list(ids)[1]
     hdr = {meta["auth_header"]: ids[user]} if spec.get("authenticated") else {}
