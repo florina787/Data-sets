@@ -13,6 +13,7 @@ export const NAV = [
   { to: "/sources", label: "Sources" },
   { to: "/governance", label: "Governance" },
   { to: "/finops", label: "FinOps" },
+  { to: "/shield", label: "Shield" },
 ];
 
 export function useRole(): Role {

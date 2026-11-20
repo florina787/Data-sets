@@ -85,3 +85,28 @@ export interface Summary {
 export interface Platform { platform: string; group: string; status: "implemented" | "simulated" | "not_implemented"; connector_type: string; note: string; connected_and_verified: boolean }
 export interface McpTool { id: string; server_id: string; name: string; description: string; input_schema: { properties?: Record<string, { type?: string }>; required?: string[] }; access: string; enabled: boolean; quarantine_reason: string | null; schema_hash: string }
 export interface AuditItem { id: string; seq: number; at: string; actor: string; action: string; target: string; outcome: string; detail: Record<string, unknown>; hash: string }
+
+// ------------------------------------------------------------------------------------------- Florome Shield
+export interface ShieldSummary {
+  repositories: number;
+  hypotheses: { total: number; by_status: Record<string, number> };
+  findings: { confirmed: number; by_severity: Record<string, number>; by_class: Record<string, number>; incidents_opened: number };
+  patches: Record<string, number>;
+  containment: { sessions: number; contained: number; by_violation: Record<string, number> };
+  policy: { decisions: number; denied: number };
+  controls: { opengrep: boolean; trivy: boolean; opa: boolean; opa_mode: string; network_namespace: boolean; emergency_stop: boolean; rate_limit_per_minute: number };
+  data_class: string;
+}
+export interface ShieldRepo { id: string; name: string; data_class: string; latest_snapshot: { id: string; commit: string | null; tree_hash: string; stats: Record<string, number> } | null }
+export interface Evidence { type: string; ref: string; detail: string }
+export interface ShieldHyp {
+  id: string; vuln_class: string; function: string; file: string; line: number; status: string; status_basis: string; assumption: string; weakness: string;
+  verification_method: string | null; supporting: Evidence[]; contradicting: Evidence[]; severity: string | null; severity_basis: string | null; incident_id: string | null;
+  verification_runs?: { id: string; purpose: string; attempt: number; outcome: string; seconds: number; isolation: { network_namespace?: boolean }; transcript: { probe?: { evidence?: string; requests?: { path: string; params: unknown; status: number }[] } } }[];
+  patches?: { id: string; status: string; diff: string; regression: { exploit_blocked_runs: number; functional_ok: boolean }; patch_hash: string; requested_by: string; reviewed_by: string | null }[];
+  source?: { start_line: number; lines: string[]; highlight: number; commit: string | null };
+}
+export interface GraphNode { id: string; kind: string; name: string; qualname: string; file: string; line: number; route: { method: string; path: string } | null; trust_boundary: string | null; auth_provider: boolean; findings: { id: string; class: string; status: string }[] }
+export interface CodeGraph { snapshot: { id: string; commit: string | null; tree_hash: string } | null; nodes: GraphNode[]; edges: { id: string; kind: string; source: string; target: string; line: number; attrs: Record<string, unknown>; provenance: Record<string, string> }[] }
+export interface ContainmentEvent { id: string; session_id: string; scenario: string; violation: string | null; outcome: string; actions_taken: string[]; forensics: { seconds: number; returncode: number; matched_expectation: boolean; guard_events: { violation: string; detail: string }[]; expected: string }; at: string }
+export interface BenchRow { id: string; pipeline: string; status: string; sample_size: number; metrics: Record<string, any>; note: string; at: string }

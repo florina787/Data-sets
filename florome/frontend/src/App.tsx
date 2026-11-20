@@ -8,6 +8,7 @@ import Integrations from "./pages/Integrations";
 import Sources from "./pages/Sources";
 import Governance from "./pages/Governance";
 import FinOps from "./pages/FinOps";
+import Shield from "./pages/Shield";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="sources" element={<Sources />} />
         <Route path="governance" element={<Governance />} />
         <Route path="finops" element={<FinOps />} />
+        <Route path="shield" element={<Shield />} />
       </Route>
     </Routes>
   );
