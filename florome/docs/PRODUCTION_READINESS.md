@@ -27,7 +27,8 @@
 
 ## Ask Florome assistant
 
-* **Done and tested:** one dock on all 9 pages, 4 starters per page, 40 question types, visual answers, evidence links, follow-ups, memory, page context, briefs, privacy, injection handling.
+* **Done and tested:** the Copilot home page (chat-first landing, grouped starters, source status); one dock on all 9 other pages, 4 starters per page, 44 question types; customer-conversation questions answered live by the Conversation Intelligence Copilot (Project A) over HTTP, with its session carried between turns and its status shown; visual answers, evidence links, follow-ups, memory, page context, briefs, privacy, injection handling.
+* **Partial:** the Project A bridge was tested against Project A running locally with `LLM_ENABLED=false`; it has no authentication between Florome and Project A yet, so it should only point at a local or private-network instance.
 * **Not done:** a language model for phrasing (none authorised); interactive drill-down inside answers; analytics on which questions go unanswered.
 
 ## Missing

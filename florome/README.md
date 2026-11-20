@@ -4,8 +4,8 @@
 
 <br>
 
-<img alt="Backend tests: 113 passing" src="https://img.shields.io/badge/backend%20tests-113%20passing-2ea44f?style=flat-square">
-<img alt="Frontend tests: 19 passing" src="https://img.shields.io/badge/frontend%20tests-19%20passing-2ea44f?style=flat-square">
+<img alt="Backend tests: 118 passing" src="https://img.shields.io/badge/backend%20tests-118%20passing-2ea44f?style=flat-square">
+<img alt="Frontend tests: 22 passing" src="https://img.shields.io/badge/frontend%20tests-22%20passing-2ea44f?style=flat-square">
 <img alt="Paid AI calls: 0" src="https://img.shields.io/badge/paid%20AI%20calls-0-64748B?style=flat-square">
 <img alt="Demo data: 100% synthetic" src="https://img.shields.io/badge/demo%20data-100%25%20synthetic-F26B2E?style=flat-square">
 <img alt="Status: research preview" src="https://img.shields.io/badge/status-research%20preview-7C84F2?style=flat-square">
@@ -16,25 +16,41 @@
 
 ---
 
-## 💬 Just ask
+## 💬 Just ask: the Copilot is the front door
 
 <div align="center">
-<img src="docs/readme/assistant.gif" alt="Asking Florome questions in plain English and getting short, visual, evidence-linked answers" width="100%">
+<img src="docs/readme/copilot-home.gif" alt="The Florome Copilot home page: asking about an outage, about customer complaints and about security holes in one conversation" width="100%">
 <br>
-<b>Ask in plain English, get the answer in one sentence, with the proof one click away.</b><br>
-<sub>Real recording on the investigation page: <i>"What caused the incident?"</i> → a follow-up → a typed question → a one-click brief → a jump to the evidence.</sub>
+<b>Open Florome and the first thing you see is a question box.</b> Ask about outages, security, customers, money or rules, and get the answer in one sentence with the proof one click away.<br>
+<sub>Real recording of the home page: <i>"What caused the incident?"</i> → <i>"What are customers most negative about?"</i> (answered by the Conversation Intelligence Copilot) → a follow-up → a typed security question.</sub>
 </div>
 
 <table>
 <tr>
 <td width="25%" align="center" valign="top">🗣️<br><b>One sentence</b><br><sub>The direct answer first, never a wall of text</sub></td>
 <td width="25%" align="center" valign="top">📊<br><b>A small picture</b><br><sub>Bars, a chain of systems, a table or a timeline, drawn from the same data</sub></td>
-<td width="25%" align="center" valign="top">🔗<br><b>The evidence</b><br><sub>Buttons that open the exact record the answer came from</sub></td>
+<td width="25%" align="center" valign="top">🔗<br><b>The evidence</b><br><sub>Buttons that open the exact record, or the customer's own words quoted</sub></td>
 <td width="25%" align="center" valign="top">➡️<br><b>Four next questions</b><br><sub>Keep going with one click; <i>"why?"</i> works too</sub></td>
 </tr>
 </table>
 
-> Every page has its own **Ask Florome** helper with four starting questions. It answers **only from Florome's own records**, read at the moment you ask, and says *"I can't answer that"* rather than guessing. It's rule-based, not an AI chatbot. [More below ↓](#-ask-florome-questions-in-plain-english)
+**Two sources, one conversation.** Every answer says underneath where it came from:
+
+| You ask about… | Answered by | Example |
+|---|---|---|
+| Outages, fixes, security holes, AI helpers, money, rules | **Florome's own records** | *"What caused the incident?"* |
+| Customer conversations: complaints, sentiment, agent coaching | **The Conversation Intelligence Copilot** (the project Florome was built on top of), called live over its own API | *"What are customers most negative about?"* |
+
+You don't choose: Florome works out which one your question is for. If the customer engine isn't running, the home page says **"not running"** and customer questions get an honest *"not available right now"* answer instead of a guess.
+
+<table>
+<tr>
+<td width="62%" valign="top"><img src="docs/readme/copilot-customer.jpg" alt="A customer question answered by the Conversation Intelligence Copilot, with a bar chart, quoted conversations and the source line" width="100%"></td>
+<td width="38%" valign="top"><img src="docs/readme/copilot-mobile.jpg" alt="The Copilot home page on a phone" width="100%"></td>
+</tr>
+</table>
+
+> Both sources are **rule-based**: no AI model wrote any of these answers (each answer shows *"0 AI model calls"*). They say *"I can't answer that"* rather than guessing. The dashboards are still one click away under **Overview**, and every other page keeps its own **Ask Florome** helper. [More below ↓](#-ask-florome-questions-in-plain-english)
 
 ---
 
@@ -504,9 +520,15 @@ Companies increasingly let small AI programs ("agents") do jobs on their behalf.
 
 ## 💬 Ask Florome: questions in plain English
 
-*(The clip at the [top of this page](#-just-ask) shows it in action.)*
+*(The clip at the [top of this page](#-just-ask-the-copilot-is-the-front-door) shows the home page; the clip below shows the helper on a single page.)*
 
-Every main page has an **"Ask Florome"** button at the bottom right. Press it and a side panel opens with **four starting questions picked for that page**, e.g. on the investigation page *"What caused the incident?"*, *"Which explanations were ruled out?"*, *"Where is the evidence weakest?"*, *"Show the timeline of events"*. You can also type your own question.
+<img src="docs/readme/assistant.gif" alt="The Ask Florome helper on the investigation page" width="100%">
+
+**The home page is the Copilot.** Open Florome and you land on a full-screen question box with starter questions in five groups (Operations, Security, Customers, Money, Governance) and a status light for each source:
+
+<img src="docs/readme/copilot-start.jpg" alt="The Copilot home page with grouped starter questions and source status" width="100%">
+
+**On every other page,** there is an **"Ask Florome"** button at the bottom right. Press it and a side panel opens with **four starting questions picked for that page**, e.g. on the investigation page *"What caused the incident?"*, *"Which explanations were ruled out?"*, *"Where is the evidence weakest?"*, *"Show the timeline of events"*. You can also type your own question.
 
 **Every answer follows the same short shape**, so you never wade through paragraphs:
 
@@ -534,11 +556,11 @@ Every main page has an **"Ask Florome"** button at the bottom right. Press it an
 <img src="docs/readme/assistant-brief.jpg" alt="A one-click brief of the FinOps page" width="100%">
 
 **What it is, and isn't, in plain words:**
-- ✅ It answers **only from Florome's own records**, read at the moment you ask. It never makes up a number.
+- ✅ It answers **only from recorded data**, read at the moment you ask: Florome's own records, or, for customer conversations, the Conversation Intelligence Copilot's analysis of real support conversations. It never makes up a number, and each answer names its source.
 - ✅ If it can't answer, it **says so** (*"I can't answer that from Florome's data"*) and offers questions it can answer, instead of guessing.
 - ✅ It can only **read**. Asking it to "approve the plan" or "ignore previous instructions" changes nothing: the text is treated as a question, flagged, and stored with any secrets blacked out.
 - ✅ Conversations are private to you and your organisation.
-- ⚠️ It is **rule-based, not an AI chatbot.** It understands the 40 kinds of question it was built for (36 page starters, plus follow-ups like "explain this finding" and "summarise this page"), with flexible wording, rather than any question at all. That's deliberate while no approved AI service is configured; a language model can be added later to phrase answers, but it would still not decide anything.
+- ⚠️ It is **rule-based, not an AI chatbot.** It understands the 44 kinds of question it was built for (36 page starters, follow-ups like "explain this finding" and "summarise this page", and the customer questions it hands to the Conversation Intelligence Copilot), with flexible wording, rather than any question at all. That's deliberate while no approved AI service is configured; a language model can be added later to phrase answers, but it would still not decide anything.
 
 ---
 
@@ -772,7 +794,19 @@ npm install
 npm run dev
 ```
 
-**3. Open http://localhost:5173 in your browser.** Use the **"Acting as"** menu at the top right to switch between demo people:
+**Optional: start the customer-conversation engine** (the Conversation Intelligence Copilot), so the home page can answer customer questions. In a third terminal, from the top of the repository:
+
+```bash
+cd conversation-intelligence-copilot && make install && make prepare && make index
+```
+
+```bash
+cd backend && LLM_ENABLED=false uv run uvicorn app.main:app --port 8001
+```
+
+Florome looks for it at `http://127.0.0.1:8001` (change with `FLOROME_COPILOT_URL`). Without it everything else works; the home page just shows *Conversation Copilot: not running*.
+
+**3. Open http://localhost:5173 in your browser.** You land on the **Copilot** home page. Use the **"Acting as"** menu at the top right to switch between demo people:
 
 | Demo person | Allowed to |
 |---|---|

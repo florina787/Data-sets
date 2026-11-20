@@ -2,6 +2,7 @@
 
 The tenant is **Meridian Freight**, a fictional company; everything is synthetic. A second tenant, **Halcyon Retail**, exists to demonstrate isolation.
 
+0. **Copilot (home page).** Florome opens on a question box. Ask **What caused the incident?**, then **What are customers most negative about?**: the second is answered by the Conversation Intelligence Copilot if it is running on :8001 (the home page shows its status), and says so underneath. Then open **Overview** in the top bar.
 1. **Overview.** One open incident, one verified (simulated) connection. The copilot layer reports Project B live or unavailable based on a real call.
 2. **Nervous System.** Every node is red. Note that customer-portal is unaffected.
 3. **RCA** (acting as operator). Run the investigation and read the conclusion: H3 is confirmed, and the red herrings H1, H2, H4 and H5 are disproven. Click an evidence node to see the raw payload and "hash verified".
@@ -27,7 +28,7 @@ To reset, restart the API (demo tenants are re-seeded) or call `POST /api/v1/dem
 
 ## Ask Florome (about 1 minute)
 
-14. On any page, press **Ask Florome** (bottom right). Pick a starter question: the answer is one sentence, a small visual, evidence links and four follow-ups.
+14. On any page except the Copilot home page (which is the chat itself), press **Ask Florome** (bottom right). Pick a starter question: the answer is one sentence, a small visual, evidence links and four follow-ups.
 15. Type **why?** after an answer: the helper remembers the topic. Type something unrelated (e.g. the weather): it says it can't answer from Florome data.
 16. In Shield, select a finding, then ask **Explain this finding**.
 17. Press **Brief** for a four-point page summary you can download.

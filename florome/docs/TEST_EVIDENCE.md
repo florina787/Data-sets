@@ -2,7 +2,9 @@
 
 Recorded 2026-11-11 on Linux x86_64 (4 vCPU), Python 3.13, Node 22.
 
-## Backend: 113 passed (64 Operations + 35 Shield + 14 Assistant)
+## Backend: 118 passed, 1 skipped (64 Operations + 35 Shield + 21 Assistant)
+
+Re-run 2026-11-20 with the Conversation Intelligence Copilot running on :8001 (`LLM_ENABLED=false`): `118 passed, 1 skipped`. The skip is `test_architecture_adapter.py` (Project B dependencies not installed in this environment).
 
 | File | Tests | Covers |
 |---|---|---|
@@ -21,6 +23,7 @@ Recorded 2026-11-11 on Linux x86_64 (4 vCPU), Python 3.13, Node 22.
 | test_shield_containment.py | 4 | Seven synthetic agent scenarios, credential revocation, decoy key never leaked, namespace blocks egress without the guard, audit |
 | test_shield_mcp_adversarial.py | 5 | Server manifest pinning and drift revocation, emergency revoke, instructions hidden in target source, hostile tool output, deny-by-default |
 | test_assistant.py | 14 | Every starter and reachable follow-up answers in the contract; grounding vs stored data; free-text routing incl. report-trigger regression; memory; page context; user/tenant privacy; injection; redaction; validation; Shield focus |
+| test_assistant_copilot.py | 7 | Project A bridge: translation of a real recorded response, non-completed status passed through, routing and session carry-over (fake transport), Florome questions stay local, unreachable / not configured, home config and `/sources`, live call to Project A on :8001 (skips if not running; passed in this run) |
 | test_shield_evaluation.py | 1 | Three pipelines scored on the labelled corpus; LLM-only recorded as not run |
 
 Run with:
@@ -29,9 +32,9 @@ Run with:
 cd florome/backend && pytest
 ```
 
-## Frontend: 19 passed, typecheck clean, production build OK
+## Frontend: 22 passed, typecheck clean, production build OK
 
-`src/tests/app.test.tsx` covers navigation, the demo banner, KPIs, honest copilot-layer status, error and retry states, the topology layout and incident roles, constellation filtering and dashed contradictions, timeline markers, the approval request (hash plus a fresh 32-hex nonce plus the role token), surfacing of SoD denials, required plan fields, and the rule that planned platforms are never shown as verified.
+`src/tests/app.test.tsx` covers navigation, the demo banner, KPIs, honest copilot-layer status, error and retry states, the topology layout and incident roles, constellation filtering and dashed contradictions, timeline markers, the approval request (hash plus a fresh 32-hex nonce plus the role token), surfacing of SoD denials, required plan fields, and the rule that planned platforms are never shown as verified. `src/tests/assistant.test.tsx` (6) covers the page dock; `src/tests/home.test.tsx` (3) covers the Copilot home page: grouped questions and source status, the "not running" state, and a customer answer with its source line and quote chips.
 
 ## Browser end to end
 

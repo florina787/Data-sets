@@ -39,6 +39,7 @@ export default function Home() {
   };
   const cop = sources.data?.conversation_copilot;
   const started = turns.length > 0;
+  const narrow = typeof window !== "undefined" && window.matchMedia?.("(max-width: 640px)").matches;
 
   const composer = (
     <form onSubmit={(e) => { e.preventDefault(); send(text); }}
@@ -46,7 +47,7 @@ export default function Home() {
       <textarea ref={input} value={text} rows={1} maxLength={500} aria-label="Ask Florome"
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(text); } }}
-        placeholder="Ask anything about your enterprise…"
+        placeholder={narrow ? "Ask anything…" : "Ask anything about your enterprise…"}
         className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] outline-none" />
       <button type="button" onClick={() => send("Summarise this page")} disabled={busy}
         className="rounded-xl border border-dome-100 px-3 py-2.5 text-xs text-ink-soft hover:bg-dome-50 disabled:opacity-40">Brief</button>
