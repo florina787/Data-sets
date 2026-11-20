@@ -2,6 +2,7 @@ import { Background, Controls, Handle, Position, ReactFlow, type Edge, type Node
 import "@xyflow/react/dist/style.css";
 import { FlaskConical, Play, ShieldCheck, Wand2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Chart, type ChartOption } from "../components/Chart";
 import { useRole } from "../components/Layout";
 import { ErrorBox, Loading, cx } from "../components/ui";
@@ -161,7 +162,9 @@ function MetricsOrb({ s }: { s: ShieldSummary }) {
 
 function ResearchLab({ hyps, repo, busy, act, onRefresh }: { hyps: ShieldHyp[]; repo?: ShieldRepo; busy: string | null;
   act: (label: string, fn: () => Promise<unknown>) => Promise<void>; onRefresh: () => void }) {
-  const [sel, setSel] = useState<string | null>(null);
+  const [params, setParams] = useSearchParams();
+  const sel = params.get("hypothesis");
+  const setSel = (id: string) => setParams((p) => { p.set("hypothesis", id); return p; }, { replace: true });  // shared with the assistant
   const detail = useAsync(() => (sel ? api<ShieldHyp>(`/shield/hypotheses/${sel}`) : Promise.resolve(null)), [sel]);
   const d = detail.data;
   const sorted = useMemo(() => [...hyps].sort((a, b) => ["confirmed", "probable", "inconclusive", "open", "disproven"].indexOf(a.status) -

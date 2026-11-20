@@ -2,7 +2,7 @@
 
 Recorded 2026-11-11 on Linux x86_64 (4 vCPU), Python 3.13, Node 22.
 
-## Backend: 99 passed (64 Operations + 35 Shield)
+## Backend: 113 passed (64 Operations + 35 Shield + 14 Assistant)
 
 | File | Tests | Covers |
 |---|---|---|
@@ -20,6 +20,7 @@ Recorded 2026-11-11 on Linux x86_64 (4 vCPU), Python 3.13, Node 22.
 | test_shield_control.py | 11 | Dual-engine (built-in + OPA) decisions, scope and symlink escape, roles, OPA missing/erroring fails closed, emergency stop, quotas, rate limits, HMAC plan signatures, visible partial scans |
 | test_shield_containment.py | 4 | Seven synthetic agent scenarios, credential revocation, decoy key never leaked, namespace blocks egress without the guard, audit |
 | test_shield_mcp_adversarial.py | 5 | Server manifest pinning and drift revocation, emergency revoke, instructions hidden in target source, hostile tool output, deny-by-default |
+| test_assistant.py | 14 | Every starter and reachable follow-up answers in the contract; grounding vs stored data; free-text routing incl. report-trigger regression; memory; page context; user/tenant privacy; injection; redaction; validation; Shield focus |
 | test_shield_evaluation.py | 1 | Three pipelines scored on the labelled corpus; LLM-only recorded as not run |
 
 Run with:
@@ -28,7 +29,7 @@ Run with:
 cd florome/backend && pytest
 ```
 
-## Frontend: 13 passed, typecheck clean, production build OK
+## Frontend: 19 passed, typecheck clean, production build OK
 
 `src/tests/app.test.tsx` covers navigation, the demo banner, KPIs, honest copilot-layer status, error and retry states, the topology layout and incident roles, constellation filtering and dashed contradictions, timeline markers, the approval request (hash plus a fresh 32-hex nonce plus the role token), surfacing of SoD denials, required plan fields, and the rule that planned platforms are never shown as verified.
 
@@ -64,3 +65,7 @@ Project A: 163 passed, 2 failed (pre-existing; see the audit). Project B: 76 pas
 | LLM only | not run | | | | |
 
 Scan 4.4 s; scan + 22 isolated lab runs 13.7 s; 5/5 template patches blocked the exploit in 2/2 retests and passed functional checks (5.2 s). Containment: violations stopped in 32-41 ms; the infinite loop was killed by RLIMIT_CPU at 3.0 s. Sample size is 9 labelled sites written by the same team: a regression benchmark, not a real-world claim.
+
+## Assistant browser review (2026-11-20)
+
+Playwright drove the dock on RCA, FinOps, Shield (dark), Governance (dark) and a 390×844 phone viewport: starters, follow-ups, free text, the honest fallback, a selected Shield finding and a page brief, with no page errors. Two defects found and fixed: the RCA page defaulted to a Shield incident while the assistant answered about the outage (the page now defaults to the latest operational incident and writes it to the URL), and answer text was cut mid-word (word-boundary truncation; evidence links now show record summaries instead of IDs).

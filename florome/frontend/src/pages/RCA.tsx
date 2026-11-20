@@ -92,7 +92,13 @@ interface EvidenceDetail { id: string; kind: string; observed_at: string; summar
 export default function RCA() {
   const [params, setParams] = useSearchParams();
   const incidents = useAsync(() => api<{ items: Incident[] }>("/incidents"));
-  const incidentId = params.get("incident") ?? incidents.data?.items[0]?.id ?? null;
+  // Default to the latest operational incident (security incidents are investigated in Shield) and put it in the URL,
+  // so the page and the assistant always talk about the same incident.
+  const fallbackId = (incidents.data?.items.find((i) => i.source_system !== "florome-shield") ?? incidents.data?.items[0])?.id ?? null;
+  const incidentId = params.get("incident") ?? fallbackId;
+  useEffect(() => {
+    if (!params.get("incident") && fallbackId) setParams({ incident: fallbackId }, { replace: true });
+  }, [fallbackId, params, setParams]);
   const [report, setReport] = useState<RCAReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [running, setRunning] = useState(false);

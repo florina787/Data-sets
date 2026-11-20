@@ -4,8 +4,8 @@
 
 <br>
 
-<img alt="Backend tests: 99 passing" src="https://img.shields.io/badge/backend%20tests-99%20passing-2ea44f?style=flat-square">
-<img alt="Frontend tests: 13 passing" src="https://img.shields.io/badge/frontend%20tests-13%20passing-2ea44f?style=flat-square">
+<img alt="Backend tests: 113 passing" src="https://img.shields.io/badge/backend%20tests-113%20passing-2ea44f?style=flat-square">
+<img alt="Frontend tests: 19 passing" src="https://img.shields.io/badge/frontend%20tests-19%20passing-2ea44f?style=flat-square">
 <img alt="Paid AI calls: 0" src="https://img.shields.io/badge/paid%20AI%20calls-0-64748B?style=flat-square">
 <img alt="Demo data: 100% synthetic" src="https://img.shields.io/badge/demo%20data-100%25%20synthetic-F26B2E?style=flat-square">
 <img alt="Status: research preview" src="https://img.shields.io/badge/status-research%20preview-7C84F2?style=flat-square">
@@ -50,6 +50,12 @@
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top" align="center">
+<img src="docs/readme/assistant.gif" alt="Asking Florome questions in plain English and getting visual answers" width="80%"><br>
+<b>⑦ Ask Florome</b><br><sub>Every page has a helper you can ask in plain English. Each answer is one sentence, a small chart and links to the evidence, with four suggested next questions. It answers only from Florome's own records.</sub>
+</td>
+</tr>
+<tr>
 <td width="50%" valign="top" align="center">
 <img src="docs/readme/integrations.gif" alt="Connecting tools through the MCP gateway" width="100%"><br>
 <b>⑤ Plugging in tools</b><br><sub>What's really connected and what's only planned, plus a live, checked call to an AI tool.</sub>
@@ -74,15 +80,16 @@
 4. [Story 1: the morning the money report broke](#-story-1-the-morning-the-money-report-broke): every screen, explained number by number
 5. [Story 2: Shield finds security holes and proves them](#%EF%B8%8F-story-2-shield-finds-security-holes-and-proves-them)
 6. [Story 3: an AI helper misbehaves, and gets stopped](#-story-3-an-ai-helper-misbehaves-and-gets-stopped)
-7. [Plugging in other systems](#-plugging-in-other-systems)
-8. [The safety rules nobody can switch off](#-the-safety-rules-nobody-can-switch-off)
-9. [Following the money](#-following-the-money)
-10. [How it works underneath](#%EF%B8%8F-how-it-works-underneath)
-11. [The numbers, measured](#-the-numbers-measured)
-12. [What it does not do yet](#-what-it-does-not-do-yet)
-13. [Try it yourself](#-try-it-yourself)
-14. [Questions people ask](#-questions-people-ask)
-15. [Glossary](#-glossary-every-technical-word-in-plain-english)
+7. [Ask Florome: questions in plain English](#-ask-florome-questions-in-plain-english)
+8. [Plugging in other systems](#-plugging-in-other-systems)
+9. [The safety rules nobody can switch off](#-the-safety-rules-nobody-can-switch-off)
+10. [Following the money](#-following-the-money)
+11. [How it works underneath](#%EF%B8%8F-how-it-works-underneath)
+12. [The numbers, measured](#-the-numbers-measured)
+13. [What it does not do yet](#-what-it-does-not-do-yet)
+14. [Try it yourself](#-try-it-yourself)
+15. [Questions people ask](#-questions-people-ask)
+16. [Glossary](#-glossary-every-technical-word-in-plain-english)
 
 ---
 
@@ -479,6 +486,48 @@ Companies increasingly let small AI programs ("agents") do jobs on their behalf.
 
 ---
 
+## 💬 Ask Florome: questions in plain English
+
+<div align="center">
+<img src="docs/readme/assistant.gif" alt="Asking questions on the RCA page" width="100%">
+</div>
+
+Every main page has an **"Ask Florome"** button at the bottom right. Press it and a side panel opens with **four starting questions picked for that page**, e.g. on the investigation page *"What caused the incident?"*, *"Which explanations were ruled out?"*, *"Where is the evidence weakest?"*, *"Show the timeline of events"*. You can also type your own question.
+
+**Every answer follows the same short shape**, so you never wade through paragraphs:
+
+| Part | What it is |
+|---|---|
+| **One sentence** | The direct answer, e.g. *"4 of 9 explanations were disproven by evidence."* |
+| **A few bullets** | At most five supporting points |
+| **A small picture** | A bar chart, a chain of systems, a table, a timeline or headline numbers, drawn from the same data |
+| **Evidence links** | Buttons that open the exact page or record the answer came from |
+| **Four next questions** | Click to keep going. The helper remembers what you were talking about, so *"why?"* works as a follow-up |
+
+<table>
+<tr>
+<td width="62%" valign="top"><img src="docs/readme/assistant-rca.jpg" alt="The helper on the investigation page" width="100%"></td>
+<td width="38%" valign="top"><img src="docs/readme/assistant-mobile.jpg" alt="The helper on a phone" width="100%"></td>
+</tr>
+</table>
+
+**It knows where you are.** The helper reads the page you're on and what you've selected. Pick a finding in Shield and ask *"Explain this finding"*, and it explains that one, including its sealed-lab runs:
+
+<img src="docs/readme/assistant-shield.jpg" alt="Explaining the selected Shield finding" width="100%">
+
+**It writes short reports.** Press **Brief** (or ask *"summarise this page"*) for a four-point summary of the page, which you can download as a document:
+
+<img src="docs/readme/assistant-brief.jpg" alt="A one-click brief of the FinOps page" width="100%">
+
+**What it is, and isn't, in plain words:**
+- ✅ It answers **only from Florome's own records**, read at the moment you ask. It never makes up a number.
+- ✅ If it can't answer, it **says so** (*"I can't answer that from Florome's data"*) and offers questions it can answer, instead of guessing.
+- ✅ It can only **read**. Asking it to "approve the plan" or "ignore previous instructions" changes nothing: the text is treated as a question, flagged, and stored with any secrets blacked out.
+- ✅ Conversations are private to you and your organisation.
+- ⚠️ It is **rule-based, not an AI chatbot.** It understands the 40 kinds of question it was built for (36 page starters, plus follow-ups like "explain this finding" and "summarise this page"), with flexible wording, rather than any question at all. That's deliberate while no approved AI service is configured; a language model can be added later to phrase answers, but it would still not decide anything.
+
+---
+
 ## 🔌 Plugging in other systems
 
 <img src="docs/readme/connect-hero.jpg" alt="Connect once, govern everything" width="100%">
@@ -619,6 +668,7 @@ Each stage is a narrowly scoped worker with a fixed list of tools and a time bud
 | `backend/florome/mcp/` | The MCP gateway |
 | `backend/florome/shield/` | Code map, scanners, suspicions, lab, fixes, containment, scoring, rules |
 | `backend/florome/shield/range/targets/ledgerlite/` | The deliberately broken test app |
+| `backend/florome/assistant/` | The "Ask Florome" helper: page questions, answers, conversation memory |
 | `backend/florome/security/` | Roles, the tamper-proof log, blacking out secrets, spotting hidden instructions |
 | `backend/scripts/` | The benchmark, the chart generator for this page, and the tool downloader |
 | `frontend/src/pages/` | One file per screen |
@@ -636,8 +686,8 @@ Everything below was **measured** on a 4-core Linux machine with the demo data. 
 
 | What | Result |
 |---|---|
-| Automated tests, server side | **99 passing** (64 Operations + 35 Shield) |
-| Automated tests, web app | **13 passing**; type check clean; production build OK |
+| Automated tests, server side | **113 passing** (64 Operations + 35 Shield + 14 assistant) |
+| Automated tests, web app | **19 passing**; type check clean; production build OK |
 | Investigate (collect 18 records, test 9 explanations) | **≈ 95 ms** median, i.e. about a tenth of a second |
 | Whole outage loop: detect → plan → approve → 5 steps → prove recovery | **≈ 0.39 s** median of 10 runs (another run, on a quieter machine, measured 0.27 s) |
 | One sealed-lab attack | **≈ 0.44 s** median over 34 runs, every one with no network |
@@ -660,7 +710,7 @@ Being clear about limits is part of the design.
 - **Shield's code map understands Python best.** JavaScript is only indexed by name, and data tracking stays inside one function rather than following data across functions.
 - **Fix templates cover five common hole types.** Anything else gets a verdict but no automatic fix.
 - **Not yet added:** random-input stress testing ("fuzzing", e.g. AFL++), the CyberGym benchmark, and attack-simulation tools for AI (PyRIT, garak, promptfoo, AgentDojo). The AI-only comparison wasn't run, because no AI service is approved.
-- **The in-app assistant is unfinished.** An "Ask Florome" helper has been started on the server side but isn't in the web app yet.
+- **The "Ask Florome" helper is rule-based.** It answers the 40 question types it was built for, with flexible wording, but it isn't a general chatbot, and it has no AI model to phrase answers more naturally.
 - **Three medium-severity problems exist in the web app's own add-on libraries** (charts and page navigation), found by Shield's own scanner. Fixing them needs major upgrades, which are tracked.
 - **Production hosting isn't set up:** there's no background job queue, no database-upgrade scripts, and no secrets vault yet.
 
@@ -829,6 +879,8 @@ No. The safety controls are designed to support those assessments later, but no 
 **Operations:** [Architecture](docs/ARCHITECTURE.md) · [Investigation engine](docs/RCA_ENGINE.md) · [Running actions](docs/ACTION_EXECUTION.md) · [MCP](docs/MCP_ARCHITECTURE.md) · [Security model](docs/SECURITY_MODEL.md) · [Integrations](docs/INTEGRATION_MATRIX.md) · [Visual design](docs/VISUALIZATION_SYSTEM.md)
 
 **Shield:** [Baseline audit](docs/SHIELD_BASELINE_AUDIT.md) · [Open-source research and tool choices](docs/OPEN_SOURCE_SECURITY_RESEARCH.md)
+
+**Assistant:** [Ask Florome design](docs/ASSISTANT.md)
 
 **Running it:** [Demo guide](docs/DEMO_GUIDE.md) · [Deployment](docs/DEPLOYMENT_GUIDE.md) · [Test evidence](docs/TEST_EVIDENCE.md) · [Production readiness](docs/PRODUCTION_READINESS.md) · [Original capability audit](docs/EXISTING_CAPABILITY_AUDIT.md)
 

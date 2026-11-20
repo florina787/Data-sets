@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ROLES, getRole, onRoleChange, setRole, type Role } from "../lib/api";
+import { AssistantDock } from "./Assistant";
 import { Wordmark } from "./Logo";
 import { cx } from "./ui";
 
@@ -60,6 +61,7 @@ export function Layout() {
         </div>
       </header>
       <main><Outlet /></main>
+      <AssistantDock />
       <footer className="mx-auto max-w-[1400px] px-6 py-10 text-xs text-ink-mute">
         Florome · the intelligence dome over your enterprise. Integration status is shown exactly as verified; see Integrations.
       </footer>

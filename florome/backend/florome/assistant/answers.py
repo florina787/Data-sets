@@ -57,6 +57,13 @@ def A(statement: str, bullets: list[str] | None = None, visual: dict | None = No
             "follow_ups": (follow or [])[:4], "focus": focus}
 
 
+def clip(text: str, n: int) -> str:
+    """Shorten on a word boundary so answers never end mid-word."""
+    if len(text) <= n:
+        return text
+    return text[:n].rsplit(" ", 1)[0].rstrip(" ,:;") + "…"
+
+
 def _money(x: float) -> str:
     return f"${x:,.0f}"
 
@@ -90,12 +97,12 @@ def incidents_open(c: Ctx) -> dict:
     if not incs:
         return A("Nothing is broken right now: every recorded incident is resolved.", follow=["Did the fix work?", "Is the audit log intact?",
                                                                                               "Which vulnerabilities are confirmed?", "Where does the money go?"])
-    rows = [[i.severity.upper(), i.title[:70], i.status] for i in incs[:6]]
+    rows = [[i.severity.upper(), clip(i.title, 70), i.status] for i in incs[:6]]
     return A(f"{len(incs)} incident{'s are' if len(incs) != 1 else ' is'} open; the most recent is “{incs[0].title}”.",
              [f"{Counter(i.severity for i in incs).most_common(1)[0][1]} at {Counter(i.severity for i in incs).most_common(1)[0][0].upper()}",
               f"{sum(i.source_system == 'florome-shield' for i in incs)} raised by Shield (security)"],
              {"type": "table", "columns": ["Severity", "Incident", "Status"], "rows": rows},
-             [{"label": i.title[:40], "href": f"/rca?incident={i.id}" if i.source_system != "florome-shield" else "/shield"} for i in incs[:3]],
+             [{"label": clip(i.title, 40), "href": f"/rca?incident={i.id}" if i.source_system != "florome-shield" else "/shield"} for i in incs[:3]],
              ["What caused the incident?", "What will the plan change?", "Which systems are failing?", "What needs my approval?"],
              incident_id=incs[0].id)
 
@@ -209,6 +216,7 @@ def root_cause(c: Ctx) -> dict:
     concl = r["conclusion"]
     root = next((h for h in r["hypotheses"] if h["id"] == concl.get("root_hypothesis_id")), None)
     names = {a["resource_id"]: a["name"] for a in r.get("affected_systems", [])}
+    summ = {t["evidence_id"]: t["summary"] for t in r["timeline"]}
     chain = concl.get("causal_chain", [])
     bullets = [f"Verdict: {concl.get('final_status', concl['status'])}"]
     if root:
@@ -216,7 +224,7 @@ def root_cause(c: Ctx) -> dict:
     return A(concl["statement"], bullets,
              {"type": "chain", "items": [{"label": names.get(x["resource_id"], x["resource_id"]), "tone": "root" if x["link_status"] == "root" else
                                           ("weak" if x["link_status"] != "confirmed" else "impacted"), "note": x["link_status"]} for x in chain]},
-             [{"label": f"Evidence {e}", "href": f"/rca?incident={inc.id}"} for e in (root["supporting_evidence"][:3] if root else [])], follow,
+             [{"label": clip(summ.get(e, e), 42), "href": f"/rca?incident={inc.id}"} for e in (root["supporting_evidence"][:3] if root else [])], follow,
              incident_id=inc.id)
 
 
@@ -228,8 +236,8 @@ def ruled_out(c: Ctx) -> dict:
         return A("No investigation has run yet, so nothing has been ruled out.", follow=follow)
     dis = [h for h in rca.report["hypotheses"] if h["status"] == "disproven"]
     return A(f"{len(dis)} of {len(rca.report['hypotheses'])} explanations were disproven by evidence.",
-             [f"{h['id']} {h['title'][:60]}: failed {', '.join(t['test'] for t in h['tests'] if t['result'] == 'fail')}" for h in dis],
-             {"type": "bars", "unit": "checks failed", "items": [{"label": f"{h['id']} {h['title'].split(':')[0][:34]}", "value": sum(t['result'] == 'fail' for t in h['tests'])} for h in dis]},
+             [f"{h['id']} {clip(h['title'].split(':')[0], 60)}: failed {', '.join(t['test'].replace('_', ' ') for t in h['tests'] if t['result'] == 'fail')}" for h in dis],
+             {"type": "bars", "unit": "checks failed", "items": [{"label": f"{h['id']} {clip(h['title'].split(':')[0], 34)}", "value": sum(t['result'] == 'fail' for t in h['tests'])} for h in dis]},
              [{"label": "Hypothesis table", "href": f"/rca?incident={inc.id}"}], follow, incident_id=inc.id)
 
 
@@ -256,8 +264,8 @@ def timeline(c: Ctx) -> dict:
     key = [t for t in tl if t["anomalous"] or t["kind"] in ("deployment", "config_change")]
     first = next((t for t in key if t["anomalous"]), None)
     return A(f"{len(tl)} events; the first failure was on {first['resource']}." if first else f"{len(tl)} events, none anomalous.",
-             [f"{as_utc_str(t['at'])} · {t['resource']}: {t['summary'][:70]}" for t in key[:5]],
-             {"type": "timeline", "items": [{"at": t["at"], "label": t["resource"], "text": t["summary"][:80], "tone": "bad" if t["anomalous"] else "change"} for t in key[:12]]},
+             [f"{as_utc_str(t['at'])} · {t['resource']}: {clip(t['summary'], 70)}" for t in key[:5]],
+             {"type": "timeline", "items": [{"at": t["at"], "label": t["resource"], "text": clip(t["summary"], 80), "tone": "bad" if t["anomalous"] else "change"} for t in key[:12]]},
              [{"label": "Time-travel view", "href": f"/rca?incident={inc.id}"}], follow, incident_id=inc.id)
 
 
@@ -273,7 +281,7 @@ def plan_changes(c: Ctx) -> dict:
     if pl is None:
         return A("No remediation plan exists yet; generate one on the Actions page after the investigation.", follow=follow)
     return A(f"The plan has {len(pl.steps)} steps at {pl.risk} risk and is {STATUS_WORDS.get(pl.status, pl.status)}.",
-             [f"{s['index'] + 1}. {s['title']} on {s['target_name']} (undo: {s['rollback'][:50]})" for s in pl.steps],
+             [f"{s['index'] + 1}. {s['title']} on {s['target_name']} (undo: {clip(s['rollback'], 50)})" for s in pl.steps],
              {"type": "table", "columns": ["#", "Action", "Target", "Risk", "Status"],
               "rows": [[s["index"] + 1, s["title"], s["target_name"], s["risk"], s.get("status", "pending")] for s in pl.steps]},
              [{"label": "Plan", "href": f"/actions?incident={pl.incident_id}"}], follow)
@@ -328,7 +336,7 @@ def mcp_tools(c: Ctx) -> dict:
                  evidence=[{"label": "MCP gateway", "href": "/integrations"}])
     on = [t for t in tools if t.enabled]
     return A(f"{len(on)} of {len(tools)} MCP tools are enabled; only read-only tools can be called directly.",
-             [f"{t.name} ({t.access}): {t.description[:60]}" for t in on],
+             [f"{t.name} ({t.access}): {clip(t.description, 60)}" for t in on],
              {"type": "table", "columns": ["Tool", "Access", "Enabled"], "rows": [[t.name, t.access, "yes" if t.enabled else "no"] for t in tools]},
              [{"label": "MCP gateway", "href": "/integrations"}], follow)
 
@@ -366,7 +374,7 @@ def evidence_integrity(c: Ctx) -> dict:
     bad = [e for e in ev if evidence_hash(e) != e.content_hash]
     follow = ["Is the audit log intact?", "Where does the evidence come from?", "Show the latest errors", "What caused the incident?"]
     return A(f"All {len(ev)} evidence records still match their fingerprints." if not bad else f"{len(bad)} of {len(ev)} records no longer match their fingerprints.",
-             [f"Altered: {e.id} ({e.summary[:50]})" for e in bad] or ["Checked just now by recomputing every SHA-256 fingerprint"],
+             [f"Altered: {e.id} ({clip(e.summary, 50)})" for e in bad] or ["Checked just now by recomputing every SHA-256 fingerprint"],
              {"type": "kpis", "items": [{"label": "Intact", "value": len(ev) - len(bad)}, {"label": "Altered", "value": len(bad)}]},
              [{"label": "Sources", "href": "/sources"}], follow)
 
@@ -380,7 +388,7 @@ def latest_errors(c: Ctx) -> dict:
     if not bad:
         return A("No error records have been collected.", follow=follow)
     return A(f"The latest error came from {bad[0].source_system} at {as_utc(bad[0].observed_at).strftime('%H:%M UTC')}.",
-             [f"{as_utc(e.observed_at).strftime('%H:%M')} · {e.summary[:80]}" for e in bad], evidence=[{"label": "Sources", "href": "/sources"}], follow=follow)
+             [f"{as_utc(e.observed_at).strftime('%H:%M')} · {clip(e.summary, 80)}" for e in bad], evidence=[{"label": "Sources", "href": "/sources"}], follow=follow)
 
 
 # ----------------------------------------------------------------------------------------------- governance
@@ -561,7 +569,7 @@ def finding_detail(c: Ctx) -> dict:
         return A("Select a finding in the research lab first, then ask again.", follow=SHIELD_FOLLOW)
     runs = c.db.scalars(select(VerificationRun).where(VerificationRun.hypothesis_id == h.id).order_by(VerificationRun.created_at)).all()
     return A(f"{h.vuln_class.replace('_', ' ').capitalize()} in {h.function} is {h.status}: {h.status_basis}",
-             [f"Assumption tested: {h.assumption}"] + [x["detail"][:90] for x in h.supporting if x["type"] in ("data_flow", "graph")][:2]
+             [f"Assumption tested: {h.assumption}"] + [clip(x["detail"], 90) for x in h.supporting if x["type"] in ("data_flow", "graph")][:2]
              + [f"Against: {x['detail'].replace('_', ' ')}" for x in h.contradicting][:2],
              {"type": "table", "columns": ["Run", "Purpose", "Outcome", "Seconds"],
               "rows": [[r.attempt, r.purpose.replace("_", " "), r.outcome, round(r.seconds, 2)] for r in runs]},

@@ -29,6 +29,7 @@ flowchart TB
 | `governance/policy.py` | Policy-as-code |
 | `mcp/gateway.py`, `mcp_servers/` | MCP |
 | `security/` | RBAC, audit chain, redaction, injection screening |
+| `assistant/` | Ask Florome: page configs, grounded answer handlers, conversation memory (see ASSISTANT.md) |
 | `api/v1.py` | REST API (OpenAPI at `/docs`) |
 
 Design rules:

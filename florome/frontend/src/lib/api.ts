@@ -47,7 +47,7 @@ export function nonce(): string {
 // ---------------------------------------------------------------------------------------------- types
 export interface TopoNode { id: string; name: string; kind: string; platform: string; environment: string; health: string; incident: { incident_id: string; role: string } | null }
 export interface Topology { nodes: TopoNode[]; edges: { source: string; target: string; kind: string }[]; data_mode: string }
-export interface Incident { id: string; title: string; severity: string; status: string; primary_resource_id: string; detected_at: string; resolved_at: string | null; symptoms: string[]; is_demo: boolean }
+export interface Incident { id: string; title: string; severity: string; status: string; primary_resource_id: string; detected_at: string; resolved_at: string | null; symptoms: string[]; is_demo: boolean; source_system?: string }
 export interface HypTest { test: string; result: "pass" | "fail" | "unknown"; detail: string; evidence: string[] }
 export interface Hypothesis { id: string; kind: string; role: string; title: string; candidate_resource_id: string; related_resource_id: string | null; status: Status; basis: string; tests: HypTest[]; supporting_evidence: string[]; contradicting_evidence: string[] }
 export type Status = "confirmed" | "probable" | "inconclusive" | "disproven";
@@ -110,3 +110,18 @@ export interface GraphNode { id: string; kind: string; name: string; qualname: s
 export interface CodeGraph { snapshot: { id: string; commit: string | null; tree_hash: string } | null; nodes: GraphNode[]; edges: { id: string; kind: string; source: string; target: string; line: number; attrs: Record<string, unknown>; provenance: Record<string, string> }[] }
 export interface ContainmentEvent { id: string; session_id: string; scenario: string; violation: string | null; outcome: string; actions_taken: string[]; forensics: { seconds: number; returncode: number; matched_expectation: boolean; guard_events: { violation: string; detail: string }[]; expected: string }; at: string }
 export interface BenchRow { id: string; pipeline: string; status: string; sample_size: number; metrics: Record<string, any>; note: string; at: string }
+
+// ------------------------------------------------------------------------------------------- Assistant
+export type AssistantVisual =
+  | { type: "kpis"; items: { label: string; value: number | string }[] }
+  | { type: "bars"; unit: string; items: { label: string; value: number }[] }
+  | { type: "chain"; items: { label: string; tone: string; note?: string }[] }
+  | { type: "table"; columns: string[]; rows: (string | number)[][] }
+  | { type: "timeline"; items: { at: string; label: string; text: string; tone: string }[] }
+  | { type: "report"; markdown: string };
+export interface AssistantAnswer {
+  conversation_id: string; intent: string | null; statement: string; bullets: string[]; visual: AssistantVisual | null;
+  evidence: { label: string; href: string }[]; follow_ups: string[]; engine: { mode: string; language_model: string | null };
+  input_flags: string[]; data_mode: string;
+}
+export interface AssistantPage { page: string; title: string; starters: string[]; engine: { mode: string; language_model: string | null } }

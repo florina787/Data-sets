@@ -24,3 +24,10 @@ To reset, restart the API (demo tenants are re-seeded) or call `POST /api/v1/dem
 11. **Agent containment**: run each scenario. Only `benign_analysis` finishes; the others are stopped on their first violation and their credential is revoked.
 12. Go back to **Overview** or **RCA**: confirmed high/critical findings now appear as Florome incidents.
 13. Switch to **demo approver** to approve a verified fix for review (the operator or admin who generated it cannot).
+
+## Ask Florome (about 1 minute)
+
+14. On any page, press **Ask Florome** (bottom right). Pick a starter question: the answer is one sentence, a small visual, evidence links and four follow-ups.
+15. Type **why?** after an answer: the helper remembers the topic. Type something unrelated (e.g. the weather): it says it can't answer from Florome data.
+16. In Shield, select a finding, then ask **Explain this finding**.
+17. Press **Brief** for a four-point page summary you can download.

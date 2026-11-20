@@ -25,6 +25,11 @@
 * **Done and tested:** scope-authorised ingestion, tree-sitter code graph with provenance and incremental reuse; Opengrep/Bandit/Trivy adapters; hypotheses; namespace-isolated verification (2 runs); adjudication; template patches with regression; independent patch review; incidents; containment supervisor; MCP manifest pinning and revocation; OPA dual authorization; quotas, rate limits, signed plans; labelled-corpus evaluation.
 * **Not done:** microVM isolation for hostile code; interprocedural/cross-language data flow; fuzzing (AFL++/libFuzzer/OSS-Fuzz); CodeQL; CyberGym benchmark; LLM-based research and the LLM-only baseline; PyRIT/garak/promptfoo/AgentDojo runs; Wazuh/Falco event intake; Alembic migrations and PostgreSQL CI; the dependency CVEs in echarts and react-router.
 
+## Ask Florome assistant
+
+* **Done and tested:** one dock on all 9 pages, 4 starters per page, 40 question types, visual answers, evidence links, follow-ups, memory, page context, briefs, privacy, injection handling.
+* **Not done:** a language model for phrasing (none authorised); interactive drill-down inside answers; analytics on which questions go unanswered.
+
 ## Missing
 
 * Live authentication (OIDC/SSO). This is the main blocker for any non-demo use.

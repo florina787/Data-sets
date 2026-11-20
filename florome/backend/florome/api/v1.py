@@ -155,7 +155,7 @@ async def topology(p: Principal = Depends(require("read")), db: Session = Depend
 
 def _inc_out(i: Incident) -> dict[str, Any]:
     return {"id": i.id, "title": i.title, "severity": i.severity, "status": i.status, "primary_resource_id": i.primary_resource_id,
-            "detected_at": _iso(i.detected_at), "resolved_at": _iso(i.resolved_at), "symptoms": i.symptoms, "is_demo": i.is_demo}
+            "detected_at": _iso(i.detected_at), "resolved_at": _iso(i.resolved_at), "symptoms": i.symptoms, "is_demo": i.is_demo, "source_system": i.source_system}
 
 
 @router.get("/incidents", tags=["incidents"])
