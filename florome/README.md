@@ -10,13 +10,35 @@
 <img alt="Demo data: 100% synthetic" src="https://img.shields.io/badge/demo%20data-100%25%20synthetic-F26B2E?style=flat-square">
 <img alt="Status: research preview" src="https://img.shields.io/badge/status-research%20preview-7C84F2?style=flat-square">
 
-### When a company's computer systems break, Florome finds out *why*, suggests a fix, waits for a person to say yes, applies the fix, and checks that the business really works again.<br>Its security side, **Shield**, looks for weak spots in software and **proves** each one is real before anyone has to worry about it.
+<h3>When a company's computer systems break, Florome finds out <i>why</i>, suggests a fix, waits for a person to say yes, applies the fix, and checks that the business really works again.<br>Its security side, <b>Shield</b>, looks for weak spots in software and <b>proves</b> each one is real before anyone has to worry about it.</h3>
 
 </div>
 
 ---
 
-## 🎬 See it first (one minute of GIFs)
+## 💬 Just ask
+
+<div align="center">
+<img src="docs/readme/assistant.gif" alt="Asking Florome questions in plain English and getting short, visual, evidence-linked answers" width="100%">
+<br>
+<b>Ask in plain English, get the answer in one sentence, with the proof one click away.</b><br>
+<sub>Real recording on the investigation page: <i>"What caused the incident?"</i> → a follow-up → a typed question → a one-click brief → a jump to the evidence.</sub>
+</div>
+
+<table>
+<tr>
+<td width="25%" align="center" valign="top">🗣️<br><b>One sentence</b><br><sub>The direct answer first, never a wall of text</sub></td>
+<td width="25%" align="center" valign="top">📊<br><b>A small picture</b><br><sub>Bars, a chain of systems, a table or a timeline, drawn from the same data</sub></td>
+<td width="25%" align="center" valign="top">🔗<br><b>The evidence</b><br><sub>Buttons that open the exact record the answer came from</sub></td>
+<td width="25%" align="center" valign="top">➡️<br><b>Four next questions</b><br><sub>Keep going with one click; <i>"why?"</i> works too</sub></td>
+</tr>
+</table>
+
+> Every page has its own **Ask Florome** helper with four starting questions. It answers **only from Florome's own records**, read at the moment you ask, and says *"I can't answer that"* rather than guessing. It's rule-based, not an AI chatbot. [More below ↓](#-ask-florome-questions-in-plain-english)
+
+---
+
+## 🎬 Then see the whole product (one minute of GIFs)
 
 > **New to this?** You don't need to know anything about programming to read this page. Watch the clips first. Every technical word is explained in plain English the first time it appears, and again in the [glossary](#-glossary-every-technical-word-in-plain-english) at the bottom.
 
@@ -47,12 +69,6 @@
 <td width="50%" valign="top" align="center">
 <img src="docs/readme/containment.gif" alt="Misbehaving AI helpers being stopped" width="100%"><br>
 <b>④ Rogue AI helpers, stopped</b><br><sub>Small AI programs try to steal a key, phone home or open a back door. Each is stopped on its first bad move.</sub>
-</td>
-</tr>
-<tr>
-<td colspan="2" valign="top" align="center">
-<img src="docs/readme/assistant.gif" alt="Asking Florome questions in plain English and getting visual answers" width="80%"><br>
-<b>⑦ Ask Florome</b><br><sub>Every page has a helper you can ask in plain English. Each answer is one sentence, a small chart and links to the evidence, with four suggested next questions. It answers only from Florome's own records.</sub>
 </td>
 </tr>
 <tr>
@@ -488,9 +504,7 @@ Companies increasingly let small AI programs ("agents") do jobs on their behalf.
 
 ## 💬 Ask Florome: questions in plain English
 
-<div align="center">
-<img src="docs/readme/assistant.gif" alt="Asking questions on the RCA page" width="100%">
-</div>
+*(The clip at the [top of this page](#-just-ask) shows it in action.)*
 
 Every main page has an **"Ask Florome"** button at the bottom right. Press it and a side panel opens with **four starting questions picked for that page**, e.g. on the investigation page *"What caused the incident?"*, *"Which explanations were ruled out?"*, *"Where is the evidence weakest?"*, *"Show the timeline of events"*. You can also type your own question.
 
