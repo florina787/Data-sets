@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="t d">
+  <title id="t">Conversation Intelligence Copilot</title>
+  <desc id="d">Agentic, evidence-first analytics for contact-centre conversations: router, analytics, evidence and QA agents.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="0.55" stop-color="#151a3a"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#94a3b8" fill-opacity="0.12"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <rect width="1280" height="320" rx="18" fill="url(#bg)"/>
+  <rect width="1280" height="320" rx="18" fill="url(#dots)"/>
+  <rect width="1280" height="320" rx="18" fill="url(#glow)"/>
+
+  <g font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif">
+    <text x="64" y="96" fill="#a5b4fc" font-size="15" font-weight="600" letter-spacing="3">AGENTIC CONVERSATION ANALYTICS</text>
+    <text x="64" y="150" fill="#f8fafc" font-size="44" font-weight="700">Conversation Intelligence</text>
+    <text x="64" y="200" fill="url(#accent)" font-size="44" font-weight="700">Copilot</text>
+    <text x="64" y="240" fill="#cbd5e1" font-size="18">Ask a question in plain language. Agents compute the numbers,</text>
+    <text x="64" y="266" fill="#cbd5e1" font-size="18">cite the conversations, and check the answer before you see it.</text>
+
+    <!-- agent pipeline motif -->
+    <g font-size="13" font-weight="600" text-anchor="middle">
+      <line x1="806" y1="110" x2="884" y2="110" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <line x1="986" y1="110" x2="1064" y2="110" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <line x1="1116" y1="136" x2="1116" y2="184" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <line x1="1064" y1="210" x2="986" y2="210" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"/>
+      <line x1="884" y1="210" x2="806" y2="210" stroke="#64748b" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+      <rect x="706" y="86" width="100" height="48" rx="12" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+      <text x="756" y="107" fill="#e0e7ff">Zero-LLM</text><text x="756" y="124" fill="#e0e7ff">router</text>
+      <rect x="886" y="86" width="100" height="48" rx="12" fill="#1e293b" stroke="#818cf8" stroke-width="1.5"/>
+      <text x="936" y="107" fill="#e0e7ff">Supervisor</text><text x="936" y="124" fill="#94a3b8" font-weight="500">plan</text>
+      <rect x="1066" y="86" width="100" height="48" rx="12" fill="#1e293b" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="1116" y="107" fill="#cffafe">DuckDB</text><text x="1116" y="124" fill="#94a3b8" font-weight="500">analytics</text>
+      <rect x="1066" y="186" width="100" height="48" rx="12" fill="#1e293b" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="1116" y="207" fill="#cffafe">FAISS</text><text x="1116" y="224" fill="#94a3b8" font-weight="500">evidence</text>
+      <rect x="886" y="186" width="100" height="48" rx="12" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+      <text x="936" y="207" fill="#d1fae5">QA +</text><text x="936" y="224" fill="#d1fae5">challenger</text>
+      <rect x="706" y="186" width="100" height="48" rx="12" fill="#1e293b" stroke="#34d399" stroke-width="1.5"/>
+      <text x="756" y="207" fill="#d1fae5">Answer</text><text x="756" y="224" fill="#94a3b8" font-weight="500">+ replay</text>
+    </g>
+    <text x="706" y="276" fill="#64748b" font-size="13">LangGraph · DuckDB · FAISS · MiniLM + LSA · FastAPI · React</text>
+  </g>
+</svg>

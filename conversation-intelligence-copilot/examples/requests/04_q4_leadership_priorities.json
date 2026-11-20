@@ -1,0 +1,14 @@
+[
+  {
+    "question": "Which recurring customer concerns should contact-centre leadership review first?",
+    "session_id": null
+  },
+  {
+    "question": "Why was this concern ranked first?",
+    "session_id": "<from previous response>"
+  },
+  {
+    "question": "Which findings are uncertain?",
+    "session_id": "<from previous response>"
+  }
+]

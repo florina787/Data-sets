@@ -1,0 +1,164 @@
+[
+  {
+    "q": "Hi, how are you?",
+    "ms": 110.4,
+    "route": "fast_path",
+    "category": "general_chat",
+    "ops": [],
+    "model_calls": 0,
+    "source": "template",
+    "qa": "pass 2/2",
+    "headline": "I'm running normally and ready to help.",
+    "answer": "I'm software, so I don't have feelings, but everything is working. I analyse the 3,000 customer-support conversations in this dataset. I can rank complaints and the topics most associated with negative sentiment, show the top positive or negative statements customers wrote, trace how sentiment changed in a conversation, review empathy and communication signals for coaching, prioritise recurring co",
+    "gov": [],
+    "ground": "Conversation (no analysis)"
+  },
+  {
+    "q": "What are the top 5 positive statements from users?",
+    "ms": 309.0,
+    "route": "analytics_only",
+    "category": "top_statements",
+    "ops": [
+      "top_statements"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "pass 15/15",
+    "headline": "Only 2 distinct positive statements appear in customer messages in all dates.",
+    "answer": "1. \u201cGot it. I\u2019ve retried, and it works now.\u201d (3117 mentions in 2021 conversations). 2. \u201cThanks, that helps.\u201d (3068 mentions in 1988 conversations). Overall, 28.6% of customer messages are positive. Only 2 distinct positive customer statements exist in scope, so 2 are shown rather than 5. The dataset is generated from message templates, so customers repeat a small set of phrasings.",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "What are the top 5 negative statements from users?",
+    "ms": 268.4,
+    "route": "analytics_only",
+    "category": "top_statements",
+    "ops": [
+      "top_statements"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "warn 14/15",
+    "headline": "The 5 most common negative statements customers made in all dates.",
+    "answer": "1. \u201cStill not fixed. Can you escalate?\u201d (3208 mentions in 2068 conversations). 2. \u201cThoda jaldi please, flight in 2 hours.\u201d (3114 mentions in 2002 conversations). 3. \u201cIt\u2019s urgent. Please expedite.\u201d (2989 mentions in 1960 conversations). 4. \u201cI can\u2019t log in. It says account locked.\u201d (304 mentions in 304 conversations). 5. \u201cHello, my Refund is not working as expected.\u201d (21 mentions in 21 conversations",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "What was the most positive statement?",
+    "ms": 194.1,
+    "route": "analytics_only",
+    "category": "top_statements",
+    "ops": [
+      "top_statements"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "pass 15/15",
+    "headline": "The strongest positive statement customers made in all dates.",
+    "answer": "1. \u201cGot it. I\u2019ve retried, and it works now.\u201d (3117 mentions in 2021 conversations). Overall, 28.6% of customer messages are positive.",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "What are the top 5 complaints?",
+    "ms": 214.9,
+    "route": "analytics_only",
+    "category": "negative_topics",
+    "ops": [
+      "rank_negative_topics",
+      "sentiment_distribution",
+      "sentiment_trend"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "warn 15/16",
+    "headline": "Top negative topics in all dates: General help request, Duplicate charge, Item or service not received, Paid but service not delivered, Feature not working.",
+    "answer": "1004 of 3000 conversations in all dates were negative (33.5%). Ranked by number of negative conversations, the top 5 topics are General help request (163), Duplicate charge (140), Item or service not received (132), Paid but service not delivered (125), Feature not working (117). General help request accounts for 16.2% of negative conversations. By negative rate rather than count, Item or service ",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "What percentage of conversations are negative?",
+    "ms": 121.7,
+    "route": "analytics_only",
+    "category": "sentiment_distribution",
+    "ops": [
+      "sentiment_distribution"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "warn 10/11",
+    "headline": "33.5% of conversations in all dates are negative.",
+    "answer": "Of 3000 conversations: negative 1004 (33.5%), mixed 1747 (58.2%), neutral 5 (0.2%), positive 244 (8.1%). Most conversations are mixed because customers typically express both urgency or frustration and thanks within the same conversation.",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "Compare sentiment this month vs last month",
+    "ms": 95.0,
+    "route": "analytics_only",
+    "category": "sentiment_trend",
+    "ops": [
+      "sentiment_trend"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "pass 11/11",
+    "headline": "Negative sentiment was 35.2% in 2025-11, up from 33.6% in 2025-10.",
+    "answer": "Monthly negative rate: 2025-08 33.2% of 788; 2025-09 32.0% of 750; 2025-10 33.6% of 780; 2025-11 35.2% of 682.",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "Which recurring customer concerns should leadership review first?",
+    "ms": 341.9,
+    "route": "analytics_only",
+    "category": "leadership_priorities",
+    "ops": [
+      "leadership_priorities",
+      "sentiment_trend",
+      "resolution_quality"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "pass 15/15",
+    "headline": "Leadership should review Item or service not received first (priority score 67.1), then Coupon not applying, Duplicate charge.",
+    "answer": "Across 3000 conversations (all dates), Item or service not received ranks first. Item or service not received: 338 conversations (11% of scope), 39% negative, 54% end unresolved, 53% closing actions misfit the issue. Stands out most on negative rate relative to the other concerns; that signal contributes 25.0 of its 67.1 priority points. Suggested action: Run a root-cause review of negative conver",
+    "gov": [
+      "human_review:required"
+    ],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "Why is duplicate charge so negative?",
+    "ms": 810.3,
+    "route": "hybrid_ai",
+    "category": "root_cause",
+    "ops": [
+      "root_cause_investigation"
+    ],
+    "model_calls": 0,
+    "source": "deterministic",
+    "qa": "pass 14/14",
+    "headline": "In Duplicate charge, negative sentiment is most strongly associated with: replies to negative turns rarely acknowledge frustration.",
+    "answer": "140 of 362 Duplicate charge conversations in all dates were negative (38.7%). Candidate drivers (association, not proof of cause): Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%): 43% negative with it vs 25% without (n=269 vs 93, p=0.0014). In 100% of the negative conversations with this behaviour it occurs before the customer's last negative message, whi",
+    "gov": [],
+    "ground": "Grounded 100%"
+  },
+  {
+    "q": "What is LangGraph?",
+    "ms": 11783.4,
+    "route": "hybrid_ai",
+    "category": "unsupported",
+    "ops": [],
+    "model_calls": 1,
+    "source": "general_knowledge",
+    "qa": "pass 10/10",
+    "headline": "LangGraph is a visualization tool for analyzing conversation trajectories.",
+    "answer": "Model's own answer, not from the dataset. LangGraph is a tool used to visualize conversation trajectories, allowing analysts to identify patterns and trends in the flow of conversations. It helps in understanding the structure and dynamics of interactions between agents and customers.",
+    "gov": [],
+    "ground": "Not from dataset \u00b7 unverified"
+  }
+]

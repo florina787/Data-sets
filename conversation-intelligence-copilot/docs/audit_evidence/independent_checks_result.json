@@ -1,0 +1,293 @@
+{
+ "label_join_missing": 0,
+ "q1": {
+  "last_month_independent": "2025-11",
+  "app_window": "November 2025",
+  "conversations_in_month": 682,
+  "negative_in_month": 239,
+  "top5_independent": [
+   [
+    "General help request",
+    49,
+    156
+   ],
+   [
+    "Duplicate charge",
+    42,
+    87
+   ],
+   [
+    "Paid but service not delivered",
+    30,
+    75
+   ],
+   [
+    "Feature not working",
+    28,
+    76
+   ],
+   [
+    "Login / account locked",
+    24,
+    58
+   ]
+  ],
+  "top5_app": [
+   [
+    "General help request",
+    49,
+    156
+   ],
+   [
+    "Duplicate charge",
+    42,
+    87
+   ],
+   [
+    "Paid but service not delivered",
+    30,
+    75
+   ],
+   [
+    "Feature not working",
+    28,
+    76
+   ],
+   [
+    "Login / account locked",
+    24,
+    58
+   ]
+  ],
+  "match": true,
+  "rank5_tie_check": [
+   [
+    "Login / account locked",
+    24
+   ],
+   [
+    "Coupon not applying",
+    23
+   ],
+   [
+    "Item or service not received",
+    23
+   ]
+  ]
+ },
+ "q2": {
+  "negative_turns_with_reply": 10966,
+  "empathic_replies": 3215,
+  "assessable_resolutions": 2338,
+  "misfit_resolutions": 1340,
+  "agents": 2987,
+  "max_conversations_per_agent": 2,
+  "agents_with_3plus": 0,
+  "top3_queue_independent": [
+   "C0006890",
+   "C0009233",
+   "C0002671"
+  ],
+  "app_answer_excerpt": "3215 of 10966 negative customer turns were followed by an empathetic agent reply (29.3%), and 1340 of 2338 assessable closing actions did not fit the customer's issue (57.3%). Highest-priority conversations for a coaching review: C0006890 (AgentHLKJ, Paid but service not delivered: 7 negative customer turns, 0 acknowledged); C0009233 (AgentCLKH, General help request: 7 negative customer turns, 0 a",
+  "repeated_phrases": {
+   "conversations_with_repeat_independent": 2727,
+   "db_column_with_repeat": 2727,
+   "rows_disagreeing": 0,
+   "original_conversations": 3000
+  }
+ },
+ "q3": {
+  "conversation_exists_in_raw": true,
+  "raw_messages": 13,
+  "customer_messages": 7,
+  "clean_text_is_prefix_of_raw_text": true,
+  "turn_order_from_turn_index": true,
+  "timestamps_monotonic_in_raw": false,
+  "turning_points_independent": [
+   [
+    2,
+    1.6
+   ],
+   [
+    4,
+    -1.6
+   ],
+   [
+    8,
+    1.4
+   ],
+   [
+    10,
+    -0.8
+   ],
+   [
+    12,
+    -1.0
+   ]
+  ],
+  "app_trajectory_points": [
+   [
+    0,
+    -0.6
+   ],
+   [
+    2,
+    1.0
+   ],
+   [
+    4,
+    -0.6
+   ],
+   [
+    6,
+    -0.6
+   ],
+   [
+    8,
+    0.8
+   ],
+   [
+    10,
+    0.0
+   ],
+   [
+    12,
+    -1.0
+   ]
+  ],
+  "independent_customer_scores": [
+   [
+    0,
+    -0.6
+   ],
+   [
+    2,
+    1.0
+   ],
+   [
+    4,
+    -0.6
+   ],
+   [
+    6,
+    -0.6
+   ],
+   [
+    8,
+    0.8
+   ],
+   [
+    10,
+    0.0
+   ],
+   [
+    12,
+    -1.0
+   ]
+  ],
+  "evidence_message_ids": [
+   "C0000479-T00",
+   "C0000479-T01",
+   "C0000479-T02",
+   "C0000479-T03",
+   "C0000479-T04",
+   "C0000479-T05",
+   "C0000479-T06",
+   "C0000479-T07",
+   "C0000479-T08",
+   "C0000479-T09",
+   "C0000479-T10",
+   "C0000479-T11",
+   "C0000479-T12"
+  ],
+  "trajectory_match": true
+ },
+ "q4": {
+  "independent_ranking": [
+   [
+    "Item or service not received",
+    67.1,
+    338
+   ],
+   [
+    "Coupon not applying",
+    60.3,
+    331
+   ],
+   [
+    "Duplicate charge",
+    59.8,
+    362
+   ],
+   [
+    "Paid but service not delivered",
+    53.4,
+    335
+   ],
+   [
+    "General help request",
+    39.0,
+    662
+   ],
+   [
+    "Login / account locked",
+    37.2,
+    304
+   ],
+   [
+    "Feature not working",
+    32.6,
+    344
+   ],
+   [
+    "App crash",
+    27.7,
+    324
+   ]
+  ],
+  "app_ranking": [
+   [
+    "Item or service not received",
+    67.1,
+    338
+   ],
+   [
+    "Coupon not applying",
+    60.3,
+    331
+   ],
+   [
+    "Duplicate charge",
+    59.8,
+    362
+   ],
+   [
+    "Paid but service not delivered",
+    52.9,
+    335
+   ],
+   [
+    "General help request",
+    39.0,
+    662
+   ],
+   [
+    "Login / account locked",
+    37.2,
+    304
+   ],
+   [
+    "Feature not working",
+    32.6,
+    344
+   ],
+   [
+    "App crash",
+    27.7,
+    324
+   ]
+  ],
+  "order_match": true,
+  "max_score_diff": 0.5
+ }
+}

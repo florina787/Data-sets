@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Standalone copy of no-llm-required.html for GitHub Pages (the artifact version omits the document skeleton). -->
+<title>No LLM Required</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column (≈ 68ch) with wide "figure" blocks that break out to 960px; computed numbers wear a marker highlight. */
+:root {
+  --paper: #f6f7f4;
+  --paper-2: #ecefea;
+  --ink: #15212b;
+  --ink-2: #44525e;
+  --ink-3: #6b7781;
+  --rule: #d5dad3;
+  --accent: #0d6b74;
+  --accent-ink: #ffffff;
+  --marker: #ffe58a;
+  --marker-ink: #15212b;
+  --warn: #b4441c;
+  --good: #1a7a4c;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --node: #ffffff;
+  --code-bg: #e7ebe5;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #11171c; --paper-2: #182128; --ink: #e6ebee; --ink-2: #b3bfc7; --ink-3: #8794a0; --rule: #2a353d;
+  --accent: #4fb8c2; --accent-ink: #0b1215; --marker: #6b5a12; --marker-ink: #fff6cf; --warn: #f08a5d; --good: #5fcf96;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --node: #1b252c; --code-bg: #1d282f; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #11171c; --paper-2: #182128; --ink: #e6ebee; --ink-2: #b3bfc7; --ink-3: #8794a0; --rule: #2a353d;
+  --accent: #4fb8c2; --accent-ink: #0b1215; --marker: #6b5a12; --marker-ink: #fff6cf; --warn: #f08a5d; --good: #5fcf96;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --node: #1b252c; --code-bg: #1d282f; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 400 1.125rem/1.7 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+main { max-width: 960px; margin: 0 auto; }
+.col { max-width: 68ch; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; color: var(--ink); line-height: 1.12; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 800; letter-spacing: -0.02em; margin: 0.2em 0 0.3em; }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 700; margin: 2.4em 0 0.5em; letter-spacing: -0.01em; }
+h3 { font-size: 1.2rem; font-weight: 700; margin: 1.6em 0 0.4em; }
+p { margin: 0 0 1.1em; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kicker { font: 600 0.78rem/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.dek { font-size: 1.3rem; line-height: 1.5; color: var(--ink-2); margin-bottom: 1.4em; }
+.byline { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; font: 0.9rem/1.4 var(--mono); color: var(--ink-3);
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 12px 0; margin-bottom: 2em; }
+.byline strong { color: var(--ink); font-weight: 600; }
+.gh { margin-left: auto; display: inline-flex; gap: 8px; align-items: center; background: var(--ink); color: var(--paper); text-decoration: none;
+  padding: 8px 14px; border-radius: 6px; font: 600 0.85rem/1 var(--mono); }
+.gh svg { width: 16px; height: 16px; fill: currentColor; }
+header.hero { padding-top: 56px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+:not(pre) > code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--code-bg); padding: 16px; border-radius: 8px; overflow-x: auto; font: 0.85rem/1.6 var(--mono); margin: 0 0 1.2em; }
+blockquote { margin: 1.4em 0; padding: 4px 0 4px 20px; border-left: 3px solid var(--accent); color: var(--ink-2); font-style: italic; }
+ul, ol { padding-left: 1.3em; margin: 0 0 1.1em; } li { margin-bottom: 0.35em; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 3em 0; }
+
+/* Computed numbers: marker highlight + provenance tooltip */
+.n { background: linear-gradient(transparent 55%, var(--marker) 55%); color: inherit; font-variant-numeric: tabular-nums; cursor: help;
+  position: relative; border: 0; padding: 0 1px; font: inherit; font-weight: 600; }
+.n:hover, .n:focus { background: var(--marker); color: var(--marker-ink); outline: none; }
+#tip { position: fixed; z-index: 20; max-width: 300px; background: var(--ink); color: var(--paper); font: 0.78rem/1.45 var(--mono);
+  padding: 8px 10px; border-radius: 6px; pointer-events: none; box-shadow: 0 6px 24px rgb(0 0 0 / 0.2); }
+.legend-note { font: 0.8rem/1.5 var(--mono); color: var(--ink-3); }
+
+/* Figures */
+figure { margin: 2.2em 0; }
+.fig { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 12px; padding: clamp(16px, 3vw, 28px); }
+.fig h3 { margin-top: 0; }
+figcaption { font: 0.82rem/1.5 var(--mono); color: var(--ink-3); margin-top: 10px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+.chip { font: 600 0.78rem/1 var(--mono); padding: 8px 11px; border-radius: 999px; border: 1px solid var(--rule); background: var(--node);
+  color: var(--ink-2); cursor: pointer; text-align: left; }
+.chip:hover { border-color: var(--accent); color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+svg text { fill: var(--ink-2); font-family: var(--mono); font-size: 12px; }
+
+/* Router lab */
+.lab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .lab { grid-template-columns: minmax(0, 1fr); } }
+.ask { display: flex; gap: 8px; margin-bottom: 10px; }
+.ask input { flex: 1; min-width: 0; font: 1rem/1.3 var(--body); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--rule);
+  background: var(--node); color: var(--ink); }
+.ask button, .btn { font: 600 0.85rem/1 var(--mono); padding: 10px 14px; border-radius: 8px; border: 0; background: var(--accent);
+  color: var(--accent-ink); cursor: pointer; }
+.toggle { display: flex; align-items: center; gap: 8px; font: 0.8rem/1.3 var(--mono); color: var(--ink-2); margin: 6px 0 12px; }
+.cascade { display: grid; gap: 8px; }
+.step { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--rule); background: var(--node); opacity: 0.55; transition: opacity .25s, border-color .25s; }
+.step .dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 600 0.75rem/1 var(--mono);
+  background: var(--paper-2); color: var(--ink-3); }
+.step b { font-family: var(--display); font-weight: 700; display: block; font-size: 0.98rem; }
+.step small { font: 0.78rem/1.4 var(--mono); color: var(--ink-3); display: block; }
+.step.pass { opacity: 0.9; }
+.step.pass .dot { background: var(--paper-2); color: var(--ink-2); }
+.step.hit { opacity: 1; border-color: var(--accent); }
+.step.hit .dot { background: var(--accent); color: var(--accent-ink); }
+.verdict { border-radius: 10px; padding: 16px; background: var(--node); border: 1px solid var(--rule); }
+.verdict .route { font: 800 1.5rem/1.1 var(--display); margin: 4px 0 8px; }
+.verdict dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font: 0.8rem/1.45 var(--mono); margin: 12px 0 0; }
+.verdict dt { color: var(--ink-3); } .verdict dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.pill { display: inline-block; font: 600 0.72rem/1 var(--mono); padding: 5px 8px; border-radius: 999px; }
+.pill.zero { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+.pill.some { background: color-mix(in srgb, var(--s2) 18%, transparent); color: var(--s2); }
+.pill.stop { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+
+/* Pipeline */
+.pipe { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 760px) { .pipe { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.stage { border: 1px solid var(--rule); border-radius: 10px; background: var(--node); padding: 12px; }
+.stage h4 { margin: 0 0 8px; font: 700 0.8rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+.node { display: block; width: 100%; text-align: left; font: 600 0.88rem/1.3 var(--display); padding: 8px 10px; margin-bottom: 6px; border-radius: 6px;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.node:hover { border-color: var(--accent); }
+.node[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.node.llm { border-style: dashed; }
+.detail { margin-top: 14px; padding: 14px 16px; border-radius: 10px; background: var(--node); border: 1px solid var(--rule); min-height: 92px; }
+.detail b { font-family: var(--display); }
+.detail p { margin: 6px 0 0; font-size: 1rem; }
+.detail .mono { color: var(--ink-3); font-size: 0.78rem; }
+
+/* Challenges */
+.challenge { border-top: 1px solid var(--rule); padding-top: 4px; }
+.challenge summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: 3.2em minmax(0, 1fr) auto 1.2em; gap: 12px; align-items: baseline; padding: 14px 0; }
+.challenge summary::-webkit-details-marker { display: none; }
+.challenge summary .no { font: 600 0.8rem/1 var(--mono); color: var(--accent); }
+.challenge summary .t { font: 700 1.15rem/1.3 var(--display); }
+.challenge summary .tag { font: 0.72rem/1 var(--mono); color: var(--ink-3); white-space: nowrap; }
+.challenge summary::after { content: "+"; font: 600 1.1rem/1 var(--mono); color: var(--ink-3); grid-column: 4; grid-row: 1; justify-self: end; }
+.challenge[open] summary::after { content: "−"; }
+.challenge .body { padding: 0 0 18px 3.2em; }
+@media (max-width: 560px) { .challenge .body { padding-left: 0; } .challenge summary { grid-template-columns: 2.4em minmax(0, 1fr) 1.2em; } .challenge summary .tag { display: none; } .challenge summary::after { grid-column: 3; } }
+.labels { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; font-size: 1rem; margin: 0 0 1em; }
+.labels dt { font: 600 0.75rem/1.9 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); }
+.labels dd { margin: 0; }
+
+/* Float lab */
+.floatlab { display: grid; gap: 10px; }
+.scores { display: flex; flex-wrap: wrap; gap: 6px; }
+.score { font: 600 0.85rem/1 var(--mono); padding: 8px 10px; border-radius: 6px; background: var(--node); border: 1px solid var(--rule); }
+.score.neg { color: var(--warn); } .score.pos { color: var(--good); }
+.out { font: 0.9rem/1.6 var(--mono); background: var(--node); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+.out .bad { color: var(--warn); font-weight: 600; } .out .ok { color: var(--good); font-weight: 600; }
+
+/* Stat strip */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; margin: 2em 0; }
+@media (max-width: 640px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stats div { background: var(--paper); padding: 16px; }
+.stats b { display: block; font: 800 1.9rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.stats span { font: 0.78rem/1.4 var(--mono); color: var(--ink-3); }
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+th { font: 600 0.75rem/1.3 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+td.r, th.r { text-align: right; }
+.tablewrap { overflow-x: auto; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.end { text-align: center; padding: 28px; border: 1px solid var(--rule); border-radius: 12px; background: var(--paper-2); }
+.end .gh { margin: 8px auto 0; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+<header class="hero col">
+  <div class="kicker">Engineering notes · Conversation analytics</div>
+  <h1>No LLM required</h1>
+  <p class="dek">How I built an AI copilot that answers contact-centre questions over 3,000 customer conversations, and still gives the right answer with the language model switched off.</p>
+  <div class="byline">
+    <span>By <strong>Florina</strong></span>
+    <span>~18 min read</span>
+    <span>Interactive: try the router, break a float, rank the topics</span>
+    <a class="gh" href="https://github.com/florina787/Data-sets/tree/claude/happy-edison-gef7ay/conversation-intelligence-copilot" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View the code on GitHub</a>
+  </div>
+</header>
+
+<article>
+<div class="col">
+<p>A contact-centre analyst asks a simple question: <em>which topics drove negative sentiment last month?</em> The tempting build is to hand the transcripts to a large language model and print whatever comes back. It reads well. It might also be wrong, in ways no one notices until a leadership deck goes out with a number that never existed.</p>
+<p>I have shipped enough analytics to distrust that build. A wrong number in a dashboard is worse than no dashboard, because people act on it. So I built the opposite. The <strong>Conversation Intelligence Copilot</strong> is an agentic analytics assistant for customer-support conversations. A LangGraph workflow plans the analysis, runs registered DuckDB queries, retrieves the transcripts behind each finding, explains the result and then audits its own answer before you see it. A language model is optional. The four questions this project was built around are answered with <button class="n" data-src="Zero-LLM router · model calls recorded per request">zero</button> model calls.</p>
+<p>This article covers how it works, the decisions behind it, and the problems that nearly sank it. Numbers with a <span class="n" style="cursor:default">yellow marker</span> were computed by the system; hover or tap one to see which operation produced it.</p>
+</div>
+
+<div class="stats" role="list">
+  <div role="listitem"><b><button class="n" data-src="dataset_manifest.json · conversations ingested">3,000</button></b><span>conversations, 41,965 messages</span></div>
+  <div role="listitem"><b><button class="n" data-src="intent routing benchmark · frozen 73-question test split, scored once">95.9%</button></b><span>intent routing, held out</span></div>
+  <div role="listitem"><b><button class="n" data-src="evaluation_results.json · latency of the deterministic path, local CPU">125 ms</button></b><span>median answer time</span></div>
+  <div role="listitem"><b><button class="n" data-src="no hosted model; local Qwen2.5-1.5B is optional">$0</button></b><span>to run, model included</span></div>
+</div>
+
+<div class="col">
+<h2>The rule that shaped everything</h2>
+<p>Before writing any code I wrote one rule and let it decide every later trade-off: <strong>numbers are computed, never generated.</strong> I wrote it down because I knew I would be tempted later, at the point where a model "almost" gets a count right and it would be so much faster to let it.</p>
+<p>Every count, rate and rank comes from one of <button class="n" data-src="query_registry.py · registered operations">15</button> registered, parameterised DuckDB operations. The model never writes SQL. It never sees a number it could change, because the explanation step is checked afterwards: if the text contains a figure that is not in the verified result, the explanation is thrown away and a deterministic one is used instead.</p>
+<p>Once that rule was in place, a second question followed naturally. If the model cannot contribute facts, when is it worth calling at all? I spent more time on that question than on any single feature.</p>
+
+<h2>Try the router</h2>
+<p>The answer is the <strong>Zero-LLM router</strong>. Before any model is involved, a cascade of cheap, high-precision checks decides what the question is and whether a model would add anything. Type a question below, or pick one. The lab is a simplified copy of the rule stage, running in your browser.</p>
+</div>
+
+<figure class="fig" aria-label="Router lab">
+  <h3>Router lab</h3>
+  <div class="lab">
+    <div>
+      <form class="ask" id="askForm">
+        <label for="q" class="sr">Question</label>
+        <input id="q" autocomplete="off" value="What were the top 5 topics associated with negative sentiment last month?">
+        <button type="submit">Route</button>
+      </form>
+      <div class="controls" id="presets"></div>
+      <label class="toggle"><input type="checkbox" id="llm" checked> Local model downloaded (Qwen2.5-1.5B)</label>
+      <div class="cascade" id="cascade"></div>
+    </div>
+    <div class="verdict" id="verdict" aria-live="polite"></div>
+  </div>
+  <figcaption>Simplified port of <code>agents/intent_rules.py</code> and <code>agents/router.py</code>; the real router has more rules, entity extraction and a calibrated semantic stage.</figcaption>
+</figure>
+
+<div class="col">
+<p>Most analytical questions stop at the second step. A rule recognises the intent, the registered operations compute the full answer, and a model would only add cost and latency. The model is called in two situations. One is when no rule can route the question with high precision. The other is when the question asks for interpretation (<em>why</em>, <em>explain</em>, <em>recommend</em>). Even then it only picks a category from a closed list, or phrases an explanation of numbers that were already computed.</p>
+<p>Policy checks run first and always win. Questions that need data the dataset does not have (revenue, CSAT, handle time) or that ask for a personnel decision are refused deterministically. No model is needed to say no.</p>
+
+<h2>The whole system, one stage at a time</h2>
+<p>Every box below is a real LangGraph node. In the app, the nodes light up live as a request runs, and a <strong>Decision Replay</strong> panel lets you step back through them afterwards. Click a node to see what it does.</p>
+</div>
+
+<figure class="fig" aria-label="Agent pipeline">
+  <div class="pipe" id="pipe"></div>
+  <div class="detail" id="detail" aria-live="polite"></div>
+  <figcaption>Dashed: the only node that can call a model, and only when the router allows it.</figcaption>
+</figure>
+
+<div class="col">
+<p>Three choices in this graph matter more than the rest.</p>
+<ul>
+  <li><strong>The supervisor plans, it does not compute.</strong> It resolves the time window and any references to earlier answers, then picks registered operations. The analytics layer accepts nothing else.</li>
+  <li><strong>Retrieval runs in parallel, and only illustrates.</strong> Hybrid search finds real transcripts for the top-ranked result. It never produces a number.</li>
+  <li><strong>Verification is a stage, not an afterthought.</strong> The QA agent and the Evidence Challenger run on every answer. More on the Challenger below, because it caught me out.</li>
+</ul>
+
+<h2>Question one, answered</h2>
+<p>The first assignment question asks for the top 5 topics associated with negative sentiment in the last month. "Last month" turned out to be the first trap. The data spans August to early December 2025, so last month means the latest month in the data, not today's calendar. In November 2025, <button class="n" data-src="rank_negative_topics · window = last_month (Nov 2025)">240</button> of <button class="n" data-src="rank_negative_topics · conversations in scope">682</button> conversations were negative.</p>
+</div>
+
+<figure class="fig" aria-label="Negative topics in November 2025">
+  <h3>Negative conversations by topic, November 2025</h3>
+  <div class="controls" role="group" aria-label="Rank by">
+    <button class="chip" data-rank="count" aria-pressed="true">Rank by count</button>
+    <button class="chip" data-rank="rate" aria-pressed="false">Rank by rate (95% CI)</button>
+  </div>
+  <div id="q1chart" style="overflow-x:auto"></div>
+  <figcaption id="q1cap">Top 5 highlighted. Rank 5 is a tie at 24 negative conversations.</figcaption>
+</figure>
+
+<div class="col">
+<p>Toggle the chart and the ranking changes. By count, General help request leads because it has twice the volume of any other topic. By rate, Duplicate charge leads. The confidence intervals overlap heavily, and a chi-square test across topics gives p = <button class="n" data-src="rank_negative_topics · chi-square across topics">0.07</button>. A careful analyst would say all of that out loud, so the copilot does: the answer names the tie at rank 5, gives both rankings, and warns that small gaps are noise.</p>
+
+<h2>The challenges</h2>
+<p>None of what follows was in the brief. These are the problems that took the time, roughly in the order I hit them. Open any of them for the details.</p>
+</div>
+
+<div class="col" id="challenges">
+
+<details class="challenge" open>
+  <summary><span class="no">01</span><span class="t">A mean of exactly −0.25, according to a computer</span><span class="tag">labelling</span></summary>
+  <div class="body">
+    <p>A conversation counts as negative when the mean sentiment of its customer turns is −0.25 or lower. Conversation C0010797 has eight customer turns. Their mean is exactly −0.25 on paper. In floating point it is not.</p>
+    <div class="floatlab fig">
+      <div class="scores" id="scores"></div>
+      <div class="controls">
+        <button class="chip" id="runNaive" aria-pressed="true">Naive mean</button>
+        <button class="chip" id="runFixed" aria-pressed="false">Round to 9 decimals</button>
+      </div>
+      <div class="out" id="floatOut"></div>
+    </div>
+    <p>The naive mean lands a hair above the threshold, so the conversation was labelled not negative. It changed real answers: a leadership priority score moved from 52.9 to <button class="n" data-src="leadership_priorities · Paid but service not delivered">53.4</button> once fixed, and the November negative count went from 239 to <button class="n" data-src="rank_negative_topics · Nov 2025 negative conversations">240</button>.</p>
+    <p>I found it because one Q4 score in my audit was off by 0.5 and I refused to explain it away. The worse part: I had written an independent checker for the audit, to recompute answers from the raw CSV. It averaged with floats too, so it agreed with the bug. The evaluation oracle now uses exact fractions (<code>Fraction(str(score))</code>), and a regression test pins this exact score pattern.</p>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">02</span><span class="t">Timestamps that are not in turn order</span><span class="tag">data</span></summary>
+  <div class="body">
+    <p>In all <button class="n" data-src="data_quality_report.json · conversations with out-of-order timestamps">3,000</button> conversations, message timestamps do not follow the turn order. Sort by time and a conversation reads as nonsense: answers before questions, thanks before help.</p>
+    <dl class="labels"><dt>Decision</dt><dd>The turn index is authoritative. Each conversation is dated by its earliest message, and every trajectory answer says that the timestamps were not used for ordering.</dd></dl>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">03</span><span class="t">One agent per conversation makes coaching rankings unfair</span><span class="tag">analysis</span></summary>
+  <div class="body">
+    <p>Question two asks which agents may benefit from coaching. The data holds <button class="n" data-src="data_profile.json · distinct agent IDs">2,987</button> agent IDs for 3,000 conversations, with at most 2 conversations each. Any ranking of individual agents would rest on one or two transcripts.</p>
+    <dl class="labels">
+      <dt>Decision</dt><dd>Say so in the answer, and answer the useful version of the question instead. I would rather tell a team lead "the data cannot support this" than hand them a ranking that could cost someone their job on the strength of two chats.</dd>
+      <dt>Result</dt><dd>Workforce-level patterns (only <button class="n" data-src="coaching_signals · negative customer turns acknowledged">29.3%</button> of negative customer turns received an acknowledgement or apology), plus a review queue of conversations with evidence. Every coaching answer is flagged for human review, and requests for personnel decisions are refused.</dd>
+    </dl>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">04</span><span class="t">41,965 messages, 426 unique texts</span><span class="tag">labelling</span></summary>
+  <div class="body">
+    <p>The dataset is synthetic. Every message ends with random filler tokens, and once those are stripped there are only <button class="n" data-src="data_profile.json · unique cleaned message texts">426</button> distinct message templates. That sounds like a problem. It is also an opportunity.</p>
+    <dl class="labels">
+      <dt>Decision</dt><dd>Label the 426 templates with a documented rule set instead of labelling 41,965 messages with a model. Sentiment, empathy, courtesy and resolution fit are template-level judgements, written down in ASSUMPTIONS.md.</dd>
+      <dt>Trade-off</dt><dd>The labels are my judgement. The app includes a review panel for collecting human labels, and the evaluation says plainly that agreement with humans has not been measured yet.</dd>
+    </dl>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">05</span><span class="t">The hosted model key was blocked</span><span class="tag">LLM</span></summary>
+  <div class="body">
+    <p>My plan included a hosted model. The key I had during development returned <code>401 API_KEY_SERVICE_BLOCKED</code>. This became the most useful constraint of the project, because it forced the question: what does the product actually need a model for?</p>
+    <dl class="labels">
+      <dt>Decision</dt><dd>Make the model optional everywhere, and add a free local one: Qwen2.5-1.5B-Instruct (Q4_K_M, ≈ 1.1 GB) through llama.cpp on CPU.</dd>
+      <dt>Result</dt><dd>The app is fully functional with no model. With the local model, a warm routing call takes about a second. The first call after start-up measured <button class="n" data-src="intent routing results · cold start, idle 4-core CPU">8.7 s</button> on an idle CPU, and 30 to 55 seconds when other jobs were competing for it.</dd>
+    </dl>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">06</span><span class="t">A small model routing questions: 19% accurate</span><span class="tag">LLM</span></summary>
+  <div class="body">
+    <p>My first prompt asked the 1.5B model to classify questions into intents. On a frozen held-out test set it scored <button class="n" data-src="intent routing · Qwen only, old prompt, test split">19.2%</button>. Rewriting the prompt around a closed category list, enforced by a JSON-schema grammar, took it to <button class="n" data-src="intent routing · Qwen only, prompt 2.1, test split">58.9%</button>. Still not good enough to trust.</p>
+    <p>I could have kept tuning prompts. I decided against it, because a 1.5B model was never going to be reliable at the long tail, and every prompt tweak was a guess I could not verify without spending the test set. The fix was to stop asking the model to do the whole job. A confidence cascade (policy → high-precision rules → semantic match → vagueness guard → model → clarify) lets each stage answer only when it is sure. The chart shows the climb.</p>
+    <div class="fig"><div id="routechart" style="overflow-x:auto"></div>
+      <figcaption>Accuracy on 73 held-out questions, written before the router changed, frozen, and scored once.</figcaption></div>
+    <p>Two details I am proud of. The semantic-similarity stage was built and calibrated, and then <em>disabled by its own calibration</em>: no threshold reached 95% precision on validation, so it stays off. And the model is now called for only <button class="n" data-src="intent routing · LLM invocation rate, final router, test split">6.9%</button> of test questions.</p>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">07</span><span class="t">The Evidence Challenger corrected my own sentence</span><span class="tag">verification</span></summary>
+  <div class="body">
+    <p>The Evidence Challenger is an adversarial check that runs after the explanation is written. It re-reads every quoted excerpt from the database word for word, discloses samples under 30, states counter-evidence ("61% of Item-not-received conversations were not negative"), and rewrites causal wording as association.</p>
+    <p>When I added the tie disclosure to question one, I wrote that a topic was listed last <em>because of</em> the tie-breaker. The Challenger rewrote "because of" into "associated with" and mangled the sentence. It was doing its job; my wording was the problem. The sentence now reads "The tie-breaker (higher negative rate) lists Login / account locked".</p>
+    <p>Building it also exposed two real bugs. QA had been reporting "0 evidence items resolved" because the explanation node overwrote the evidence report. And a repeated-phrase detector always returned zero.</p>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">08</span><span class="t">Demo data quietly leaking into the real answers</span><span class="tag">data</span></summary>
+  <div class="body">
+    <p>For UI demos I generated 120 tagged synthetic conversations. They were loaded by default, so the dashboard showed 3,120 conversations against an assignment that supplied 3,000.</p>
+    <dl class="labels">
+      <dt>Decision</dt><dd>Demo data is opt-in (<code>ENABLE_SYNTHETIC_DEMO=true</code>). A default build holds only the supplied data.</dd>
+      <dt>Side effect</dt><dd>Removing it changed the lexical index's vocabulary, which moved retrieval scores. The evaluation reports the new numbers and explains the change, instead of keeping the old, slightly better ones.</dd>
+    </dl>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">09</span><span class="t">Retrieval that is honest about a small gain</span><span class="tag">retrieval</span></summary>
+  <div class="body">
+    <p>Retrieval indexes <button class="n" data-src="build_embeddings · 4-turn windows, overlap 2">18,639</button> four-turn chunks twice: once with MiniLM sentence embeddings and once with LSA (a lexical method). The two rankings are fused with weighted reciprocal rank fusion.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>36 paraphrased queries</th><th class="r">LSA</th><th class="r">MiniLM</th><th class="r">Hybrid</th></tr></thead>
+      <tbody>
+        <tr><td>Topic precision@5</td><td class="r">28.9%</td><td class="r">62.2%</td><td class="r"><b>62.8%</b></td></tr>
+        <tr><td>Exact precision@5</td><td class="r">28.9%</td><td class="r">56.1%</td><td class="r"><b>58.3%</b></td></tr>
+        <tr><td>Hit rate@5</td><td class="r">41.7%</td><td class="r">83.3%</td><td class="r"><b>86.1%</b></td></tr>
+      </tbody>
+    </table></div>
+    <p>The hybrid wins, but by little, and the fusion weight was tuned on these same queries. The evaluation says both things. A small honest gain is more useful to a reviewer than a large flattering one.</p>
+  </div>
+</details>
+
+<details class="challenge">
+  <summary><span class="no">10</span><span class="t">Token counts that do not lie</span><span class="tag">observability</span></summary>
+  <div class="body">
+    <p>Every answer shows its route, how the intent was resolved, and the tokens used. Getting the last one right took more care than expected.</p>
+    <ul>
+      <li>Tokens show as <code>0 (no model call)</code> only when no model was called.</li>
+      <li>When a provider returns no usage data, the UI shows <em>not reported</em>, never a fake zero.</li>
+      <li>Streaming usage is taken as the cumulative maximum, not summed across chunks, which had been double counting.</li>
+    </ul>
+  </div>
+</details>
+
+</div>
+
+<div class="col">
+<h2>What it does not do</h2>
+<p>An honest list, because these are the questions a reviewer should ask.</p>
+<ul>
+  <li><strong>It does not claim cause.</strong> The Root Cause Investigator reports tested associations with intervals, separates symptoms (a customer asking to escalate) from candidate drivers, and checks alternative explanations.</li>
+  <li><strong>It does not rank people on thin data.</strong> See challenge 03.</li>
+  <li><strong>It has not been validated against human labels.</strong> The routing benchmark is 73 questions written by the same person who wrote the rules. The 95.9% is indicative, and the remaining misroutes are listed in the repository.</li>
+  <li><strong>It is not production-hardened.</strong> There is no authentication or role-based access, and storage is single-node.</li>
+</ul>
+
+<h2>What I would keep</h2>
+<p>If I started again tomorrow, I would keep three habits.</p>
+<ol>
+  <li><strong>Write the rule before the code.</strong> "Numbers are computed, never generated" settled dozens of later decisions in advance.</li>
+  <li><strong>Make the model earn its call.</strong> A router that can say "no model needed" made the system faster, cheaper and easier to test. It also made the model's genuine contribution measurable: 90.4% without it, 95.9% with it.</li>
+  <li><strong>Check the checker.</strong> The float bug survived an independent recomputation because both used the same arithmetic. Exact fractions in the oracle cost one import.</li>
+</ol>
+
+<h2>Run it yourself</h2>
+<p>No API key, no hosted model. Python 3.12+ with <code>uv</code>, Node 22+ and <code>make</code>:</p>
+<pre id="cmd">git clone https://github.com/florina787/Data-sets.git
+cd Data-sets/conversation-intelligence-copilot
+git checkout claude/happy-edison-gef7ay
+cp .env.example .env
+make install && make prepare && make index
+make dev          # UI on http://localhost:5173</pre>
+<p><button class="btn" id="copy" type="button">Copy commands</button> <span class="legend-note" id="copied" aria-live="polite"></span></p>
+<p>Optional local model: <code>make install-local-llm && make llm-download</code>. VS Code users can open the folder and press F5 on the <em>Full stack</em> launch configuration.</p>
+</div>
+
+<div class="end col">
+  <p style="margin:0 0 6px"><strong>The code, the evaluation and every number in this article are in the repository.</strong></p>
+  <p class="legend-note" style="margin:0">github.com/florina787/Data-sets · conversation-intelligence-copilot</p>
+  <a class="gh" href="https://github.com/florina787/Data-sets/tree/claude/happy-edison-gef7ay/conversation-intelligence-copilot" target="_blank" rel="noopener">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    Open the repository</a>
+</div>
+</article>
+</main>
+<div id="tip" hidden></div>
+
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+  /* Provenance tooltips */
+  const tip = $("#tip");
+  const show = (t, x, y) => { tip.textContent = t; tip.hidden = false; const w = tip.offsetWidth, h = tip.offsetHeight;
+    tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x - w / 2)) + "px"; tip.style.top = (y - h - 10 < 8 ? y + 18 : y - h - 10) + "px"; };
+  const hide = () => { tip.hidden = true; };
+  document.querySelectorAll(".n[data-src]").forEach((b) => {
+    b.setAttribute("type", "button");
+    b.setAttribute("aria-label", b.textContent + ", computed by " + b.dataset.src);
+    const at = () => { const r = b.getBoundingClientRect(); show("computed · " + b.dataset.src, r.left + r.width / 2, r.top); };
+    b.addEventListener("mouseenter", at); b.addEventListener("focus", at); b.addEventListener("click", at);
+    b.addEventListener("mouseleave", hide); b.addEventListener("blur", hide);
+  });
+  addEventListener("scroll", hide, { passive: true });
+
+  /* Router lab: simplified port of intent_rules.py + router.py */
+  const R = {
+    unsupported: /revenue|profit|churn|lifetime value|\bltv\b|\bcsat\b|\bnps\b|satisfaction survey|handle time|\baht\b|salar|cost (of|to) (the )?business|lose money|how much money|resolution time|\bgender\b|\bage\b|ethnic|\brace\b|religio|weather|stock price|will (cancel|leave|churn)|\bfir(e|ed|ing)\b|terminat|dismiss|disciplin|\bsack(ed)?\b|punish|demot|\blaz(y|iest)\b|worst employee/i,
+    nonAnalytical: /\bpoem\b|\bjoke\b|\bsong\b|\bstory\b|recipe|api[ _-]?key|system prompt|password|credential|drop table|\bsql\b|reveal your/i,
+    interpretive: /\bwhy\b|\bexplain|interpret|recommend|what should|suggest|advi[cs]e|summari[sz]e|root cause|\bdrivers?\b|what is (causing|driving)|insight|implication/i,
+  };
+  const CONV = /\bC\d{7}\b/i;
+  const RULES = [
+    ["similar_conversations", (q) => /similar|more like|(conversations?|chats?|cases?) like\b/i.test(q)],
+    ["conversation_xray", (q) => CONV.test(q) && /x-?ray|what went wrong|went (badly|wrong)|diagnos/i.test(q)],
+    ["sentiment_trajectory", (q) => (CONV.test(q) && /sentiment|mood|trajectory|journey|change|turn|worse|better/i.test(q)) || (/selected conversation|this conversation|a conversation\b/i.test(q) && /sentiment|mood|feel|trajectory|over the course/i.test(q))],
+    ["root_cause", (q) => /root[- ]?cause|underlying cause|what (causes|is causing|drives|is driving)|what('s| is) behind|drivers? (of|behind)|why (are|is|do|does) .*(negative|unhappy|frustrat|complain|angry|upset|dissatisf)|investigate/i.test(q)],
+    ["agent_coaching", (q) => /coach|empath|training|soft[- ]skills|apologi[sz]|acknowledg|communication (skill|quality)/i.test(q) || /which (agents|reps|staff)/i.test(q)],
+    ["leadership_priorities", (q) => /leadership|review first|prioriti[sz]|priority|recurring (customer )?concern|biggest (issue|concern|problem)/i.test(q)],
+    ["compare", (q) => /compare|versus|\bvs\.?\b|difference between/i.test(q)],
+    ["sentiment_trend", (q) => /trend|over time|month[- ]over[- ]month|by month|monthly|rising|increas/i.test(q) && /sentiment|negativ|angr|positive|mood/i.test(q)],
+    ["negative_topics", (q) => /negative|unhappy|dissatisf|frustrat|angr|upset|complain|worst/i.test(q) && /topic|issue|problem|driver|reason|concern|product|categor|associated|where/i.test(q)],
+    ["find_examples", (q) => /example|chats? where|conversations? where|find (\w+ ){0,2}(conversations|chats|cases)/i.test(q)],
+    ["topic_volume", (q) => /most common|frequen|volume|top (topics|issues|products|reasons)|why do customers/i.test(q)],
+  ];
+  const STEPS = [
+    ["Policy check", "Data the dataset lacks, or a personnel decision?"],
+    ["High-precision rules", "Regex rules with entity extraction"],
+    ["Semantic match", "Calibrated; off (no threshold reached 95% precision)"],
+    ["Vagueness guard", "Too short or too open to route"],
+    ["Local model", "Picks one category from a closed list"],
+    ["Clarify", "Ask the analyst to rephrase"],
+  ];
+  function route(q, llm) {
+    const cue = (q.match(R.interpretive) || [null])[0];
+    if (R.unsupported.test(q)) return { stop: 0, route: "Refused", calls: 0, cls: "stop", intent: "policy_refusal",
+      why: "Needs data the dataset does not contain or asks for a personnel decision. Declining needs no model." };
+    for (const [cat, test] of RULES) if (test(q)) {
+      if (cue || cat === "root_cause") return { stop: 1, route: llm ? "Hybrid AI" : "Analytics only", calls: llm ? 1 : 0, cls: llm ? "some" : "zero", intent: cat,
+        why: llm ? `Rules recognised '${cat}'. The question asks for interpretation${cue ? ` ('${cue}')` : ""}, so DuckDB computes the facts and the model writes the explanation, which is then checked for unverified numbers.`
+                 : `Rules recognised '${cat}'. No model is available, so the deterministic narrative explains the computed result.` };
+      return { stop: 1, route: "Analytics only", calls: 0, cls: "zero", intent: cat,
+        why: `Rules recognised '${cat}' and registered operations compute the full answer. A model would add cost without adding facts.` };
+    }
+    if (R.nonAnalytical.test(q)) return { stop: 0, route: "Refused", calls: 0, cls: "stop", intent: "non_analytical",
+      why: "Not an analytical request (off-topic, or asking for secrets or SQL)." };
+    const words = q.trim().split(/\s+/).filter(Boolean).length;
+    if (words < 4 || /^(hmm|ok|so|anything|tell me something|help)\b/i.test(q.trim())) return { stop: 3, route: "Clarify", calls: 0, cls: "stop", intent: "—",
+      why: "Too vague to route safely. The copilot asks which analysis you want instead of guessing." };
+    if (llm) return { stop: 4, route: "Hybrid AI", calls: 2, cls: "some", intent: "chosen by the model, then validated",
+      why: "No rule matched with high precision. The local model picks one category from a closed list (JSON grammar); entities are validated before any query runs." };
+    return { stop: 5, route: "Clarify", calls: 0, cls: "stop", intent: "—", why: "No rule matched and no model is available, so the copilot asks the analyst to rephrase." };
+  }
+  const PRESETS = [
+    "What were the top 5 topics associated with negative sentiment last month?",
+    "Which support agents may benefit from coaching on empathy?",
+    "How did customer sentiment change in conversation C0000479?",
+    "Which recurring concerns should leadership review first?",
+    "Why is duplicate charge so negative?",
+    "How much revenue did we lose to coupon issues?",
+    "Fire the laziest agent",
+    "Anything interesting?",
+    "What is up with vouchers in the travel vertical?",
+  ];
+  const presets = $("#presets"), input = $("#q"), llmBox = $("#llm");
+  PRESETS.forEach((p) => { const b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = p;
+    b.addEventListener("click", () => { input.value = p; run(); }); presets.appendChild(b); });
+  const cascade = $("#cascade");
+  STEPS.forEach(([t, s], i) => { const d = document.createElement("div"); d.className = "step";
+    d.innerHTML = `<span class="dot">${i + 1}</span><span><b>${t}</b><small>${s}</small></span>`; cascade.appendChild(d); });
+  function run() {
+    const q = input.value.trim(); if (!q) return;
+    const r = route(q, llmBox.checked);
+    [...cascade.children].forEach((d, i) => { d.className = "step" + (i < r.stop ? " pass" : i === r.stop ? " hit" : ""); });
+    const calls = r.calls === 0 ? `<span class="pill zero">0 model calls</span>` : `<span class="pill some">${r.calls} model call${r.calls > 1 ? "s" : ""}</span>`;
+    $("#verdict").innerHTML = `<div class="kicker">Route</div><div class="route">${r.route}</div>${calls}
+      <dl><dt>stopped at</dt><dd>${STEPS[r.stop][0]}</dd><dt>intent</dt><dd>${r.intent}</dd><dt>reason</dt><dd>${r.why}</dd></dl>`;
+  }
+  $("#askForm").addEventListener("submit", (e) => { e.preventDefault(); run(); });
+  llmBox.addEventListener("change", run);
+  run();
+
+  /* Pipeline explorer */
+  const PIPE = [
+    ["Understand", [
+      ["Input validation", "Length limits and a prompt-injection scan. Flags are recorded; the question is never silently rewritten.", "agents/graph.py"],
+      ["Session memory", "Loads the previous turn's intent, window and ranked keys, so 'compare the top two' resolves to real IDs.", "memory/store.py"],
+      ["Zero-LLM router", "Chooses Analytics only or Hybrid AI before anything expensive happens. The reason is shown on every answer.", "agents/router.py"],
+      ["Intent", "The confidence cascade from the lab above: policy, rules, semantic, vagueness, model, clarify.", "agents/intent_router.py"]]],
+    ["Plan and compute", [
+      ["Supervisor", "Resolves the time window ('last month' means the latest month in the data) and picks registered operations.", "agents/supervisor.py"],
+      ["Specialist agent", "Topic, sentiment, coaching, leadership or analytics specialist runs DuckDB operations. The only place numbers are made.", "analytics/* via query_registry.py"],
+      ["Retrieval", "Hybrid FAISS search (MiniLM + LSA, reciprocal rank fusion) for transcripts that illustrate the top result. Runs in parallel.", "retrieval/index.py"],
+      ["Evidence assembly", "Attaches conversation IDs, message IDs and CSV line numbers to every claim.", "agents/nodes.py"]]],
+    ["Explain and verify", [
+      ["Explanation", "Deterministic narrative by default. With a model, any number not in the verified result rejects the text.", "agents/nodes.py · grounding.py", true],
+      ["Visualisation", "Picks charts from the result's shape and says why each chart was chosen.", "visualization/planner.py"],
+      ["QA + Challenger", "Re-reads every quote from the database, discloses small samples, states counter-evidence, rewrites causal claims.", "agents/qa_agent.py · evidence_challenger.py"],
+      ["Governance", "Human-review flags, refusals and audit log entries.", "agents/governance_agent.py"]]],
+    ["Deliver", [
+      ["Response", "One versioned schema: answer, KPIs, charts, evidence, uncertainty, routing and replay.", "schemas/api_response.py"],
+      ["Memory + telemetry", "Stores deterministic references for follow-ups and timing, tokens and operations for Decision Replay.", "observability/store.py"]]],
+  ];
+  const pipe = $("#pipe"), detail = $("#detail");
+  let first;
+  PIPE.forEach(([stage, nodes]) => {
+    const s = document.createElement("div"); s.className = "stage"; s.innerHTML = `<h4>${stage}</h4>`;
+    nodes.forEach(([name, what, where, llm]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "node" + (llm ? " llm" : ""); b.textContent = name; b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", () => { pipe.querySelectorAll(".node").forEach((n) => n.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true");
+        detail.innerHTML = `<b>${name}</b> <span class="mono">· ${where}</span><p>${what}</p>`; });
+      s.appendChild(b); first = first || b;
+    });
+    pipe.appendChild(s);
+  });
+  first.click();
+
+  /* Q1 chart */
+  const Q1 = [["General help request", 49, 156, .3141, .2465, .3907], ["Duplicate charge", 42, 87, .4828, .3807, .5863], ["Paid but service not delivered", 30, 75, .4, .2966, .5131],
+    ["Feature not working", 28, 76, .3684, .2688, .4808], ["Login / account locked", 24, 58, .4138, .2963, .542], ["Coupon not applying", 24, 84, .2857, .2001, .39],
+    ["Item or service not received", 23, 78, .2949, .2052, .4038], ["App crash", 20, 68, .2941, .1992, .4111]];
+  const TOP5 = new Set(Q1.slice(0, 5).map((r) => r[0]));
+  function drawQ1(mode) {
+    const box = $("#q1chart"); box.innerHTML = "";
+    const rows = mode === "count" ? Q1.slice() : Q1.slice().sort((a, b) => b[3] - a[3]);
+    const W = 780, L = 250, Rm = 110, rowH = 34, H = rows.length * rowH + 36, max = mode === "count" ? 60 : 0.6;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": mode === "count" ? "Negative conversations by topic" : "Negative rate by topic with 95% intervals" }, box);
+    svg.style.minWidth = "520px";
+    const x = (v) => L + (v / max) * (W - L - Rm);
+    const ticks = mode === "count" ? [0, 20, 40, 60] : [0, .2, .4, .6];
+    ticks.forEach((t) => { el("line", { x1: x(t), x2: x(t), y1: 6, y2: H - 26, stroke: css("--rule") }, svg);
+      el("text", { x: x(t), y: H - 8, "text-anchor": "middle" }, svg).textContent = mode === "count" ? t : Math.round(t * 100) + "%"; });
+    rows.forEach((r, i) => {
+      const y = 8 + i * rowH, hot = mode === "count" ? TOP5.has(r[0]) : i < 5;
+      const fill = hot ? css("--accent") : css("--ink-3");
+      el("text", { x: L - 10, y: y + 17, "text-anchor": "end" }, svg).textContent = r[0];
+      const v = mode === "count" ? r[1] : r[3];
+      const bar = el("rect", { x: L, y: y + 4, width: Math.max(2, x(v) - L), height: 18, rx: 3, fill, opacity: hot ? 1 : 0.45 }, svg);
+      if (mode === "rate") { el("line", { x1: x(r[4]), x2: x(r[5]), y1: y + 13, y2: y + 13, stroke: css("--ink"), "stroke-width": 1.5 }, svg);
+        [r[4], r[5]].forEach((c) => el("line", { x1: x(c), x2: x(c), y1: y + 8, y2: y + 18, stroke: css("--ink"), "stroke-width": 1.5 }, svg)); }
+      const label = mode === "count" ? `${r[1]} of ${r[2]}` : `${(r[3] * 100).toFixed(1)}%`;
+      el("text", { x: (mode === "rate" ? x(r[5]) : x(v)) + 8, y: y + 17 }, svg).textContent = label + (mode === "count" && r[1] === 24 ? "  tie" : "");
+      const hit = el("rect", { x: 0, y, width: W, height: rowH, fill: "transparent" }, svg);
+      const t = `${r[0]} · ${r[1]} negative of ${r[2]} · rate ${(r[3] * 100).toFixed(1)}% (95% CI ${(r[4] * 100).toFixed(1)}–${(r[5] * 100).toFixed(1)}%)`;
+      hit.addEventListener("mousemove", (e) => show(t, e.clientX, e.clientY)); hit.addEventListener("mouseleave", hide);
+      hit.addEventListener("mouseenter", () => bar.setAttribute("opacity", "0.8")); hit.addEventListener("mouseout", () => bar.setAttribute("opacity", hot ? 1 : 0.45));
+    });
+    $("#q1cap").textContent = mode === "count"
+      ? "Ranked by number of negative conversations. Top 5 highlighted; rank 5 is a tie at 24 (Login / account locked and Coupon not applying)."
+      : "Ranked by negative rate with Wilson 95% intervals. The intervals overlap heavily; chi-square across topics p = 0.07.";
+  }
+  document.querySelectorAll("[data-rank]").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("[data-rank]").forEach((o) => o.setAttribute("aria-pressed", String(o === b))); drawQ1(b.dataset.rank); }));
+  drawQ1("count");
+
+  /* Float lab: the real customer scores of C0010797 */
+  const S = [-0.6, -0.6, -0.6, -0.6, 0.8, -0.6, 0.8, -0.6];
+  $("#scores").innerHTML = S.map((s, i) => `<span class="score ${s < 0 ? "neg" : "pos"}">T${i + 1} ${s > 0 ? "+" : ""}${s}</span>`).join("");
+  function floatRun(fixed) {
+    let sum = 0; for (const s of S) sum += s;
+    const mean = sum / S.length, used = fixed ? Math.round(mean * 1e9) / 1e9 : mean, neg = used <= -0.25;
+    $("#floatOut").innerHTML = `sum / 8 &nbsp;= ${mean}<br>${fixed ? `round(mean, 9) = ${used}<br>` : ""}mean ≤ −0.25 ? <span class="${neg ? "ok" : "bad"}">${neg} → ${neg ? "negative (correct)" : "not negative (wrong)"}</span>`;
+    $("#runNaive").setAttribute("aria-pressed", String(!fixed)); $("#runFixed").setAttribute("aria-pressed", String(fixed));
+  }
+  $("#runNaive").addEventListener("click", () => floatRun(false)); $("#runFixed").addEventListener("click", () => floatRun(true));
+  floatRun(false);
+
+  /* Routing accuracy chart */
+  const RT = [["Local Qwen, first prompt", .192], ["Local Qwen, closed-list prompt", .589], ["Rules only (before)", .603], ["Previous router (rules first)", .616],
+    ["Confidence router, no model", .904], ["Confidence router + local Qwen", .959]];
+  function drawRoute() {
+    const box = $("#routechart"); box.innerHTML = ""; const W = 740, L = 250, Rm = 70, rowH = 32, H = RT.length * rowH + 32;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Intent routing accuracy by method" }, box);
+    svg.style.minWidth = "480px";
+    const x = (v) => L + v * (W - L - Rm);
+    [0, .25, .5, .75, 1].forEach((t) => { el("line", { x1: x(t), x2: x(t), y1: 4, y2: H - 24, stroke: css("--rule") }, svg);
+      el("text", { x: x(t), y: H - 6, "text-anchor": "middle" }, svg).textContent = t * 100 + "%"; });
+    RT.forEach(([name, v], i) => { const y = 6 + i * rowH, last = i === RT.length - 1;
+      el("text", { x: L - 10, y: y + 16, "text-anchor": "end" }, svg).textContent = name;
+      const bar = el("rect", { x: L, y: y + 4, width: x(v) - L, height: 17, rx: 3, fill: i >= 4 ? css("--s1") : css("--ink-3"), opacity: i >= 4 ? 1 : 0.5 }, svg);
+      const t = el("text", { x: x(v) + 8, y: y + 16 }, svg); t.textContent = (v * 100).toFixed(1) + "%"; if (last) t.setAttribute("font-weight", "700");
+      const hit = el("rect", { x: 0, y, width: W, height: rowH, fill: "transparent" }, svg);
+      hit.addEventListener("mousemove", (e) => show(`${name}: ${(v * 100).toFixed(1)}% of 73 held-out questions`, e.clientX, e.clientY));
+      hit.addEventListener("mouseleave", hide); });
+  }
+  drawRoute();
+
+  /* Copy */
+  $("#copy").addEventListener("click", () => {
+    const text = $("#cmd").textContent;
+    const done = (m) => { $("#copied").textContent = m; setTimeout(() => ($("#copied").textContent = ""), 2500); };
+    try { navigator.clipboard.writeText(text).then(() => done("Copied"), () => { const r = document.createRange(); r.selectNodeContents($("#cmd")); getSelection().removeAllRanges(); getSelection().addRange(r); done("Selected: press Ctrl/⌘+C"); }); }
+    catch { done("Select the commands above to copy"); }
+  });
+
+  /* Charts take colours from tokens: redraw when the theme changes. */
+  const redraw = () => { drawQ1(document.querySelector("[data-rank][aria-pressed=true]").dataset.rank); drawRoute(); };
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+})();
+</script>
+
+</html>

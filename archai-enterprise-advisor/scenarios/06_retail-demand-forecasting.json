@@ -1,0 +1,142 @@
+{
+  "id": "retail-demand-forecasting",
+  "name": "MapleCart Retail \u2014 Store demand forecasting",
+  "company": "MapleCart Retail",
+  "industry": "retail",
+  "summary": "Planners forecast weekly SKU demand per store. A vector database exists from an earlier experiment.",
+  "expected": {
+    "primary_architecture": "traditional_ml",
+    "agentic_verdict": "not_recommended",
+    "ai_recommended": true
+  },
+  "request": {
+    "organization": {
+      "name": "MapleCart Retail (fictional)",
+      "industry": "retail",
+      "size": "large",
+      "ai_maturity": 3
+    },
+    "current_architecture": {
+      "deployment": [
+        "aws"
+      ],
+      "compute": [
+        "kubernetes",
+        "serverless"
+      ],
+      "styles": [
+        "microservices",
+        "batch"
+      ],
+      "integration": [
+        "rest",
+        "kafka",
+        "batch_jobs"
+      ],
+      "identity_security": [
+        "oidc",
+        "rbac",
+        "api_gateway",
+        "secrets_management"
+      ],
+      "data_stores": [
+        "data_warehouse",
+        "data_lake",
+        "postgresql",
+        "vector_database"
+      ],
+      "devops": [
+        "github_actions",
+        "cloudwatch",
+        "datadog"
+      ],
+      "existing_systems": [
+        "Replenishment Service",
+        "Sales Data Warehouse"
+      ]
+    },
+    "data_profile": {
+      "availability": 5,
+      "quality": 4,
+      "freshness": 4,
+      "ownership": 4,
+      "lineage": 4,
+      "metadata": 4,
+      "permissions": 4,
+      "document_quality": 2,
+      "structured_share_pct": 95,
+      "knowledge_fragmentation": 1,
+      "data_sources": [
+        "POS sales history",
+        "Promotions calendar",
+        "Inventory snapshots"
+      ]
+    },
+    "use_case": {
+      "title": "Weekly SKU-store demand forecasting",
+      "description": "Planners use spreadsheets and moving averages to forecast demand, causing stockouts and overstock.",
+      "users": "Demand planners",
+      "workflow": "Weekly: export sales -> spreadsheet forecasts -> adjust -> feed replenishment.",
+      "pain_points": [
+        "Stockouts in peak season",
+        "Overstock write-offs",
+        "Manual spreadsheet effort"
+      ],
+      "desired_outcome": "More accurate forecasts with planner override.",
+      "current_solution": "Spreadsheet moving averages",
+      "constraints": [
+        "Planner remains accountable",
+        "Forecast explainability for buyers"
+      ],
+      "primary_tasks": [
+        "forecasting"
+      ],
+      "action_types": [
+        "read_only",
+        "draft_content"
+      ],
+      "deterministic_requirement": 2,
+      "prediction_requirement": 5,
+      "generation_requirement": 0,
+      "workflow_variability": 1,
+      "multi_step_reasoning": 1,
+      "cross_system_interaction": 2,
+      "tool_requirements": 0,
+      "proprietary_knowledge_need": 0,
+      "citation_requirement": 0,
+      "knowledge_change_frequency": 2,
+      "autonomy_benefit": 2,
+      "hallucination_tolerance": 2,
+      "transaction_criticality": 2,
+      "explainability_requirement": 3,
+      "latency_sensitivity": 1,
+      "availability_requirement": 2,
+      "human_oversight_available": 4
+    },
+    "cost_inputs": {
+      "requests_per_month": 200000,
+      "avg_input_tokens": 0,
+      "avg_output_tokens": 0,
+      "rag_top_k": 0,
+      "human_review_pct": 0.02,
+      "human_review_minutes": 2,
+      "reviewer_hourly_cost": 55,
+      "infrastructure_cost_month": 3000,
+      "current_monthly_cost": 500
+    },
+    "roi_inputs": {
+      "people_involved": 25,
+      "tasks_per_month": 4000,
+      "minutes_per_task": 15,
+      "hourly_cost": 55,
+      "error_rate_pct": 8,
+      "rework_cost_per_error": 300,
+      "existing_technology_cost_annual": 6000,
+      "implementation_cost": 180000,
+      "expected_time_reduction_pct": 50,
+      "expected_error_reduction_pct": 30
+    }
+  },
+  "order": 6,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}

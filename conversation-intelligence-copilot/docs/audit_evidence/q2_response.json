@@ -1,0 +1,1460 @@
+{
+ "version": "1.0",
+ "request_id": "R-c7045ce1bcb3",
+ "session_id": "S-7ac988b3a333",
+ "status": "completed",
+ "question": "Which support agents may benefit from additional coaching on empathy or customer communication, and what evidence supports that view?",
+ "resolved_intent": {
+  "category": "agent_coaching",
+  "time_window": {
+   "type": "inherit",
+   "month": null,
+   "n": null
+  },
+  "dimension": "topic",
+  "rank_by": "count",
+  "top_n": null,
+  "topics": [],
+  "products": [],
+  "agents": [],
+  "sentiments": [],
+  "conversation_ids": [],
+  "search_query": null,
+  "group_by": null,
+  "is_follow_up": false,
+  "reference_ranks": [],
+  "audience": "analyst",
+  "needs_evidence": true,
+  "reasoning": "Rule-based interpretation."
+ },
+ "dataset_scope": {
+  "dataset_mode": "original",
+  "window": {
+   "start": null,
+   "end": null,
+   "label": "All dates",
+   "rule": "all",
+   "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+  },
+  "topics": [],
+  "products": [],
+  "domains": [],
+  "agents": [],
+  "sentiments": [],
+  "conversation_ids": []
+ },
+ "plan": {
+  "category": "agent_coaching",
+  "specialist": "coaching_agent",
+  "steps": [
+   {
+    "op": "agent_coaching_review",
+    "params": {
+     "min_conversations": 3
+    },
+    "purpose": "Communication review signals"
+   }
+  ],
+  "retrieval": {
+   "mode": "parallel",
+   "query": "customer still not fixed asks to escalate urgent; agent asks for details without acknowledging frustration",
+   "k": 4,
+   "scope": {
+    "dataset_mode": "original",
+    "window": {
+     "start": null,
+     "end": null,
+     "label": "All dates",
+     "rule": "all",
+     "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025; no date filter applied."
+    },
+    "topics": [],
+    "products": [],
+    "domains": [],
+    "agents": [],
+    "sentiments": [
+     "negative"
+    ],
+    "conversation_ids": []
+   }
+  },
+  "notes": [],
+  "resolved_references": {},
+  "audience": "analyst"
+ },
+ "headline": "No agent has enough conversations for a fair individual comparison, so I've flagged conversations for review instead. Across the workforce, only 29.3% of negative customer turns got an acknowledgement or apology.",
+ "answer": "3215 of 10966 negative customer turns were followed by an empathetic agent reply (29.3%), and 1340 of 2338 assessable closing actions did not fit the customer's issue (57.3%). Highest-priority conversations for a coaching review: C0006890 (AgentHLKJ, Paid but service not delivered: 7 negative customer turns, 0 acknowledged); C0009233 (AgentCLKH, General help request: 7 negative customer turns, 0 acknowledged); C0002671 (AgentSHVG, General help request: 6 negative customer turns, 0 acknowledged). This is decision support: a team lead should read these transcripts before any coaching conversation.",
+ "key_points": [
+  "C0006890 \u00b7 AgentHLKJ: review score 100.0, closing action out for delivery",
+  "C0009233 \u00b7 AgentCLKH: review score 100.0, closing action refund issued",
+  "C0002671 \u00b7 AgentSHVG: review score 100.0, closing action escalated to specialists",
+  "C0002685 \u00b7 AgentESTP: review score 100.0, closing action refund issued",
+  "C0002798 \u00b7 AgentHMIF: review score 100.0, closing action service activated"
+ ],
+ "metrics": [
+  {
+   "id": "agents_in_scope",
+   "label": "Agents in scope",
+   "value": 2987,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "eligible_agents",
+   "label": "Agents with \u22653 conversations",
+   "value": 0,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "empathy_response_rate",
+   "label": "Negative turns answered with empathy",
+   "value": 0.2932,
+   "unit": "percent",
+   "numerator": 3215,
+   "denominator": 10966,
+   "description": ""
+  },
+  {
+   "id": "irrelevant_resolution_rate",
+   "label": "Closing action does not fit the issue",
+   "value": 0.5731,
+   "unit": "percent",
+   "numerator": 1340,
+   "denominator": 2338,
+   "description": ""
+  },
+  {
+   "id": "conversations_reviewed",
+   "label": "Conversations analysed",
+   "value": 3000,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  }
+ ],
+ "rankings": [],
+ "charts": [
+  {
+   "chart_id": "R-c7045ce1bcb3_coach_kpis",
+   "chart_type": "kpi",
+   "title": "Key figures",
+   "description": "",
+   "x_field": null,
+   "y_field": null,
+   "series": [],
+   "data": [
+    {
+     "id": "agents_in_scope",
+     "label": "Agents in scope",
+     "value": 2987,
+     "unit": "count",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "eligible_agents",
+     "label": "Agents with \u22653 conversations",
+     "value": 0,
+     "unit": "count",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "empathy_response_rate",
+     "label": "Negative turns answered with empathy",
+     "value": 0.2932,
+     "unit": "percent",
+     "numerator": 3215,
+     "denominator": 10966,
+     "description": ""
+    },
+    {
+     "id": "irrelevant_resolution_rate",
+     "label": "Closing action does not fit the issue",
+     "value": 0.5731,
+     "unit": "percent",
+     "numerator": 1340,
+     "denominator": 2338,
+     "description": ""
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-c7045ce1bcb3_coach",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Agents in scope: 2987; Agents with \u22653 conversations: 0; Negative turns answered with empathy: 0.2932; Closing action does not fit the issue: 0.5731"
+  },
+  {
+   "chart_id": "coaching_heatmap",
+   "chart_type": "heatmap",
+   "title": "Review signals for flagged conversations",
+   "description": "1 = signal present / worst. Rows are conversations (agent in brackets).",
+   "x_field": "signal",
+   "y_field": "conversation_id",
+   "series": [],
+   "data": [
+    {
+     "row": "C0006890 (AgentHLKJ)",
+     "conversation_id": "C0006890",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.6666666666666666
+     }
+    },
+    {
+     "row": "C0009233 (AgentCLKH)",
+     "conversation_id": "C0009233",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": null,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.6666666666666666
+     }
+    },
+    {
+     "row": "C0002671 (AgentSHVG)",
+     "conversation_id": "C0002671",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": null,
+      "Ends unresolved": 0.0,
+      "Escalation requests": 0.3333333333333333
+     }
+    },
+    {
+     "row": "C0002685 (AgentESTP)",
+     "conversation_id": "C0002685",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 0.0,
+      "Escalation requests": 0.3333333333333333
+     }
+    },
+    {
+     "row": "C0002798 (AgentHMIF)",
+     "conversation_id": "C0002798",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 1.0
+     }
+    },
+    {
+     "row": "C0003652 (AgentXNAB)",
+     "conversation_id": "C0003652",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.3333333333333333
+     }
+    },
+    {
+     "row": "C0003700 (AgentROHQ)",
+     "conversation_id": "C0003700",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": null,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.3333333333333333
+     }
+    },
+    {
+     "row": "C0004551 (AgentDLHM)",
+     "conversation_id": "C0004551",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.3333333333333333
+     }
+    },
+    {
+     "row": "C0005833 (AgentPIOI)",
+     "conversation_id": "C0005833",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.3333333333333333
+     }
+    },
+    {
+     "row": "C0005966 (AgentGLJB)",
+     "conversation_id": "C0005966",
+     "cells": {
+      "Missed empathy": 1.0,
+      "Resolution misfit": 1.0,
+      "Ends unresolved": 1.0,
+      "Escalation requests": 0.0
+     }
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-c7045ce1bcb3",
+   "evidence_ids": [
+    "C0006890",
+    "C0009233",
+    "C0002671",
+    "C0002685",
+    "C0002798",
+    "C0003652",
+    "C0003700",
+    "C0004551",
+    "C0005833",
+    "C0005966"
+   ],
+   "uncertainty_note": null,
+   "drilldown": {
+    "kind": "conversation",
+    "field": "conversation_id"
+   },
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "10 conversations flagged for review."
+  },
+  {
+   "chart_id": "empathy_distribution",
+   "chart_type": "bar",
+   "title": "Share of negative turns answered with empathy (per conversation)",
+   "description": "",
+   "x_field": "bucket",
+   "y_field": null,
+   "series": [
+    {
+     "key": "conversations",
+     "label": "Conversations",
+     "color": "violet"
+    }
+   ],
+   "data": [
+    {
+     "bucket": "0%",
+     "conversations": 902
+    },
+    {
+     "bucket": "1\u201325%",
+     "conversations": 580
+    },
+    {
+     "bucket": "26\u201350%",
+     "conversations": 1133
+    },
+    {
+     "bucket": "51\u201375%",
+     "conversations": 265
+    },
+    {
+     "bucket": "76\u2013100%",
+     "conversations": 102
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-c7045ce1bcb3",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "0%: 902; 1\u201325%: 580; 26\u201350%: 1133; 51\u201375%: 265; 76\u2013100%: 102"
+  },
+  {
+   "chart_id": "sample_size",
+   "chart_type": "bar",
+   "title": "Conversations per agent (sample size)",
+   "description": "",
+   "x_field": "conversations_per_agent",
+   "y_field": null,
+   "series": [
+    {
+     "key": "agents",
+     "label": "Agents",
+     "color": "muted"
+    }
+   ],
+   "data": [
+    {
+     "conversations_per_agent": 1,
+     "agents": 2974
+    },
+    {
+     "conversations_per_agent": 2,
+     "agents": 13
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-c7045ce1bcb3",
+   "evidence_ids": [],
+   "uncertainty_note": "No agent has 3 or more conversations in scope (max is 2; 2974 of 2987 agents handled exactly one). Ranking individual agents would rest on one or two transcripts, so this answer prioritises conversations for review and reports workforce-wide patterns instead.",
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "1 conversation(s): 2974 agents; 2 conversation(s): 13 agents"
+  },
+  {
+   "chart_id": "coaching_by_topic",
+   "chart_type": "bar",
+   "title": "Communication signals by topic",
+   "description": "",
+   "x_field": "topic_label",
+   "y_field": null,
+   "series": [
+    {
+     "key": "empathy_response_rate",
+     "label": "Empathic replies",
+     "color": "positive"
+    },
+    {
+     "key": "irrelevant_resolution_rate",
+     "label": "Resolution misfit",
+     "color": "warning"
+    }
+   ],
+   "data": [
+    {
+     "topic_label": "Login / account locked",
+     "empathy_response_rate": 0.2884,
+     "irrelevant_resolution_rate": 0.6776
+    },
+    {
+     "topic_label": "Coupon not applying",
+     "empathy_response_rate": 0.2885,
+     "irrelevant_resolution_rate": 0.6375
+    },
+    {
+     "topic_label": "Duplicate charge",
+     "empathy_response_rate": 0.2835,
+     "irrelevant_resolution_rate": 0.6326
+    },
+    {
+     "topic_label": "Feature not working",
+     "empathy_response_rate": 0.2864,
+     "irrelevant_resolution_rate": 0.5465
+    },
+    {
+     "topic_label": "Item or service not received",
+     "empathy_response_rate": 0.2992,
+     "irrelevant_resolution_rate": 0.5296
+    },
+    {
+     "topic_label": "Paid but service not delivered",
+     "empathy_response_rate": 0.2971,
+     "irrelevant_resolution_rate": 0.5075
+    },
+    {
+     "topic_label": "App crash",
+     "empathy_response_rate": 0.3052,
+     "irrelevant_resolution_rate": 0.4846
+    },
+    {
+     "topic_label": "General help request",
+     "empathy_response_rate": 0.2996,
+     "irrelevant_resolution_rate": 0
+    }
+   ],
+   "value_format": "percent",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-c7045ce1bcb3",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Login / account locked: empathy 29%; Coupon not applying: empathy 29%; Duplicate charge: empathy 28%; Feature not working: empathy 29%; Item or service not received: empathy 30%; Paid but service not delivered: empathy 30%; App crash: empathy 31%; General help request: empathy 30%"
+  },
+  {
+   "chart_id": "retrieval_results",
+   "chart_type": "horizontal_bar",
+   "title": "Retrieved passages by similarity",
+   "description": "",
+   "x_field": "conversation_id",
+   "y_field": null,
+   "series": [
+    {
+     "key": "similarity",
+     "label": "Cosine similarity",
+     "color": "cyan"
+    }
+   ],
+   "data": [
+    {
+     "conversation_id": "C0007437",
+     "similarity": 0.7172,
+     "topic": "General help request"
+    },
+    {
+     "conversation_id": "C0013288",
+     "similarity": 0.7123,
+     "topic": "General help request"
+    },
+    {
+     "conversation_id": "C0010141",
+     "similarity": 0.7044,
+     "topic": "Feature not working"
+    },
+    {
+     "conversation_id": "C0007344",
+     "similarity": 0.7224,
+     "topic": "General help request"
+    }
+   ],
+   "value_format": "number",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-c7045ce1bcb3",
+   "evidence_ids": [
+    "C0007437#4-7",
+    "C0013288#2-5",
+    "C0010141#4-7",
+    "C0007344#6-9"
+   ],
+   "uncertainty_note": "Similarity is a ranking signal between embeddings, not a probability or confidence.",
+   "drilldown": {
+    "kind": "conversation",
+    "field": "conversation_id"
+   },
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "C0007437: 0.72; C0013288: 0.71; C0010141: 0.70; C0007344: 0.72"
+  }
+ ],
+ "graphs": [],
+ "evidence": [
+  {
+   "evidence_id": "C0007437#4-7",
+   "kind": "retrieval",
+   "conversation_id": "C0007437",
+   "message_ids": [
+    "C0007437-T04",
+    "C0007437-T05",
+    "C0007437-T06",
+    "C0007437-T07"
+   ],
+   "turn_range": [
+    4,
+    7
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0007437-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 21159"
+    },
+    {
+     "message_id": "C0007437-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+     "sentiment": "neutral",
+     "act": "courtesy_greeting",
+     "source_reference": "cs_conversations.csv:line 21160"
+    },
+    {
+     "message_id": "C0007437-T06",
+     "turn_index": 6,
+     "role": "customer",
+     "text": "It\u2019s urgent. Please expedite.",
+     "sentiment": "negative",
+     "act": "urgency",
+     "source_reference": "cs_conversations.csv:line 21161"
+    },
+    {
+     "message_id": "C0007437-T07",
+     "turn_index": 7,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 21162"
+    }
+   ],
+   "topic": "General help request",
+   "product": "Order",
+   "sentiment": "negative",
+   "agent_id": "AgentTBOP",
+   "date": "2025-11-26",
+   "similarity": 0.7172,
+   "reason": "Hybrid match (MiniLM #3, LSA #13; fused by RRF; similarity 0.72)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 3,
+     "similarity": 0.7172
+    },
+    "lsa": {
+     "rank": 13,
+     "similarity": 0.5934
+    }
+   }
+  },
+  {
+   "evidence_id": "C0013288#2-5",
+   "kind": "retrieval",
+   "conversation_id": "C0013288",
+   "message_ids": [
+    "C0013288-T02",
+    "C0013288-T03",
+    "C0013288-T04",
+    "C0013288-T05"
+   ],
+   "turn_range": [
+    2,
+    5
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0013288-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 37029"
+    },
+    {
+     "message_id": "C0013288-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "I understand this is frustrating. I'm investigating now.",
+     "sentiment": "neutral",
+     "act": "empathy_acknowledgement",
+     "source_reference": "cs_conversations.csv:line 37030"
+    },
+    {
+     "message_id": "C0013288-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 37031"
+    },
+    {
+     "message_id": "C0013288-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "I can help with that. May I have the registered email or phone?",
+     "sentiment": "neutral",
+     "act": "verification_request",
+     "source_reference": "cs_conversations.csv:line 37032"
+    }
+   ],
+   "topic": "General help request",
+   "product": "Appointment",
+   "sentiment": "negative",
+   "agent_id": "AgentQROR",
+   "date": "2025-10-28",
+   "similarity": 0.7123,
+   "reason": "Hybrid match (MiniLM #4, LSA #114; fused by RRF; similarity 0.71)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 4,
+     "similarity": 0.7123
+    },
+    "lsa": {
+     "rank": 114,
+     "similarity": 0.5119
+    }
+   }
+  },
+  {
+   "evidence_id": "C0010141#4-7",
+   "kind": "retrieval",
+   "conversation_id": "C0010141",
+   "message_ids": [
+    "C0010141-T04",
+    "C0010141-T05",
+    "C0010141-T06",
+    "C0010141-T07"
+   ],
+   "turn_range": [
+    4,
+    7
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0010141-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 28871"
+    },
+    {
+     "message_id": "C0010141-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 28872"
+    },
+    {
+     "message_id": "C0010141-T06",
+     "turn_index": 6,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 28873"
+    },
+    {
+     "message_id": "C0010141-T07",
+     "turn_index": 7,
+     "role": "agent",
+     "text": "I understand this is frustrating. I'm investigating now.",
+     "sentiment": "neutral",
+     "act": "empathy_acknowledgement",
+     "source_reference": "cs_conversations.csv:line 28874"
+    }
+   ],
+   "topic": "Feature not working",
+   "product": "Order",
+   "sentiment": "negative",
+   "agent_id": "AgentPRCH",
+   "date": "2025-10-01",
+   "similarity": 0.7044,
+   "reason": "Hybrid match (MiniLM #6, LSA #60; fused by RRF; similarity 0.70)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 6,
+     "similarity": 0.7044
+    },
+    "lsa": {
+     "rank": 60,
+     "similarity": 0.5476
+    }
+   }
+  },
+  {
+   "evidence_id": "C0007344#6-9",
+   "kind": "retrieval",
+   "conversation_id": "C0007344",
+   "message_ids": [
+    "C0007344-T06",
+    "C0007344-T07",
+    "C0007344-T08",
+    "C0007344-T09"
+   ],
+   "turn_range": [
+    6,
+    9
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0007344-T06",
+     "turn_index": 6,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 20835"
+    },
+    {
+     "message_id": "C0007344-T07",
+     "turn_index": 7,
+     "role": "agent",
+     "text": "I understand this is frustrating. I'm investigating now.",
+     "sentiment": "neutral",
+     "act": "empathy_acknowledgement",
+     "source_reference": "cs_conversations.csv:line 20836"
+    },
+    {
+     "message_id": "C0007344-T08",
+     "turn_index": 8,
+     "role": "customer",
+     "text": "It\u2019s urgent. Please expedite.",
+     "sentiment": "negative",
+     "act": "urgency",
+     "source_reference": "cs_conversations.csv:line 20837"
+    },
+    {
+     "message_id": "C0007344-T09",
+     "turn_index": 9,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 20838"
+    }
+   ],
+   "topic": "General help request",
+   "product": "Partner Offer",
+   "sentiment": "negative",
+   "agent_id": "AgentGEBH",
+   "date": "2025-08-25",
+   "similarity": 0.7224,
+   "reason": "Hybrid match (MiniLM #1; fused by RRF; similarity 0.72)",
+   "retrieval_method": "hybrid",
+   "method_scores": {
+    "dense": {
+     "rank": 1,
+     "similarity": 0.7224
+    }
+   }
+  },
+  {
+   "evidence_id": "C0006890#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0006890",
+   "message_ids": [
+    "C0006890-T00",
+    "C0006890-T02",
+    "C0006890-T03",
+    "C0006890-T15"
+   ],
+   "turn_range": [
+    0,
+    15
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0006890-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "UPI shows successful but I didn't get the service for Hotel.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 19604"
+    },
+    {
+     "message_id": "C0006890-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 19606"
+    },
+    {
+     "message_id": "C0006890-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 19607"
+    },
+    {
+     "message_id": "C0006890-T15",
+     "turn_index": 15,
+     "role": "agent",
+     "text": "The order is out for delivery. Expected by tomorrow evening.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 19619"
+    }
+   ],
+   "topic": "Paid but service not delivered",
+   "product": "Hotel",
+   "sentiment": "negative",
+   "agent_id": "AgentHLKJ",
+   "date": "2025-09-20",
+   "similarity": null,
+   "reason": "Flagged for coaching review (highest review score)"
+  },
+  {
+   "evidence_id": "C0009233#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0009233",
+   "message_ids": [
+    "C0009233-T00",
+    "C0009233-T10",
+    "C0009233-T11",
+    "C0009233-T17"
+   ],
+   "turn_range": [
+    0,
+    17
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0009233-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Mujhe Voucher ke baare mein help chahiye.",
+     "sentiment": "neutral",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 26007"
+    },
+    {
+     "message_id": "C0009233-T10",
+     "turn_index": 10,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 26017"
+    },
+    {
+     "message_id": "C0009233-T11",
+     "turn_index": 11,
+     "role": "agent",
+     "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+     "sentiment": "neutral",
+     "act": "courtesy_greeting",
+     "source_reference": "cs_conversations.csv:line 26018"
+    },
+    {
+     "message_id": "C0009233-T17",
+     "turn_index": 17,
+     "role": "agent",
+     "text": "I have issued a refund. You\u2019ll see it in 3-5 business days.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 26024"
+    }
+   ],
+   "topic": "General help request",
+   "product": "Voucher",
+   "sentiment": "negative",
+   "agent_id": "AgentCLKH",
+   "date": "2025-11-22",
+   "similarity": null,
+   "reason": "Flagged for coaching review (highest review score)"
+  },
+  {
+   "evidence_id": "C0002671#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0002671",
+   "message_ids": [
+    "C0002671-T00",
+    "C0002671-T02",
+    "C0002671-T03",
+    "C0002671-T16"
+   ],
+   "turn_range": [
+    0,
+    16
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0002671-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Mujhe Insurance ke baare mein help chahiye.",
+     "sentiment": "neutral",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 7209"
+    },
+    {
+     "message_id": "C0002671-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 7211"
+    },
+    {
+     "message_id": "C0002671-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 7212"
+    },
+    {
+     "message_id": "C0002671-T16",
+     "turn_index": 16,
+     "role": "customer",
+     "text": "Thanks, that helps.",
+     "sentiment": "positive",
+     "act": "gratitude",
+     "source_reference": "cs_conversations.csv:line 7225"
+    }
+   ],
+   "topic": "General help request",
+   "product": "Insurance",
+   "sentiment": "mixed",
+   "agent_id": "AgentSHVG",
+   "date": "2025-09-01",
+   "similarity": null,
+   "reason": "Flagged for coaching review (highest review score)"
+  },
+  {
+   "evidence_id": "C0002685#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0002685",
+   "message_ids": [
+    "C0002685-T00",
+    "C0002685-T04",
+    "C0002685-T05",
+    "C0002685-T17"
+   ],
+   "turn_range": [
+    0,
+    17
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0002685-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Coupon isn\u2019t applying on checkout for the Wallet.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 7271"
+    },
+    {
+     "message_id": "C0002685-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 7275"
+    },
+    {
+     "message_id": "C0002685-T05",
+     "turn_index": 5,
+     "role": "agent",
+     "text": "Thanks for reaching out! I\u2019m pulling up the details.",
+     "sentiment": "neutral",
+     "act": "courtesy_greeting",
+     "source_reference": "cs_conversations.csv:line 7276"
+    },
+    {
+     "message_id": "C0002685-T17",
+     "turn_index": 17,
+     "role": "agent",
+     "text": "I have issued a refund. You\u2019ll see it in 3-5 business days.",
+     "sentiment": "neutral",
+     "act": "resolution",
+     "source_reference": "cs_conversations.csv:line 7288"
+    }
+   ],
+   "topic": "Coupon not applying",
+   "product": "Wallet",
+   "sentiment": "mixed",
+   "agent_id": "AgentESTP",
+   "date": "2025-09-15",
+   "similarity": null,
+   "reason": "Flagged for coaching review (highest review score)"
+  },
+  {
+   "evidence_id": "C0002798#analysis",
+   "kind": "analysis",
+   "conversation_id": "C0002798",
+   "message_ids": [
+    "C0002798-T00",
+    "C0002798-T02",
+    "C0002798-T03",
+    "C0002798-T14"
+   ],
+   "turn_range": [
+    0,
+    14
+   ],
+   "excerpts": [
+    {
+     "message_id": "C0002798-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "The Gift Card hasn\u2019t arrived yet. Can you check?",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 7590"
+    },
+    {
+     "message_id": "C0002798-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 7592"
+    },
+    {
+     "message_id": "C0002798-T03",
+     "turn_index": 3,
+     "role": "agent",
+     "text": "Please allow me a moment while I run some checks.",
+     "sentiment": "neutral",
+     "act": "hold_notice",
+     "source_reference": "cs_conversations.csv:line 7593"
+    },
+    {
+     "message_id": "C0002798-T14",
+     "turn_index": 14,
+     "role": "customer",
+     "text": "It\u2019s urgent. Please expedite.",
+     "sentiment": "negative",
+     "act": "urgency",
+     "source_reference": "cs_conversations.csv:line 7604"
+    }
+   ],
+   "topic": "Item or service not received",
+   "product": "Gift Card",
+   "sentiment": "negative",
+   "agent_id": "AgentHMIF",
+   "date": "2025-09-08",
+   "similarity": null,
+   "reason": "Flagged for coaching review (highest review score)"
+  }
+ ],
+ "recommendations": [],
+ "uncertainty_notes": [
+  "No agent has 3 or more conversations in scope (max is 2; 2974 of 2987 agents handled exactly one). Ranking individual agents would rest on one or two transcripts, so this answer prioritises conversations for review and reports workforce-wide patterns instead.",
+  "Decision support only: these signals describe a small number of transcripts and are not a performance assessment. A team lead should read the cited conversations before any coaching conversation.",
+  "Empathy is detected from fixed phrases ('I understand this is frustrating', 'I'm sorry about the trouble'); it measures observable acknowledgement, not how the customer felt."
+ ],
+ "method_notes": [
+  "review_score = 100 \u00d7 mean(missed-empathy rate after negative customer turns, irrelevant-resolution flag), using whichever components are observable in the conversation.",
+  "Missed empathy = share of negative customer turns whose next agent turn has no acknowledgement or apology.",
+  "Resolution fit uses a documented issue\u2192action mapping (ASSUMPTIONS.md); general help requests are not assessable."
+ ],
+ "follow_up_questions": [
+  "How did customer sentiment change in C0006890?",
+  "Does the closing action fit the issue, by topic?",
+  "Show similar conversations where the customer asked to escalate."
+ ],
+ "execution_trace_id": "R-c7045ce1bcb3",
+ "model_metadata": {
+  "provider": "local",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m",
+  "mode": "deterministic",
+  "available": true,
+  "reason": null,
+  "intent_source": "rules",
+  "explanation_source": "deterministic",
+  "label_source": "rules",
+  "embedding_backend": "sentence-transformers/all-MiniLM-L6-v2 + lsa-tfidf-svd192",
+  "routing": {
+   "requested_mode": "auto",
+   "route": "analytics_only",
+   "reason": "Rules recognised 'agent_coaching' and registered operations compute the full answer; a model would add cost without adding facts.",
+   "llm_available": true,
+   "llm_steps": [],
+   "rules_category": "agent_coaching",
+   "interpretive_cue": null,
+   "intent_precheck": {
+    "method": "rules",
+    "reason": "High-precision rule 'coaching'.",
+    "rule": "coaching",
+    "label": "agent_coaching"
+   }
+  },
+  "intent_routing": {
+   "method": "rules",
+   "reason": "High-precision rule 'coaching'.",
+   "rule": "coaching",
+   "label": "agent_coaching",
+   "llm_calls": 0,
+   "semantic": null,
+   "llm": null,
+   "stages": [
+    "policy",
+    "rules"
+   ],
+   "latency_ms": 0.3
+  },
+  "token_usage": {
+   "calls": 0,
+   "model_calls": 0,
+   "cache_hits": 0,
+   "reported_calls": 0,
+   "unreported_calls": 0,
+   "complete": true,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "total_tokens": 0,
+   "estimated_cost_usd": 0.0,
+   "by_purpose": []
+  }
+ },
+ "routing": {
+  "requested_mode": "auto",
+  "route": "analytics_only",
+  "reason": "Rules recognised 'agent_coaching' and registered operations compute the full answer; a model would add cost without adding facts.",
+  "llm_available": true,
+  "llm_steps": [],
+  "rules_category": "agent_coaching",
+  "interpretive_cue": null,
+  "intent_precheck": {
+   "method": "rules",
+   "reason": "High-precision rule 'coaching'.",
+   "rule": "coaching",
+   "label": "agent_coaching"
+  }
+ },
+ "token_usage": {
+  "calls": 0,
+  "model_calls": 0,
+  "cache_hits": 0,
+  "reported_calls": 0,
+  "unreported_calls": 0,
+  "complete": true,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "by_purpose": []
+ },
+ "xray": null,
+ "root_cause": null,
+ "dashboard": {
+  "title": "Coaching review",
+  "generated_from": "Which support agents may benefit from additional coaching on empathy or customer communication, and what evidence supports that view?",
+  "kpi_chart_ids": [
+   "R-c7045ce1bcb3_coach_kpis"
+  ],
+  "sections": [
+   {
+    "title": "Answer",
+    "items": [
+     {
+      "chart_id": "coaching_heatmap",
+      "why": "Agents \u00d7 signals: where communication signals concentrate.",
+      "width": "full"
+     }
+    ]
+   },
+   {
+    "title": "Reliability",
+    "items": [
+     {
+      "chart_id": "sample_size",
+      "why": "Conversations per agent: small samples are flagged, not ranked.",
+      "width": "half"
+     }
+    ]
+   },
+   {
+    "title": "Context",
+    "items": [
+     {
+      "chart_id": "empathy_distribution",
+      "why": "How the selected agents compare with everyone else.",
+      "width": "half"
+     },
+     {
+      "chart_id": "coaching_by_topic",
+      "why": "Whether the signal depends on the issue mix an agent handles.",
+      "width": "half"
+     }
+    ]
+   },
+   {
+    "title": "Evidence",
+    "items": [
+     {
+      "chart_id": "retrieval_results",
+      "why": "Semantically similar passages (hybrid MiniLM + LSA retrieval).",
+      "width": "half"
+     }
+    ]
+   }
+  ],
+  "filters": [
+   {
+    "field": "window",
+    "value": "All dates"
+   }
+  ],
+  "refinements": [
+   {
+    "label": "Latest month",
+    "question": "Same analysis for the last month only."
+   }
+  ],
+  "operations": [
+   "agent_coaching_review"
+  ],
+  "layout_rule": "Layout chosen from the analysis type; every chart is copied from a verified result."
+ },
+ "evidence_review": {
+  "verdict": "supported",
+  "checks": [
+   {
+    "check": "excerpt_fidelity",
+    "status": "pass",
+    "detail": "36/36 quoted excerpts match their source message word for word",
+    "items": []
+   },
+   {
+    "check": "evidence_relevance",
+    "status": "pass",
+    "detail": "7/9 evidence conversations are negative, matching a claim about negative sentiment",
+    "items": []
+   },
+   {
+    "check": "sample_size",
+    "status": "pass",
+    "detail": "No group below 30 conversations",
+    "items": []
+   },
+   {
+    "check": "counter_evidence",
+    "status": "pass",
+    "detail": "No counter-evidence applicable",
+    "items": []
+   },
+   {
+    "check": "causal_language",
+    "status": "pass",
+    "detail": "No unqualified causal claims",
+    "items": []
+   }
+  ],
+  "challenges": [],
+  "counter_evidence": [],
+  "added_notes": [],
+  "replaced_explanation": false,
+  "passed": 5,
+  "total": 5
+ },
+ "quality_status": {
+  "status": "pass",
+  "checks": [
+   {
+    "check": "registered_operations",
+    "passed": true,
+    "critical": true,
+    "detail": "Operations: ['agent_coaching_review']"
+   },
+   {
+    "check": "filters_applied",
+    "passed": true,
+    "critical": false,
+    "detail": "All results use the planned scope"
+   },
+   {
+    "check": "proportions_valid",
+    "passed": true,
+    "critical": true,
+    "detail": "All proportions within [0, 1]"
+   },
+   {
+    "check": "chart_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "6 charts match their source tables"
+   },
+   {
+    "check": "evidence_valid",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items resolved to source messages"
+   },
+   {
+    "check": "evidence_present",
+    "passed": true,
+    "critical": false,
+    "detail": "9 evidence items attached"
+   },
+   {
+    "check": "explanation_grounded",
+    "passed": true,
+    "critical": true,
+    "detail": "All numbers in the answer trace to verified results"
+   },
+   {
+    "check": "uncertainty_disclosed",
+    "passed": true,
+    "critical": false,
+    "detail": "3 uncertainty notes attached to the response"
+   },
+   {
+    "check": "coaching_sample_size_gate",
+    "passed": true,
+    "critical": false,
+    "detail": "Minimum 3 conversations per agent enforced; safeguard attached"
+   },
+   {
+    "check": "excerpt_fidelity",
+    "passed": true,
+    "critical": true,
+    "detail": "36/36 quoted excerpts match their source message word for word"
+   },
+   {
+    "check": "evidence_relevance",
+    "passed": true,
+    "critical": false,
+    "detail": "7/9 evidence conversations are negative, matching a claim about negative sentiment"
+   },
+   {
+    "check": "sample_size",
+    "passed": true,
+    "critical": false,
+    "detail": "No group below 30 conversations"
+   },
+   {
+    "check": "causal_language",
+    "passed": true,
+    "critical": false,
+    "detail": "No unqualified causal claims"
+   }
+  ],
+  "passed": 13,
+  "total": 13
+ },
+ "governance": [
+  {
+   "policy": "pii_masking",
+   "outcome": "pass",
+   "detail": "Evidence excerpts are PII-masked at ingestion"
+  },
+  {
+   "policy": "prompt_injection",
+   "outcome": "pass",
+   "detail": "No injection patterns in the question"
+  },
+  {
+   "policy": "coaching_safeguard",
+   "outcome": "enforced",
+   "detail": "Coaching output is decision support; requires team-lead review; no protected attributes used."
+  },
+  {
+   "policy": "human_review",
+   "outcome": "required",
+   "detail": "A human owner must review before acting on these recommendations."
+  },
+  {
+   "policy": "tool_safety",
+   "outcome": "pass",
+   "detail": "Only registered read-only operations ran; no model-generated SQL or code."
+  },
+  {
+   "policy": "dataset_authorisation",
+   "outcome": "pass",
+   "detail": "Dataset mode: original"
+  }
+ ],
+ "human_review_required": true,
+ "errors": [],
+ "latency_ms": 522.5,
+ "_wall_ms": 555
+}

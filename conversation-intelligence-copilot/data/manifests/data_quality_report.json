@@ -1,0 +1,166 @@
+{
+  "messages": 41965,
+  "conversations": 3000,
+  "overall": "warning",
+  "checks": [
+    {
+      "check": "duplicate_messages",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Identical (conversation, turn, role, text) rows.",
+      "examples": []
+    },
+    {
+      "check": "duplicate_turn_index",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Two messages share a conversation and turn index.",
+      "examples": []
+    },
+    {
+      "check": "duplicate_conversations",
+      "count": 0,
+      "total": 3000,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Conversations with identical cleaned transcripts.",
+      "examples": []
+    },
+    {
+      "check": "missing_timestamp",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Unparseable or missing timestamps.",
+      "examples": []
+    },
+    {
+      "check": "missing_turn_index",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Missing or non-numeric turn index.",
+      "examples": []
+    },
+    {
+      "check": "unknown_speaker",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Speaker role not recognised.",
+      "examples": []
+    },
+    {
+      "check": "empty_text",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Messages with no text.",
+      "examples": []
+    },
+    {
+      "check": "missing_agent",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Messages without an agent identifier.",
+      "examples": []
+    },
+    {
+      "check": "turn_index_gaps",
+      "count": 0,
+      "total": 3000,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Turn indexes are not contiguous from 0.",
+      "examples": []
+    },
+    {
+      "check": "timestamps_not_in_turn_order",
+      "count": 3000,
+      "total": 3000,
+      "rate": 1.0,
+      "severity": "warning",
+      "description": "Timestamps decrease while turn_index increases. Turn order is treated as authoritative; timestamps are used only to date conversations.",
+      "examples": [
+        "C0000006",
+        "C0000009",
+        "C0000010",
+        "C0000016",
+        "C0000017"
+      ]
+    },
+    {
+      "check": "multiple_agents_per_conversation",
+      "count": 0,
+      "total": 3000,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Conversations handled by more than one agent ID.",
+      "examples": []
+    },
+    {
+      "check": "not_customer_opened",
+      "count": 0,
+      "total": 3000,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Conversations whose first turn is not from the customer.",
+      "examples": []
+    },
+    {
+      "check": "very_short_conversations",
+      "count": 0,
+      "total": 3000,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Fewer than 4 messages.",
+      "examples": []
+    },
+    {
+      "check": "length_outliers",
+      "count": 0,
+      "total": 3000,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Conversation length outside 1.5 IQR.",
+      "examples": []
+    },
+    {
+      "check": "synthetic_filler_tokens",
+      "count": 41965,
+      "total": 41965,
+      "rate": 1.0,
+      "severity": "info",
+      "description": "Messages ending in random lowercase filler tokens. Filler is removed in clean_text; raw text is preserved.",
+      "examples": []
+    },
+    {
+      "check": "unsupported_characters",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Characters outside ASCII and typographic quotes.",
+      "examples": []
+    },
+    {
+      "check": "pii_detected",
+      "count": 0,
+      "total": 41965,
+      "rate": 0.0,
+      "severity": "pass",
+      "description": "Messages where PII patterns were found and masked.",
+      "examples": []
+    }
+  ]
+}

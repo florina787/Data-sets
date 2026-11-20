@@ -1,0 +1,488 @@
+{
+ "intent_routing": {
+  "method": "rules",
+  "reason": "High-precision rule 'trajectory_selected'.",
+  "rule": "trajectory_selected",
+  "label": "sentiment_trajectory",
+  "llm_calls": 0,
+  "semantic": null,
+  "llm": null,
+  "stages": [
+   "policy",
+   "rules"
+  ],
+  "latency_ms": 0.2
+ },
+ "request_id": "R-47f6af03b163",
+ "question": "How did customer sentiment change over the course of a selected conversation?",
+ "created_at": "2026-10-23T00:45:25.531499+00:00",
+ "status": "completed",
+ "latency_ms": 112.7,
+ "routing": {
+  "requested_mode": "auto",
+  "route": "analytics_only",
+  "reason": "Rules recognised 'sentiment_trajectory' and registered operations compute the full answer; a model would add cost without adding facts.",
+  "llm_available": true,
+  "llm_steps": [],
+  "rules_category": "sentiment_trajectory",
+  "interpretive_cue": null,
+  "intent_precheck": {
+   "method": "rules",
+   "reason": "High-precision rule 'trajectory_selected'.",
+   "rule": "trajectory_selected",
+   "label": "sentiment_trajectory"
+  }
+ },
+ "token_usage": {
+  "calls": 0,
+  "model_calls": 0,
+  "cache_hits": 0,
+  "reported_calls": 0,
+  "unreported_calls": 0,
+  "complete": true,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "by_purpose": []
+ },
+ "decisions": [
+  {
+   "at": "router",
+   "decision": "Route: analytics_only",
+   "why": "Rules recognised 'sentiment_trajectory' and registered operations compute the full answer; a model would add cost without adding facts."
+  },
+  {
+   "at": "intent",
+   "decision": "Intent: sentiment_trajectory (via rules)",
+   "why": "High-precision rule 'trajectory_selected'.",
+   "stages": [
+    "policy",
+    "rules"
+   ],
+   "semantic": null,
+   "llm": null
+  },
+  {
+   "at": "supervisor",
+   "decision": "Plan: sentiment_trajectory, conversation_xray",
+   "why": "Using the conversation selected in the workspace (C0000479)."
+  },
+  {
+   "at": "explanation",
+   "decision": "Explanation: deterministic",
+   "why": "router: analytics only"
+  },
+  {
+   "at": "qa",
+   "decision": "Evidence review: supported",
+   "why": "No challenges raised."
+  }
+ ],
+ "steps": [
+  {
+   "node": "input_validation",
+   "label": "Input validation",
+   "role": "Sanitise the question, enforce limits, flag injection attempts.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.398452+00:00",
+   "duration_ms": 0.0,
+   "output": {
+    "chars": 77,
+    "flags": 0
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "session_context",
+   "label": "Session memory",
+   "role": "Load prior turns and references for follow-up resolution.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.400163+00:00",
+   "duration_ms": 0.8,
+   "output": {
+    "history_turns": 0,
+    "has_previous": false
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "router",
+   "label": "Intelligence router",
+   "role": "Zero-LLM routing: decide whether a model is needed at all, and record why.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.402162+00:00",
+   "duration_ms": 0.5,
+   "output": {
+    "route": "analytics_only",
+    "requested": "auto",
+    "reason": "Rules recognised 'sentiment_trajectory' and registered operations compute the full answer; a model would add cost without adding facts.",
+    "llm_steps": []
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "intent",
+   "label": "Intent agent",
+   "role": "Interpret the question into a typed intent (LLM, or rules).",
+   "engine": "rules / LLM",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.404413+00:00",
+   "duration_ms": 0.8,
+   "output": {
+    "category": "sentiment_trajectory",
+    "source": "rules",
+    "method": "rules",
+    "reason": "High-precision rule 'trajectory_selected'.",
+    "window": {
+     "type": "inherit",
+     "month": null,
+     "n": null
+    },
+    "follow_up": false
+   },
+   "meta": {
+    "routing": {
+     "method": "rules",
+     "reason": "High-precision rule 'trajectory_selected'.",
+     "rule": "trajectory_selected",
+     "label": "sentiment_trajectory",
+     "llm_calls": 0,
+     "semantic": null,
+     "llm": null,
+     "stages": [
+      "policy",
+      "rules"
+     ],
+     "latency_ms": 0.2
+    }
+   },
+   "error": null
+  },
+  {
+   "node": "supervisor",
+   "label": "Supervisor / planner",
+   "role": "Resolve references and date window; choose registered operations and agents.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.406765+00:00",
+   "duration_ms": 7.6,
+   "output": {
+    "steps": [
+     "sentiment_trajectory",
+     "conversation_xray"
+    ],
+    "specialist": "sentiment_agent",
+    "retrieval": "none",
+    "window": "All dates",
+    "notes": [
+     "Using the conversation selected in the workspace (C0000479)."
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "sentiment_agent",
+   "label": "Sentiment agent",
+   "role": "Sentiment distribution, trends and conversation trajectories.",
+   "engine": "DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.415743+00:00",
+   "duration_ms": 41.2,
+   "output": {
+    "sentiment_trajectory": {
+     "status": "ok",
+     "metrics": {
+      "customer_turns": 7,
+      "opening_score": -0.6,
+      "first_followup_score": 1.0,
+      "final_score": -1.0
+     }
+    },
+    "conversation_xray": {
+     "status": "ok",
+     "metrics": {
+      "messages": 13,
+      "customer_turns": 7,
+      "escalation_signals": 2,
+      "repeated_concerns": 3
+     }
+    }
+   },
+   "meta": {
+    "operations": [
+     {
+      "op": "sentiment_trajectory",
+      "engine": "duckdb",
+      "params": {
+       "conversation_id": "\u2026"
+      },
+      "status": "ok",
+      "duration_ms": 28.2,
+      "rows": 13,
+      "metrics": 8
+     },
+     {
+      "op": "conversation_xray",
+      "engine": "duckdb",
+      "params": {
+       "conversation_id": "\u2026"
+      },
+      "status": "ok",
+      "duration_ms": 12.9,
+      "rows": 13,
+      "metrics": 8
+     }
+    ]
+   },
+   "error": null
+  },
+  {
+   "node": "evidence",
+   "label": "Evidence assembly",
+   "role": "Resolve cited IDs to source messages and validate them.",
+   "engine": "DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.458213+00:00",
+   "duration_ms": 11.8,
+   "output": {
+    "items": 1,
+    "validation": {}
+   },
+   "meta": {
+    "requested": 1,
+    "resolved": 1,
+    "invalid": [],
+    "out_of_scope": []
+   },
+   "error": null
+  },
+  {
+   "node": "explanation",
+   "label": "Explanation agent",
+   "role": "Grounded narrative (LLM with numeric check, or deterministic).",
+   "engine": "deterministic / LLM",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.471620+00:00",
+   "duration_ms": 0.1,
+   "output": {
+    "source": "deterministic",
+    "headline": "In C0000479 (Coupon not applying \u00b7 Voucher), customer sentiment worsened: +1.0 at the first follow-up to -1.0 at the end."
+   },
+   "meta": {
+    "reason": "router: analytics only"
+   },
+   "error": null
+  },
+  {
+   "node": "visualization",
+   "label": "Visualization planner",
+   "role": "Choose charts and build validated specs from results.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.473173+00:00",
+   "duration_ms": 0.4,
+   "output": {
+    "charts": [
+     "R-47f6af03b163_traj_kpis",
+     "R-47f6af03b163_xr_kpis",
+     "sentiment_trajectory",
+     "trajectory_timeline"
+    ],
+    "graphs": 0,
+    "dashboard_sections": [
+     "Answer",
+     "Drill-down"
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "qa",
+   "label": "QA agent",
+   "role": "Check filters, denominators, rankings, charts, citations and grounding.",
+   "engine": "rules + DuckDB",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.474712+00:00",
+   "duration_ms": 12.7,
+   "output": {
+    "status": "pass",
+    "passed": "11/11",
+    "evidence_verdict": "supported",
+    "challenges": 0
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "governance",
+   "label": "Governance agent",
+   "role": "PII, coaching safeguards, dataset authorisation, audit.",
+   "engine": "rules",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.488865+00:00",
+   "duration_ms": 0.6,
+   "output": {
+    "findings": [
+     "pii_masking:pass",
+     "prompt_injection:pass",
+     "tool_safety:pass",
+     "dataset_authorisation:pass"
+    ]
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "response",
+   "label": "Response assembly",
+   "role": "Build the unified, versioned response contract.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.490912+00:00",
+   "duration_ms": 1.5,
+   "output": {
+    "status": "completed",
+    "charts": 4
+   },
+   "meta": {},
+   "error": null
+  },
+  {
+   "node": "memory_telemetry",
+   "label": "Memory + telemetry",
+   "role": "Persist session references and execution telemetry.",
+   "engine": "\u2014",
+   "status": "completed",
+   "started_at": "2026-10-23T00:45:25.494026+00:00",
+   "duration_ms": 1.8,
+   "output": {
+    "saved": true
+   },
+   "meta": {},
+   "error": null
+  }
+ ],
+ "operations": [
+  {
+   "op": "sentiment_trajectory",
+   "engine": "duckdb",
+   "params": {
+    "conversation_id": "C0000479"
+   },
+   "status": "ok",
+   "duration_ms": 28.2,
+   "rows": 13,
+   "metrics": 8
+  },
+  {
+   "op": "conversation_xray",
+   "engine": "duckdb",
+   "params": {
+    "conversation_id": "C0000479"
+   },
+   "status": "ok",
+   "duration_ms": 12.9,
+   "rows": 13,
+   "metrics": 8
+  }
+ ],
+ "retrieval": [],
+ "llm_calls": [],
+ "qa": {
+  "status": "pass",
+  "passed": 11,
+  "total": 11,
+  "checks": [
+   {
+    "check": "registered_operations",
+    "passed": true,
+    "critical": true,
+    "detail": "Operations: ['sentiment_trajectory', 'conversation_xray']"
+   },
+   {
+    "check": "filters_applied",
+    "passed": true,
+    "critical": false,
+    "detail": "All results use the planned scope"
+   },
+   {
+    "check": "proportions_valid",
+    "passed": true,
+    "critical": true,
+    "detail": "All proportions within [0, 1]"
+   },
+   {
+    "check": "chart_consistency",
+    "passed": true,
+    "critical": true,
+    "detail": "4 charts match their source tables"
+   },
+   {
+    "check": "evidence_valid",
+    "passed": true,
+    "critical": false,
+    "detail": "1 evidence items resolved to source messages"
+   },
+   {
+    "check": "evidence_present",
+    "passed": true,
+    "critical": false,
+    "detail": "1 evidence items attached"
+   },
+   {
+    "check": "explanation_grounded",
+    "passed": true,
+    "critical": true,
+    "detail": "All numbers in the answer trace to verified results"
+   },
+   {
+    "check": "uncertainty_disclosed",
+    "passed": true,
+    "critical": false,
+    "detail": "4 uncertainty notes attached to the response"
+   },
+   {
+    "check": "excerpt_fidelity",
+    "passed": true,
+    "critical": true,
+    "detail": "13/13 quoted excerpts match their source message word for word"
+   },
+   {
+    "check": "sample_size",
+    "passed": true,
+    "critical": false,
+    "detail": "No group below 30 conversations"
+   },
+   {
+    "check": "causal_language",
+    "passed": true,
+    "critical": false,
+    "detail": "No unqualified causal claims"
+   }
+  ]
+ },
+ "evidence_review": {
+  "verdict": "supported",
+  "passed": 4,
+  "total": 4,
+  "challenges": []
+ },
+ "counts": {
+  "nodes": 13,
+  "duckdb_operations": 2,
+  "faiss_searches": 0,
+  "llm_calls": 0,
+  "llm_calls_live": 0
+ },
+ "started_at": "2026-10-23T00:45:25.398452+00:00",
+ "sanitisation": "Secrets redacted, secret-named fields and tracebacks dropped, text truncated to 300 characters; prompt bodies are not included."
+}

@@ -1,0 +1,10 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "install", "type": "shell", "command": "make install", "problemMatcher": [] },
+    { "label": "prepare + index", "type": "shell", "command": "make prepare index", "problemMatcher": [] },
+    { "label": "dev (API + UI)", "type": "shell", "command": "make dev", "isBackground": true, "problemMatcher": [] },
+    { "label": "test", "type": "shell", "command": "make test", "group": { "kind": "test", "isDefault": true }, "problemMatcher": [] },
+    { "label": "e2e", "type": "shell", "command": "make e2e", "problemMatcher": [] }
+  ]
+}

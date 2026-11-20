@@ -1,0 +1,165 @@
+{
+  "id": "retail-customer-service",
+  "name": "MapleCart Retail \u2014 Customer service cross-system search",
+  "company": "MapleCart Retail",
+  "industry": "retail",
+  "summary": "Customer service representatives search across product, order, inventory and policy systems to answer customers.",
+  "expected": {
+    "primary_architecture": "hybrid",
+    "agentic_verdict": "not_recommended",
+    "ai_recommended": true
+  },
+  "request": {
+    "organization": {
+      "name": "MapleCart Retail (fictional)",
+      "industry": "retail",
+      "size": "large",
+      "ai_maturity": 3,
+      "gpu_available": false
+    },
+    "current_architecture": {
+      "deployment": [
+        "aws"
+      ],
+      "compute": [
+        "kubernetes"
+      ],
+      "styles": [
+        "microservices",
+        "event_driven",
+        "api_based"
+      ],
+      "integration": [
+        "rest",
+        "graphql",
+        "kafka"
+      ],
+      "identity_security": [
+        "oidc",
+        "oauth2",
+        "jwt",
+        "rbac",
+        "api_gateway",
+        "secrets_management",
+        "private_networking"
+      ],
+      "data_stores": [
+        "postgresql",
+        "mongodb",
+        "search_engine",
+        "object_storage",
+        "data_warehouse"
+      ],
+      "devops": [
+        "github_actions",
+        "argocd",
+        "cloudwatch",
+        "datadog",
+        "grafana"
+      ],
+      "existing_systems": [
+        "Order Management Service",
+        "Inventory Service",
+        "Product Catalog Service",
+        "Customer Service Desk"
+      ]
+    },
+    "data_profile": {
+      "availability": 4,
+      "quality": 4,
+      "freshness": 4,
+      "ownership": 4,
+      "lineage": 3,
+      "metadata": 3,
+      "permissions": 3,
+      "document_quality": 3,
+      "structured_share_pct": 55,
+      "knowledge_fragmentation": 4,
+      "contains_pii": true,
+      "contains_financial_data": false,
+      "confidential": false,
+      "privileged": false,
+      "data_residency_required": false,
+      "data_sources": [
+        "Product catalog",
+        "Orders",
+        "Inventory",
+        "Return & shipping policies",
+        "Help-center articles"
+      ]
+    },
+    "use_case": {
+      "title": "Customer service representative assistant across product, order, inventory and policy systems",
+      "description": "Representatives switch between 4-6 screens to answer 'where is my order', returns eligibility and product questions.",
+      "users": "Customer service representatives",
+      "workflow": "Customer contact -> rep looks up order, inventory, product and policy -> composes answer.",
+      "pain_points": [
+        "Average handle time inflated by screen switching",
+        "Policy answers inconsistent",
+        "Peak-season backlog"
+      ],
+      "desired_outcome": "One assistant view with authoritative order/inventory facts plus grounded policy answers.",
+      "current_solution": "Customer Service Desk + direct lookups in each system",
+      "constraints": [
+        "Order and inventory facts must come from systems of record",
+        "Peak-season scale (5x)",
+        "Sub-3-second responses"
+      ],
+      "primary_tasks": [
+        "knowledge_search",
+        "summarization",
+        "conversation"
+      ],
+      "action_types": [
+        "read_only",
+        "draft_content"
+      ],
+      "deterministic_requirement": 2,
+      "prediction_requirement": 1,
+      "generation_requirement": 4,
+      "workflow_variability": 2,
+      "multi_step_reasoning": 3,
+      "cross_system_interaction": 4,
+      "tool_requirements": 3,
+      "proprietary_knowledge_need": 4,
+      "citation_requirement": 3,
+      "knowledge_change_frequency": 4,
+      "autonomy_benefit": 1,
+      "hallucination_tolerance": 2,
+      "transaction_criticality": 2,
+      "explainability_requirement": 2,
+      "latency_sensitivity": 4,
+      "availability_requirement": 4,
+      "human_oversight_available": 4
+    },
+    "cost_inputs": {
+      "requests_per_month": 250000,
+      "avg_input_tokens": 1500,
+      "avg_output_tokens": 350,
+      "rag_top_k": 5,
+      "tokens_per_chunk": 350,
+      "cache_hit_rate": 0.3,
+      "small_model_routing_pct": 0.6,
+      "human_review_pct": 0.05,
+      "human_review_minutes": 1,
+      "reviewer_hourly_cost": 32,
+      "infrastructure_cost_month": 6000,
+      "current_monthly_cost": 0,
+      "max_output_tokens": 500
+    },
+    "roi_inputs": {
+      "people_involved": 400,
+      "tasks_per_month": 250000,
+      "minutes_per_task": 6,
+      "hourly_cost": 32,
+      "error_rate_pct": 4,
+      "rework_cost_per_error": 25,
+      "existing_technology_cost_annual": 0,
+      "implementation_cost": 600000,
+      "expected_time_reduction_pct": 25,
+      "expected_error_reduction_pct": 25
+    }
+  },
+  "order": 3,
+  "disclaimer": "Fictional company and synthetic data for demonstration only."
+}

@@ -1,0 +1,10 @@
+{
+  "note": "Range metadata supplied by the person who authorised this target: how to start it and its synthetic test identities.",
+  "framework": "fastapi",
+  "module": "app",
+  "app_variable": "app",
+  "identities": {"alice": "Bearer token-alice", "bob": "Bearer token-bob"},
+  "auth_header": "Authorization",
+  "file_base": "files",
+  "functional_tests": "functional_test.py"
+}

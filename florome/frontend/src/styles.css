@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+body { @apply bg-canvas text-ink font-sans antialiased; }
+.grid-canvas {
+  background-image: linear-gradient(to right, rgba(91, 99, 230, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(91, 99, 230, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.grid-dark {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.react-flow__attribution { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

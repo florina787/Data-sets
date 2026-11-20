@@ -1,0 +1,607 @@
+[
+ {
+  "intent": "negative_topics",
+  "question": "What were the top 5 topics most associated with negative customer sentiment in the last month represented in the dataset?",
+  "family": "negative_topics_1"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Top five topics linked to negative sentiment last month?",
+  "family": "negative_topics_1"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "last month's 5 most negative topics",
+  "family": "negative_topics_1"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Top 3 negative topics in October 2025",
+  "family": "negative_topics_4"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Show the three most negative issues for Oct 2025",
+  "family": "negative_topics_4"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "october 2025 worst topics by negative sentiment",
+  "family": "negative_topics_4"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Which domains have the most negative sentiment?",
+  "family": "negative_topics_6"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Negative sentiment by business domain — which is worst?",
+  "family": "negative_topics_6"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "rank the domains by unhappy customers",
+  "family": "negative_topics_6"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "Which support agents may benefit from additional coaching on empathy or customer communication, and what evidence supports that view?",
+  "family": "agent_coaching_1"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "Which agents would benefit from more empathy coaching, and why?",
+  "family": "agent_coaching_1"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "agents who need communication coaching + evidence",
+  "family": "agent_coaching_1"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "Which agents miss empathy cues most often?",
+  "family": "agent_coaching_4"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "Who rarely apologises or acknowledges the customer?",
+  "family": "agent_coaching_4"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "agents with the lowest empathy response rate",
+  "family": "agent_coaching_4"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "How did customer sentiment change over the course of a selected conversation?",
+  "family": "sentiment_trajectory_1"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "How did the customer's mood evolve during the selected conversation?",
+  "family": "sentiment_trajectory_1"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "sentiment over the course of a conversation",
+  "family": "sentiment_trajectory_1"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "How did sentiment change in conversation C0000479?",
+  "family": "sentiment_trajectory_2"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "Trace the customer's sentiment through C0000479",
+  "family": "sentiment_trajectory_2"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "c0000479 sentiment journey",
+  "family": "sentiment_trajectory_2"
+ },
+ {
+  "intent": "sentiment_trajectory",
+  "question": "Walk me through how the customer felt in C0000479",
+  "family": "sentiment_trajectory_2"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "Which recurring customer concerns should contact-centre leadership review first?",
+  "family": "leadership_priorities_1"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "What recurring concerns should leadership look at first?",
+  "family": "leadership_priorities_1"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "leadership: which concerns to review first",
+  "family": "leadership_priorities_1"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "Prioritise the recurring issues for the operations team",
+  "family": "leadership_priorities_3"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "Rank recurring issues by priority",
+  "family": "leadership_priorities_3"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "Give me a priority list of customer concerns",
+  "family": "leadership_priorities_3"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "What should the executive team know about customer pain points?",
+  "family": "leadership_priorities_4"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "Brief the VP of support on the top concerns",
+  "family": "leadership_priorities_4"
+ },
+ {
+  "intent": "leadership_priorities",
+  "question": "Which customer issues deserve senior attention?",
+  "family": "leadership_priorities_4"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "How do customers feel overall?",
+  "family": "sentiment_distribution_2"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "Overall, are customers happy?",
+  "family": "sentiment_distribution_2"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "What's the general mood of our customers?",
+  "family": "sentiment_distribution_2"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "Sentiment breakdown by domain",
+  "family": "sentiment_distribution_3"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "Show the sentiment mix by domain",
+  "family": "sentiment_distribution_3"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "positive vs negative share for each domain",
+  "family": "sentiment_distribution_3"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "What share of conversations are negative?",
+  "family": "sentiment_distribution_4"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "What percentage of chats are positive?",
+  "family": "sentiment_distribution_4"
+ },
+ {
+  "intent": "sentiment_distribution",
+  "question": "How many conversations were negative overall?",
+  "family": "sentiment_distribution_4"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Was there a spike in negative conversations recently?",
+  "family": "sentiment_trend_5"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Any month where negativity jumped?",
+  "family": "sentiment_trend_5"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "When was sentiment at its worst?",
+  "family": "sentiment_trend_5"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "Why do customers contact us?",
+  "family": "topic_frequency_2"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "What do customers usually write in about?",
+  "family": "topic_frequency_2"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "What brings people to support?",
+  "family": "topic_frequency_2"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "How many conversations are there per topic?",
+  "family": "topic_frequency_3"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "Volume by issue type",
+  "family": "topic_frequency_3"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "Count conversations for each topic",
+  "family": "topic_frequency_3"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "Which products get the most support conversations?",
+  "family": "topic_frequency_4"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "Most frequently mentioned products",
+  "family": "topic_frequency_4"
+ },
+ {
+  "intent": "topic_frequency",
+  "question": "product volume breakdown",
+  "family": "topic_frequency_4"
+ },
+ {
+  "intent": "compare_topics",
+  "question": "Compare duplicate charges versus coupon problems",
+  "family": "compare_topics_1"
+ },
+ {
+  "intent": "compare_topics",
+  "question": "Duplicate charge vs coupon not applying",
+  "family": "compare_topics_1"
+ },
+ {
+  "intent": "compare_topics",
+  "question": "How do coupon issues stack up against double charges?",
+  "family": "compare_topics_1"
+ },
+ {
+  "intent": "compare_topics",
+  "question": "What's the difference between duplicate charges and refunds not showing?",
+  "family": "compare_topics_4"
+ },
+ {
+  "intent": "compare_topics",
+  "question": "Compare double billing with paid-but-not-delivered cases",
+  "family": "compare_topics_4"
+ },
+ {
+  "intent": "compare_topics",
+  "question": "duplicate charge versus payment not reflected",
+  "family": "compare_topics_4"
+ },
+ {
+  "intent": "agent_profile",
+  "question": "How does AgentASVV handle frustrated customers?",
+  "family": "agent_profile_3"
+ },
+ {
+  "intent": "agent_profile",
+  "question": "Review AgentASVV",
+  "family": "agent_profile_3"
+ },
+ {
+  "intent": "agent_profile",
+  "question": "AgentASVV performance signals",
+  "family": "agent_profile_3"
+ },
+ {
+  "intent": "conversation_detail",
+  "question": "What was C0001200 about?",
+  "family": "conversation_detail_2"
+ },
+ {
+  "intent": "conversation_detail",
+  "question": "Show me the full chat C0001200",
+  "family": "conversation_detail_2"
+ },
+ {
+  "intent": "conversation_detail",
+  "question": "Pull up conversation C0001200",
+  "family": "conversation_detail_2"
+ },
+ {
+  "intent": "conversation_detail",
+  "question": "Read me C0000837",
+  "family": "conversation_detail_3"
+ },
+ {
+  "intent": "conversation_detail",
+  "question": "Transcript for C0000837 please",
+  "family": "conversation_detail_3"
+ },
+ {
+  "intent": "conversation_detail",
+  "question": "Let me see conversation C0000837",
+  "family": "conversation_detail_3"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Show me examples of customers asking to escalate",
+  "family": "similar_conversations_2"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Find conversations where the customer demanded escalation",
+  "family": "similar_conversations_2"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "examples of escalation requests",
+  "family": "similar_conversations_2"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Search for conversations about locked accounts",
+  "family": "similar_conversations_3"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Find chats where users couldn't log in",
+  "family": "similar_conversations_3"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "look for conversations about account lockouts",
+  "family": "similar_conversations_3"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Give me 3 examples of coupons not working",
+  "family": "similar_conversations_5"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Show a few coupon failure cases",
+  "family": "similar_conversations_5"
+ },
+ {
+  "intent": "similar_conversations",
+  "question": "Find three chats about coupon codes failing",
+  "family": "similar_conversations_5"
+ },
+ {
+  "intent": "resolution_quality",
+  "question": "Do refunds go to the right cases?",
+  "family": "resolution_quality_3"
+ },
+ {
+  "intent": "resolution_quality",
+  "question": "Are agents applying the correct remedy?",
+  "family": "resolution_quality_3"
+ },
+ {
+  "intent": "resolution_quality",
+  "question": "How good are our resolutions?",
+  "family": "resolution_quality_3"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "How many conversations are in the dataset?",
+  "family": "dataset_overview_1"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "How big is the dataset?",
+  "family": "dataset_overview_1"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "How much data do we have?",
+  "family": "dataset_overview_1"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "What date range does the data cover?",
+  "family": "dataset_overview_2"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "Which months are in the data?",
+  "family": "dataset_overview_2"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "What period does this dataset span?",
+  "family": "dataset_overview_2"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "What is the data quality like?",
+  "family": "dataset_overview_4"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "Are there gaps or issues in the data?",
+  "family": "dataset_overview_4"
+ },
+ {
+  "intent": "dataset_overview",
+  "question": "How reliable are the labels in this dataset?",
+  "family": "dataset_overview_4"
+ },
+ {
+  "intent": "conversation_list",
+  "question": "Show only positive conversations",
+  "family": "conversation_list_2"
+ },
+ {
+  "intent": "conversation_list",
+  "question": "List the positive chats",
+  "family": "conversation_list_2"
+ },
+ {
+  "intent": "conversation_list",
+  "question": "Give me the list of positive conversations",
+  "family": "conversation_list_2"
+ },
+ {
+  "intent": "conversation_xray",
+  "question": "What went wrong in conversation C0001673?",
+  "family": "conversation_xray_2"
+ },
+ {
+  "intent": "conversation_xray",
+  "question": "Diagnose conversation C0001673",
+  "family": "conversation_xray_2"
+ },
+ {
+  "intent": "conversation_xray",
+  "question": "Why did C0001673 go badly?",
+  "family": "conversation_xray_2"
+ },
+ {
+  "intent": "conversation_xray",
+  "question": "Break down the selected conversation: escalation, repeats, gaps",
+  "family": "conversation_xray_4"
+ },
+ {
+  "intent": "conversation_xray",
+  "question": "Diagnose the selected conversation",
+  "family": "conversation_xray_4"
+ },
+ {
+  "intent": "conversation_xray",
+  "question": "X-ray the selected conversation",
+  "family": "conversation_xray_4"
+ },
+ {
+  "intent": "root_cause",
+  "question": "What is driving negative sentiment in duplicate charges?",
+  "family": "root_cause_1"
+ },
+ {
+  "intent": "root_cause",
+  "question": "Root cause of negativity in duplicate charge conversations",
+  "family": "root_cause_1"
+ },
+ {
+  "intent": "root_cause",
+  "question": "Why are duplicate charge customers so unhappy?",
+  "family": "root_cause_1"
+ },
+ {
+  "intent": "root_cause",
+  "question": "Why are customers unhappy?",
+  "family": "root_cause_3"
+ },
+ {
+  "intent": "root_cause",
+  "question": "What are the underlying causes of negative sentiment?",
+  "family": "root_cause_3"
+ },
+ {
+  "intent": "root_cause",
+  "question": "Investigate the drivers of dissatisfaction",
+  "family": "root_cause_3"
+ },
+ {
+  "intent": "root_cause",
+  "question": "Do slow or unempathetic replies explain unhappy coupon customers?",
+  "family": "root_cause_5"
+ },
+ {
+  "intent": "root_cause",
+  "question": "What is driving complaints about coupons?",
+  "family": "root_cause_5"
+ },
+ {
+  "intent": "root_cause",
+  "question": "Root-cause the coupon issue",
+  "family": "root_cause_5"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Is negativity rising over time, and which topics drive the rise?",
+  "family": "multi_trend_and_topics"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Show the monthly negative trend and the topics behind it",
+  "family": "multi_trend_and_topics"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "negative sentiment trend month over month and its main topics",
+  "family": "multi_trend_and_topics"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Did negative sentiment crash or rise over the months?",
+  "family": "adv_crash_word_not_topic"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Has the negative rate dropped since last month?",
+  "family": "adv_crash_word_not_topic"
+ },
+ {
+  "intent": "sentiment_trend",
+  "question": "Is the share of unhappy customers trending down?",
+  "family": "adv_crash_word_not_topic"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "For example, which agents struggle with empathy?",
+  "family": "adv_examples_word_in_coaching"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "Which agents, for instance, ignore customer frustration?",
+  "family": "adv_examples_word_in_coaching"
+ },
+ {
+  "intent": "agent_coaching",
+  "question": "Say, who on the team needs help with empathetic replies?",
+  "family": "adv_examples_word_in_coaching"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Which topics had the highest negative rate in September 2025?",
+  "family": "adv_trend_word_in_ranking"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "In September 2025, rank topics by how negative they were",
+  "family": "adv_trend_word_in_ranking"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "worst topics by negative share, Sept 2025",
+  "family": "adv_trend_word_in_ranking"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Which products had the most negative chats last month?",
+  "family": "entity_product_variation"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "Most negative products in October 2025",
+  "family": "entity_product_variation"
+ },
+ {
+  "intent": "negative_topics",
+  "question": "products with the highest number of negative conversations",
+  "family": "entity_product_variation"
+ }
+]

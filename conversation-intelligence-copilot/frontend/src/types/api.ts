@@ -1,0 +1,280 @@
+export type Unit = "count" | "percent" | "score" | "sentiment" | "ratio" | "p" | null;
+
+export interface Metric {
+  id: string;
+  label: string;
+  value: number | string | null;
+  unit?: Unit;
+  numerator?: number | null;
+  denominator?: number | null;
+  description?: string;
+}
+
+export interface Table<Row = Record<string, any>> {
+  columns: string[];
+  rows: Row[];
+}
+
+export interface DateWindow {
+  start: string | null;
+  end: string | null;
+  label: string;
+  rule: string;
+  explanation: string;
+}
+
+export interface Scope {
+  dataset_mode: "original" | "synthetic" | "combined";
+  window: DateWindow;
+  topics: string[];
+  products: string[];
+  domains: string[];
+  agents: string[];
+  sentiments: string[];
+  conversation_ids: string[];
+}
+
+export interface AnalysisResult {
+  operation: string;
+  params: Record<string, any>;
+  scope: Scope;
+  metrics: Metric[];
+  table: Table | null;
+  series: Record<string, Table>;
+  evidence_refs: string[];
+  method_notes: string[];
+  uncertainty_notes: string[];
+  coverage: Record<string, any>;
+  status: "ok" | "insufficient_data" | "unsupported" | "error";
+}
+
+export type ChartType =
+  | "bar" | "horizontal_bar" | "line" | "area" | "stacked_bar" | "donut" | "heatmap" | "timeline"
+  | "priority_matrix" | "scatter" | "kpi" | "table" | "error_bar";
+
+export interface ChartSeries { key: string; label: string; color: string }
+
+export interface ChartSpec {
+  chart_id: string;
+  chart_type: ChartType;
+  title: string;
+  description: string;
+  x_field: string | null;
+  y_field: string | null;
+  series: ChartSeries[];
+  data: Record<string, any>[];
+  value_format: "count" | "percent" | "score" | "number";
+  filters: Record<string, any>;
+  dataset_scope: string;
+  source_analysis_id: string;
+  evidence_ids: string[];
+  uncertainty_note: string | null;
+  drilldown: { kind: "topic" | "product" | "conversation" | "agent" | "month" | "message"; field: string } | null;
+  error_low_field: string | null;
+  error_high_field: string | null;
+  accessibility_summary: string;
+}
+
+export interface GraphSpec {
+  graph_id: string;
+  title: string;
+  description: string;
+  nodes: { id: string; label: string; kind: string; value?: number | null }[];
+  edges: { source: string; target: string; weight: number; label: string; relation: "observed" | "inferred" }[];
+}
+
+export interface Excerpt {
+  message_id: string;
+  turn_index: number;
+  role: "customer" | "agent";
+  text: string;
+  sentiment: string;
+  act: string;
+  source_reference?: string;
+}
+
+export interface Evidence {
+  evidence_id: string;
+  kind: "analysis" | "retrieval";
+  conversation_id: string;
+  message_ids: string[];
+  turn_range: [number, number];
+  excerpts: Excerpt[];
+  topic: string;
+  product: string | null;
+  sentiment: string;
+  agent_id: string | null;
+  date: string;
+  similarity: number | null;
+  reason: string;
+  retrieval_method?: "hybrid" | "dense" | "lsa" | null;
+  method_scores?: Partial<Record<"dense" | "lsa", { rank: number; similarity: number }>>;
+}
+
+export type AnalysisMode = "auto" | "analytics_only" | "hybrid_ai";
+
+export interface Routing {
+  requested_mode: AnalysisMode;
+  route: "analytics_only" | "hybrid_ai" | "fast_path";
+  reason: string;
+  llm_available: boolean;
+  llm_steps: string[];
+  rules_category?: string;
+  interpretive_cue?: string | null;
+  intent_precheck?: { method: string; reason: string; rule: string; label: string };
+}
+
+/** Tokens are null when calls were made but the provider reported no usage; 0 only when no model call was made. */
+export interface TokenUsage {
+  calls: number;
+  model_calls: number;
+  cache_hits: number;
+  reported_calls: number;
+  unreported_calls: number;
+  complete: boolean;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  total_tokens: number | null;
+  estimated_cost_usd: number | null;
+  by_purpose: { purpose: string; model: string; total_tokens: number | null; cache_hit: number; status: string; latency_ms: number }[];
+}
+
+export interface Panel {
+  operation: string;
+  params: Record<string, any>;
+  metrics: Metric[];
+  table: Table | null;
+  series: Record<string, Table>;
+  method_notes: string[];
+  uncertainty_notes: string[];
+  coverage: Record<string, any>;
+}
+
+export interface DashboardSpec {
+  title: string;
+  generated_from: string;
+  kpi_chart_ids: string[];
+  sections: { title: string; items: { chart_id: string; why: string; width: "full" | "half" }[] }[];
+  filters: { field: string; value: string }[];
+  refinements: { label: string; question: string }[];
+  operations: string[];
+  layout_rule: string;
+}
+
+export interface ChallengeCheck { check: string; status: "pass" | "warn" | "fail"; detail: string; items: any[] }
+
+export interface EvidenceReview {
+  verdict: "supported" | "partially supported" | "challenged";
+  checks: ChallengeCheck[];
+  challenges: string[];
+  counter_evidence: string[];
+  added_notes: string[];
+  replaced_explanation: boolean;
+  passed: number;
+  total: number;
+}
+
+export interface Recommendation {
+  concern: string;
+  topic: string;
+  rank: number;
+  priority: "High" | "Medium" | "Low";
+  finding: string;
+  supporting_metric: { label: string; value: number; signal: string };
+  rationale: string;
+  suggested_action: string;
+  decision_owner: string;
+  evidence: string[];
+  uncertainty: string;
+}
+
+export interface QACheck { check: string; passed: boolean; critical: boolean; detail: string }
+
+export interface Groundedness {
+  basis: "dataset" | "model_explained" | "general_knowledge" | "no_analysis";
+  score: number | null;
+  risk: "low" | "medium" | "high";
+  label: string;
+  reasons: string[];
+  components: Record<string, number>;
+}
+
+export interface ChatResponse {
+  version: string;
+  request_id: string;
+  session_id: string;
+  status: "completed" | "insufficient_data" | "unsupported" | "needs_review" | "failed";
+  question: string;
+  resolved_intent: Record<string, any>;
+  dataset_scope: Scope;
+  plan: { category: string; specialist: string | null; steps: { op: string; params: any; purpose: string }[]; retrieval: any; notes: string[]; resolved_references: any; audience: string };
+  headline: string;
+  answer: string;
+  key_points: string[];
+  metrics: Metric[];
+  rankings: Record<string, any>[];
+  charts: ChartSpec[];
+  graphs: GraphSpec[];
+  evidence: Evidence[];
+  recommendations: Recommendation[];
+  uncertainty_notes: string[];
+  method_notes: string[];
+  follow_up_questions: string[];
+  execution_trace_id: string;
+  model_metadata: Record<string, any>;
+  quality_status: { status: "pass" | "warn" | "fail"; checks: QACheck[]; passed: number; total: number };
+  governance: { policy: string; outcome: string; detail: string }[];
+  human_review_required: boolean;
+  errors: { node: string; error: string }[];
+  latency_ms?: number;
+  routing?: Routing;
+  token_usage?: TokenUsage;
+  xray?: Panel | null;
+  root_cause?: Panel | null;
+  dashboard?: DashboardSpec | null;
+  evidence_review?: EvidenceReview | null;
+  groundedness?: Groundedness | null;
+}
+
+export type NodeStatus = "pending" | "running" | "completed" | "failed" | "skipped" | "cancelled";
+
+export interface StreamEvent {
+  type: "accepted" | "node_start" | "node_end" | "explanation_draft" | "final" | "error";
+  text?: string;
+  node?: string;
+  label?: string;
+  status?: NodeStatus;
+  duration_ms?: number;
+  error?: string | null;
+  output_summary?: Record<string, any>;
+  meta?: Record<string, any>;
+  request_id?: string;
+  session_id?: string;
+  response?: ChatResponse;
+  message?: string;
+  retryable?: boolean;
+}
+
+export interface TraceNode {
+  node: string;
+  status: NodeStatus;
+  started_at: string | null;
+  finished_at: string | null;
+  duration_ms: number | null;
+  retries: number;
+  input_summary: any;
+  output_summary: any;
+  error: string | null;
+  meta_json: any;
+}
+
+export interface Trace {
+  request: Record<string, any>;
+  nodes: TraceNode[];
+  llm_calls: Record<string, any>[];
+}
+
+export interface GraphDefinition {
+  nodes: { id: string; label: string; role: string }[];
+  edges: { source: string; target: string; conditional: boolean }[];
+}

@@ -1,0 +1,20 @@
+{"question": "Where is customer frustration concentrated?", "expected": "negative_topics"}
+{"question": "Which product areas generate the most complaints?", "expected": "negative_topics"}
+{"question": "Give me the worst-performing topics for September 2025", "expected": "negative_topics"}
+{"question": "Which reps should get communication training?", "expected": "agent_coaching"}
+{"question": "Are our agents showing enough empathy?", "expected": "agent_coaching"}
+{"question": "Walk me through how the customer felt in C0001673", "expected": "sentiment_trajectory"}
+{"question": "Did the customer calm down by the end of conversation C0000837?", "expected": "sentiment_trajectory"}
+{"question": "What should the head of support look at first this quarter?", "expected": "leadership_priorities"}
+{"question": "Rank the recurring issues by priority", "expected": "leadership_priorities"}
+{"question": "Has sentiment improved since August?", "expected": "sentiment_trend"}
+{"question": "What share of conversations are positive?", "expected": "sentiment_distribution"}
+{"question": "Which issues come up most often?", "expected": "topic_frequency"}
+{"question": "How do login problems compare with app crashes?", "expected": "compare_topics"}
+{"question": "Pull up a few chats where someone was double charged", "expected": "similar_conversations"}
+{"question": "Do agents close conversations with the right action?", "expected": "resolution_quality"}
+{"question": "How many agents are in the data?", "expected": "dataset_overview"}
+{"question": "What is the average handle time?", "expected": "unsupported"}
+{"question": "Predict next quarter's churn", "expected": "unsupported"}
+{"question": "Which agent is the laziest?", "expected": "unsupported"}
+{"question": "Write me a poem about customer service", "expected": "unsupported"}

@@ -1,0 +1,341 @@
+{
+  "label": "after_llm_budget60",
+  "base_url": "http://127.0.0.1:8000",
+  "runs_per_category": 20,
+  "health": {
+    "status": "ok",
+    "checked_at": "2026-10-27T23:54:42.818291+00:00",
+    "checks": [
+      {
+        "check": "raw_dataset",
+        "status": "ok",
+        "detail": "cs_conversations.csv.zip",
+        "required": true
+      },
+      {
+        "check": "analytics_database",
+        "status": "ok",
+        "detail": "built 2026-10-23T00:57:21Z, 41965 labelled messages",
+        "required": true
+      },
+      {
+        "check": "retrieval_index",
+        "status": "ok",
+        "detail": "18639 chunks, lsa-tfidf-svd192 + sentence-transformers/all-MiniLM-L6-v2",
+        "required": false
+      },
+      {
+        "check": "llm",
+        "status": "ok",
+        "detail": "local \u00b7 qwen2.5-1.5b-instruct-q4_k_m: llm",
+        "required": false
+      },
+      {
+        "check": "dependency:duckdb",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "dependency:faiss",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "dependency:langgraph",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "dependency:google.genai",
+        "status": "ok",
+        "detail": "importable",
+        "required": true
+      },
+      {
+        "check": "memory_store",
+        "status": "ok",
+        "detail": "SQLite ready; 0 expired session(s) purged",
+        "required": true
+      }
+    ],
+    "dataset_mode": "original"
+  },
+  "categories": {
+    "llm_explanation": {
+      "n": 20,
+      "p50_ms": 30503.5,
+      "p95_ms": 37437.4,
+      "max_ms": 44532.2,
+      "mean_ms": 31555.6,
+      "correct": 20,
+      "failures": 0,
+      "model_calls": 20,
+      "runs": [
+        {
+          "question": "Why is duplicate charge so negative?",
+          "wall_ms": 32950.6,
+          "server_ms": 32908.1,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Negative outcomes associated with replies to negative turns rarely acknowledging frustration"
+        },
+        {
+          "question": "Why are coupon conversations so negative?",
+          "wall_ms": 30411.6,
+          "server_ms": 30380.4,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "No agent or context factor is clearly associated with negative sentiment in Coupon not applying."
+        },
+        {
+          "question": "What is behind negative sentiment in refund conversations?",
+          "wall_ms": 44532.2,
+          "server_ms": 44498.4,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Negative sentiment in refund conversations is associated with replies to negative turns that rarely acknowledge frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why are customers unhappy about items not received?",
+          "wall_ms": 30595.5,
+          "server_ms": 30557.1,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Customers are unhappy about items not received associated with replies to negative turns rarely acknowledging frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why is duplicate charge so negative?",
+          "wall_ms": 30600.7,
+          "server_ms": 30560.0,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%) are strongly associated with negative outcomes."
+        },
+        {
+          "question": "Why are coupon conversations so negative?",
+          "wall_ms": 27805.9,
+          "server_ms": 27771.3,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "No agent or context factor is clearly associated with negative sentiment in Coupon not applying."
+        },
+        {
+          "question": "What is behind negative sentiment in refund conversations?",
+          "wall_ms": 33236.3,
+          "server_ms": 33189.8,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Negative sentiment in refund conversations is associated with replies to negative turns that rarely acknowledge frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why are customers unhappy about items not received?",
+          "wall_ms": 34690.4,
+          "server_ms": 34651.2,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Customers are unhappy about items not received due to replies to negative turns rarely acknowledging frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why is duplicate charge so negative?",
+          "wall_ms": 37064.0,
+          "server_ms": 37030.4,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%) is associated with negative outcomes"
+        },
+        {
+          "question": "Why are coupon conversations so negative?",
+          "wall_ms": 26383.9,
+          "server_ms": 26341.9,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "No agent or context factor is clearly associated with negative sentiment in Coupon not applying."
+        },
+        {
+          "question": "What is behind negative sentiment in refund conversations?",
+          "wall_ms": 35868.2,
+          "server_ms": 35828.4,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Negative sentiment in refund conversations is associated with replies to negative turns that rarely acknowledge frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why are customers unhappy about items not received?",
+          "wall_ms": 29876.7,
+          "server_ms": 29840.3,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Customers are unhappy about items not received associated with replies to negative turns rarely acknowledging frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why is duplicate charge so negative?",
+          "wall_ms": 29388.8,
+          "server_ms": 29342.9,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%) are strongly associated with negative outcomes."
+        },
+        {
+          "question": "Why are coupon conversations so negative?",
+          "wall_ms": 28562.0,
+          "server_ms": 28517.5,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "No agent or context factor is clearly associated with negative sentiment in Coupon not applying."
+        },
+        {
+          "question": "What is behind negative sentiment in refund conversations?",
+          "wall_ms": 28305.5,
+          "server_ms": 28263.6,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "warn",
+          "headline": "Negative sentiment in refund conversations is associated with replies to negative turns that rarely acknowledge frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why are customers unhappy about items not received?",
+          "wall_ms": 30176.8,
+          "server_ms": 30135.1,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Customers are unhappy about items not received due to replies to negative turns rarely acknowledging frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why is duplicate charge so negative?",
+          "wall_ms": 26702.2,
+          "server_ms": 26656.9,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Replies to negative turns rarely acknowledge frustration (empathy response rate below 50%) are associated with negative outcomes"
+        },
+        {
+          "question": "Why are coupon conversations so negative?",
+          "wall_ms": 28053.4,
+          "server_ms": 28015.3,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "deterministic",
+          "qa": "warn",
+          "headline": "No agent or context factor is clearly associated with negative sentiment in Coupon not applying."
+        },
+        {
+          "question": "What is behind negative sentiment in refund conversations?",
+          "wall_ms": 31270.0,
+          "server_ms": 31227.0,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Negative sentiment in refund conversations is associated with replies to negative turns that rarely acknowledge frustration (empathy response rate below 50%)"
+        },
+        {
+          "question": "Why are customers unhappy about items not received?",
+          "wall_ms": 34636.5,
+          "server_ms": 34593.2,
+          "correct": true,
+          "problems": [],
+          "route": "hybrid_ai",
+          "category": "root_cause",
+          "model_calls": 1,
+          "explanation_source": "llm",
+          "qa": "pass",
+          "headline": "Customers unhappy about items not received due to replies to negative turns rarely acknowledging frustration (empathy response rate below 50%)"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-10-27T23:54:42Z"
+}
