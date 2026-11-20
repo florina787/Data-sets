@@ -37,7 +37,7 @@ export function SiteLayout({ children, dark = false }: { children: ReactNode; da
             <p className="mt-3 text-sm text-[#5a544b]">In an emergency, call your local emergency number.</p></div>
           <div><h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7c5f2b]">Explore</h2><ul className="mt-3 space-y-2 text-[15px]">{SITE_NAV.map((n) => <li key={n.to}><Link to={n.to}>{n.label}</Link></li>)}</ul></div>
           <div><h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7c5f2b]">Open source</h2><ul className="mt-3 space-y-2 text-[15px]">
-            <li><a href="https://github.com/florina787/femora" rel="noopener">Source code</a></li><li><Link to="/app">Open the app</Link></li><li><Link to="/trust">Privacy & limits</Link></li></ul></div>
+            <li><a href="https://github.com/florina787/Bea" rel="noopener">Source code</a></li><li><Link to="/app">Open the app</Link></li><li><Link to="/trust">Privacy & limits</Link></li></ul></div>
         </div>
         <div className="border-t border-[#17140f]/10 py-6 text-center"><Credit /></div>
       </footer>

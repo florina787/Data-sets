@@ -62,7 +62,7 @@ export function PricingPage() {
               <li>• Trial start and expiry timestamps, usage counted server-side, rate limits and abuse controls.</li>
               <li>• A payment provider connected server-side with idempotent webhooks; no secret keys ever ship to this website.</li>
             </ul>
-            <p className="mt-4 text-sm text-[#5a544b]">Full design: <a className="underline" href="https://github.com/florina787/femora/blob/main/femora/docs/SUBSCRIPTIONS.md">docs/SUBSCRIPTIONS.md</a></p></Reveal>
+            <p className="mt-4 text-sm text-[#5a544b]">Full design: <a className="underline" href="https://github.com/florina787/Bea/blob/main/femora/docs/SUBSCRIPTIONS.md">docs/SUBSCRIPTIONS.md</a></p></Reveal>
         </div>
       </section>
     </SiteLayout>

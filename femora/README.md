@@ -28,7 +28,7 @@
 A cinematic public site sits in front of the app: homepage, features, an **interactive demo with synthetic data**, the Sisterhood club, how it works, a gallery, pricing (proposed, with no checkout) and science & trust.
 
 - **Lighthouse:** accessibility, best practices and SEO **100** on all 8 pages; mobile performance 90–98.
-- **Where it will live:** `https://florina787.github.io/femora/`, published from its own repository so the existing VEENA.AI site isn't affected.
+- **Where it will live:** `https://florina787.github.io/Bea/`, published from its own repository so the existing VEENA.AI site isn't affected.
 - **Details:** [docs/WEBSITE.md](docs/WEBSITE.md) · billing design: [docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md)
 
 ---

@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const dist = new URL("../dist/", import.meta.url).pathname;
-const SITE = (process.env.FEMORA_SITE_URL ?? "https://florina787.github.io/femora/").replace(/\/?$/, "/");
+const SITE = (process.env.FEMORA_SITE_URL ?? "https://florina787.github.io/Bea/").replace(/\/?$/, "/");
 const PAGES = [
   ["", "FEMORA Muse · Every woman's journey deserves to be understood", "Meet Muse, your personal AI wellness companion. Understand your menopause journey, discover meaningful connections, and feel supported through every change."],
   ["features", "Features · FEMORA Muse", "Muse AI companion, menopause journey, health intelligence, MedScan, food & lifestyle, Guardian safety, sisterhood and offline privacy. What works today and what's coming."],

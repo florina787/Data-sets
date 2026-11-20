@@ -31,9 +31,9 @@ Open `/demo` → **Start the demo**. Everything you see uses synthetic data. Mus
 
 ## Deploying (owner-approved, manual)
 GitHub Pages for `florina787/Data-sets` already serves **VEENA.AI**, so FEMORA deploys from its own repository:
-1. Create an empty public repository `florina787/femora` on GitHub.
+1. Create an empty public repository `florina787/Bea` on GitHub (done).
 2. Push this project to it (see the session notes), then go to *Settings → Pages → Source: GitHub Actions*.
-3. Run **FEMORA deploy to GitHub Pages** from the Actions tab. The site goes live at `https://florina787.github.io/femora/`.
+3. Run **FEMORA deploy to GitHub Pages** from the Actions tab. The site goes live at `https://florina787.github.io/Bea/`.
 
 The workflow refuses to run in any other repository, so it can't overwrite VEENA.
 
@@ -44,5 +44,5 @@ The workflow refuses to run in any other repository, so it can't overwrite VEENA
 - [x] Lighthouse: accessibility, best practices and SEO 100 on all 8 public pages; mobile performance 90–98
 - [x] No secrets in the bundle (CI scan); no payment code; no analytics
 - [x] Demo clearly labelled and isolated; no invented members, events, prices, ratings or endorsements
-- [ ] Repository `florina787/femora` created and Pages source set to GitHub Actions (owner)
+- [ ] Repository `florina787/Bea` created and Pages source set to GitHub Actions (owner)
 - [ ] Owner runs, or approves, the deploy workflow

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined) ?? "https://florina787.github.io/femora/";
+export const SITE_URL = (import.meta.env.VITE_SITE_URL as string | undefined) ?? "https://florina787.github.io/Bea/";
 
 /** Unique title/description/canonical per page (static copies are also generated at build for crawlers). */
 export function usePageMeta(title: string, description: string, path: string) {
