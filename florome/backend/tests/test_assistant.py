@@ -27,12 +27,16 @@ def ran(client):
 
 def test_every_page_has_four_distinct_starters(client):
     seen = set()
+    areas = [p for p in PAGES if p != "home"]  # home is the cross-area hub and deliberately reuses area questions
     for page in PAGES:
         cfg = client.get(f"/api/v1/assistant/pages/{page}", headers=H("viewer")).json()
         assert len(cfg["starters"]) == 4 and len(set(cfg["starters"])) == 4
         assert cfg["engine"]["language_model"] is None
-        seen |= set(cfg["starters"])
-    assert len(seen) == 4 * len(PAGES)  # no question is reused across pages
+        if page != "home":
+            seen |= set(cfg["starters"])
+    assert len(seen) == 4 * len(areas)  # no question is reused across area pages
+    home = client.get("/api/v1/assistant/pages/home", headers=H("viewer")).json()
+    assert len(home["groups"]) >= 4  # the home page spans operations, security, customers, money, governance
     assert client.get("/api/v1/assistant/pages/nope", headers=H("viewer")).status_code == 404
 
 
@@ -51,7 +55,7 @@ def test_every_starter_and_reachable_follow_up_answers_in_the_contract(ran):
         assert len(a["bullets"]) <= 5 and all(len(b) <= 200 for b in a["bullets"])
         assert len(a["follow_ups"]) == 4, (q, a["follow_ups"])
         for e in a["evidence"]:
-            assert e["href"].startswith("/")
+            assert e["href"] is None or e["href"].startswith("/")  # None: third-party evidence with no Florome page
         queue.extend((page, f) for f in a["follow_ups"])
     assert len(asked) >= 36
 

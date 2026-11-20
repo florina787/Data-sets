@@ -31,6 +31,14 @@ def page(page: str, p: Principal = Depends(require("read"))) -> dict[str, Any]:
         raise HTTPException(404, "Unknown page") from exc
 
 
+@router.get("/sources")
+async def sources(p: Principal = Depends(require("read")), ctx: AppContext = Depends(get_ctx)) -> dict[str, Any]:
+    """Which answer sources are available right now (checked live)."""
+    from florome.assistant import copilot
+
+    return {"florome": {"reachable": True, "status": "ok"}, "conversation_copilot": await copilot.health(ctx.settings)}
+
+
 @router.post("/ask")
 async def ask(body: AskRequest, request: Request, p: Principal = Depends(require("read")), db: Session = Depends(get_db),
               ctx: AppContext = Depends(get_ctx)) -> dict[str, Any]:

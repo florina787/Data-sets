@@ -16,6 +16,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from florome.assistant import answers as h
+from florome.assistant import copilot
 from florome.assistant.models import AssistantConversation, AssistantMessage
 from florome.context import AppContext
 from florome.models import Tenant
@@ -25,6 +26,15 @@ from florome.security.redaction import redact
 
 ENGINE = {"name": "florome-assistant", "mode": "rule-based, grounded in Florome data", "language_model": None}
 MAX_QUESTION = 500
+
+def _customer(fixed: str | None):
+    """Forward to the Conversation Intelligence Copilot: a fixed, supported phrasing, or the user's own words."""
+
+    async def handler(c: h.Ctx) -> dict:
+        return await copilot.ask(c.app.settings, fixed or c.focus.get("_question", ""), c.focus.get("copilot_session"))
+
+    return handler
+
 
 # intent -> (handler, canonical question, keywords)
 INTENTS: dict[str, tuple[Any, str, list[str]]] = {
@@ -67,9 +77,28 @@ INTENTS: dict[str, tuple[Any, str, list[str]]] = {
     "proving": (h.proving, "Does proving beat guessing?", ["proving", "benchmark", "evaluation", "precision", "recall", "compare approaches"]),
     "finding_detail": (h.finding_detail, "Explain the selected finding", ["selected", "this finding", "explain this", "this one"]),
     "code_reach": (h.code_reach, "Which public endpoints reach dangerous code?", ["endpoint", "public", "reach", "graph", "unauthenticated"]),
+    # Customer conversations: answered by the Conversation Intelligence Copilot (Project A)
+    "customer_negative_topics": (_customer("What are the top 5 topics associated with negative sentiment in the last month?"),
+                                 "What are customers most negative about?", ["negative about", "unhappy", "complain", "negative sentiment", "negative topics"]),
+    "customer_priorities": (_customer("Which recurring concerns should leadership review first?"), "Which customer concerns need leadership attention?",
+                            ["customer concerns", "leadership", "recurring concerns", "review first"]),
+    "customer_coaching": (_customer("Which agents may benefit from empathy or communication coaching?"), "Which agents could use coaching?",
+                          ["coaching", "empathy", "agents could", "communication"]),
+    "customer_trajectory": (_customer("How did customer sentiment change over conversation C0000479?"), "How did sentiment change in a conversation?",
+                            ["sentiment change", "trajectory", "turning point"]),
+    "customer_free": (_customer(None), "Ask about customer conversations",
+                      ["customer", "conversation", "sentiment", "topic", "transcript", "refund", "complaint", "contact centre", "contact center"]),
 }
+CUSTOMER_INTENTS = {k for k in INTENTS if k.startswith("customer_")}
+CONVERSATION_ID = re.compile(r"\bC\d{6,8}\b")
 
 PAGES: dict[str, dict[str, Any]] = {
+    "home": {"title": "Copilot", "intents": ["incidents_open", "vulns_confirmed", "customer_negative_topics", "spend_where"],
+             "groups": [("Operations", ["root_cause", "fix_worked", "blast_radius"]),
+                        ("Security · Shield", ["vulns_confirmed", "false_alarms", "agents"]),
+                        ("Customers · Conversation Copilot", ["customer_negative_topics", "customer_priorities", "customer_coaching", "customer_trajectory"]),
+                        ("Money", ["spend_where", "spend_change", "spend_ai"]),
+                        ("Governance", ["audit_intact", "policy_current", "denied_recent"])]},
     "overview": {"title": "Overview", "intents": ["incidents_open", "approvals_pending", "connections_health", "spend_month"]},
     "topology": {"title": "Nervous System", "intents": ["failing_systems", "upstream", "blast_radius", "health_by_platform"]},
     "rca": {"title": "RCA", "intents": ["root_cause", "ruled_out", "weakest", "timeline"]},
@@ -90,7 +119,10 @@ def page_config(page: str) -> dict[str, Any]:
     cfg = PAGES.get(page)
     if cfg is None:
         raise KeyError(page)
-    return {"page": page, "title": cfg["title"], "starters": [INTENTS[i][1] for i in cfg["intents"]], "engine": ENGINE}
+    out = {"page": page, "title": cfg["title"], "starters": [INTENTS[i][1] for i in cfg["intents"]], "engine": ENGINE}
+    if cfg.get("groups"):
+        out["groups"] = [{"title": t, "questions": [INTENTS[i][1] for i in ids]} for t, ids in cfg["groups"]]
+    return out
 
 
 def route(page: str, question: str, last_intent: str | None, focus: dict[str, Any]) -> str | None:
@@ -101,6 +133,8 @@ def route(page: str, question: str, last_intent: str | None, focus: dict[str, An
         return next(v for k, v in BY_QUESTION.items() if k.rstrip("?") == q.rstrip("?"))
     if focus.get("hypothesis_id") and re.search(r"\b(this|selected)\b", q):
         return "finding_detail"
+    if question.strip() in focus.get("copilot_followups", []) or CONVERSATION_ID.search(question):
+        return "customer_free"
 
     def score(intent: str) -> int:
         return sum(len(k) for k in INTENTS[intent][2] if k in q)
@@ -112,6 +146,8 @@ def route(page: str, question: str, last_intent: str | None, focus: dict[str, An
     best = max(((score(i), i) for i in INTENTS), default=(0, None))
     if best[0] > 0:
         return best[1]
+    if last_intent in CUSTOMER_INTENTS:
+        return "customer_free"  # the Copilot keeps its own session context, e.g. "what about the previous month?"
     if last_intent and VAGUE.search(q):
         return last_intent
     return None
@@ -133,7 +169,7 @@ async def answer(db: Session, app: AppContext, p: Principal, page: str, question
         db.flush()
     focus = {**conv.focus, **{k: v for k, v in context.items() if k in ("incident_id", "hypothesis_id") and isinstance(v, str) and v}}
     flags = scan(q)  # flagged text is still treated purely as a question; nothing in it is executed or obeyed
-    ctx = h.Ctx(db, app, p, focus, list(request_samples))
+    ctx = h.Ctx(db, app, p, {**focus, "_question": q}, list(request_samples))
 
     if REPORT.search(q):
         intent = "page_report"
@@ -156,10 +192,13 @@ async def answer(db: Session, app: AppContext, p: Principal, page: str, question
             fn = INTENTS[intent][0]
             ans = await fn(ctx) if inspect.iscoroutinefunction(fn) else fn(ctx)
     new_focus = {**focus, **{k: v for k, v in ans.pop("focus", {}).items() if v}}
+    source = ans.pop("source", None) or {"name": "Florome records", "status": "completed", "model_calls": 0}
+    if source["name"] == copilot.SOURCE:
+        source["content_flags"] = scan(" ".join([ans["statement"], *ans["bullets"]]))  # third-party text is data, never instructions
     if intent:
         new_focus["last_intent"] = intent if intent != "page_report" else focus.get("last_intent")
     conv.focus = new_focus
-    ans = redact({**ans, "intent": intent, "engine": ENGINE, "input_flags": flags,
+    ans = redact({**ans, "intent": intent, "engine": ENGINE, "input_flags": flags, "source": source,
                   "data_mode": db.get(Tenant, p.tenant_id).mode})
     db.add(AssistantMessage(tenant_id=p.tenant_id, conversation_id=conv.id, role="user", text=redact(q)))
     db.add(AssistantMessage(tenant_id=p.tenant_id, conversation_id=conv.id, role="assistant", text=ans["statement"], answer=ans))

@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     shield_probe_timeout_seconds: float = 30.0
     signing_key: SecretStr | None = None  # HMAC key for plan signatures; an ephemeral key is generated when unset (demo)
     rate_limit_per_minute: int = 240  # mutating requests per principal
+    # Conversation Intelligence Copilot (Project A), called over HTTP. Empty string disables the integration.
+    copilot_url: str = "http://127.0.0.1:8001"
+    copilot_timeout_seconds: float = 60.0
 
     def mcp_allowlist(self) -> dict[str, list[str]]:
         """name -> argv for allow-listed stdio servers. Commands are fixed here, never taken from API input."""

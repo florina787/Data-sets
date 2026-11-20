@@ -1,0 +1,677 @@
+{
+ "status": "completed",
+ "headline": "Top negative topics in November 2025: General help request, Duplicate charge, Paid but service not delivered, Feature not working, Login / account locked.",
+ "key_points": [
+  "#1 General help request: 49 negative of 156 (31.4%, 95% CI 24.6%\u201339.1%)",
+  "#2 Duplicate charge: 42 negative of 87 (48.3%, 95% CI 38.1%\u201358.6%)",
+  "#3 Paid but service not delivered: 30 negative of 75 (40.0%, 95% CI 29.7%\u201351.3%)",
+  "#4 Feature not working: 28 negative of 76 (36.8%, 95% CI 26.9%\u201348.1%)",
+  "#5 Login / account locked: 24 negative of 58 (41.4%, 95% CI 29.6%\u201354.2%)"
+ ],
+ "metrics": [
+  {
+   "id": "conversations_in_scope",
+   "label": "Conversations in scope",
+   "value": 682,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "negative_conversations",
+   "label": "Negative conversations",
+   "value": 240,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "negative_rate_overall",
+   "label": "Overall negative rate",
+   "value": 0.3519,
+   "unit": "percent",
+   "numerator": 240,
+   "denominator": 682,
+   "description": ""
+  },
+  {
+   "id": "top_topic",
+   "label": "Top topic",
+   "value": "General help request",
+   "unit": null,
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "top_topic_negative",
+   "label": "Negative conversations in top topic",
+   "value": 49,
+   "unit": "count",
+   "numerator": 49,
+   "denominator": 240,
+   "description": ""
+  },
+  {
+   "id": "conversations_in_scope",
+   "label": "Conversations",
+   "value": 682,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "negative_rate_overall",
+   "label": "Negative conversations",
+   "value": 0.3519,
+   "unit": "percent",
+   "numerator": 240,
+   "denominator": 682,
+   "description": ""
+  },
+  {
+   "id": "customer_messages",
+   "label": "Customer messages",
+   "value": 4973,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "months",
+   "label": "Months",
+   "value": 4,
+   "unit": "count",
+   "numerator": null,
+   "denominator": null,
+   "description": ""
+  },
+  {
+   "id": "latest_negative_rate",
+   "label": "Negative rate 2025-11",
+   "value": 0.3519,
+   "unit": "percent",
+   "numerator": 240,
+   "denominator": 682,
+   "description": ""
+  }
+ ],
+ "charts": [
+  {
+   "chart_id": "R-bd5cdb5ac61c_neg_kpis",
+   "chart_type": "kpi",
+   "title": "Key figures",
+   "description": "",
+   "x_field": null,
+   "y_field": null,
+   "series": [],
+   "data": [
+    {
+     "id": "conversations_in_scope",
+     "label": "Conversations in scope",
+     "value": 682,
+     "unit": "count",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "negative_conversations",
+     "label": "Negative conversations",
+     "value": 240,
+     "unit": "count",
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    },
+    {
+     "id": "negative_rate_overall",
+     "label": "Overall negative rate",
+     "value": 0.3519,
+     "unit": "percent",
+     "numerator": 240,
+     "denominator": 682,
+     "description": ""
+    },
+    {
+     "id": "top_topic",
+     "label": "Top topic",
+     "value": "General help request",
+     "unit": null,
+     "numerator": null,
+     "denominator": null,
+     "description": ""
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-bd5cdb5ac61c_neg",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "Conversations in scope: 682; Negative conversations: 240; Overall negative rate: 0.3519; Top topic: General help request"
+  },
+  {
+   "chart_id": "negative_topics",
+   "chart_type": "horizontal_bar",
+   "title": "Top negative topics \u00b7 November 2025",
+   "description": "Ranked by number of negative conversations",
+   "x_field": "name",
+   "y_field": null,
+   "series": [
+    {
+     "key": "negative",
+     "label": "Negative conversations",
+     "color": "negative"
+    },
+    {
+     "key": "conversations",
+     "label": "All conversations",
+     "color": "muted"
+    }
+   ],
+   "data": [
+    {
+     "name": "General help request",
+     "key": "general_help",
+     "negative": 49.0,
+     "conversations": 156,
+     "negative_rate": 0.3141
+    },
+    {
+     "name": "Duplicate charge",
+     "key": "duplicate_charge",
+     "negative": 42.0,
+     "conversations": 87,
+     "negative_rate": 0.4828
+    },
+    {
+     "name": "Paid but service not delivered",
+     "key": "payment_not_reflected",
+     "negative": 30.0,
+     "conversations": 75,
+     "negative_rate": 0.4
+    },
+    {
+     "name": "Feature not working",
+     "key": "service_malfunction",
+     "negative": 28.0,
+     "conversations": 76,
+     "negative_rate": 0.3684
+    },
+    {
+     "name": "Login / account locked",
+     "key": "account_locked",
+     "negative": 24.0,
+     "conversations": 58,
+     "negative_rate": 0.4138
+    }
+   ],
+   "value_format": "count",
+   "filters": {
+    "dataset_mode": "original",
+    "window": {
+     "start": "2025-11-01",
+     "end": "2025-12-01",
+     "label": "November 2025",
+     "rule": "latest_month",
+     "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025. The latest calendar month in which conversations start is November 2025 (682 conversations); conversations are dated by their earliest message."
+    },
+    "topics": [],
+    "products": [],
+    "domains": [],
+    "agents": [],
+    "sentiments": [],
+    "conversation_ids": []
+   },
+   "dataset_scope": "original",
+   "source_analysis_id": "R-bd5cdb5ac61c",
+   "evidence_ids": [
+    "C0011749",
+    "C0007786",
+    "C0014263",
+    "C0002874",
+    "C0010437",
+    "C0001427"
+   ],
+   "uncertainty_note": "Rank 5 is a tie: Login / account locked (24 of 58), Coupon not applying (24 of 84) share the same count. The tie-breaker (higher negative rate) lists Login / account locked; the others are equally entitled to the last place.",
+   "drilldown": {
+    "kind": "topic",
+    "field": "key"
+   },
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "General help request: 49 negative of 156; Duplicate charge: 42 negative of 87; Paid but service not delivered: 30 negative of 75; Feature not working: 28 negative of 76; Login / account locked: 24 negative of 58"
+  },
+  {
+   "chart_id": "negative_rate_ci",
+   "chart_type": "error_bar",
+   "title": "Negative rate with 95% confidence interval",
+   "description": "Highest count is not the same as highest rate; overlapping intervals mean the difference may be noise.",
+   "x_field": "name",
+   "y_field": "negative_rate",
+   "series": [
+    {
+     "key": "negative_rate",
+     "label": "Negative rate",
+     "color": "violet"
+    }
+   ],
+   "data": [
+    {
+     "name": "Duplicate charge",
+     "key": "duplicate_charge",
+     "negative_rate": 0.4828,
+     "rate_ci_low": 0.3807,
+     "rate_ci_high": 0.5863,
+     "conversations": 87
+    },
+    {
+     "name": "Login / account locked",
+     "key": "account_locked",
+     "negative_rate": 0.4138,
+     "rate_ci_low": 0.2963,
+     "rate_ci_high": 0.542,
+     "conversations": 58
+    },
+    {
+     "name": "Paid but service not delivered",
+     "key": "payment_not_reflected",
+     "negative_rate": 0.4,
+     "rate_ci_low": 0.2966,
+     "rate_ci_high": 0.5131,
+     "conversations": 75
+    },
+    {
+     "name": "Feature not working",
+     "key": "service_malfunction",
+     "negative_rate": 0.3684,
+     "rate_ci_low": 0.2688,
+     "rate_ci_high": 0.4808,
+     "conversations": 76
+    },
+    {
+     "name": "General help request",
+     "key": "general_help",
+     "negative_rate": 0.3141,
+     "rate_ci_low": 0.2465,
+     "rate_ci_high": 0.3907,
+     "conversations": 156
+    },
+    {
+     "name": "Item or service not received",
+     "key": "not_received",
+     "negative_rate": 0.2949,
+     "rate_ci_low": 0.2052,
+     "rate_ci_high": 0.4038,
+     "conversations": 78
+    },
+    {
+     "name": "App crash",
+     "key": "app_crash",
+     "negative_rate": 0.2941,
+     "rate_ci_low": 0.1992,
+     "rate_ci_high": 0.4111,
+     "conversations": 68
+    },
+    {
+     "name": "Coupon not applying",
+     "key": "coupon_not_applied",
+     "negative_rate": 0.2857,
+     "rate_ci_low": 0.2001,
+     "rate_ci_high": 0.39,
+     "conversations": 84
+    }
+   ],
+   "value_format": "percent",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-bd5cdb5ac61c",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": {
+    "kind": "topic",
+    "field": "key"
+   },
+   "error_low_field": "rate_ci_low",
+   "error_high_field": "rate_ci_high",
+   "accessibility_summary": "General help request: 31.4%; Duplicate charge: 48.3%; Paid but service not delivered: 40.0%; Feature not working: 36.8%; Login / account locked: 41.4%; Coupon not applying: 28.6%; Item or service not received: 29.5%; App crash: 29.4%"
+  },
+  {
+   "chart_id": "sentiment_by_group",
+   "chart_type": "stacked_bar",
+   "title": "Sentiment mix by topic",
+   "description": "",
+   "x_field": "name",
+   "y_field": null,
+   "series": [
+    {
+     "key": "negative",
+     "label": "Negative",
+     "color": "negative"
+    },
+    {
+     "key": "mixed",
+     "label": "Mixed",
+     "color": "mixed"
+    },
+    {
+     "key": "neutral",
+     "label": "Neutral",
+     "color": "neutral"
+    },
+    {
+     "key": "positive",
+     "label": "Positive",
+     "color": "positive"
+    }
+   ],
+   "data": [
+    {
+     "name": "App crash",
+     "negative": 20.0,
+     "mixed": 41.0,
+     "neutral": 0.0,
+     "positive": 7.0,
+     "total": 68.0
+    },
+    {
+     "name": "Coupon not applying",
+     "negative": 24.0,
+     "mixed": 51.0,
+     "neutral": 1.0,
+     "positive": 8.0,
+     "total": 84.0
+    },
+    {
+     "name": "Duplicate charge",
+     "negative": 42.0,
+     "mixed": 36.0,
+     "neutral": 0.0,
+     "positive": 9.0,
+     "total": 87.0
+    },
+    {
+     "name": "Feature not working",
+     "negative": 28.0,
+     "mixed": 43.0,
+     "neutral": 0.0,
+     "positive": 5.0,
+     "total": 76.0
+    },
+    {
+     "name": "General help request",
+     "negative": 49.0,
+     "mixed": 89.0,
+     "neutral": 0.0,
+     "positive": 18.0,
+     "total": 156.0
+    },
+    {
+     "name": "Item or service not received",
+     "negative": 23.0,
+     "mixed": 52.0,
+     "neutral": 0.0,
+     "positive": 3.0,
+     "total": 78.0
+    },
+    {
+     "name": "Login / account locked",
+     "negative": 24.0,
+     "mixed": 29.0,
+     "neutral": 0.0,
+     "positive": 5.0,
+     "total": 58.0
+    },
+    {
+     "name": "Paid but service not delivered",
+     "negative": 30.0,
+     "mixed": 40.0,
+     "neutral": 0.0,
+     "positive": 5.0,
+     "total": 75.0
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-bd5cdb5ac61c",
+   "evidence_ids": [],
+   "uncertainty_note": "Sentiment mix does not differ significantly by topic (chi-square p = 0.1938).",
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "App crash: 20 negative of 68; Coupon not applying: 24 negative of 84; Duplicate charge: 42 negative of 87; Feature not working: 28 negative of 76; General help request: 49 negative of 156; Item or service not received: 23 negative of 78; Login / account locked: 24 negative of 58; Paid but service not delivered: 30 negative of 75"
+  },
+  {
+   "chart_id": "sentiment_distribution",
+   "chart_type": "donut",
+   "title": "Conversation sentiment",
+   "description": "",
+   "x_field": "sentiment",
+   "y_field": null,
+   "series": [
+    {
+     "key": "conversations",
+     "label": "Conversations",
+     "color": "indigo"
+    }
+   ],
+   "data": [
+    {
+     "sentiment": "negative",
+     "conversations": 240,
+     "share": 0.3519,
+     "color": "negative"
+    },
+    {
+     "sentiment": "mixed",
+     "conversations": 381,
+     "share": 0.5587,
+     "color": "mixed"
+    },
+    {
+     "sentiment": "neutral",
+     "conversations": 1,
+     "share": 0.0015,
+     "color": "neutral"
+    },
+    {
+     "sentiment": "positive",
+     "conversations": 60,
+     "share": 0.088,
+     "color": "positive"
+    }
+   ],
+   "value_format": "count",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-bd5cdb5ac61c",
+   "evidence_ids": [],
+   "uncertainty_note": null,
+   "drilldown": null,
+   "error_low_field": null,
+   "error_high_field": null,
+   "accessibility_summary": "negative: 35.2%; mixed: 55.9%; neutral: 0.1%; positive: 8.8%"
+  },
+  {
+   "chart_id": "sentiment_trend",
+   "chart_type": "line",
+   "title": "Negative rate by month",
+   "description": "",
+   "x_field": "month",
+   "y_field": "negative_rate",
+   "series": [
+    {
+     "key": "negative_rate",
+     "label": "Negative rate",
+     "color": "cyan"
+    }
+   ],
+   "data": [
+    {
+     "month": "2025-08",
+     "negative_rate": 0.3325,
+     "rate_ci_low": 0.3005,
+     "rate_ci_high": 0.3661,
+     "conversations": 788,
+     "negative": 262.0
+    },
+    {
+     "month": "2025-09",
+     "negative_rate": 0.32,
+     "rate_ci_low": 0.2876,
+     "rate_ci_high": 0.3542,
+     "conversations": 750,
+     "negative": 240.0
+    },
+    {
+     "month": "2025-10",
+     "negative_rate": 0.3359,
+     "rate_ci_low": 0.3036,
+     "rate_ci_high": 0.3698,
+     "conversations": 780,
+     "negative": 262.0
+    },
+    {
+     "month": "2025-11",
+     "negative_rate": 0.3519,
+     "rate_ci_low": 0.317,
+     "rate_ci_high": 0.3885,
+     "conversations": 682,
+     "negative": 240.0
+    }
+   ],
+   "value_format": "percent",
+   "filters": {},
+   "dataset_scope": "original",
+   "source_analysis_id": "R-bd5cdb5ac61c",
+   "evidence_ids": [],
+   "uncertainty_note": "Negative rate moved from 33.2% (2025-08) to 35.2% (2025-11); the 95% intervals overlap, so this is not a reliable trend.",
+   "drilldown": {
+    "kind": "month",
+    "field": "month"
+   },
+   "error_low_field": "rate_ci_low",
+   "error_high_field": "rate_ci_high",
+   "accessibility_summary": "2025-08: 33.2%; 2025-09: 32.0%; 2025-10: 33.6%; 2025-11: 35.2%"
+  }
+ ],
+ "follow_up_questions": [
+  "Compare the top two topics.",
+  "What about the previous month?",
+  "Show three supporting examples.",
+  "Which agents handled those concerns?"
+ ],
+ "token_usage": {
+  "calls": 0,
+  "model_calls": 0,
+  "cache_hits": 0,
+  "reported_calls": 0,
+  "unreported_calls": 0,
+  "complete": true,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "total_tokens": 0,
+  "estimated_cost_usd": 0.0,
+  "by_purpose": []
+ },
+ "session_id": "S-84ceed4db4c1",
+ "dataset_scope": {
+  "dataset_mode": "original",
+  "window": {
+   "start": "2025-11-01",
+   "end": "2025-12-01",
+   "label": "November 2025",
+   "rule": "latest_month",
+   "explanation": "Data spans 01 Aug 2025 to 02 Dec 2025. The latest calendar month in which conversations start is November 2025 (682 conversations); conversations are dated by their earliest message."
+  },
+  "topics": [],
+  "products": [],
+  "domains": [],
+  "agents": [],
+  "sentiments": [],
+  "conversation_ids": []
+ },
+ "evidence": [
+  {
+   "conversation_id": "C0011749",
+   "topic": "General help request",
+   "excerpts": [
+    {
+     "message_id": "C0011749-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Hi, I need help with my Membership.",
+     "sentiment": "neutral",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 33409"
+    },
+    {
+     "message_id": "C0011749-T02",
+     "turn_index": 2,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 33411"
+    }
+   ]
+  },
+  {
+   "conversation_id": "C0007786",
+   "topic": "General help request",
+   "excerpts": [
+    {
+     "message_id": "C0007786-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "Mujhe FASTag ke baare mein help chahiye.",
+     "sentiment": "neutral",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 21938"
+    },
+    {
+     "message_id": "C0007786-T06",
+     "turn_index": 6,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 21944"
+    }
+   ]
+  },
+  {
+   "conversation_id": "C0014263",
+   "topic": "Duplicate charge",
+   "excerpts": [
+    {
+     "message_id": "C0014263-T00",
+     "turn_index": 0,
+     "role": "customer",
+     "text": "I was charged twice for my Bus.",
+     "sentiment": "negative",
+     "act": "issue_report",
+     "source_reference": "cs_conversations.csv:line 39935"
+    },
+    {
+     "message_id": "C0014263-T04",
+     "turn_index": 4,
+     "role": "customer",
+     "text": "Still not fixed. Can you escalate?",
+     "sentiment": "negative",
+     "act": "escalation_request",
+     "source_reference": "cs_conversations.csv:line 39939"
+    }
+   ]
+  }
+ ]
+}

@@ -14,7 +14,8 @@ from florome.models import session_factory
 @pytest.fixture
 def settings(tmp_path) -> Settings:
     return Settings(database_url=f"sqlite:///{tmp_path / 'test.db'}", default_mode="demo", action_timeout_seconds=2.0,
-                    mcp_allowlist_extra=["malicious=tests.mcp_fixtures.malicious_server"])
+                    mcp_allowlist_extra=["malicious=tests.mcp_fixtures.malicious_server"],
+                    copilot_url="")  # hermetic by default; copilot tests opt in explicitly
 
 
 @pytest.fixture
