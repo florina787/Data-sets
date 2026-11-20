@@ -20,6 +20,11 @@
 * PostgreSQL: supported through SQLAlchemy but not yet tested.
 * Project A is imported but not integrated into the API.
 
+## Florome Shield (research preview)
+
+* **Done and tested:** scope-authorised ingestion, tree-sitter code graph with provenance and incremental reuse; Opengrep/Bandit/Trivy adapters; hypotheses; namespace-isolated verification (2 runs); adjudication; template patches with regression; independent patch review; incidents; containment supervisor; MCP manifest pinning and revocation; OPA dual authorization; quotas, rate limits, signed plans; labelled-corpus evaluation.
+* **Not done:** microVM isolation for hostile code; interprocedural/cross-language data flow; fuzzing (AFL++/libFuzzer/OSS-Fuzz); CodeQL; CyberGym benchmark; LLM-based research and the LLM-only baseline; PyRIT/garak/promptfoo/AgentDojo runs; Wazuh/Falco event intake; Alembic migrations and PostgreSQL CI; the dependency CVEs in echarts and react-router.
+
 ## Missing
 
 * Live authentication (OIDC/SSO). This is the main blocker for any non-demo use.

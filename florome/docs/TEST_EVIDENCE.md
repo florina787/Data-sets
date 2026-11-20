@@ -2,7 +2,7 @@
 
 Recorded 2026-11-11 on Linux x86_64 (4 vCPU), Python 3.13, Node 22.
 
-## Backend: 64 passed
+## Backend: 99 passed (64 Operations + 35 Shield)
 
 | File | Tests | Covers |
 |---|---|---|
@@ -16,6 +16,11 @@ Recorded 2026-11-11 on Linux x86_64 (4 vCPU), Python 3.13, Node 22.
 | test_security.py | 7 | Authn, redaction, injection in logs, audit tamper, evidence integrity, RBAC matrix, measured metrics |
 | test_tenant_isolation.py | 4 | Cross-tenant reads/writes return 404, scoped lists, per-tenant audit chains, evidence pagination |
 | test_architecture_adapter.py | 2 | Project B engine reused unchanged (skipped if its deps are absent) |
+| test_shield_research.py | 14 | Real Opengrep/Bandit/Trivy runs, source-derived graph with provenance, every labelled site adjudicated correctly, false positives rejected by execution, reproducible isolated evidence, dedupe, incidents, patch regression and independent review, incremental re-ingest, agent records, tenant isolation |
+| test_shield_control.py | 11 | Dual-engine (built-in + OPA) decisions, scope and symlink escape, roles, OPA missing/erroring fails closed, emergency stop, quotas, rate limits, HMAC plan signatures, visible partial scans |
+| test_shield_containment.py | 4 | Seven synthetic agent scenarios, credential revocation, decoy key never leaked, namespace blocks egress without the guard, audit |
+| test_shield_mcp_adversarial.py | 5 | Server manifest pinning and drift revocation, emergency revoke, instructions hidden in target source, hostile tool output, deny-by-default |
+| test_shield_evaluation.py | 1 | Three pipelines scored on the labelled corpus; LLM-only recorded as not run |
 
 Run with:
 
@@ -23,7 +28,7 @@ Run with:
 cd florome/backend && pytest
 ```
 
-## Frontend: 12 passed, typecheck clean, production build OK
+## Frontend: 13 passed, typecheck clean, production build OK
 
 `src/tests/app.test.tsx` covers navigation, the demo banner, KPIs, honest copilot-layer status, error and retry states, the topology layout and incident roles, constellation filtering and dashed contradictions, timeline markers, the approval request (hash plus a fresh 32-hex nonce plus the role token), surfacing of SoD denials, required plan fields, and the rule that planned platforms are never shown as verified.
 
@@ -48,3 +53,14 @@ These numbers come from a local dev box with a simulated target. Real connectors
 ## Pre-existing projects
 
 Project A: 163 passed, 2 failed (pre-existing; see the audit). Project B: 76 passed.
+
+## Shield measurements (LedgerLite, 2026-11-20)
+
+| Pipeline | Found (of 5) | False alarms | Missed | Precision | Recall |
+|---|---|---|---|---|---|
+| Scanners only | 4 | 2 (`echo`, a module-level import) | 1 (`get_invoice` access control) | 0.667 | 0.8 |
+| Code graph, no lab | 5 | 0 | 0 | 1.0 | 1.0 |
+| Graph + lab (hybrid) | 5 | 0 | 0 | 1.0 | 1.0 |
+| LLM only | not run | | | | |
+
+Scan 4.4 s; scan + 22 isolated lab runs 13.7 s; 5/5 template patches blocked the exploit in 2/2 retests and passed functional checks (5.2 s). Containment: violations stopped in 32-41 ms; the infinite loop was killed by RLIMIT_CPU at 3.0 s. Sample size is 9 labelled sites written by the same team: a regression benchmark, not a real-world claim.

@@ -15,3 +15,12 @@ The tenant is **Meridian Freight**, a fictional company; everything is synthetic
 7. **Governance.** The audit chain is verified. Activate the emergency stop and try to execute a new approved plan: it is refused (HTTP 423).
 
 To reset, restart the API (demo tenants are re-seeded) or call `POST /api/v1/demo/reset` as an admin.
+
+## Florome Shield (about 3 minutes)
+
+8. Switch to **demo admin** and open **Shield**. Press **Run full research** (about 30 s). Shield registers the bundled LedgerLite training app, parses it, runs Opengrep/Bandit/Trivy, forms hypotheses, attacks each one twice in the network-sealed lab, scores the three pipelines and writes fixes.
+9. In the research lab, click **ping**: the source line, evidence for and against, two reproduced lab runs, then the fix diff and its two blocked retests. Click **echo** to see a false alarm disproven.
+10. **Who can reach what**: the code graph. Gold endpoints are public; red lines mean request data reaches a dangerous operation unguarded.
+11. **Agent containment**: run each scenario. Only `benign_analysis` finishes; the others are stopped on their first violation and their credential is revoked.
+12. Go back to **Overview** or **RCA**: confirmed high/critical findings now appear as Florome incidents.
+13. Switch to **demo approver** to approve a verified fix for review (the operator or admin who generated it cannot).
