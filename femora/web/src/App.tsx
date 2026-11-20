@@ -1,8 +1,8 @@
 import { lazy, Suspense } from "react";
-import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppStateProvider } from "./lib/app-state";
 import { AppShell } from "./components/AppShell";
-import { Showcase } from "./pages/Showcase";
+import { HomePage } from "./site/pages/HomePage";
 import { Home } from "./pages/Home";
 import { Planned } from "./pages/Planned";
 
@@ -18,6 +18,13 @@ const BodyPage = lazy(() => import("./modules/body/BodyPage").then((m) => ({ def
 const GuardianPage = lazy(() => import("./modules/guardian/GuardianPage").then((m) => ({ default: m.GuardianPage })));
 const SisterhoodPage = lazy(() => import("./modules/sisterhood/SisterhoodPage").then((m) => ({ default: m.SisterhoodPage })));
 const HelpPage = lazy(() => import("./modules/onboarding/HelpPage").then((m) => ({ default: m.HelpPage })));
+const FeaturesPage = lazy(() => import("./site/pages/FeaturesPage").then((m) => ({ default: m.FeaturesPage })));
+const DemoPage = lazy(() => import("./site/pages/DemoPage").then((m) => ({ default: m.DemoPage })));
+const ClubPage = lazy(() => import("./site/pages/ClubPage").then((m) => ({ default: m.ClubPage })));
+const HowItWorksPage = lazy(() => import("./site/pages/HowItWorksPage").then((m) => ({ default: m.HowItWorksPage })));
+const GalleryPage = lazy(() => import("./site/pages/GalleryPage").then((m) => ({ default: m.GalleryPage })));
+const PricingPage = lazy(() => import("./site/pages/PricingPage").then((m) => ({ default: m.PricingPage })));
+const TrustPage = lazy(() => import("./site/pages/TrustPage").then((m) => ({ default: m.TrustPage })));
 const Joy = lazy(() => import("./pages/Joy").then((m) => ({ default: m.Joy })));
 const Settings = lazy(() => import("./pages/Settings").then((m) => ({ default: m.Settings })));
 
@@ -25,13 +32,15 @@ function Loading() {
   return <div role="status" aria-label="Loading" className="grid min-h-[40vh] place-items-center"><span className="h-10 w-10 animate-spin rounded-full border-2 border-line border-t-accent" /></div>;
 }
 
-// HashRouter: deep links work on GitHub Pages static hosting without a 404 fallback.
+// Clean URLs under the GitHub Pages base path. Direct loads/refreshes work because the build writes an
+// index.html per public page and a 404.html fallback for app routes (scripts/postbuild.mjs).
+export const BASENAME = import.meta.env.BASE_URL.replace(/\/$/, "");
 export function App() {
   return (
     <AppStateProvider>
-      <HashRouter>
+      <BrowserRouter basename={BASENAME}>
         <AppRoutes />
-      </HashRouter>
+      </BrowserRouter>
     </AppStateProvider>
   );
 }
@@ -40,7 +49,14 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path="/" element={<Showcase />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/demo" element={<DemoPage />} />
+        <Route path="/club" element={<ClubPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/trust" element={<TrustPage />} />
         <Route path="/app" element={<AppShell />}>
           <Route index element={<Home />} />
           <Route path="copilot" element={<CopilotPage />} />

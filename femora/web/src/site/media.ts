@@ -1,0 +1,33 @@
+// Every visual on the launch site is a real capture of the FEMORA Muse app (example entries typed in for the recording).
+const B = import.meta.env.BASE_URL;
+export const shot = (n: string, w: 640 | 1280 = 1280) => `${B}media/shots/${n}-${w}.webp`;
+export const phone = (n: string) => `${B}media/phones/${n}.webp`;
+export const clip = (n: string) => ({ mp4: `${B}media/clips/${n}.mp4`, webm: `${B}media/clips/${n}.webm`, poster: `${B}media/clips/${n}.webp`, gif: `${B}media/gif/muse-${n}.gif` });
+
+export interface Slide { id: string; title: string; text: string; shot: string; alt: string; to: string }
+export const SLIDES: Slide[] = [
+  { id: "home", title: "FEMORA Home", text: "Muse greets you with next steps drawn only from what you've recorded.", shot: "home", alt: "FEMORA home: 'Good evening, Bea' with a reminder about a real upcoming cervical screening and suggestions", to: "/features#muse" },
+  { id: "muse", title: "Muse AI", text: "Warm conversation, eight modes, answers grounded in your own records, safety rules first.", shot: "chat", alt: "Muse conversation answering when menopause usually happens using national data, without predicting a personal date", to: "/features#muse" },
+  { id: "journey", title: "Menopause Journey", text: "Cycle calendar, symptoms, a next-period forecast and real-data context.", shot: "journey", alt: "Menopause journey with next-period forecast and an age-in-context curve from national data", to: "/features#journey" },
+  { id: "medscan", title: "MedScan", text: "Understand lab values against your own report's reference range.", shot: "medscan", alt: "MedScan explaining a low vitamin D result against the report's range, with questions for a clinician", to: "/features#medscan" },
+  { id: "food", title: "Food & Lifestyle", text: "Log meals from 10 world regions in a sentence. See your sugar percentage.", shot: "food", alt: "Food diary with an energy donut, added-sugar gauge and weekly goal chart", to: "/features#food" },
+  { id: "dashboard", title: "Health Dashboard", text: "Fourteen measures you record, trends and comparisons. No scores, no diagnoses.", shot: "body", alt: "Health dashboard comparing sleep with mood over 30 days", to: "/features#health" },
+  { id: "guardian", title: "Guardian", text: "Emergency call in one tap, SOS drafts to your people, check-ins.", shot: "guardian", alt: "Guardian with Call 911, SOS to my people, message draft, trusted contacts and check-ins", to: "/features#guardian" },
+  { id: "sisterhood", title: "Sisterhood Map", text: "Fifteen organisations verified at their official websites.", shot: "sisterhood", alt: "World map zoomed to the UK with the British Menopause Society detail card and verification date", to: "/features#sisterhood" },
+  { id: "settings", title: "Settings & Themes", text: "Three luxury themes, privacy controls, your own local AI.", shot: "settings", alt: "Profile and privacy settings with notification controls, Muse model connection and data export", to: "/features#privacy" },
+];
+
+export type ClipCategory = "Muse" | "Health" | "Food" | "Safety" | "Community" | "Getting started" | "Design";
+export interface Clip { id: string; title: string; category: ClipCategory; caption: string; transcript: string[] }
+export const CLIPS: Clip[] = [
+  { id: "onboarding", title: "Welcome & guided tour", category: "Getting started", caption: "Five gentle steps, then 'Show me around' spotlights the real controls.", transcript: ["Welcome screen introduces FEMORA Muse.", "Choose interests such as Yoga and Walking.", "Set privacy: memory consent and private notifications.", "Enter a city, then start the guided tour.", "The tour highlights navigation, Muse's greeting and the notification bell."] },
+  { id: "chat", title: "Talking to Muse", category: "Muse", caption: "Warm replies, answers from records, gentle humour.", transcript: ["The user writes about loneliness and poor sleep; Muse responds with empathy and practical ideas.", "Asked 'When was my last period?', Muse answers from the logged cycle data.", "Asked to make her laugh, Muse shares a gentle joke."] },
+  { id: "journey", title: "Menopause journey", category: "Health", caption: "Calendar, patterns, forecast and real-data context.", transcript: ["The cycle calendar shows logged periods and symptom days.", "A pattern note explains what the cycles may mean, with uncertainty.", "The next-period forecast shows a likely range and how accurate it was on past cycles.", "The age-in-context chart shows national NHANES data."] },
+  { id: "food", title: "Logging food in a sentence", category: "Food", caption: "Type a meal; nutrients and sugar percentage update.", transcript: ["The user types '2 idli and sambar with chai for breakfast'.", "Then 'grilled chicken salad and almonds for lunch'.", "The energy split, sugar gauge and weekly chart update."] },
+  { id: "body", title: "Health dashboard", category: "Health", caption: "Compare measures, read guideline ranges in plain words.", transcript: ["Sleep is compared with mood over 30 days.", "Blood pressure shows a guideline-range note.", "Steps are shown as a trend."] },
+  { id: "planner", title: "Reminders & notifications", category: "Health", caption: "A dose marked taken; the notification centre.", transcript: ["Muse's home greets the user about an upcoming appointment.", "In the planner, the Vitamin D dose is marked taken.", "The notification centre opens with reminders."] },
+  { id: "guardian", title: "Guardian safety", category: "Safety", caption: "Emergency call and SOS drafts, always visible.", transcript: ["The red emergency panel shows Call 911 and SOS to my people.", "The SOS message draft appears with an option to add location.", "Trusted contacts, check-ins and the capability table follow."] },
+  { id: "sisterhood", title: "Global sisterhood map", category: "Community", caption: "Verified organisations; markers never show addresses.", transcript: ["A world map shows clustered organisation markers.", "Selecting the British Menopause Society zooms to the UK with a verified detail card.", "Then the Indian Menopause Society is selected."] },
+  { id: "themes", title: "Three luxury themes", category: "Design", caption: "Emerald, Midnight and Onyx, in light and dark.", transcript: ["The theme switches through Emerald & Ivory, Midnight & Pearl and Onyx & Champagne.", "Dark mode is turned on and themes switch again."] },
+  { id: "landing", title: "The FEMORA homepage", category: "Design", caption: "Editorial hero and feature story.", transcript: ["The homepage hero cycles through lines describing Muse.", "Scrolling reveals the six pillars and honest status."] },
+];

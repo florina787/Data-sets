@@ -3,7 +3,8 @@ import { NavLink, Outlet, Link, useLocation, useNavigate } from "react-router-do
 import { Bell, Clock, MapPin, Menu, Moon, Sun, ThumbsDown, ThumbsUp, Wifi, WifiOff, X } from "lucide-react";
 import { NAV } from "../modules/navigation";
 import { useApp } from "../lib/app-state";
-import { load } from "../lib/storage";
+import { isDemo, load } from "../lib/storage";
+import { exitDemo, startDemo } from "../site/demoData";
 import { Logo } from "./ui";
 import { Credit } from "./Credit";
 import { LocationDialog } from "./LocationDialog";
@@ -38,6 +39,12 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen">
+      {isDemo() && (
+        <div role="status" className="sticky top-0 z-[45] flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-[#3f5139] px-4 py-2 text-center text-sm text-white">
+          <span><b>Interactive demo</b> · synthetic sample data for a fictional member · Muse replies come from its offline library, not a live AI model</span>
+          <span className="flex gap-3"><button className="underline" onClick={() => { startDemo(); location.reload(); }}>Reset demo</button>
+            <button className="underline" onClick={() => { exitDemo(); location.assign(import.meta.env.BASE_URL); }}>Exit demo</button></span>
+        </div>)}
       <ReminderWatcher />
       <GuardianWatcher />
       {!onboarded ? <Onboarding onDone={() => setOnboarded(true)} /> : (!app.location || editLoc) && <LocationDialog onClose={app.location ? () => setEditLoc(false) : undefined} />}

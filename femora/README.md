@@ -4,14 +4,14 @@
 
 <br>
 
-![Tests](https://img.shields.io/badge/tests-134%20passing-2f6a4a?style=for-the-badge)
+![Tests](https://img.shields.io/badge/tests-151%20passing-2f6a4a?style=for-the-badge)
 ![Evals](https://img.shields.io/badge/agent%20evals-15%2F15-2f6a4a?style=for-the-badge)
 ![Accessibility](https://img.shields.io/badge/Lighthouse%20a11y-100-2f6a4a?style=for-the-badge)
 ![React](https://img.shields.io/badge/React%2019-17140f?style=for-the-badge&logo=react&logoColor=e7cf9f)
 ![TypeScript](https://img.shields.io/badge/TypeScript-17140f?style=for-the-badge&logo=typescript&logoColor=e7cf9f)
 ![Real data](https://img.shields.io/badge/trained%20on-10%2C375%20real%20women-7c5f2b?style=for-the-badge)
 
-**[The story](#-the-story) · [See it move](#-see-it-move) · [Real data](#-trained-on-real-data) · [How Muse thinks](#-how-muse-thinks) · [Measured](#-measured-not-claimed) · [Status](#-honest-status) · [Run it](#-run-it)**
+**[Launch website](docs/WEBSITE.md) · [The story](#-the-story) · [See it move](#-see-it-move) · [Real data](#-trained-on-real-data) · [How Muse thinks](#-how-muse-thinks) · [Measured](#-measured-not-claimed) · [Status](#-honest-status) · [Run it](#-run-it)**
 
 </div>
 
@@ -20,6 +20,16 @@
 <p align="center">
   <img src="docs/media/muse-landing.gif" alt="FEMORA Muse homepage: onyx and champagne hero with the line 'A companion that walks beside you' cycling through 'listens first', 'knows your plate', 'remembers your check-ups'" width="88%">
 </p>
+
+---
+
+## ✦ The launch website
+
+A cinematic public site sits in front of the app: homepage, features, an **interactive demo with synthetic data**, the Sisterhood club, how it works, a gallery, pricing (proposed, with no checkout) and science & trust.
+
+- **Lighthouse:** accessibility, best practices and SEO **100** on all 8 pages; mobile performance 90–98.
+- **Where it will live:** `https://florina787.github.io/femora/`, published from its own repository so the existing VEENA.AI site isn't affected.
+- **Details:** [docs/WEBSITE.md](docs/WEBSITE.md) · billing design: [docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md)
 
 ---
 
@@ -406,7 +416,7 @@ npm run dev        # http://127.0.0.1:5174
 ```
 
 ```bash
-npm test           # 134 tests
+npm test           # 151 tests
 npm run build      # production build
 ```
 

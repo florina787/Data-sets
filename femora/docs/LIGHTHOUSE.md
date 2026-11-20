@@ -1,5 +1,23 @@
 # Lighthouse results
 
+## Launch website (20 Nov 2026)
+Production build served like GitHub Pages (gzip, `/femora/` base, `404.html` fallback). Lighthouse 12.8.2, simulated mobile and desktop.
+
+| Page | Mobile perf | Desktop perf | Accessibility | Best practices | SEO | Mobile LCP | CLS |
+|---|---|---|---|---|---|---|---|
+| Home `/` | 94 | 100 | 100 | 100 | 100 | 3.0 s | 0 |
+| Features | 94 | 100 | 100 | 100 | 100 | 2.8 s | 0 |
+| Demo | 96 | 100 | 100 | 100 | 100 | 2.5 s | 0 |
+| Sisterhood club | 96 | 100 | 100 | 100 | 100 | 2.5 s | 0 |
+| How it works | 94 | 100 | 100 | 100 | 100 | 2.8 s | 0 |
+| Gallery | 90 | 100 | 100 | 100 | 100 | 3.5 s | 0 |
+| Pricing | 98 | 100 | 100 | 100 | 100 | 2.3 s | 0 |
+| Science & trust | 96 | 100 | 100 | 100 | 100 | 2.5 s | 0 |
+
+Fixes made during this pass: relative favicon/manifest paths 404'd on sub-pages; inactive carousel slides used opacity (contrast 2.24:1); "Learn more" link text; transparent header measured against the light page colour; faded step numbers; dark text on a dark pricing pill; a missing space between the two hero lines (screen readers read "journeydeserves").
+
+## App
+
 Measured 17 Nov 2026 with **Lighthouse 12.8.2** (Chrome 153, headless), default simulated throttling: mobile (slow 4G, 4× CPU) and the desktop preset. The production build was served with gzip at `/Data-sets/`, as GitHub Pages would serve it. Every run is a **first visit** (empty storage, welcome dialog showing). Raw JSON reports are not committed.
 
 | Page | Mobile perf | Desktop perf | Accessibility | Best practices | SEO | Mobile LCP | Mobile CLS | Mobile TBT |

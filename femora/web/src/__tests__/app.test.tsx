@@ -9,9 +9,10 @@ const seedLocation = () => localStorage.setItem("femora:v1:locations", JSON.stri
 const at = (path: string) => { seedLocation(); return render(<AppStateProvider><MemoryRouter initialEntries={[path]}><AppRoutes /></MemoryRouter></AppStateProvider>); };
 
 describe("app", () => {
-  it("shows the Muse homepage with its main action and the creator credit", () => {
+  it("shows the launch homepage with its headline, actions and the creator credit", () => {
     at("/");
-    expect(screen.getAllByText(/Meet your Muse/).length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Every woman's journey deserves to be understood.");
+    expect(screen.getAllByRole("link", { name: /Explore the Interactive Demo/ }).length).toBeGreaterThan(0);
     expect(screen.getByText("florinaregius@yahoo.com")).toBeInTheDocument();
   });
 

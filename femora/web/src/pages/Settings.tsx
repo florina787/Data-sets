@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Download } from "lucide-react";
 import { useApp } from "../lib/app-state";
 import { PROFILES, STAGE_LABEL, INTEREST_OPTIONS, type Stage } from "../data/examples/profiles";
-import { resetDemo } from "../lib/storage";
+import { prefix, resetDemo } from "../lib/storage";
 import { usePersistent } from "../lib/usePersistent";
 import { Badge, Button, Card, Field, Notice, PageHeader, inputCls } from "../components/ui";
 import { CATEGORY_LABEL, type NotifCategory } from "../modules/notifications/engine";
@@ -12,7 +12,7 @@ import { setProvider } from "../modules/conversation/router";
 import { scriptedProvider } from "../modules/conversation/scriptedProvider";
 
 function exportAll() {
-  const data = Object.fromEntries(Object.keys(localStorage).filter((k) => k.startsWith("femora:")).map((k) => [k, JSON.parse(localStorage.getItem(k) ?? "null")]));
+  const data = Object.fromEntries(Object.keys(localStorage).filter((k) => k.startsWith(prefix())).map((k) => [k, JSON.parse(localStorage.getItem(k) ?? "null")]));
   const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
   const a = document.createElement("a"); a.href = url; a.download = "femora-muse-data.json"; a.click(); URL.revokeObjectURL(url);
 }
