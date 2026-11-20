@@ -53,7 +53,11 @@ def token_for(tenant_id: str, role: str) -> str:
 
 
 def wipe_tenant(db: Session, tenant_id: str) -> None:
+    from florome.assistant.models import AssistantConversation, AssistantMessage
     from florome.shield import models as sm
+
+    db.execute(delete(AssistantMessage).where(AssistantMessage.tenant_id == tenant_id))
+    db.execute(delete(AssistantConversation).where(AssistantConversation.tenant_id == tenant_id))
 
     for model in (sm.ContainmentEvent, sm.TemporaryCredential, sm.AgentExecution, sm.BenchmarkRun, sm.SecurityPolicyDecision,
                   sm.RemediationPatch, sm.VulnerabilityFinding, sm.VerificationRun, sm.SecurityHypothesis, sm.FindingEvidence, sm.ScanRun,

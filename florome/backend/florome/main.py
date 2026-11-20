@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from florome import __version__
 from florome.api.v1 import router
+from florome.assistant.api import router as assistant_router
 from florome.shield.api import router as shield_router
 from florome.config import Settings, get_settings
 from florome.context import AppContext
@@ -102,6 +103,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(router)
     app.include_router(shield_router)
+    app.include_router(assistant_router)
     return app
 
 
