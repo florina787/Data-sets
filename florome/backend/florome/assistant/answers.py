@@ -160,7 +160,7 @@ async def failing_systems(c: Ctx) -> dict:
                 h = "unknown"
             if h not in ("healthy",):
                 bad.append((r["name"], r["platform"], h))
-    follow = ["What caused the incident?", "What is the blast radius?", "What's upstream of the failing service?", "Which platforms are connected?"]
+    follow = ["What caused the incident?", "What is the blast radius?", "What's upstream of the failing service?", "Which cloud has the most failures?"]
     if not bad:
         return A("Every connected system reports healthy right now.", follow=follow)
     return A(f"{len(bad)} systems are not healthy, across {len({b[1] for b in bad})} platforms.", [f"{n} ({p}): {h}" for n, p, h in bad],
@@ -272,7 +272,7 @@ def plan_changes(c: Ctx) -> dict:
     follow = ["Who still needs to approve?", "Did the fix work?", "What failed or was denied?", "What caused the incident?"]
     if pl is None:
         return A("No remediation plan exists yet; generate one on the Actions page after the investigation.", follow=follow)
-    return A(f"The plan has {len(pl.steps)} steps at {pl.risk} risk and is {pl.status.replace('_', ' ')}.",
+    return A(f"The plan has {len(pl.steps)} steps at {pl.risk} risk and is {STATUS_WORDS.get(pl.status, pl.status)}.",
              [f"{s['index'] + 1}. {s['title']} on {s['target_name']} (undo: {s['rollback'][:50]})" for s in pl.steps],
              {"type": "table", "columns": ["#", "Action", "Target", "Risk", "Status"],
               "rows": [[s["index"] + 1, s["title"], s["target_name"], s["risk"], s.get("status", "pending")] for s in pl.steps]},
@@ -288,7 +288,7 @@ def who_approves(c: Ctx) -> dict:
 
     ap = c.db.scalars(select(Approval).where(Approval.plan_id == pl.id).order_by(Approval.created_at.desc())).first()
     if ap:
-        return A(f"Plan {pl.id} was {ap.decision} by {ap.approver_id}; it is now {pl.status.replace('_', ' ')}.",
+        return A(f"Plan {pl.id} was {ap.decision} by {ap.approver_id}; it is now {STATUS_WORDS.get(pl.status, pl.status)}.",
                  [f"Bound to hash {ap.plan_hash[:12]}…", f"Expires {as_utc(ap.expires_at).strftime('%H:%M UTC')}"],
                  evidence=[{"label": "Plan", "href": f"/actions?incident={pl.incident_id}"}], follow=follow)
     return A(f"Plan {pl.id} still needs an approver who is not {pl.created_by}.", ["Roles that can approve: approver, admin"],
@@ -577,3 +577,49 @@ def code_reach(c: Ctx) -> dict:
     return A(f"{len(hs)} public endpoints pass visitor data to a dangerous operation with no safety check.",
              [f"{h.function} → {h.vuln_class.replace('_', ' ')} ({h.status})" for h in hs], evidence=[{"label": "Code graph", "href": "/shield"}],
              follow=["Which vulnerabilities are confirmed?", "Were the fixes verified?", "Which alarms were false?", "Does proving beat guessing?"])
+
+
+# ------------------------------------------------------------------------------------------- added intents
+
+async def health_by_platform(c: Ctx) -> dict:
+    topo = load_topology(c.db, c.p.tenant_id)
+    tally: dict[str, Counter] = defaultdict(Counter)
+    for r in topo.resources.values():
+        cid = r.get("connection_id")
+        health = "unknown"
+        if cid and c.app.registry.has(cid):
+            try:
+                health = (await c.app.registry.get(cid).read_status(r["source_ref"])).get("health", "unknown")
+            except ConnectorError:
+                health = "unknown"
+        tally[r["platform"]][health] += 1
+    bad = {p: sum(n for h, n in t.items() if h not in ("healthy", "unknown")) for p, t in tally.items()}
+    worst = max(bad.items(), key=lambda kv: kv[1])
+    follow = ["Which systems are failing?", "What is the blast radius?", "What's upstream of the failing service?", "What caused the incident?"]
+    return A(f"{worst[0]} has the most unhealthy systems ({worst[1]})." if worst[1] else "No cloud has an unhealthy system right now.",
+             [f"{p}: {t.get('healthy', 0)} healthy, {bad[p]} unhealthy" for p, t in sorted(tally.items())],
+             {"type": "bars", "unit": "unhealthy systems", "items": [{"label": p, "value": n} for p, n in sorted(bad.items(), key=lambda kv: -kv[1])]},
+             [{"label": "Map", "href": "/topology"}], follow)
+
+
+def log_gaps(c: Ctx) -> dict:
+    inc = _incident(c)
+    rca = _rca(c, inc)
+    follow = ["Where is the evidence weakest?", "Where does the evidence come from?", "Has any evidence been tampered with?", "Show the latest errors"]
+    if rca is None:
+        return A("No investigation has run yet, so evidence coverage is unknown.", follow=follow)
+    topo = load_topology(c.db, c.p.tenant_id)
+    have: dict[str, set[str]] = defaultdict(set)
+    for t in rca.report["timeline"]:
+        have[t["resource_id"]].add(t["kind"])
+    scope = rca.report["scope"]
+    silent = [r for r in scope if not have[r] & {"log", "trace", "status"} and topo.resources[r]["kind"] != "ci_pipeline"]
+    return A(f"{len(silent)} of {len(scope)} investigated systems kept no logs or traces: {', '.join(topo.name(r) for r in silent)}." if silent
+             else f"Every one of the {len(scope)} investigated systems provided logs or traces.",
+             ["Links into a silent system can only be inferred from timing, never proven"] if silent else [],
+             {"type": "table", "columns": ["System", "Evidence kinds"], "rows": [[topo.name(r), ", ".join(sorted(have[r])) or "none"] for r in scope]},
+             [{"label": "Investigation", "href": f"/rca?incident={inc.id}"}], follow, incident_id=inc.id)
+
+
+STATUS_WORDS = {"succeeded": "done and verified", "pending_approval": "waiting for approval", "approved": "approved, not yet run",
+                "executing": "running", "failed": "stopped on a failed step", "rejected": "rejected", "blocked": "blocked by policy"}

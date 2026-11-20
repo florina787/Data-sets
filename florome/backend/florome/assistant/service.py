@@ -35,7 +35,7 @@ INTENTS: dict[str, tuple[Any, str, list[str]]] = {
     "failing_systems": (h.failing_systems, "Which systems are failing?", ["failing", "unhealthy", "red", "which systems", "status"]),
     "upstream": (h.upstream, "What's upstream of the failing service?", ["upstream", "feeds", "depends", "dependency", "dependencies"]),
     "blast_radius": (h.blast_radius, "What is the blast radius?", ["blast", "impact", "affected", "radius", "business"]),
-    "platforms_connected": (h.connections_health, "Which platforms are connected?", ["platforms", "clouds"]),
+    "health_by_platform": (h.health_by_platform, "Which cloud has the most failures?", ["which cloud", "per cloud", "by platform", "clouds", "most failures"]),
     "root_cause": (h.root_cause, "What caused the incident?", ["cause", "caused", "root", "why did", "reason", "culprit"]),
     "ruled_out": (h.ruled_out, "Which explanations were ruled out?", ["ruled out", "disproven", "red herring", "excluded", "not the cause"]),
     "weakest": (h.weakest, "Where is the evidence weakest?", ["weak", "caveat", "uncertain", "confidence", "gaps", "challenger"]),
@@ -50,7 +50,7 @@ INTENTS: dict[str, tuple[Any, str, list[str]]] = {
     "planned": (h.planned, "What's planned next?", ["planned", "roadmap", "next", "not built", "coming"]),
     "evidence_sources": (h.evidence_sources, "Where does the evidence come from?", ["evidence", "source", "sources", "kinds of evidence", "records"]),
     "evidence_integrity": (h.evidence_integrity, "Has any evidence been tampered with?", ["tamper", "integrity", "altered", "hash", "fingerprint"]),
-    "evidence_kinds": (h.evidence_sources, "What kinds of evidence do we have?", ["kinds", "types of evidence"]),
+    "log_gaps": (h.log_gaps, "Which systems have no logs?", ["no logs", "silent", "missing logs", "coverage", "blind spot"]),
     "latest_errors": (h.latest_errors, "Show the latest errors", ["latest error", "errors", "logs", "exceptions"]),
     "audit_intact": (h.audit_intact, "Is the audit log intact?", ["audit", "log intact", "chain", "trail"]),
     "denied_recent": (h.denied_recent, "What was denied recently?", ["denied recently", "blocked", "rejected", "refusals"]),
@@ -71,18 +71,19 @@ INTENTS: dict[str, tuple[Any, str, list[str]]] = {
 
 PAGES: dict[str, dict[str, Any]] = {
     "overview": {"title": "Overview", "intents": ["incidents_open", "approvals_pending", "connections_health", "spend_month"]},
-    "topology": {"title": "Nervous System", "intents": ["failing_systems", "upstream", "blast_radius", "platforms_connected"]},
+    "topology": {"title": "Nervous System", "intents": ["failing_systems", "upstream", "blast_radius", "health_by_platform"]},
     "rca": {"title": "RCA", "intents": ["root_cause", "ruled_out", "weakest", "timeline"]},
     "actions": {"title": "Actions", "intents": ["plan_changes", "who_approves", "fix_worked", "failures_denied"]},
     "integrations": {"title": "Integrations", "intents": ["really_connected", "mcp_tools", "quarantined", "planned"]},
-    "sources": {"title": "Sources", "intents": ["evidence_sources", "evidence_integrity", "evidence_kinds", "latest_errors"]},
+    "sources": {"title": "Sources", "intents": ["evidence_sources", "evidence_integrity", "log_gaps", "latest_errors"]},
     "governance": {"title": "Governance", "intents": ["audit_intact", "denied_recent", "policy_current", "api_speed"]},
     "finops": {"title": "FinOps", "intents": ["spend_where", "spend_change", "spend_ai", "spend_outcome"]},
     "shield": {"title": "Shield", "intents": ["vulns_confirmed", "false_alarms", "fixes_verified", "agents"]},
 }
 BY_QUESTION = {q.lower(): k for k, (_, q, _) in INTENTS.items()}
 VAGUE = re.compile(r"^\s*(why|how|explain|more|tell me more|show me|details?|go on|and\??|what else)\b", re.I)
-REPORT = re.compile(r"\b(report|summari[sz]e|summary|brief me|overview of this page)\b", re.I)
+# Only an explicit request produces a report: "why did the revenue report break?" is a question, not a request.
+REPORT = re.compile(r"\b(summari[sz]e|brief me)\b|\b(generate|write|create|make|give me|export)\b.{0,30}\b(report|summary|brief)\b", re.I)
 
 
 def page_config(page: str) -> dict[str, Any]:
@@ -160,7 +161,7 @@ async def answer(db: Session, app: AppContext, p: Principal, page: str, question
     conv.focus = new_focus
     ans = redact({**ans, "intent": intent, "engine": ENGINE, "input_flags": flags,
                   "data_mode": db.get(Tenant, p.tenant_id).mode})
-    db.add(AssistantMessage(tenant_id=p.tenant_id, conversation_id=conv.id, role="user", text=q))
+    db.add(AssistantMessage(tenant_id=p.tenant_id, conversation_id=conv.id, role="user", text=redact(q)))
     db.add(AssistantMessage(tenant_id=p.tenant_id, conversation_id=conv.id, role="assistant", text=ans["statement"], answer=ans))
     db.flush()
     return conv, ans
