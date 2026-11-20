@@ -6,7 +6,8 @@ import { Wordmark } from "./Logo";
 import { cx } from "./ui";
 
 export const NAV = [
-  { to: "/", label: "Overview" },
+  { to: "/", label: "Copilot" },
+  { to: "/overview", label: "Overview" },
   { to: "/topology", label: "Nervous System" },
   { to: "/rca", label: "RCA" },
   { to: "/actions", label: "Actions" },

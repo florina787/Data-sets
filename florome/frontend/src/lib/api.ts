@@ -121,7 +121,12 @@ export type AssistantVisual =
   | { type: "report"; markdown: string };
 export interface AssistantAnswer {
   conversation_id: string; intent: string | null; statement: string; bullets: string[]; visual: AssistantVisual | null;
-  evidence: { label: string; href: string }[]; follow_ups: string[]; engine: { mode: string; language_model: string | null };
+  evidence: { label: string; href: string | null }[]; follow_ups: string[]; engine: { mode: string; language_model: string | null };
   input_flags: string[]; data_mode: string;
+  source: { name: string; status: string; model_calls: number | null; content_flags?: string[] };
 }
-export interface AssistantPage { page: string; title: string; starters: string[]; engine: { mode: string; language_model: string | null } }
+export interface AssistantPage {
+  page: string; title: string; starters: string[]; engine: { mode: string; language_model: string | null };
+  groups?: { title: string; questions: string[] }[];
+}
+export interface AssistantSources { florome: { reachable: boolean; status: string }; conversation_copilot: { configured: boolean; reachable: boolean; status: string } }

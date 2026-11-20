@@ -41,23 +41,23 @@ const renderAt = (path: string) => render(<MemoryRouter initialEntries={[path]}>
 
 describe("navigation and overview", () => {
   it("renders the shell, demo banner and live KPIs", async () => {
-    renderAt("/");
+    renderAt("/overview");
     expect(screen.getByText(/fictional tenant/)).toBeInTheDocument();
     const nav = screen.getByRole("navigation", { name: "Primary" });
-    for (const l of ["Overview", "Nervous System", "RCA", "Actions", "Integrations", "Sources", "Governance", "FinOps"]) expect(within(nav).getByText(l)).toBeInTheDocument();
+    for (const l of ["Copilot", "Overview", "Nervous System", "RCA", "Actions", "Integrations", "Sources", "Governance", "FinOps"]) expect(within(nav).getByText(l)).toBeInTheDocument();
     expect(await screen.findByText("1/1")).toBeInTheDocument();
     expect(screen.getAllByText(/Synthetic demo data/).length).toBeGreaterThan(0);
   });
 
   it("reports the copilot layer honestly when Project B is unavailable", async () => {
-    renderAt("/");
+    renderAt("/overview");
     expect(await screen.findByText("unavailable")).toBeInTheDocument();
     expect(screen.getByText("imported")).toBeInTheDocument();
   });
 
   it("shows an error state with retry when the API fails", async () => {
     routes.unshift([/\/analytics\/summary$/, () => ({ status: 500, body: { detail: "backend down" } })]);
-    renderAt("/");
+    renderAt("/overview");
     expect(await screen.findByRole("alert")).toHaveTextContent("backend down");
     expect(screen.getByText("Retry")).toBeInTheDocument();
   });

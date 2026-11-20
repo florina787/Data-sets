@@ -5,34 +5,21 @@ import { api, post, type AssistantAnswer, type AssistantPage, type AssistantVisu
 import { cx } from "./ui";
 
 const PAGE_BY_PATH: Record<string, string> = {
-  "/": "overview", "/topology": "topology", "/rca": "rca", "/actions": "actions", "/integrations": "integrations",
+  "/": "home", "/overview": "overview", "/topology": "topology", "/rca": "rca", "/actions": "actions", "/integrations": "integrations",
   "/sources": "sources", "/governance": "governance", "/finops": "finops", "/shield": "shield",
 };
-type Turn = { role: "user"; text: string } | { role: "assistant"; answer: AssistantAnswer } | { role: "error"; text: string; retry: string };
+export type Turn = { role: "user"; text: string } | { role: "assistant"; answer: AssistantAnswer } | { role: "error"; text: string; retry: string };
 
 export function pageFor(pathname: string): string | null {
   return PAGE_BY_PATH[pathname] ?? null;
 }
 
-export function AssistantDock() {
-  const loc = useLocation();
-  const page = pageFor(loc.pathname);
-  const [open, setOpen] = useState(false);
+/** One chat engine for every surface (side panel and the Copilot home page). */
+export function useAssistantChat(page: string | null, context: Record<string, string>) {
   const [cfg, setCfg] = useState<AssistantPage | null>(null);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [conv, setConv] = useState<string | null>(null);
-  const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
-  const input = useRef<HTMLInputElement>(null);
-  const end = useRef<HTMLDivElement>(null);
-  const context = useMemo(() => {
-    const sp = new URLSearchParams(loc.search);
-    const c: Record<string, string> = {};
-    if (sp.get("incident")) c.incident_id = sp.get("incident")!;
-    if (sp.get("hypothesis")) c.hypothesis_id = sp.get("hypothesis")!;
-    return c;
-  }, [loc.search]);
-
   // A new page starts a new conversation: the assistant is specialised per page.
   useEffect(() => {
     setTurns([]);
@@ -40,24 +27,9 @@ export function AssistantDock() {
     setCfg(null);
     if (page) api<AssistantPage>(`/assistant/pages/${page}`).then(setCfg).catch(() => setCfg(null));
   }, [page]);
-  useEffect(() => {
-    if (open) input.current?.focus();
-  }, [open]);
-  useEffect(() => {
-    end.current?.scrollIntoView?.({ block: "end" });
-  }, [turns, busy]);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  if (!page) return null;
-
   const ask = async (q: string) => {
     const question = q.trim();
-    if (!question || busy) return;
-    setText("");
+    if (!question || busy || !page) return;
     setTurns((t) => [...t.filter((x) => x.role !== "error"), { role: "user", text: question }]);
     setBusy(true);
     try {
@@ -70,6 +42,41 @@ export function AssistantDock() {
       setBusy(false);
     }
   };
+  const reset = () => { setTurns([]); setConv(null); };
+  return { cfg, turns, busy, ask, reset };
+}
+
+export function contextFrom(search: string): Record<string, string> {
+  const sp = new URLSearchParams(search);
+  const c: Record<string, string> = {};
+  if (sp.get("incident")) c.incident_id = sp.get("incident")!;
+  if (sp.get("hypothesis")) c.hypothesis_id = sp.get("hypothesis")!;
+  return c;
+}
+
+export function AssistantDock() {
+  const loc = useLocation();
+  const page = pageFor(loc.pathname);
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const input = useRef<HTMLInputElement>(null);
+  const end = useRef<HTMLDivElement>(null);
+  const context = useMemo(() => contextFrom(loc.search), [loc.search]);
+  const { cfg, turns, busy, ask: send, reset } = useAssistantChat(page === "home" ? null : page, context);
+  useEffect(() => {
+    if (open) input.current?.focus();
+  }, [open]);
+  useEffect(() => {
+    end.current?.scrollIntoView?.({ block: "end" });
+  }, [turns, busy]);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+  const ask = async (q: string) => { setText(""); await send(q); };
+
+  if (!page || page === "home") return null;  // the home page is itself the full-screen copilot
 
   return (
     <>
@@ -88,7 +95,7 @@ export function AssistantDock() {
               <div className="text-sm font-semibold">Ask Florome · {cfg?.title ?? page}</div>
               <div className="text-[11px] text-ink-mute">Rule-based · answers only from Florome data · no AI model</div>
             </div>
-            <button aria-label="New conversation" title="New conversation" onClick={() => { setTurns([]); setConv(null); }} className="rounded-md p-1.5 hover:bg-dome-50"><RotateCcw className="h-4 w-4" /></button>
+            <button aria-label="New conversation" title="New conversation" onClick={reset} className="rounded-md p-1.5 hover:bg-dome-50"><RotateCcw className="h-4 w-4" /></button>
             <button aria-label="Close assistant" onClick={() => setOpen(false)} className="rounded-md p-1.5 hover:bg-dome-50"><X className="h-4 w-4" /></button>
           </header>
           <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4" aria-live="polite">
@@ -130,11 +137,11 @@ export function AssistantDock() {
   );
 }
 
-function Dot({ d = "0ms" }: { d?: string }) {
+export function Dot({ d = "0ms" }: { d?: string }) {
   return <span className="h-2 w-2 animate-bounce rounded-full bg-dome-300 motion-reduce:animate-none" style={{ animationDelay: d }} />;
 }
 
-function AnswerCard({ a, onAsk, latest }: { a: AssistantAnswer; onAsk: (q: string) => void; latest: boolean }) {
+export function AnswerCard({ a, onAsk, latest }: { a: AssistantAnswer; onAsk: (q: string) => void; latest: boolean }) {
   return (
     <div className="rounded-2xl rounded-bl-md border border-dome-100 bg-canvas/60 p-3.5" data-testid="assistant-answer">
       <p className="text-[14px] font-medium leading-snug">{a.statement}</p>
@@ -144,10 +151,19 @@ function AnswerCard({ a, onAsk, latest }: { a: AssistantAnswer; onAsk: (q: strin
       {a.visual && <div className="mt-3"><Visual v={a.visual} /></div>}
       {a.evidence.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {a.evidence.map((e, i) => (
+          {a.evidence.map((e, i) => e.href ? (
             <Link key={i} to={e.href} className="rounded-md bg-white px-2 py-1 text-[11px] font-medium text-dome-600 ring-1 ring-dome-100 hover:ring-dome-300">↗ {e.label}</Link>
+          ) : (
+            <span key={i} className="rounded-md bg-white px-2 py-1 text-[11px] text-ink-soft ring-1 ring-dome-100" title="Quoted from the source conversation">❝ {e.label}</span>
           ))}
         </div>
+      )}
+      {a.source && (
+        <p className="mt-2 text-[10.5px] text-ink-mute" data-testid="answer-source">
+          {a.source.name === "Florome records" ? "From Florome records" : `Answered by the ${a.source.name}`}
+          {a.source.model_calls !== null && a.source.model_calls !== undefined ? ` · ${a.source.model_calls} AI model calls` : ""}
+          {a.source.status !== "completed" && a.source.name !== "Florome records" ? ` · ${a.source.status}` : ""}
+        </p>
       )}
       {a.input_flags.length > 0 && <p className="mt-2 text-[11px] text-warn">Your message contained instruction-like text; it was treated as a plain question and changed nothing.</p>}
       {latest && a.follow_ups.length > 0 && (

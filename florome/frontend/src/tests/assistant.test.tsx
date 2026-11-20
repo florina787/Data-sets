@@ -45,7 +45,8 @@ const openOn = async (path: string) => {
 };
 
 it("maps routes to page assistants", () => {
-  expect(pageFor("/")).toBe("overview");
+  expect(pageFor("/")).toBe("home");
+  expect(pageFor("/overview")).toBe("overview");
   expect(pageFor("/shield")).toBe("shield");
   expect(pageFor("/nowhere")).toBeNull();
 });

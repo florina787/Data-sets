@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
+import Home from "./pages/Home";
 import Overview from "./pages/Overview";
 import Topology from "./pages/Topology";
 import RCA from "./pages/RCA";
@@ -14,7 +15,8 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Overview />} />
+        <Route index element={<Home />} />
+        <Route path="overview" element={<Overview />} />
         <Route path="topology" element={<Topology />} />
         <Route path="rca" element={<RCA />} />
         <Route path="actions" element={<Actions />} />
